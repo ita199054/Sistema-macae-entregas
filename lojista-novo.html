@@ -1,24 +1,619 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lojista - Criar Corrida</title><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script><script src="config.js"></script><style>body{background:#111;color:#fff;font-family:Arial;padding:12px;max-width:500px;margin:auto}input{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:1px solid #D4AF37;background:#222;color:#fff;box-sizing:border-box}button{width:100%;padding:14px;background:#D4AF37;color:#000;border:none;border-radius:10px;font-weight:900;margin-top:10px;cursor:pointer}.saldo{background:#171717;border:1px solid #D4AF37;padding:10px;border-radius:10px;text-align:center;margin-bottom:10px}</style></head><body>
-<div class="saldo">Saldo: R$<span id="s">0,00</span> | Loja: <span id="lj">-</span></div>
-<h2 style="color:#D4AF37">CRIAR ENTREGA</h2>
-<input id="origem" placeholder="Origem - sua loja">
-<input id="destino" placeholder="Destino - cliente">
-<input id="tel" placeholder="Zap cliente 22999999999 (só números)">
-<input id="valor" type="number" placeholder="Valor R$ 15">
-<input id="motoboyDestino" placeholder="#0001 opcional (vazio = todos)">
-<button onclick="criar()">🚀 CRIAR CORRIDA</button>
-<div id="lista" style="margin-top:15px"></div>
-<script>
-firebase.initializeApp(firebaseConfig);const db=firebase.firestore();let MEU_UID="",MINHA_LOJA="";
-firebase.auth().onAuthStateChanged(async u=>{if(!u)return location.href="index.html";MEU_UID=u.uid;const d=await db.collection("usuarios").doc(u.uid).get();MINHA_LOJA=d.data().nomeLoja||d.data().nome||"Loja";document.getElementById("lj").innerText=MINHA_LOJA;document.getElementById("s").innerText=(d.data().saldo||0).toFixed(2);load();});
-async function criar(){
-const origem=document.getElementById("origem").value, destino=document.getElementById("destino").value, tel=document.getElementById("tel").value, valor=Number(document.getElementById("valor").value), motoboyDestino=document.getElementById("motoboyDestino").value.trim();
-if(!destino||!valor)return alert("Destino e valor obrigatório");
-const cod=String(Math.floor(1000+Math.random()*9000));
-const meu=await db.collection("usuarios").doc(MEU_UID).get();if((meu.data().saldo||0)<valor)return alert("Saldo insuficiente! Recarrega no admin.");
-await db.collection("corridas").add({origem,destino,valor,codigoEntrega:cod,motoboyDestino,status:"pendente",nomeLoja:MINHA_LOJA,lojistaId:MEU_UID,criadoEm:firebase.firestore.FieldValue.serverTimestamp(),telCliente:tel});
-await db.collection("usuarios").doc(MEU_UID).update({saldo:firebase.firestore.FieldValue.increment(-valor)});
-const msg=`🚀 *Anjos Flash Macaé*%0ASeu código é *${cod}*%0AFale pro motoboy quando chegar.`;window.open(`https://wa.me/55${tel}?text=${msg}`,"_blank");alert("Corrida criada! Código: "+cod);location.reload();
+<!-- PARTE 2 — PAINEL LOJISTA -->
+
+<script type="module">
+
+import {
+  doc,
+  getDoc,
+  addDoc,
+  collection,
+  serverTimestamp,
+  runTransaction
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const db = window.db;
+const auth = window.auth;
+
+window.renderLojista = async function(data){
+
+  const configSnap = await getDoc(
+    doc(db,"configuracoes","principal")
+  );
+
+  const CONFIG = configSnap.exists()
+    ? {...window.CONFIG_PADRAO,...configSnap.data()}
+    : {...window.CONFIG_PADRAO};
+
+  let lojas = data.lojas || [];
+
+  let options = lojas.map((loja,index)=>{
+
+    return `
+      <option value="${loja.id || index}">
+        ${loja.nome || "Loja"}
+      </option>
+    `;
+
+  }).join("");
+
+  $("panel").innerHTML = `
+
+  <div class="card">
+
+    <h2>🏪 PAINEL LOJISTA</h2>
+
+    <div class="grid">
+
+      <div class="card">
+        <h3>Saldo disponível</h3>
+
+        <div class="money">
+          ${formatarMoeda(data.saldo)}
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Pagamento</h3>
+
+        <div>
+          PIX:
+          <b>${window.PIX_EMPRESA}</b>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>🚀 PEDIR CORRIDA</h2>
+
+    <label>Escolha a loja</label>
+
+    <select id="lojaOrigem">
+      ${options}
+    </select>
+
+    <label>Tipo de veículo</label>
+
+    <select id="tipoVeiculo">
+
+      <option value="moto">
+        🏍️ Motoboy / Moto
+      </option>
+
+      <option value="utilitario">
+        🚐 Utilitário
+      </option>
+
+      <option value="caminhao">
+        🚚 Caminhão
+      </option>
+
+      <option value="carreta">
+        🚛 Carreta
+      </option>
+
+    </select>
+
+    <label>Endereço do cliente</label>
+
+    <input
+      id="clienteEndereco"
+      placeholder="Endereço completo">
+
+    <label>Telefone do cliente</label>
+
+    <input
+      id="clienteTelefone"
+      placeholder="Telefone">
+
+    <label>Distância loja → cliente</label>
+
+    <input
+      id="clienteKm"
+      type="number"
+      min="0"
+      step="0.1"
+      placeholder="Ex.: 7.5"
+      oninput="calcularValorPedido()">
+
+    <div id="valorPedido"></div>
+
+    <div id="opcoesPedido"></div>
+
+    <label>
+      Código do cliente — 4 dígitos
+    </label>
+
+    <input
+      id="codigoCliente"
+      maxlength="4"
+      inputmode="numeric"
+      placeholder="0000">
+
+    <button
+      class="gold"
+      onclick="dispararCorrida()">
+
+      🚀 PEDIR CORRIDA
+
+    </button>
+
+    <div id="resultadoPedido"></div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>📋 Minhas corridas</h2>
+
+    <div id="corridasLojista">
+      Carregando...
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>📊 Extrato</h2>
+
+    <button
+      class="gold"
+      onclick="mostrarExtratoLojista()">
+
+      EXTRATO — ÚLTIMOS 90 DIAS
+
+    </button>
+
+    <button
+      class="dark"
+      onclick="imprimirExtratoLojista()">
+
+      🖨️ IMPRIMIR EXTRATO
+
+    </button>
+
+    <div id="extratoLojista"></div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>💬 Chat com Admin</h2>
+
+    <button
+      class="gold"
+      onclick="abrirChatAdmin()">
+
+      ABRIR CHAT
+
+    </button>
+
+  </div>
+
+  `;
+
+  mostrarOpcoesPedido(CONFIG);
+
+  ouvirCorridasLojista(auth.currentUser.uid);
+
+};
+
+function mostrarOpcoesPedido(CONFIG){
+
+  let html = "";
+
+  if(CONFIG.dinamicaAtiva){
+
+    html += `
+      <button
+        id="btnDinamica"
+        class="dark"
+        onclick="alternarOpcaoPedido('dinamica')">
+
+        ⚡ DINÂMICA
+
+      </button>
+    `;
+
+  }
+
+  if(CONFIG.retornoAtivo){
+
+    html += `
+      <button
+        id="btnRetorno"
+        class="dark"
+        onclick="alternarOpcaoPedido('retorno')">
+
+        ↩ RETORNO
+
+      </button>
+    `;
+
+  }
+
+  if(CONFIG.superAtivo){
+
+    html += `
+      <button
+        id="btnSuper"
+        class="dark"
+        onclick="alternarOpcaoPedido('super')">
+
+        ⭐ SUPER
+
+      </button>
+    `;
+
+  }
+
+  $("opcoesPedido").innerHTML = html;
+
+  window.opcoesPedido = {
+    dinamica:false,
+    retorno:false,
+    super:false
+  };
+
 }
-async function load(){const s=await db.collection("corridas").where("lojistaId","==",MEU_UID).orderBy("criadoEm","desc").limit(10).get();let h="";s.forEach(d=>{let x=d.data();h+=`<div style="background:#222;padding:10px;border-radius:8px;margin:6px 0">📦 ${x.destino}<br>Código: <b>${x.codigoEntrega}</b> | R$${x.valor} | ${x.status} ${x.motoboyDestino?"| Só #"+x.motoboyDestino:"| Todos"}</div>`});document.getElementById("lista").innerHTML=h}
-</script></body></html>
+
+window.alternarOpcaoPedido = function(tipo){
+
+  window.opcoesPedido[tipo] =
+    !window.opcoesPedido[tipo];
+
+  const ids = {
+    dinamica:"btnDinamica",
+    retorno:"btnRetorno",
+    super:"btnSuper"
+  };
+
+  const botao = $(ids[tipo]);
+
+  if(botao){
+
+    botao.className =
+      window.opcoesPedido[tipo]
+      ? "gold"
+      : "dark";
+
+  }
+
+  calcularValorPedido();
+
+};
+
+window.calcularValorPedido = async function(){
+
+  const km =
+    Number($("clienteKm")?.value) || 0;
+
+  const configSnap =
+    await getDoc(
+      doc(db,"configuracoes","principal")
+    );
+
+  const c =
+    configSnap.exists()
+    ? {...window.CONFIG_PADRAO,...configSnap.data()}
+    : window.CONFIG_PADRAO;
+
+  let valor = c.valorBase;
+
+  if(km > c.kmBase){
+
+    valor +=
+      (km-c.kmBase) *
+      c.adicionalLojista;
+
+  }
+
+  if(window.opcoesPedido?.dinamica){
+
+    valor += Number(c.dinamicaValor || 0);
+
+  }
+
+  if(window.opcoesPedido?.super){
+
+    valor = Number(c.superLojista);
+
+  }
+
+  if(window.opcoesPedido?.retorno){
+
+    valor +=
+      valor *
+      (Number(c.retornoPercentual)/100);
+
+  }
+
+  $("valorPedido").innerHTML = `
+
+    <div class="card">
+
+      <h3>Valor para o lojista</h3>
+
+      <div class="money">
+        ${formatarMoeda(valor)}
+      </div>
+
+    </div>
+
+  `;
+
+  return Number(valor.toFixed(2));
+
+};
+
+window.dispararCorrida = async function(){
+
+  const uid = auth.currentUser.uid;
+
+  const userSnap =
+    await getDoc(
+      doc(db,"usuarios",uid)
+    );
+
+  if(!userSnap.exists()){
+
+    toast("Usuário não encontrado.");
+    return;
+
+  }
+
+  const lojista = userSnap.data();
+
+  const lojaId =
+    $("lojaOrigem").value;
+
+  const loja =
+    (lojista.lojas || []).find(
+      (l,index)=>
+        String(l.id || index) === String(lojaId)
+    );
+
+  if(!loja){
+
+    toast("Escolha uma loja.");
+    return;
+
+  }
+
+  const tipoVeiculo =
+    $("tipoVeiculo").value;
+
+  const endereco =
+    $("clienteEndereco").value.trim();
+
+  const telefone =
+    $("clienteTelefone").value.trim();
+
+  const km =
+    Number($("clienteKm").value);
+
+  const codigo =
+    $("codigoCliente").value.trim();
+
+  if(
+    !endereco ||
+    !telefone ||
+    !km ||
+    !/^[0-9]{4}$/.test(codigo)
+  ){
+
+    toast(
+      "Preencha endereço, telefone, km e código de 4 dígitos."
+    );
+
+    return;
+
+  }
+
+  const valor =
+    await calcularValorPedido();
+
+  const saldo =
+    Number(lojista.saldo || 0);
+
+  /*
+    O lojista somente chama se tiver
+    saldo suficiente.
+  */
+
+  if(saldo < valor){
+
+    $("resultadoPedido").innerHTML = `
+
+      <div class="card">
+
+        <h3>❌ SALDO INSUFICIENTE</h3>
+
+        <p>
+          Saldo:
+          <b>${formatarMoeda(saldo)}</b>
+        </p>
+
+        <p>
+          Necessário:
+          <b>${formatarMoeda(valor)}</b>
+        </p>
+
+        <p>
+          PIX para recarga:
+          <b>${window.PIX_EMPRESA}</b>
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+  try{
+
+    /*
+      IMPORTANTE:
+      o débito do lojista acontece
+      dentro da transação.
+    */
+
+    await runTransaction(
+      db,
+      async(transaction)=>{
+
+        const lojaRef =
+          doc(db,"usuarios",uid);
+
+        const lojaSnap =
+          await transaction.get(lojaRef);
+
+        const saldoAtual =
+          Number(
+            lojaSnap.data().saldo || 0
+          );
+
+        if(saldoAtual < valor){
+
+          throw new Error(
+            "SALDO_INSUFICIENTE"
+          );
+
+        }
+
+        /*
+          DESCONTA DO LOJISTA
+        */
+
+        transaction.update(
+          lojaRef,
+          {
+            saldo:
+              Number(
+                (saldoAtual-valor)
+                .toFixed(2)
+              )
+          }
+        );
+
+        const corridaRef =
+          doc(collection(db,"corridas"));
+
+        transaction.set(
+          corridaRef,
+          {
+
+            lojistaId:uid,
+            lojistaNome:lojista.nome,
+
+            lojaId,
+            lojaNome:loja.nome,
+            lojaEndereco:loja.endereco,
+
+            clienteEndereco:endereco,
+            clienteTelefone:telefone,
+
+            codigoCliente:codigo,
+
+            tipoVeiculo,
+
+            km,
+
+            valorLojista:valor,
+
+            /*
+              O motorista ainda não recebe
+              antes de aceitar.
+            */
+
+            valorMotorista:0,
+
+            motoristaId:null,
+            motoristaNome:null,
+
+            status:"PROCURANDO_MOTORISTA",
+
+            opcoes:{
+              dinamica:
+                !!window.opcoesPedido.dinamica,
+
+              retorno:
+                !!window.opcoesPedido.retorno,
+
+              super:
+                !!window.opcoesPedido.super
+            },
+
+            criadoEm:serverTimestamp()
+
+          }
+        );
+
+        const movRef =
+          doc(collection(db,"movimentacoes"));
+
+        transaction.set(
+          movRef,
+          {
+
+            usuarioId:uid,
+
+            corridaId:corridaRef.id,
+
+            tipo:"DEBITO",
+
+            valor,
+
+            descricao:
+              "Pedido de corrida",
+
+            data:serverTimestamp()
+
+          }
+        );
+
+      }
+    );
+
+    toast(
+      "🚀 Corrida disparada automaticamente!"
+    );
+
+    $("resultadoPedido").innerHTML = `
+
+      <div class="card">
+
+        <h3>🚀 CORRIDA DISPARADA</h3>
+
+        <p>
+          Procurando:
+          <b>${TIPOS_VEICULO[tipoVeiculo]}</b>
+        </p>
+
+        <p>
+          Motoristas aprovados e ONLINE
+          desse tipo receberão a corrida.
+        </p>
+
+      </div>
+
+    `;
+
+  }catch(e){
+
+    toast(
+      e.message === "SALDO_INSUFICIENTE"
+      ? "Saldo insuficiente."
+      : "Erro ao criar corrida."
+    );
+
+  }
+
+};
+
+</script>
