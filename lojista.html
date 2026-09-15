@@ -1,68 +1,195 @@
-<!DOCTYPE html><html><head>
+<!DOCTYPE html>
+<html><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Lojista - Anjos Flash</title>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="config.js"></script>
-<style>body{background:#0A0A0A;color:#fff;font-family:Arial;padding:15px}.card{background:#171717;border:1px solid #D4AF3733;border-radius:16px;padding:15px;margin-bottom:12px}.btn{background:#D4AF37;color:#000;font-weight:bold;padding:12px;width:100%;border:none;border-radius:12px}.input{width:100%;background:#1F1F1F;border:1px solid #D4AF3733;border-radius:12px;padding:12px;color:#fff;margin:5px 0;box-sizing:border-box}.gold{color:#D4AF37}#map{height:250px;background:#111;border-radius:12px;margin:10px 0}</style>
-</head><body>
-<h2 class="gold">LOJISTA - Pedir Entrega</h2>
-<div id="avisoMural" style="background:#D4AF37;color:#000;padding:10px;border-radius:10px;display:none"></div>
+<style>
+body{background:#0A0A0A;color:#fff;font-family:Arial;padding:12px;margin:0}
+.card{background:#171717;border:1px solid #D4AF3733;border-radius:16px;padding:14px;margin-bottom:12px}
+.input{background:#1F1F1F;border:1px solid #D4AF3733;border-radius:12px;padding:12px;color:#fff;width:94%;margin:6px 0}
+.btn{background:#D4AF37;color:#000;font-weight:bold;padding:14px;border:none;border-radius:12px;width:100%;cursor:pointer;font-size:15px;margin-top:8px}
+.btn-green{background:#00c851;color:#fff}.btn-dark{background:#333;color:#D4AF37}
+.saldo{color:#D4AF37;font-weight:bold;font-size:18px}
+.badge{background:#D4AF3733;color:#D4AF37;padding:6px 10px;border-radius:8px;font-size:11px;margin:2px;display:inline-block}
+h1{color:#D4AF37;font-size:20px}
+</style>
+</head>
+<body>
 
-<div class="card">
-<input id="origem" class="input" placeholder="Origem - endereço da loja">
-<input id="destino" class="input" placeholder="Destino - cliente">
-<input id="cidade" class="input" placeholder="Cidade: macae">
-<button class="btn" onclick="calcular()">CALCULAR PREÇO</button>
-<div id="resultado" class="gold" style="margin-top:10px;font-weight:bold"></div>
-<div id="map">Mapa aparece aqui</div>
-<select id="tipo" class="input"><option value="normal">Normal</option><option value="super">Super Rápido (+R$8)</option><option value="retorno">Retorno 50% OFF</option></select>
-<label><input type="checkbox" id="dinamica"> Taxa dinâmica?</label>
-<button class="btn" style="margin-top:10px" onclick="pedir()">PEDIR CORRIDA - Pix 22997450131</button>
+<div style="display:flex;justify-content:space-between;align-items:center">
+<h1>LOJISTA</h1>
+<button onclick="firebase.auth().signOut().then(()=>location.href='index.html')" style="background:#ff4444;color:#fff;border:none;padding:8px 12px;border-radius:8px">SAIR</button>
 </div>
 
-<div class="card"><h4 class="gold">Minhas Corridas</h4><div id="corridas"></div></div>
+<div class="card" style="border:2px solid #D4AF37">
+💰 Meu saldo devendo: <span id="meuSaldo" class="saldo">R$ 0,00</span><br>
+<span style="font-size:11px;color:#aaa">PIX pagamento: 22997450131</span><br>
+<div id="textoDinamica" style="font-size:12px;color:#ffaa00;margin-top:6px">Verificando dinâmica...</div>
+</div>
+
+<div class="card" style="border:1px solid #D4AF37">
+<h3 style="color:#D4AF37;margin:0 0 8px 0">🏪 Minha Loja (salva automático)</h3>
+<input id="nomeLoja" class="input" placeholder="Nome ex: Lu Doces">
+<input id="endLoja" class="input" placeholder="Endereço ex: Rua 2 nº8 São Marcos Macaé RJ">
+<input id="cidade" class="input" placeholder="Cidade ex: Macaé" value="Macaé">
+<button class="btn btn-dark" style="padding:8px;font-size:13px" onclick="salvarLoja()">💾 Salvar minha loja</button>
+</div>
+
+<div class="card">
+<label style="color:#D4AF37;font-weight:bold">🛻 Qual veículo precisa?</label>
+<select id="veiculo" class="input" style="font-weight:bold;font-size:16px">
+<option value="moto">🏍️ Moto (até 20kg)</option>
+<option value="utilitario">🚐 Utilitário Fiorino (até 500kg)</option>
+<option value="caminhao">🚚 Caminhão 3/4 (até 3 ton)</option>
+<option value="carreta">🚛 Carreta (até 30 ton)</option>
+</select>
+
+<input id="destino" class="input" placeholder="Destino cliente: Rua, número, bairro, cidade">
+
+<select id="tipoEntrega" class="input">
+<option value="Normal">Normal</option>
+<option value="Super">Super - taxa extra (valor definido por admin)</option>
+<option value="Retorno">Retorno - volta na loja</option>
+</select>
+
+<label><input type="checkbox" id="checkRetorno"> Precisa RETORNO? (só marcar, não edita)</label><br>
+<label><input type="checkbox" id="checkSuper"> Pedido SUPER? (só marcar, não edita)</label>
+
+<div style="margin-top:12px;border-top:1px solid #222;padding-top:10px">
+<label style="color:#D4AF37;font-weight:bold">🎯 Motoboy específico #0001? (opcional)</label>
+<input id="motoboyEspecifico" class="input" placeholder="Deixa vazio = chama TODO MUNDO | Ou digita #0001">
+<p style="font-size:10px;color:#aaa;margin:0">Vazio = dispara pra todos. Com #0001 = só aquele motoboy recebe.</p>
+</div>
+
+<div style="margin-top:10px">
+<label style="color:#D4AF37;font-weight:bold">🔐 Código de entrega pro cliente</label>
+<div style="display:flex;gap:6px">
+<input id="codigoEntrega" class="input" placeholder="Clique em Gerar" readonly style="width:60%">
+<button class="btn" style="width:38%;padding:10px;margin-top:6px" onclick="gerarCodigo()">Gerar</button>
+</div>
+<p style="font-size:10px;color:#aaa;margin:0">Você manda esse código pro cliente no zap. Cliente fala pro motoboy.</p>
+</div>
+
+<button class="btn" onclick="calcular()">CALCULAR PREÇO</button>
+<div id="resPreco" style="margin-top:10px;color:#D4AF37;font-weight:bold;white-space:pre-line"></div>
+<div id="avisoDin" style="display:none;background:#ff444433;padding:8px;border-radius:8px;margin-top:8px">🌧️ DINÂMICA ATIVA +R$ <span id="valDinView"></span> - só admin/franqueado controla (só ver)</div>
+
+<button class="btn btn-green" onclick="pedir()">🚀 PEDIR AGORA</button>
+</div>
 
 <script>
-firebase.initializeApp(firebaseConfig); const db=firebase.firestore(); const auth=firebase.auth();
-let precoL=0, precoM=0, km=0;
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore(); const auth=firebase.auth();
+let MEU_EMAIL="", VALOR_DIN=0, DIN_ATIVA=false;
+
+auth.onAuthStateChanged(async u=>{
+ if(!u) location.href="index.html";
+ MEU_EMAIL=u.email.toLowerCase();
+ const doc=await db.collection("usuarios").doc(MEU_EMAIL).get();
+ if(doc.exists){
+  const d=doc.data();
+  if(d.nomeLoja) document.getElementById("nomeLoja").value=d.nomeLoja;
+  if(d.enderecoLoja) document.getElementById("endLoja").value=d.enderecoLoja;
+  if(d.cidade) document.getElementById("cidade").value=d.cidade;
+  document.getElementById("meuSaldo").innerText="R$ "+(d.saldo||0).toFixed(2);
+ }
+ carregarDinamica();
+});
+
+async function salvarLoja(){
+ const nome=document.getElementById("nomeLoja").value.trim();
+ const end=document.getElementById("endLoja").value.trim();
+ const cid=document.getElementById("cidade").value.trim();
+ if(!nome||!end) return alert("Preenche nome e endereço da loja");
+ await db.collection("usuarios").doc(MEU_EMAIL).set({nomeLoja:nome,enderecoLoja:end,cidade:cid,nome:nome,email:MEU_EMAIL,tipo:"lojista"},{merge:true});
+ alert("Salvo! Motoboy vai ver: "+nome+" - "+end);
+}
+
+async function carregarDinamica(){
+ const d=await db.collection("config").doc("dinamica").get();
+ if(d.exists && d.data().ativa){ DIN_ATIVA=true; VALOR_DIN=d.data().valor||5; document.getElementById("avisoDin").style.display="block"; document.getElementById("valDinView").innerText=VALOR_DIN; document.getElementById("textoDinamica").innerText="🌧️ Dinâmica ATIVA +R$"+VALOR_DIN+" (só ver, não edita)"; }
+ else { DIN_ATIVA=false; document.getElementById("textoDinamica").innerText="Dinâmica DESLIGADA (só ver)"; }
+}
+
+function gerarCodigo(){
+ const codigo=Math.floor(1000+Math.random()*9000).toString();
+ document.getElementById("codigoEntrega").value=codigo;
+ return codigo;
+}
 
 async function calcular(){
-  const cid=cidade.value.toLowerCase();
-  const doc=await db.collection("config").doc("cidades").collection(cid).doc("precos").get();
-  const cfg=doc.data() || {lojistaBase:10,motoboyBase:7.5,superLojista:8,retornoMotoboy:2};
-  // simulando 3km por enquanto, depois liga Maps com MINHA_CHAVE
-  km=3.5;
-  let base=cfg.lojistaBase||10; if(tipo.value=="super") base+=cfg.superLojista||8;
-  precoL=base+ (km>5?(km-5)*2:0);
-  precoM=(cfg.motoboyBase||7.5)+ (tipo.value=="retorno"?(cfg.retornoMotoboy||2):0);
-  if(dinamica.checked){ precoL+=4.5; precoM+=3; }
-  if(tipo.value=="retorno") precoL=precoL*0.5;
-  resultado.innerHTML=`Distância: ${km}km | Lojista paga: R$${precoL.toFixed(2)} | Motoboy recebe: R$${precoM.toFixed(2)}`;
+ const cid=(document.getElementById("cidade").value||"macae").toLowerCase();
+ const veic=document.getElementById("veiculo").value;
+ const p=await db.collection("precos").doc(cid+"_"+veic).get();
+ let p2=await db.collection("precos").doc(cid).get();
+ let base=10, km=2;
+ if(p.exists){ base=p.data().valor||10; km=p.data().valorKm||2; }
+ else if(p2.exists){ base=p2.data().valor||10; km=p2.data().valorKm||2; }
+ // extra fixo por veiculo caso não tenha preço salvo
+ const tabelaExtra={moto:0, utilitario:15, caminhao:50, carreta:150};
+ let extraVeiculo = p.exists?0:(tabelaExtra[veic]||0);
+ let total=base+extraVeiculo+(DIN_ATIVA?VALOR_DIN:0);
+ const taxas=await db.collection("config").doc("taxas").get();
+ let extraSuper=0, extraRet=0;
+ if(taxas.exists){
+  if(document.getElementById("checkSuper").checked) extraSuper=taxas.data().super||5;
+  if(document.getElementById("checkRetorno").checked) extraRet=taxas.data().retorno||5;
+ }
+ total+=extraSuper+extraRet;
+ document.getElementById("resPreco").innerHTML=`Veículo: ${veic.toUpperCase()}\nBase: R$${base} + Veículo: R$${extraVeiculo} ${DIN_ATIVA?'+ Din R$'+VALOR_DIN:''} ${extraSuper?'+ Super R$'+extraSuper:''} ${extraRet?'+ Ret R$'+extraRet:''}\nVocê paga: R$${total.toFixed(2)} | Motoboy recebe: R$${(total*0.8).toFixed(2)}`;
+ document.getElementById("resPreco").dataset.valor=total;
 }
 
 async function pedir(){
-  const user=auth.currentUser; if(!user){alert("Faça login no index.html primeiro");return;}
-  await db.collection("corridas").add({
-    lojistaId:user.uid, origem:origem.value, destino:destino.value, cidade:cidade.value.toLowerCase(),
-    tipo:tipo.value, km:km, precoLojista:precoL, precoMotoboy:precoM, status:"pendente",
-    codigo: Math.floor(1000+Math.random()*9000).toString(), criadoEm:new Date()
-  });
-  alert("Corrida pedida! Código: vai aparecer quando motoboy finalizar");
-  carregarCorridas();
-}
-function carregarCorridas(){
-  const user=auth.currentUser; if(!user) return;
-  db.collection("corridas").where("lojistaId","==",user.uid).orderBy("criadoEm","desc").onSnapshot(s=>{
-    let h=""; s.forEach(d=>{const c=d.data(); h+=`<div style="border-bottom:1px solid #333;padding:8px">${c.origem} → ${c.destino} | R$${c.precoLojista} | ${c.status} ${c.status=="finalizada"?"- COD:"+c.codigo:""}</div>`}); corridas.innerHTML=h;
-  });
-}
-auth.onAuthStateChanged(u=>{if(u) carregarCorridas();});
+ const nome=document.getElementById("nomeLoja").value.trim();
+ const endLoja=document.getElementById("endLoja").value.trim();
+ const dest=document.getElementById("destino").value.trim();
+ if(!nome||!endLoja) return alert("Salva sua loja primeiro!");
+ if(!dest) return alert("Destino cliente");
+ const total=parseFloat(document.getElementById("resPreco").dataset.valor||"0");
+ if(!total || total==0) return alert("Clica em CALCULAR PREÇO antes");
+ let codigoEnt=document.getElementById("codigoEntrega").value;
+ if(!codigoEnt) codigoEnt=gerarCodigo();
 
-// Mural
-db.collection("avisos").where("ativo","==",true).orderBy("criadoEm","desc").limit(1).onSnapshot(s=>{
- if(!s.empty){const d=s.docs[0].data(); if(d.para=="todos"||d.para=="lojista"){avisoMural.style.display='block'; avisoMural.innerText=d.titulo+": "+d.mensagem}}
-});
+ // #0001 DO PEDIDO
+ const counterRef=db.collection("config").doc("contadorPedidos");
+ const numInt=await db.runTransaction(async t=>{
+  const doc=await t.get(counterRef); let n=1; if(doc.exists) n=(doc.data().ultimo||0)+1; t.set(counterRef,{ultimo:n},{merge:true}); return n;
+ });
+ const numeroPedido="#"+String(numInt).padStart(4,'0');
 
-</script></body></html>
+ // MOTOBOY ESPECÍFICO #0001
+ let motoboyDestino=null;
+ const campo=document.getElementById("motoboyEspecifico").value.trim();
+ if(campo){
+   const cod=campo.replace("#","").trim();
+   const q=await db.collection("usuarios").where("codigoMotoboy","==",cod).get();
+   if(!q.empty){ motoboyDestino=q.docs[0].data().email; }
+   else if(campo.includes("@")){ motoboyDestino=campo.toLowerCase(); }
+   else { motoboyDestino=cod; }
+ }
+
+ await db.collection("corridas").add({
+  numero: numeroPedido, numeroInt:numInt,
+  codigoEntrega: codigoEnt,
+  nomeLoja:nome, enderecoLoja:endLoja, origemNome:nome+" - "+endLoja, origem:endLoja,
+  destino:dest, cidade:document.getElementById("cidade").value,
+  veiculo:document.getElementById("veiculo").value,
+  tipo:document.getElementById("tipoEntrega").value,
+  super:document.getElementById("checkSuper").checked,
+  retorno:document.getElementById("checkRetorno").checked,
+  dinamica:DIN_ATIVA, valorDinamica:VALOR_DIN,
+  valor:total, lojista:MEU_EMAIL,
+  motoboyDestino: motoboyDestino,
+  status:"pendente", criadoEm:new Date()
+ });
+ await db.collection("usuarios").doc(MEU_EMAIL).update({saldo: firebase.firestore.FieldValue.increment(total)});
+ alert(`✅ Pedido ${numeroPedido} criado!\nCódigo entrega: ${codigoEnt}\n${motoboyDestino?'🎯 Vai só pro motoboy '+motoboyDestino:'📢 Disparado pra TODO MUNDO'}\n\nManda o código ${codigoEnt} pro cliente no Whats!`);
+ location.reload();
+}
+</script>
+</body>
+</html>
