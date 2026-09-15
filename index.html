@@ -1,85 +1,17 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Anjos Flash - Login</title>
-<style>
-body{background:#000;color:#fff;font-family:Arial;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
-.card{background:#111;border:1px solid #D4AF37;padding:20px;border-radius:16px;width:90%;max-width:400px}
-h1{color:#D4AF37;text-align:center}
-input,select{width:100%;padding:14px;margin:8px 0;background:#222;color:#fff;border:1px solid #333;border-radius:10px;box-sizing:border-box}
-button{width:100%;padding:14px;border:none;border-radius:10px;font-weight:900;margin-top:8px}
-.gold{background:#D4AF37;color:#000}.dark{background:#222;color:#D4AF37;border:1px solid #D4AF37}
-#msg{color:#ffcc00;margin-top:10px;font-size:14px}
-</style>
-</head>
-<body>
-<div class="card">
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Anjos Flash</title></head>
+<body style="background:#000;color:#D4AF37;font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;margin:0">
+<div style="text-align:center">
 <h1>ANJOS FLASH</h1>
-<input id="email" type="email" placeholder="Email">
-<input id="senha" type="password" placeholder="Senha">
-<select id="tipo"><option value="lojista">🏪 Sou Lojista</option><option value="motorista">🏍️ Sou Motorista</option><option value="admin">👑 Admin</option></select>
-<button class="gold" id="btnEntrar">ENTRAR</button>
-<button class="dark" id="btnCad">CADASTRAR</button>
-<div id="msg"></div>
+<p style="color:#fff">Sistema carregando...</p>
+<p id="msg" style="color:yellow"></p>
+<button onclick="location.reload()" style="padding:12px 20px;background:#D4AF37;border:none;border-radius:10px;font-weight:900">RECARREGAR</button>
+<br><br>
+<a href="lojista.html" style="color:#D4AF37">Ir Lojista</a> | <a href="motoboy.html" style="color:#D4AF37">Ir Motoboy</a> | <a href="Admin.html" style="color:#D4AF37">Ir Admin</a>
 </div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
-  authDomain: "anjos-flash.firebaseapp.com",
-  projectId: "anjos-flash",
-  storageBucket: "anjos-flash.firebasestorage.app",
-  messagingSenderId: "725133182752",
-  appId: "1:725133182752:web:5f9a98fa97269dcdcab945",
-  measurementId: "G-9CSJXXNR0C"
-};
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
-window.db=db; window.auth=auth;
-
-const $=id=>document.getElementById(id);
-const mostrar=m=>$("msg").innerText=m;
-
-async function entrar(){
-  const e=$("email").value.trim(); const s=$("senha").value;
-  if(!e||!s) return mostrar("Digite email e senha");
-  try{
-    mostrar("Entrando...");
-    const cred=await signInWithEmailAndPassword(auth,e,s);
-    const snap=await getDoc(doc(db,"usuarios",cred.user.uid));
-    if(!snap.exists()){ mostrar("Sem perfil, cadastre"); return; }
-    const u=snap.data();
-    if(u.role==="lojista") location.href="lojista.html";
-    else if(u.role==="motorista") location.href="motoboy.html";
-    else location.href="Admin.html";
-  }catch(err){ mostrar(err.message); }
-}
-async function cadastrar(){
-  const e=$("email").value.trim(); const s=$("senha").value; const tipo=$("tipo").value;
-  if(!e||!s) return mostrar("Digite email e senha");
-  try{
-    mostrar("Cadastrando...");
-    const cred=await createUserWithEmailAndPassword(auth,e,s);
-    await setDoc(doc(db,"usuarios",cred.user.uid), {
-      email:e, role:tipo, nome:e.split("@")[0],
-      saldo: tipo==="lojista"?70:0,
-      aprovado: tipo==="motorista"?false:true,
-      veiculo: tipo==="motorista"?"moto":null,
-      codigoMotorista: tipo==="motorista"?"M"+Math.floor(1000+Math.random()*9000):null,
-      criadoEm: serverTimestamp()
-    });
-    mostrar("Cadastrado! Entrando...");
-    setTimeout(entrar,1000);
-  }catch(err){ mostrar(err.message); }
-}
-$("btnEntrar").onclick=entrar;
-$("btnCad").onclick=cadastrar;
+<script>
+document.getElementById("msg").innerText="Index OK - "+new Date().toLocaleTimeString();
+console.log("INDEX TESTE OK");
 </script>
-</body>
-</html>
+</body></html>
