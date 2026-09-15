@@ -1,74 +1,108 @@
-<!DOCTYPE html><html><head>
+<!DOCTYPE html>
+<html>
+<head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Super - Anjos Flash</title>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="config.js"></script>
 <style>
-body{background:#0A0A0A;color:#fff;font-family:Arial;padding:15px}
-.card{background:#171717;border:1px solid #D4AF3733;border-radius:16px;padding:15px;margin-bottom:15px}
-.btn{background:#D4AF37;color:#000;font-weight:bold;padding:10px 15px;border:none;border-radius:10px;margin:3px}
-.input{width:100%;background:#1F1F1F;border:1px solid #D4AF3733;border-radius:10px;padding:10px;color:#fff;margin:5px 0;box-sizing:border-box}
-.gold{color:#D4AF37} .item{border-bottom:1px solid #333;padding:10px 0}
-</style></head><body>
-<h1 class="gold">SUPER ADMIN - APROVAÇÕES</h1>
+body{background:#0A0A0A;color:#fff;font-family:Arial;margin:0;padding:15px}
+.card{background:#171717;border:1px solid #D4AF3733;border-radius:16px;padding:16px;margin-bottom:12px}
+.btn{background:#D4AF37;color:#000;font-weight:bold;padding:10px 14px;border:none;border-radius:10px;cursor:pointer;margin:4px}
+.btn-red{background:#ff4444;color:#fff}.btn-green{background:#00c851;color:#fff}
+.input{background:#1F1F1F;border:1px solid #D4AF3733;border-radius:8px;padding:10px;color:#fff;margin:4px;width:90%}
+h1,h2{color:#D4AF37} table{width:100%;border-collapse:collapse} th,td{padding:8px;text-align:left;border-bottom:1px solid #333;font-size:13px}
+.saldo{color:#D4AF37;font-weight:bold}
+</style>
+</head>
+<body>
 
-<div class="card">
-<h3 class="gold">1. Motoboys pendentes por cidade</h3>
-<select id="filtroCidade" class="input" onchange="carregar()"><option value="">Todas cidades</option><option value="macae">Macaé</option><option value="rio">Rio</option><option value="niteroi">Niterói</option></select>
-<div id="lista"></div>
+<div style="display:flex;justify-content:space-between;align-items:center">
+<h1>SUPER ADMIN</h1>
+<button class="btn btn-red" onclick="sair()">SAIR</button>
+</div>
+<p style="color:#D4AF37;font-size:12px">PIX SAQUE: 22997450131</p>
+
+<div class="card" style="border:2px solid #D4AF37">
+<h2>💰 FINANCEIRO</h2>
+Motoboys pra receber: <span id="totalMoto" class="saldo">R$ 0,00</span><br>
+Lojistas devem: <span id="totalLoja" class="saldo">R$ 0,00</span><br>
+<b>SEU LUCRO (20%): <span id="meuLucro" class="saldo">R$ 0,00</span></b><br><br>
+<button class="btn" style="width:100%;font-size:16px" onclick="sacarPix()">💸 SACAR MEU LUCRO -> PIX 22997450131</button>
+<div id="pixMsg" style="margin-top:8px;color:#D4AF37"></div>
+</div>
+
+<div class="card" style="border:2px solid #ffaa00">
+<h2>🌧️ TAXA DINÂMICA (CHUVA)</h2>
+Status: <span id="statusDin" style="font-weight:bold">Carregando...</span><br><br>
+Valor extra: R$ <input id="valDin" type="number" value="5" style="width:60px;background:#1F1F1F;color:#fff;padding:6px;border-radius:6px"> por entrega<br><br>
+<button class="btn btn-red" onclick="setDinamica(true)">🔴 LIGAR DINÂMICA</button>
+<button class="btn btn-green" onclick="setDinamica(false)">🟢 DESLIGAR</button>
 </div>
 
 <div class="card">
-<h3 class="gold">2. Mural de Avisos</h3>
-<input id="avTitulo" class="input" placeholder="Título: ATENÇÃO DINÂMICA ATIVA">
-<input id="avMsg" class="input" placeholder="Mensagem: Chuva forte hoje, taxa extra...">
-<select id="avPara" class="input"><option value="todos">Todos</option><option value="motoboy">Só Motoboy</option><option value="lojista">Só Lojista</option></select>
-<button class="btn" onclick="publicar()">PUBLICAR AVISO</button>
+<h2>⏳ Pendentes pra aprovar</h2>
+<div id="pendentes">Carregando...</div>
 </div>
 
 <div class="card">
-<h3 class="gold">3. Preço por cidade (franqueado só vê a dele)</h3>
-<input id="cid" class="input" placeholder="cidade ex: macae">
-<input id="baseL" class="input" placeholder="Base lojista ex: 10">
-<input id="baseM" class="input" placeholder="Base motoboy ex: 7.5">
-<input id="superL" class="input" placeholder="Super lojista ex: 8">
-<input id="retM" class="input" placeholder="Retorno motoboy ex: 2">
-<button class="btn" onclick="salvarCidade()">SALVAR PREÇO CIDADE</button>
+<h2>🏍️ Motoboys - Saldo</h2>
+<table><thead><tr><th>Nome</th><th>Cidade</th><th>Saldo</th><th>Ação</th></tr></thead><tbody id="listaMoto"></tbody></table>
+</div>
+
+<div class="card">
+<h2>🏪 Lojistas - Saldo</h2>
+<table><thead><tr><th>Loja</th><th>Cidade</th><th>Devendo</th><th>Ação</th></tr></thead><tbody id="listaLoja"></tbody></table>
+</div>
+
+<div class="card">
+<h2>📢 Mural</h2>
+<input id="avTitulo" class="input" placeholder="Titulo ex: CHUVA">
+<input id="avMsg" class="input" placeholder="Mensagem">
+<button class="btn" onclick="enviarAviso()">Enviar aviso</button>
+</div>
+
+<div class="card">
+<h2>💲 Preço por Cidade</h2>
+<input id="cidadePreco" class="input" placeholder="cidade" style="width:35%">
+<input id="valorPreco" class="input" type="number" placeholder="12" style="width:20%">
+<button class="btn" onclick="salvarPreco()">Salvar</button>
+<div id="listaPrecos" style="margin-top:10px"></div>
 </div>
 
 <script>
 firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore();
+const db=firebase.firestore(); const auth=firebase.auth();
+function sair(){ firebase.auth().signOut().then(()=>location.href='index.html'); }
+auth.onAuthStateChanged(async u=>{ if(!u) location.href="index.html"; carregar(); });
+
 async function carregar(){
- const cidade=filtroCidade.value;
- let q=db.collection("usuarios").where("status","==","pendente");
- if(cidade) q=q.where("cidade","==",cidade);
- const snap=await q.get();
- let h=""; snap.forEach(d=>{
-  const u=d.data();
-  h+=`<div class="item"><b>${u.nome}</b> - ${u.cidade} - ${u.placa}<br>
-  <a class="gold" href="${u.cnhUrl}" target="_blank">Ver CNH</a> | 
-  <a class="gold" href="${u.selfieUrl}" target="_blank">Selfie</a> | 
-  <a class="gold" href="${u.crlvUrl}" target="_blank">CRLV</a><br>
-  <button class="btn" onclick="aprovar('${d.id}')">APROVAR</button>
-  <button class="btn" style="background:#ff4444" onclick="reprovar('${d.id}')">REPROVAR</button></div>`;
- });
- lista.innerHTML=h||"Nenhum pendente";
+ const snap=await db.collection("usuarios").where("status","==","pendente").get();
+ let html=""; snap.forEach(d=>{ const x=d.data(); html+=`<div style="border:1px solid #333;padding:8px;margin:4px;border-radius:8px">${x.nome} - ${x.cidade} - ${x.tipo} <button class="btn" onclick="aprovar('${d.id}')">Aprovar</button> <button class="btn btn-red" onclick="reprovar('${d.id}')">Reprovar</button></div>`; });
+ document.getElementById("pendentes").innerHTML=html||"Nenhum pendente";
+
+ const motos=await db.collection("usuarios").where("tipo","==","motoboy").get();
+ let totM=0,hM=""; motos.forEach(d=>{ const x=d.data(); const s=x.saldo||0; totM+=s; hM+=`<tr><td>${x.nome||''}</td><td>${x.cidade||''}</td><td class="saldo">R$ ${s.toFixed(2)}</td><td><input id="s_${d.id}" placeholder="novo" style="width:70px;background:#222;color:#fff"><button class="btn" onclick="atualizaSaldo('${d.id}')">Salvar</button></td></tr>`; });
+ document.getElementById("listaMoto").innerHTML=hM; document.getElementById("totalMoto").innerText="R$ "+totM.toFixed(2);
+
+ const lojas=await db.collection("usuarios").where("tipo","==","lojista").get();
+ let totL=0,hL=""; lojas.forEach(d=>{ const x=d.data(); const s=x.saldo||0; totL+=s; hL+=`<tr><td>${x.nome||''}</td><td>${x.cidade||''}</td><td class="saldo">R$ ${s.toFixed(2)}</td><td><button class="btn" onclick="zerarLoja('${d.id}')">Zerar</button></td></tr>`; });
+ document.getElementById("listaLoja").innerHTML=hL; document.getElementById("totalLoja").innerText="R$ "+totL.toFixed(2);
+ document.getElementById("meuLucro").innerText="R$ "+(totL*0.2).toFixed(2);
+ carregarPrecos(); carregarDin();
 }
-async function aprovar(id){ await db.collection("usuarios").doc(id).update({status:"aprovado"}); alert("Aprovado!"); carregar(); }
+async function aprovar(id){ await db.collection("usuarios").doc(id).update({status:"aprovado"}); carregar(); }
 async function reprovar(id){ await db.collection("usuarios").doc(id).update({status:"reprovado"}); carregar(); }
-async function publicar(){
- await db.collection("avisos").add({titulo:avTitulo.value,mensagem:avMsg.value,para:avPara.value,ativo:true,criadoEm:new Date()});
- alert("Aviso publicado no mural!");
-}
-async function salvarCidade(){
- await db.collection("config").doc("cidades").collection(cid.value.toLowerCase()).doc("precos").set({
-  lojistaBase:Number(baseL.value), motoboyBase:Number(baseM.value),
-  superLojista:Number(superL.value), retornoMotoboy:Number(retM.value), atualizadoEm:new Date()
- },{merge:true});
- alert("Preço salvo para "+cid.value);
-}
-carregar();
-</script></body></html>
+async function atualizaSaldo(id){ const v=parseFloat(document.getElementById("s_"+id).value); if(isNaN(v)) return alert("Digite valor"); await db.collection("usuarios").doc(id).update({saldo:v}); carregar(); }
+async function zerarLoja(id){ if(confirm("Confirmar pagamento? Zerar?")){ await db.collection("usuarios").doc(id).update({saldo:0}); carregar(); } }
+async function sacarPix(){ const lucro=document.getElementById("meuLucro").innerText; await db.collection("saques").add({pix:"22997450131",valor:lucro,criadoEm:new Date(),status:"solicitado"}); document.getElementById("pixMsg").innerText="✅ Solicitado "+lucro+" pro PIX 22997450131"; }
+async function enviarAviso(){ await db.collection("avisos").add({titulo:avTitulo.value,mensagem:avMsg.value,ativo:true,criadoEm:new Date()}); alert("Enviado"); }
+async function salvarPreco(){ await db.collection("precos").doc(cidadePreco.value.toLowerCase()).set({cidade:cidadePreco.value.toLowerCase(),valor:parseFloat(valorPreco.value)}); alert("Salvo"); carregarPrecos(); }
+async function carregarPrecos(){ const s=await db.collection("precos").get(); let h=""; s.forEach(d=>{ h+=d.data().cidade+": R$ "+d.data().valor+"<br>"; }); document.getElementById("listaPrecos").innerHTML=h; }
+async function carregarDin(){ const d=await db.collection("config").doc("dinamica").get(); if(d.exists && d.data().ativa){ document.getElementById("statusDin").innerText="🔴 LIGADA R$ "+d.data().valor; } else{ document.getElementById("statusDin").innerText="🟢 DESLIGADA"; } }
+async function setDinamica(ligar){ const valor=parseFloat(document.getElementById("valDin").value)||5; await db.collection("config").doc("dinamica").set({ativa:ligar,valor:valor,atualizadoEm:new Date()}); if(ligar) await db.collection("avisos").add({titulo:"🌧️ DINÂMICA",mensagem:"Chuva! Taxa extra R$ "+valor,ativo:true,criadoEm:new Date()}); carregarDin(); alert(ligar?"Dinâmica LIGADA R$"+valor:"DESLIGADA"); }
+</script>
+</body>
+</html>
