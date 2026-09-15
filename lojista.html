@@ -13,7 +13,6 @@ body{background:#0A0A0A;color:#fff;font-family:Arial;padding:12px;margin:0}
 .btn{background:#D4AF37;color:#000;font-weight:bold;padding:14px;border:none;border-radius:12px;width:100%;cursor:pointer;font-size:15px;margin-top:8px}
 .btn-green{background:#00c851;color:#fff}.btn-dark{background:#333;color:#D4AF37}
 .saldo{color:#D4AF37;font-weight:bold;font-size:18px}
-.badge{background:#D4AF3733;color:#D4AF37;padding:6px 10px;border-radius:8px;font-size:11px;margin:2px;display:inline-block}
 h1{color:#D4AF37;font-size:20px}
 </style>
 </head>
@@ -25,10 +24,12 @@ h1{color:#D4AF37;font-size:20px}
 </div>
 
 <div class="card" style="border:2px solid #D4AF37">
-💰 Meu saldo devendo: <span id="meuSaldo" class="saldo">R$ 0,00</span><br>
-<span style="font-size:11px;color:#aaa">PIX pagamento: 22997450131</span><br>
-<div id="textoDinamica" style="font-size:12px;color:#ffaa00;margin-top:6px">Verificando dinâmica...</div>
+💰 Meu saldo: <span id="meuSaldo" class="saldo">R$ 0,00</span><br>
+<span style="font-size:11px;color:#aaa">PIX recarga: 22997450131</span><br>
+<div id="textoDinamica" style="font-size:12px;color:#ffaa00;margin-top:6px;display:block">Verificando dinâmica...</div>
 </div>
+
+<div id="pedidoAtivoLojista"></div>
 
 <div class="card" style="border:1px solid #D4AF37">
 <h3 style="color:#D4AF37;margin:0 0 8px 0">🏪 Minha Loja (salva automático)</h3>
@@ -51,17 +52,22 @@ h1{color:#D4AF37;font-size:20px}
 
 <select id="tipoEntrega" class="input">
 <option value="Normal">Normal</option>
-<option value="Super">Super - taxa extra (valor definido por admin)</option>
-<option value="Retorno">Retorno - volta na loja</option>
+<option value="Super">Super</option>
+<option value="Retorno">Retorno</option>
 </select>
 
-<label><input type="checkbox" id="checkRetorno"> Precisa RETORNO? (só marcar, não edita)</label><br>
-<label><input type="checkbox" id="checkSuper"> Pedido SUPER? (só marcar, não edita)</label>
+<div style="display:flex;flex-direction:column;gap:10px;margin:12px 0">
+<label style="background:#222;padding:12px;border-radius:10px;display:flex;align-items:center;gap:10px">
+<input type="checkbox" id="checkRetorno" style="width:22px;height:22px"><span>🔁 Precisa RETORNO? (só marcar)</span>
+</label>
+<label style="background:#222;padding:12px;border-radius:10px;display:flex;align-items:center;gap:10px">
+<input type="checkbox" id="checkSuper" style="width:22px;height:22px"><span>⚡ Pedido SUPER? (só marcar)</span>
+</label>
+</div>
 
 <div style="margin-top:12px;border-top:1px solid #222;padding-top:10px">
 <label style="color:#D4AF37;font-weight:bold">🎯 Motoboy específico #0001? (opcional)</label>
-<input id="motoboyEspecifico" class="input" placeholder="Deixa vazio = chama TODO MUNDO | Ou digita #0001">
-<p style="font-size:10px;color:#aaa;margin:0">Vazio = dispara pra todos. Com #0001 = só aquele motoboy recebe.</p>
+<input id="motoboyEspecifico" class="input" placeholder="Vazio = todos | #0001 = só ele">
 </div>
 
 <div style="margin-top:10px">
@@ -70,20 +76,19 @@ h1{color:#D4AF37;font-size:20px}
 <input id="codigoEntrega" class="input" placeholder="Clique em Gerar" readonly style="width:60%">
 <button class="btn" style="width:38%;padding:10px;margin-top:6px" onclick="gerarCodigo()">Gerar</button>
 </div>
-<p style="font-size:10px;color:#aaa;margin:0">Você manda esse código pro cliente no zap. Cliente fala pro motoboy.</p>
 </div>
 
 <button class="btn" onclick="calcular()">CALCULAR PREÇO</button>
 <div id="resPreco" style="margin-top:10px;color:#D4AF37;font-weight:bold;white-space:pre-line"></div>
-<div id="avisoDin" style="display:none;background:#ff444433;padding:8px;border-radius:8px;margin-top:8px">🌧️ DINÂMICA ATIVA +R$ <span id="valDinView"></span> - só admin/franqueado controla (só ver)</div>
-
 <button class="btn btn-green" onclick="pedir()">🚀 PEDIR AGORA</button>
 </div>
+
+<div id="listaMeusPedidos"></div>
 
 <script>
 firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore(); const auth=firebase.auth();
-let MEU_EMAIL="", VALOR_DIN=0, DIN_ATIVA=false;
+let MEU_EMAIL="", VALOR_DIN=0, DIN_ATIVA=false, MEU_TIPO="lojista", MEU_SALDO=0;
 
 auth.onAuthStateChanged(async u=>{
  if(!u) location.href="index.html";
@@ -91,27 +96,36 @@ auth.onAuthStateChanged(async u=>{
  const doc=await db.collection("usuarios").doc(MEU_EMAIL).get();
  if(doc.exists){
   const d=doc.data();
+  MEU_TIPO=(d.tipo||"lojista").toLowerCase();
+  MEU_SALDO=d.saldo||0;
   if(d.nomeLoja) document.getElementById("nomeLoja").value=d.nomeLoja;
   if(d.enderecoLoja) document.getElementById("endLoja").value=d.enderecoLoja;
   if(d.cidade) document.getElementById("cidade").value=d.cidade;
   document.getElementById("meuSaldo").innerText="R$ "+(d.saldo||0).toFixed(2);
  }
  carregarDinamica();
+ escutarMeusPedidos();
 });
 
 async function salvarLoja(){
  const nome=document.getElementById("nomeLoja").value.trim();
  const end=document.getElementById("endLoja").value.trim();
  const cid=document.getElementById("cidade").value.trim();
- if(!nome||!end) return alert("Preenche nome e endereço da loja");
+ if(!nome||!end) return alert("Preenche nome e endereço");
  await db.collection("usuarios").doc(MEU_EMAIL).set({nomeLoja:nome,enderecoLoja:end,cidade:cid,nome:nome,email:MEU_EMAIL,tipo:"lojista"},{merge:true});
- alert("Salvo! Motoboy vai ver: "+nome+" - "+end);
+ alert("Salvo!");
 }
 
 async function carregarDinamica(){
- const d=await db.collection("config").doc("dinamica").get();
- if(d.exists && d.data().ativa){ DIN_ATIVA=true; VALOR_DIN=d.data().valor||5; document.getElementById("avisoDin").style.display="block"; document.getElementById("valDinView").innerText=VALOR_DIN; document.getElementById("textoDinamica").innerText="🌧️ Dinâmica ATIVA +R$"+VALOR_DIN+" (só ver, não edita)"; }
- else { DIN_ATIVA=false; document.getElementById("textoDinamica").innerText="Dinâmica DESLIGADA (só ver)"; }
+ try{
+  const d=await db.collection("config").doc("dinamica").get();
+  if(d.exists && d.data().ativa){ 
+    VALOR_DIN=d.data().valor||5; DIN_ATIVA=true; 
+    document.getElementById("textoDinamica").innerText="🌧️ DINÂMICA ATIVA +R$"+VALOR_DIN+" (só ver - admin controla)"; 
+  } else { 
+    DIN_ATIVA=false; document.getElementById("textoDinamica").innerText="Dinâmica DESLIGADA (só ver)"; 
+  }
+ } catch(e){ document.getElementById("textoDinamica").innerText="Dinâmica: erro ao carregar"; }
 }
 
 function gerarCodigo(){
@@ -125,13 +139,13 @@ async function calcular(){
  const veic=document.getElementById("veiculo").value;
  const p=await db.collection("precos").doc(cid+"_"+veic).get();
  let p2=await db.collection("precos").doc(cid).get();
- let base=10, km=2;
- if(p.exists){ base=p.data().valor||10; km=p.data().valorKm||2; }
- else if(p2.exists){ base=p2.data().valor||10; km=p2.data().valorKm||2; }
- // extra fixo por veiculo caso não tenha preço salvo
+ let base=10;
+ if(p.exists) base=p.data().valor||10;
+ else if(p2.exists) base=p2.data().valor||10;
  const tabelaExtra={moto:0, utilitario:15, caminhao:50, carreta:150};
  let extraVeiculo = p.exists?0:(tabelaExtra[veic]||0);
- let total=base+extraVeiculo+(DIN_ATIVA?VALOR_DIN:0);
+ let total=base+extraVeiculo;
+ if(DIN_ATIVA) total+=VALOR_DIN;
  const taxas=await db.collection("config").doc("taxas").get();
  let extraSuper=0, extraRet=0;
  if(taxas.exists){
@@ -139,8 +153,9 @@ async function calcular(){
   if(document.getElementById("checkRetorno").checked) extraRet=taxas.data().retorno||5;
  }
  total+=extraSuper+extraRet;
- document.getElementById("resPreco").innerHTML=`Veículo: ${veic.toUpperCase()}\nBase: R$${base} + Veículo: R$${extraVeiculo} ${DIN_ATIVA?'+ Din R$'+VALOR_DIN:''} ${extraSuper?'+ Super R$'+extraSuper:''} ${extraRet?'+ Ret R$'+extraRet:''}\nVocê paga: R$${total.toFixed(2)} | Motoboy recebe: R$${(total*0.8).toFixed(2)}`;
+ document.getElementById("resPreco").innerHTML=`Você paga: R$${total.toFixed(2)}`;
  document.getElementById("resPreco").dataset.valor=total;
+ document.getElementById("resPreco").dataset.motoboy=(total*0.8).toFixed(2);
 }
 
 async function pedir(){
@@ -150,45 +165,87 @@ async function pedir(){
  if(!nome||!endLoja) return alert("Salva sua loja primeiro!");
  if(!dest) return alert("Destino cliente");
  const total=parseFloat(document.getElementById("resPreco").dataset.valor||"0");
- if(!total || total==0) return alert("Clica em CALCULAR PREÇO antes");
+ if(!total) return alert("Clica em CALCULAR PREÇO antes");
  let codigoEnt=document.getElementById("codigoEntrega").value;
  if(!codigoEnt) codigoEnt=gerarCodigo();
 
- // #0001 DO PEDIDO
+ const docFresh = await db.collection("usuarios").doc(MEU_EMAIL).get();
+ const saldoAtual = docFresh.data().saldo||0;
+
+ if(MEU_TIPO==="lojista" && saldoAtual < total){
+   return alert(`⛔ SEM SALDO!\n\nVocê tem: R$ ${saldoAtual.toFixed(2)}\nPrecisa: R$ ${total.toFixed(2)}\n\nPIX: 22997450131`);
+ }
+
  const counterRef=db.collection("config").doc("contadorPedidos");
  const numInt=await db.runTransaction(async t=>{
   const doc=await t.get(counterRef); let n=1; if(doc.exists) n=(doc.data().ultimo||0)+1; t.set(counterRef,{ultimo:n},{merge:true}); return n;
  });
  const numeroPedido="#"+String(numInt).padStart(4,'0');
 
- // MOTOBOY ESPECÍFICO #0001
  let motoboyDestino=null;
  const campo=document.getElementById("motoboyEspecifico").value.trim();
  if(campo){
    const cod=campo.replace("#","").trim();
    const q=await db.collection("usuarios").where("codigoMotoboy","==",cod).get();
-   if(!q.empty){ motoboyDestino=q.docs[0].data().email; }
-   else if(campo.includes("@")){ motoboyDestino=campo.toLowerCase(); }
-   else { motoboyDestino=cod; }
+   if(!q.empty) motoboyDestino=q.docs[0].data().email;
+   else if(campo.includes("@")) motoboyDestino=campo.toLowerCase();
+   else motoboyDestino=cod;
  }
 
  await db.collection("corridas").add({
   numero: numeroPedido, numeroInt:numInt,
   codigoEntrega: codigoEnt,
-  nomeLoja:nome, enderecoLoja:endLoja, origemNome:nome+" - "+endLoja, origem:endLoja,
+  nomeLoja:nome, enderecoLoja:endLoja, origem:endLoja,
   destino:dest, cidade:document.getElementById("cidade").value,
   veiculo:document.getElementById("veiculo").value,
   tipo:document.getElementById("tipoEntrega").value,
   super:document.getElementById("checkSuper").checked,
   retorno:document.getElementById("checkRetorno").checked,
   dinamica:DIN_ATIVA, valorDinamica:VALOR_DIN,
-  valor:total, lojista:MEU_EMAIL,
+  valor:total, valorMotoboy: parseFloat(document.getElementById("resPreco").dataset.motoboy||0),
+  lojista:MEU_EMAIL, emailLoja:MEU_EMAIL,
   motoboyDestino: motoboyDestino,
   status:"pendente", criadoEm:new Date()
  });
- await db.collection("usuarios").doc(MEU_EMAIL).update({saldo: firebase.firestore.FieldValue.increment(total)});
- alert(`✅ Pedido ${numeroPedido} criado!\nCódigo entrega: ${codigoEnt}\n${motoboyDestino?'🎯 Vai só pro motoboy '+motoboyDestino:'📢 Disparado pra TODO MUNDO'}\n\nManda o código ${codigoEnt} pro cliente no Whats!`);
+
+ await db.collection("usuarios").doc(MEU_EMAIL).update({saldo: firebase.firestore.FieldValue.increment(-total)});
+ alert(`✅ Pedido ${numeroPedido} criado! Código: ${codigoEnt}`);
  location.reload();
+}
+
+function escutarMeusPedidos(){
+ if(!MEU_EMAIL) return;
+ db.collection("corridas").where("lojista","==",MEU_EMAIL).onSnapshot(snap=>{
+   let htmlFixo="";
+   let htmlExtrato=`<div class="card"><h3 style="color:#D4AF37">📋 Meu Extrato - Todas corridas</h3>`;
+   let tem=false;
+   snap.forEach(doc=>{
+     const p=doc.data(); tem=true;
+     const data = p.criadoEm && p.criadoEm.seconds ? new Date(p.criadoEm.seconds*1000).toLocaleDateString() : '';
+     if(p.status==="aceito" || p.status==="a_caminho_loja"){
+       htmlFixo=`
+        <div class="card" style="border:2px solid #D4AF37;background:#1a1a0a;position:sticky;top:10px;z-index:99">
+          <h3 style="color:#D4AF37;margin:0">🏍️ MOTOBOY A CAMINHO DA SUA LOJA</h3>
+          <p style="font-size:18px;margin:6px 0"><b>${p.nomeMotoboy||'Motoboy'} ${p.numeroMotoboy||''}</b></p>
+          <p style="font-size:20px;color:#00ff88">📍 ${p.distanciaAteLoja||'1.2'} km - ${p.tempoAteLoja||'5'} min para chegar na loja</p>
+          <p>Pedido: ${p.numero} | Código: ${p.codigoEntrega}</p>
+        </div>`;
+     }
+     if(p.status==="na_loja"){
+       htmlFixo=`<div class="card" style="border:2px solid #00c851;background:#0a1a0a"><h3 style="color:#00ff88">✅ MOTOBOY CHEGOU NA SUA LOJA!</h3><p>${p.nomeMotoboy||'Motoboy'} já está aí - ${p.numero}</p></div>`;
+     }
+     let cor="#aaa"; if(p.status==="pendente") cor="#ffaa00"; if(p.status==="aceito") cor="#D4AF37"; if(p.status==="entregue") cor="#00c851";
+     htmlExtrato+=`
+       <div style="border-bottom:1px solid #222;padding:10px 0;display:flex;justify-content:space-between">
+         <div><b>${p.numero||''}</b> - ${p.destino||''}<br><span style="font-size:11px;color:#aaa">${data} - <span style="color:${cor}">${(p.status||'').toUpperCase()}</span> ${p.super?'⚡':''} ${p.retorno?'🔁':''} ${p.dinamica?'🌧️':''}</span></div>
+         <div style="text-align:right"><b style="color:#D4AF37">R$ ${(p.valor||0).toFixed(2)}</b><br><span style="font-size:10px;color:#aaa">${p.codigoEntrega||''}</span></div>
+       </div>`;
+   });
+   if(!tem) htmlExtrato+=`<p style="color:#aaa">Nenhuma corrida</p>`;
+   htmlExtrato+=`</div>`;
+   document.getElementById("pedidoAtivoLojista").innerHTML=htmlFixo;
+   document.getElementById("listaMeusPedidos").innerHTML=htmlExtrato;
+ });
 }
 </script>
 </body>
