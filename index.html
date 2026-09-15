@@ -1,44 +1,92 @@
 <!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Anjos Flash</title>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="config.js"></script>
-<style>body{background:#000;color:#fff;padding:20px;font-family:Arial}input{width:100%;padding:12px;margin:8px 0;border-radius:10px}button{width:100%;padding:12px;background:gold;font-weight:bold;border-radius:10px}#msg{background:#222;padding:10px;margin-top:10px;color:gold}</style>
+<style>
+body{background:#0A0A0A;color:#fff;font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;flex-direction:column}
+.card{width:90%;max-width:350px;text-align:center}
+.input{width:94%;padding:14px;border-radius:12px;border:1px solid #D4AF3733;background:#1F1F1F;color:#fff;margin:6px 0;font-size:16px}
+.btn{background:#D4AF37;color:#000;font-weight:bold;padding:14px;border:none;border-radius:12px;width:100%;cursor:pointer;font-size:16px;margin-top:8px}
+.btn2{background:#222;color:#D4AF37;border:1px solid #D4AF37}
+h1{color:#D4AF37}
+#msg{margin-top:10px;color:#ffaa00;background:#222;padding:10px;border-radius:8px;display:none}
+</style>
 </head>
 <body>
-<h2>ANJOS FLASH - TESTE</h2>
-<input id="email" placeholder="super@macae.com">
-<input id="senha" type="password" placeholder="senha">
-<button onclick="login()">ENTRAR</button>
-<div id="msg">Aguardando...</div>
+<div class="card">
+<h1>ANJOS FLASH - TESTE</h1>
+<input id="email" class="input" placeholder="email ex: super@macae.com" value="super@macae.com">
+<input id="senha" class="input" type="password" placeholder="senha">
+<button class="btn" onclick="entrar()">ENTRAR</button>
+<button class="btn btn2" onclick="cadastrar()">CADASTRAR NOVO</button>
+<div id="msg"></div>
+<p style="font-size:11px;color:#666;margin-top:20px">macae-entregas.vercel.app</p>
+</div>
+
 <script>
 firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth();
 const db=firebase.firestore();
 
-async function login(){
- const msg=document.getElementById("msg");
- msg.innerText="Tentando...";
- try{
-  const e=document.getElementById("email").value.trim().toLowerCase();
-  const s=document.getElementById("senha").value;
-  msg.innerText="Conectando Firebase com "+e;
-  const cred=await auth.signInWithEmailAndPassword(e,s);
-  msg.innerText="Logou! Buscando tipo... UID="+cred.user.uid;
-  let doc=await db.collection("usuarios").doc(e).get();
-  if(!doc.exists){ doc=await db.collection("usuarios").doc(cred.user.uid).get(); msg.innerText=msg.innerText+" - Achou por UID"; }
-  else{ msg.innerText=msg.innerText+" - Achou por EMAIL"; }
-  if(!doc.exists){ msg.innerText="ERRO: Não achou doc em usuarios"; return; }
-  const tipo=doc.data().tipo;
-  msg.innerText="TIPO="+tipo+" | Indo pra "+tipo+".html";
-  setTimeout(()=>{ location.href=tipo=="super"||tipo=="admin"?"super.html":tipo+".html"; },1000);
- }catch(err){
-  msg.innerText="ERRO: "+err.message;
-  alert(err.message);
- }
+function showMsg(t){
+  const m=document.getElementById("msg");
+  m.style.display="block"; m.innerText=t;
 }
+
+async function entrar(){
+  const email=document.getElementById("email").value.trim().toLowerCase();
+  const senha=document.getElementById("senha").value.trim();
+  if(!email||!senha) return showMsg("Digite email e senha");
+  showMsg("Entrando...");
+  try{
+    const cred=await auth.signInWithEmailAndPassword(email,senha);
+    const doc=await db.collection("usuarios").doc(email).get();
+    if(!doc.exists){
+      showMsg("Usuário sem cadastro na coleção usuarios, fale com admin");
+      return;
+    }
+    const tipo=(doc.data().tipo||"lojista").toLowerCase();
+    showMsg("OK! Indo para "+tipo);
+    if(tipo==="admin" || tipo==="super") location.href="admin.html";
+    else if(tipo==="franqueado") location.href="franqueado.html";
+    else if(tipo.includes("motoboy") || tipo.includes("entregador")) location.href="motoboy.html";
+    else location.href="lojista.html";
+  }catch(e){
+    showMsg("Erro: "+e.message);
+    console.log(e);
+  }
+}
+
+async function cadastrar(){
+  const email=document.getElementById("email").value.trim().toLowerCase();
+  const senha=document.getElementById("senha").value.trim();
+  if(!email||!senha) return showMsg("Digite email e senha pra cadastrar");
+  if(senha.length<6) return showMsg("Senha mínimo 6 letras");
+  showMsg("Cadastrando...");
+  try{
+    await auth.createUserWithEmailAndPassword(email,senha);
+    // cria na coleção usuarios como lojista com saldo 0 = BLOQUEADO
+    await db.collection("usuarios").doc(email).set({
+      email:email, tipo:"lojista", saldo:0, criadoEm:new Date()
+    },{merge:true});
+    showMsg("✅ Cadastrado! Saldo R$0 - NÃO chama. Admin precisa colocar saldo. Agora clica ENTRAR");
+  }catch(e){
+    if(e.code==="auth/email-already-in-use"){
+      showMsg("Esse email já existe, clica em ENTRAR");
+    } else {
+      showMsg("Erro: "+e.message);
+    }
+  }
+}
+
+auth.onAuthStateChanged(u=>{
+  // se já logado, não fica no Esperando...
+  if(u) showMsg("Já logado como "+u.email+" - clique ENTRAR");
+});
 </script>
 </body>
 </html>
