@@ -1,34 +1,44 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Anjos Flash - Preto e Dourado</title>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 <script src="config.js"></script>
-<style>
-body{background:#0A0A0A;color:#fff;font-family:Arial;margin:0;padding:15px}
-.card{background:#171717;border:1px solid #D4AF3733;border-radius:16px;padding:20px;margin-bottom:15px}
-.btn{background:#D4AF37;color:#000;font-weight:bold;padding:12px;width:100%;border:none;border-radius:12px;cursor:pointer}
-.input{width:100%;background:#1F1F1F;border:1px solid #D4AF3733;border-radius:12px;padding:12px;color:#fff;margin:6px 0;box-sizing:border-box}
-h1{color:#D4AF37}.gold{color:#D4AF37}
-#aviso{background:#D4AF37;color:#000;padding:12px;border-radius:12px;font-weight:bold;margin-bottom:15px;display:none}
-#msg{color:#D4AF37;margin-top:10px;font-weight:bold}
-</style>
+<style>body{background:#000;color:#fff;padding:20px;font-family:Arial}input{width:100%;padding:12px;margin:8px 0;border-radius:10px}button{width:100%;padding:12px;background:gold;font-weight:bold;border-radius:10px}#msg{background:#222;padding:10px;margin-top:10px;color:gold}</style>
 </head>
 <body>
-<h1>ANJOS FLASH</h1>
-<div id="aviso"></div>
+<h2>ANJOS FLASH - TESTE</h2>
+<input id="email" placeholder="super@macae.com">
+<input id="senha" type="password" placeholder="senha">
+<button onclick="login()">ENTRAR</button>
+<div id="msg">Aguardando...</div>
+<script>
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();
+const db=firebase.firestore();
 
-<div class="card">
-<h3 class="gold">LOGIN</h3>
-<input id="email" class="input" placeholder="Email">
-<input id="senha" class="input" type="password" placeholder="Senha">
-<button class="btn" id="btnLogin" onclick="login()">ENTRAR</button>
-<div id="msg"></div>
-<p><a class="gold" onclick="show('cadM')">Cadastrar Motoboy</a> | <a class="gold" onclick="show('cadL')">Cadastrar Lojista</a></p>
-</div>
-
-<div id="cadM" class="
+async function login(){
+ const msg=document.getElementById("msg");
+ msg.innerText="Tentando...";
+ try{
+  const e=document.getElementById("email").value.trim().toLowerCase();
+  const s=document.getElementById("senha").value;
+  msg.innerText="Conectando Firebase com "+e;
+  const cred=await auth.signInWithEmailAndPassword(e,s);
+  msg.innerText="Logou! Buscando tipo... UID="+cred.user.uid;
+  let doc=await db.collection("usuarios").doc(e).get();
+  if(!doc.exists){ doc=await db.collection("usuarios").doc(cred.user.uid).get(); msg.innerText=msg.innerText+" - Achou por UID"; }
+  else{ msg.innerText=msg.innerText+" - Achou por EMAIL"; }
+  if(!doc.exists){ msg.innerText="ERRO: Não achou doc em usuarios"; return; }
+  const tipo=doc.data().tipo;
+  msg.innerText="TIPO="+tipo+" | Indo pra "+tipo+".html";
+  setTimeout(()=>{ location.href=tipo=="super"||tipo=="admin"?"super.html":tipo+".html"; },1000);
+ }catch(err){
+  msg.innerText="ERRO: "+err.message;
+  alert(err.message);
+ }
+}
+</script>
+</body>
+</html>
