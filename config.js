@@ -1,11 +1,11 @@
 const firebaseConfig = {
-  apiKey: "AIzaSyC2vEov-Mac2JHhl_CkfEL7hvmwQBuIVeo",
-  authDomain: "anjos-flash-deliver-brasil.firebaseapp.com",
-  projectId: "anjos-flash-deliver-brasil",
-  storageBucket: "anjos-flash-deliver-brasil.firebasestorage.app",
-  messagingSenderId: "1081152420523",
-  appId: "1:1081152420523:web:5d730a03455699956c95ee"
+  apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
+  authDomain: "anjos-flash.firebaseapp.com",
+  projectId: "anjos-flash",
+  storageBucket: "anjos-flash.firebasestorage.app",
+  messagingSenderId: "725133182752",
+  appId: "1:725133182752:web:5f9a98fa97269dcdcab945",
+  measurementId: "G-9CSJXXNR0C"
 };
-
 const MINHA_CHAVE = "";
 const TOKEN_PAGAMENTO = "22997450131";
