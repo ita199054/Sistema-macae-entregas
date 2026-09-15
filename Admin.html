@@ -1,25 +1,348 @@
-Você tá certo, foi sacanagem minha. Ficou confuso demais com 9,32 / 9,35 / 4,55.
+<!-- =========================================================
+     PARTE 6 — ADMIN MASTER
+     ANJOS EM DUAS RODAS / ANJOS FLASH
+     CONTROLE GERAL DO SISTEMA
+     ========================================================= -->
 
-Desculpa. Vamos fazer do jeito mais simples agora, sem pasta Downloads.
+<script type="module">
 
-Esquece tudo que tá na pasta Downloads. Não precisa apagar nada no celular, apaga direto no GitHub.
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  getDocs,
+  getDoc,
+  doc,
+  updateDoc,
+  setDoc,
+  addDoc,
+  serverTimestamp,
+  runTransaction
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-*Faz assim agora em 2 cliques:*
+const db = window.db;
+const auth = window.auth;
 
-1. Vai no seu repositório no GitHub no Chrome
-2. Entra em `admin.html` > clica nos 3 pontinhos `...` > `Delete file` > Commit
-3. Faz isso com `admin (1)`, `admin (2)`, `admin (3)` também. Deleta os 4 velhos de 9,32 kB
+const ADMIN_EMAIL =
+  "italorossi.generali@gmail.com";
 
-4. Depois clica `Add file` > `Create new file` > nome `admin.html`
 
-5. Cola ESSE CÓDIGO PEQUENO que *NÃO CORTA* no WhatsApp (tem só 3 kB, cabe de uma vez):
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin</title><script src="https://cdn.tailwindcss.com"></script><script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script></head><body class="p-2 bg-gray-100"><h1 class="bg-white p-2 rounded font-bold">Admin #0001 + Saldo</h1><div id="m" class="bg-white p-2 mt-2 rounded"></div><div id="l" class="bg-white p-2 mt-2 rounded"></div><script>
-const cfg={apiKey:"AIzaSy...",authDomain:"macae-entregas.firebaseapp.com",projectId:"macae-entregas"};firebase.initializeApp(cfg);const db=firebase.firestore();
-async function load(){const s=await db.collection("motoboys").get();let h="";s.forEach(d=>{const x=d.data();h+=`<div class="border p-1 mb-1"><b>#${x.codigo||d.id.slice(0,4)} ${x.nome}</b> R$${x.saldo||0} <button onclick="db.collection('motoboys').doc('${d.id}').update({saldo:firebase.firestore.FieldValue.increment(10)}).then(load)" class="bg-green-500 text-white px-1 rounded">+10</button> <button onclick="db.collection('motoboys').doc('${d.id}').update({saldo:firebase.firestore.FieldValue.increment(-10)}).then(load)" class="bg-red-500 text-white px-1 rounded">-10</button></div>`});document.getElementById("m").innerHTML=h;
-const s2=await db.collection("lojas").get();let h2="";s2.forEach(d=>{const x=d.data();h2+=`<div class="border p-1 mb-1"><b>${x.nomeFantasia||x.nome}</b> R$${x.saldo||0} Dono:${x.dono||""} <button onclick="db.collection('lojas').doc('${d.id}').update({saldo:firebase.firestore.FieldValue.increment(10)}).then(load)" class="bg-green-500 text-white px-1 rounded">+10</button></div>`});document.getElementById("l").innerHTML=h2;}load();
-</script></body></html>
-Esse tem só 3 kB, não corta. Cola ele no `Create new file` e dá `Commit`.
+/* =========================================================
+   VERIFICAÇÃO DO ADMIN MASTER
+   ========================================================= */
 
-Depois que subir, me manda o print do seu `index.html` (só as linhas do `firebaseConfig`) que eu coloco sua apiKey verdadeira e o saldo para de ficar R$0.
+window.isAdminMaster = async function(){
 
-Faz esse de 3 kB primeiro pra parar de dar erro de 9,32 / 4,55.
+  const user = auth.currentUser;
+
+  if(!user){
+    return false;
+  }
+
+  if(
+    String(user.email || "")
+      .toLowerCase()
+      === ADMIN_EMAIL.toLowerCase()
+  ){
+    return true;
+  }
+
+  const snap =
+    await getDoc(
+      doc(db,"usuarios",user.uid)
+    );
+
+  if(!snap.exists()){
+    return false;
+  }
+
+  const data = snap.data();
+
+  return (
+    data.role === "admin" &&
+    data.adminMaster === true
+  );
+
+};
+
+
+/* =========================================================
+   ABRIR PAINEL ADMIN
+   ========================================================= */
+
+window.renderAdmin = async function(){
+
+  const autorizado =
+    await isAdminMaster();
+
+  if(!autorizado){
+
+    $("panel").innerHTML = `
+
+      <div class="card">
+
+        <h2>🔒 ACESSO NEGADO</h2>
+
+        <p>
+          Esta área é exclusiva do
+          <b>ADMIN MASTER</b>.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+  $("panel").innerHTML = `
+
+    <div class="card">
+
+      <h1>👑 ADMIN MASTER</h1>
+
+      <p>
+        Controle geral do
+        <b>ANJOS EM DUAS RODAS</b>
+      </p>
+
+      <div class="grid">
+
+        <button
+          class="gold"
+          onclick="adminUsuarios()">
+
+          👥 USUÁRIOS
+
+        </button>
+
+        <button
+          class="gold"
+          onclick="adminMotoristas()">
+
+          🏍️ MOTORISTAS
+
+        </button>
+
+        <button
+          class="gold"
+          onclick="adminLojistas()">
+
+          🏪 LOJISTAS
+
+        </button>
+
+        <button
+          class="gold"
+          onclick="adminFranqueados()">
+
+          🏢 FRANQUEADOS
+
+        </button>
+
+        <button
+          class="gold"
+          onclick="adminCorridas()">
+
+          🚀 CORRIDAS
+
+        </button>
+
+        <button
+          class="gold"
+          onclick="adminSaldos()">
+
+          💰 SALDOS
+
+        </button>
+
+        <button
+          class="gold"
+          onclick="adminConfiguracoes()">
+
+          ⚙️ VALORES
+
+        </button>
+
+        <button
+          class="gold"
+          onclick="adminExtratos()">
+
+          📊 EXTRATOS
+
+        </button>
+
+        <button
+          class="gold"
+          onclick="adminChat()">
+
+          💬 CHAT
+
+        </button>
+
+      </div>
+
+    </div>
+
+    <div
+      id="adminConteudo">
+
+      <div class="card">
+
+        <h2>📊 RESUMO DO SISTEMA</h2>
+
+        <div id="adminResumo">
+          Carregando...
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+  carregarResumoAdmin();
+
+};
+
+
+/* =========================================================
+   RESUMO
+   ========================================================= */
+
+async function carregarResumoAdmin(){
+
+  const snap =
+    await getDocs(
+      collection(db,"usuarios")
+    );
+
+  let total=0;
+  let motoristas=0;
+  let lojistas=0;
+  let franqueados=0;
+  let pendentes=0;
+
+  snap.forEach(d=>{
+
+    const u=d.data();
+
+    total++;
+
+    if(u.role==="motorista"){
+      motoristas++;
+
+      if(u.aprovado!==true){
+        pendentes++;
+      }
+    }
+
+    if(
+      u.role==="lojista" ||
+      u.role==="lojista_franquia"
+    ){
+      lojistas++;
+    }
+
+    if(u.role==="franqueado"){
+      franqueados++;
+    }
+
+  });
+
+  $("adminResumo").innerHTML=`
+
+    <div class="grid">
+
+      <div class="card">
+        <h3>Usuários</h3>
+        <b>${total}</b>
+      </div>
+
+      <div class="card">
+        <h3>Motoristas</h3>
+        <b>${motoristas}</b>
+      </div>
+
+      <div class="card">
+        <h3>Lojistas</h3>
+        <b>${lojistas}</b>
+      </div>
+
+      <div class="card">
+        <h3>Franqueados</h3>
+        <b>${franqueados}</b>
+      </div>
+
+      <div class="card">
+        <h3>⏳ Pendentes</h3>
+        <b>${pendentes}</b>
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   USUÁRIOS
+   ========================================================= */
+
+window.adminUsuarios = async function(){
+
+  const autorizado =
+    await isAdminMaster();
+
+  if(!autorizado)return;
+
+  const snap =
+    await getDocs(
+      collection(db,"usuarios")
+    );
+
+  let html=`
+
+    <div class="card">
+
+      <h2>👥 TODOS OS USUÁRIOS</h2>
+
+      <button
+        class="gold"
+        onclick="adminCriarUsuario()">
+
+        ➕ CRIAR USUÁRIO
+
+      </button>
+
+      <div style="overflow:auto">
+
+      <table>
+
+        <tr>
+          <th>Nome</th>
+          <th>Telefone</th>
+          <th>Tipo</th>
+          <th>Status</th>
+          <th>Ação</th>
+        </tr>
+
+  `;
+
+  snap.forEach(d=>{
+
+    const u=d.data();
+
+    html+=`
+
+      <tr>
+
+        <td>
+          ${u.nome || "-"}
+        </td>
+
+        <td>
+          ${u.telefone || "-
