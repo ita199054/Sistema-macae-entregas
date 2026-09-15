@@ -3,35 +3,62 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="config.js"></script>
-<style>body{background:#0A0A0A;color:#fff;font-family:Arial;padding:12px;margin:0}.card{background:#171717;border:1px solid #D4AF3733;border-radius:16px;padding:16px;margin:12px auto;max-width:420px}.input{width:94%;padding:14px;border-radius:12px;border:1px solid #D4AF3733;background:#1F1F1F;color:#fff;margin:6px 0}.btn{background:#D4AF37;color:#000;font-weight:bold;padding:14px;border:none;border-radius:12px;width:100%;cursor:pointer;margin-top:8px}.btn2{background:#222;color:#D4AF37;border:1px solid #D4AF37}label{color:#D4AF37;font-size:13px;font-weight:bold}#msg{margin-top:10px;color:#ffaa00;background:#222;padding:10px;border-radius:8px;display:none;white-space:pre-line}</style>
+<style>body{background:#0A0A0A;color:#fff;font-family:Arial;padding:12px;margin:0}.card{background:#171717;border:1px solid #D4AF3733;border-radius:16px;padding:16px;margin:12px auto;max-width:420px}.input{width:94%;padding:14px;border-radius:12px;border:1px solid #D4AF3733;background:#1F1F1F;color:#fff;margin:6px 0}.btn{background:#D4AF37;color:#000;font-weight:bold;padding:14px;border:none;border-radius:12px;width:100%;cursor:pointer;margin-top:8px}.btn2{background:#222;color:#D4AF37;border:1px solid #D4AF37}#msg{margin-top:10px;color:#ffaa00;background:#222;padding:10px;border-radius:8px;display:none;white-space:pre-line}</style>
 </head><body><h1 style="color:#D4AF37;text-align:center">ANJOS FLASH</h1>
 <div class="card">
 <input id="email" class="input" placeholder="Email">
 <input id="senha" class="input" type="password" placeholder="Senha min 6">
-<select id="tipoCadastro" class="input" onchange="document.getElementById('boxMotoboy').style.display=this.value=='lojista'?'none':'block'">
-<option value="lojista">🏪 Sou Lojista</option>
-<option value="motoboy">🏍️ Sou Motoboy</option>
-<option value="motorista">🚚 Sou Motorista</option>
-</select>
+<select id="tipoCadastro" class="input"><option value="lojista">🏪 Sou Lojista</option><option value="motoboy">🏍️ Motoboy</option><option value="motorista">🚚 Motorista</option></select>
 <div id="boxMotoboy" style="display:none;border-top:1px solid #333;margin-top:10px;padding-top:10px">
-<label>Dados para aprovação - só admin vê docs</label>
-<input id="nomeComp" class="input" placeholder="Nome completo">
-<input id="telefone" class="input" placeholder="Telefone zap">
-<input id="endereco" class="input" placeholder="Endereço completo">
-<select id="tipoVeiculo" class="input"><option value="moto">Moto</option><option value="fiorino">Fiorino</option><option value="caminhao">Caminhão 3/4</option><option value="carreta">Carreta</option></select>
-<input id="placa" class="input" placeholder="Placa">
-<label>📸 Selfie (essa o lojista vai ver)</label><input id="fileSelfie" type="file" accept="image/*" class="input">
-<label>🪪 CNH foto</label><input id="fileCNH" type="file" accept="image/*" class="input">
-<label>📄 CRLV foto</label><input id="fileCRLV" type="file" accept="image/*" class="input">
-</div>
-<button class="btn" onclick="entrar()">ENTRAR</button>
-<button class="btn btn2" onclick="cadastrar()">CADASTRAR NOVO</button>
-<div id="msg"></div></div>
+<input id="nomeComp" class="input" placeholder="Nome"><input id="telefone" class="input" placeholder="Telefone"><input id="endereco" class="input" placeholder="Endereço"><select id="tipoVeiculo" class="input"><option value="moto">Moto</option><option value="fiorino">Fiorino</option><option value="caminhao">Caminhão</option></select><input id="placa" class="input" placeholder="Placa"><label>📸 Selfie (lojista vê)</label><input id="fileSelfie" type="file" accept="image/*" class="input"><label>🪪 CNH</label><input id="fileCNH" type="file" accept="image/*" class="input"><label>📄 CRLV</label><input id="fileCRLV" type="file" accept="image/*" class="input"></div>
+<button class="btn" onclick="entrar()">ENTRAR</button><button class="btn btn2" onclick="cadastrar()">CADASTRAR</button><div id="msg"></div></div>
 <script>
 firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth(), db=firebase.firestore();
+document.getElementById("tipoCadastro").addEventListener("change",function(){document.getElementById("boxMotoboy").style.display=this.value=='lojista'?'none':'block'});
 function showMsg(t){let m=document.getElementById("msg");m.style.display="block";m.innerText=t}
-function fileToBase64(file){return new Promise((res,rej)=>{if(!file)return res(null);const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);})}
-async function entrar(){const email=document.getElementById("email").value.trim().toLowerCase(),senha=document.getElementById("senha").value.trim();if(!email||!senha)return showMsg("Email e senha");showMsg("Entrando...");try{await auth.signInWithEmailAndPassword(email,senha);const doc=await db.collection("usuarios").doc(email).get();if(!doc.exists)return showMsg("Sem cadastro usuarios");let d=doc.data(),tipo=(d.tipo||"lojista").toLowerCase();if((tipo=="motoboy"||tipo=="motorista")&&d.status=="pendente")return showMsg("⏳ Em ANÁLISE");if(tipo=="admin"||tipo=="super")location.href="super.html";else if(tipo=="motoboy"||tipo=="motorista")location.href="motoboy.html";else location.href="lojista.html";}catch(e){showMsg("Erro: "+e.message)}}
-async function cadastrar(){const email=document.getElementById("email").value.trim().toLowerCase(),senha=document.getElementById("senha").value.trim(),tipo=document.getElementById("tipoCadastro").value;if(!email||!senha)return showMsg("Email senha");showMsg("Cadastrando...");try{await auth.createUserWithEmailAndPassword(email,senha);if(tipo=="lojista"){await db.collection("usuarios").doc(email).set({email:email,tipo:"lojista",saldo:0,status:"ativo",criadoEm:new Date()},{merge:true});showMsg("✅ Lojista OK! Clica ENTRAR");return;}const nome=document.getElementById("nomeComp").value.trim(),tel=document.getElementById("telefone").value.trim(),end=document.getElementById("endereco").value.trim(),veic=document.getElementById("tipoVeiculo").value,placa=document.getElementById("placa").value.trim();if(!nome||!tel||!end||!placa)return showMsg("Preenche nome/tel/end/placa");let fS=document.getElementById("fileSelfie").files[0],fC=document.getElementById("fileCNH").files[0],fR=document.getElementById("fileCRLV").files[0];if(!fS||!fC||!fR)return showMsg("Manda os 3: Selfie, CNH, CRLV");showMsg("Salvando fotos...");let bS=await fileToBase64(fS),bC=await fileToBase64(fC),bR=await fileToBase64(fR);let cod=String(Math.floor(1000+Math.random()*9000));await db.collection("usuarios").doc(email).set({email:email,nome:nome,nomeCompleto:nome,telefone:tel,endereco:end,tipo:tipo,tipoVeiculo:veic,placa:placa,selfieBase64:bS,cnhBase64:bC,crlvBase64:bR,status:"pendente",codigoMotoboy:cod,saldo:0,criadoEm:new Date()},{merge:true});showMsg(`✅ ${tipo} #${cod} CADASTRADO! Em análise`);}catch(e){if(e.code=="auth/email-already-in-use")showMsg("Já existe, clica ENTRAR");else showMsg("Erro: "+e.message)}}
+function fileToBase64(f){return new Promise((r,j)=>{if(!f)return r(null);let rd=new FileReader();rd.onload=()=>r(rd.result);rd.onerror=j;rd.readAsDataURL(f);})}
+async function entrar(){
+  let email=document.getElementById("email").value.trim().toLowerCase(), senha=document.getElementById("senha").value.trim();
+  if(!email||!senha)return showMsg("Email e senha"); showMsg("Entrando...");
+  try{
+    await auth.signInWithEmailAndPassword(email,senha);
+    // TENTA POR ID
+    let doc=await db.collection("usuarios").doc(email).get();
+    // SE NÃO ACHA POR ID, PROCURA POR CAMPO email
+    if(!doc.exists){
+      let q=await db.collection("usuarios").where("email","==",email).limit(1).get();
+      if(!q.empty) doc=q.docs[0];
+    }
+    // SE É SUPER E NÃO EXISTE, CRIA
+    if(!doc ||!doc.exists){
+      if(email.includes("super")||email=="super@macae.com"){
+        await db.collection("usuarios").doc(email).set({email:email,tipo:"super",status:"ativo",saldo:0,criadoEm:new Date()},{merge:true});
+        location.href="super.html"; return;
+      }
+      return showMsg("Sem cadastro usuarios. Mas login OK. Vou criar como lojista...");
+    }
+    let d=doc.data(), tipo=(d.tipo||"lojista").toLowerCase();
+    if((tipo=="motoboy"||tipo=="motorista")&&d.status=="pendente")return showMsg("⏳ Em ANÁLISE");
+    if(tipo=="super"||tipo=="admin"||tipo=="franqueado") location.href="super.html";
+    else if(tipo=="motoboy"||tipo=="motorista") location.href="motoboy.html";
+    else location.href="lojista.html";
+  }catch(e){showMsg("Erro: "+e.message+" Verifique Authentication")}
+}
+async function cadastrar(){
+  let email=document.getElementById("email").value.trim().toLowerCase(), senha=document.getElementById("senha").value.trim(), tipo=document.getElementById("tipoCadastro").value;
+  if(!email||!senha)return showMsg("Email senha"); showMsg("Cadastrando...");
+  try{
+    await auth.createUserWithEmailAndPassword(email,senha);
+    if(tipo=="lojista"){await db.collection("usuarios").doc(email).set({email:email,tipo:"lojista",status:"ativo",saldo:0,criadoEm:new Date()},{merge:true}); showMsg("✅ Lojista OK! Clica ENTRAR"); return;}
+    let nome=document.getElementById("nomeComp").value, tel=document.getElementById("telefone").value, end=document.getElementById("endereco").value, veic=document.getElementById("tipoVeiculo").value, placa=document.getElementById("placa").value;
+    let fS=document.getElementById("fileSelfie").files[0], fC=document.getElementById("fileCNH").files[0], fR=document.getElementById("fileCRLV").files[0];
+    if(!nome||!tel||!end||!placa||!fS||!fC||!fR)return showMsg("Preenche tudo e 3 fotos");
+    showMsg("Salvando...");
+    let bS=await fileToBase64(fS), bC=await fileToBase64(fC), bR=await fileToBase64(fR);
+    let cod=String(Math.floor(1000+Math.random()*9000));
+    await db.collection("usuarios").doc(email).set({email:email,nome:nome,telefone:tel,endereco:end,tipo:tipo,tipoVeiculo:veic,placa:placa,selfieBase64:bS,cnhBase64:bC,crlvBase64:bR,status:"pendente",codigoMotoboy:cod,saldo:0,criadoEm:new Date()},{merge:true});
+    showMsg("✅ Cadastrado pendente");
+  }catch(e){if(e.code=="auth/email-already-in-use")showMsg("Já existe, clica ENTRAR"); else showMsg(e.message)}
+}
 </script></body></html>
