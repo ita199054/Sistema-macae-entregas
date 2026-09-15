@@ -1,0 +1,68 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lojista - Anjos Flash</title>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="config.js"></script>
+<style>body{background:#0A0A0A;color:#fff;font-family:Arial;padding:15px}.card{background:#171717;border:1px solid #D4AF3733;border-radius:16px;padding:15px;margin-bottom:12px}.btn{background:#D4AF37;color:#000;font-weight:bold;padding:12px;width:100%;border:none;border-radius:12px}.input{width:100%;background:#1F1F1F;border:1px solid #D4AF3733;border-radius:12px;padding:12px;color:#fff;margin:5px 0;box-sizing:border-box}.gold{color:#D4AF37}#map{height:250px;background:#111;border-radius:12px;margin:10px 0}</style>
+</head><body>
+<h2 class="gold">LOJISTA - Pedir Entrega</h2>
+<div id="avisoMural" style="background:#D4AF37;color:#000;padding:10px;border-radius:10px;display:none"></div>
+
+<div class="card">
+<input id="origem" class="input" placeholder="Origem - endereço da loja">
+<input id="destino" class="input" placeholder="Destino - cliente">
+<input id="cidade" class="input" placeholder="Cidade: macae">
+<button class="btn" onclick="calcular()">CALCULAR PREÇO</button>
+<div id="resultado" class="gold" style="margin-top:10px;font-weight:bold"></div>
+<div id="map">Mapa aparece aqui</div>
+<select id="tipo" class="input"><option value="normal">Normal</option><option value="super">Super Rápido (+R$8)</option><option value="retorno">Retorno 50% OFF</option></select>
+<label><input type="checkbox" id="dinamica"> Taxa dinâmica?</label>
+<button class="btn" style="margin-top:10px" onclick="pedir()">PEDIR CORRIDA - Pix 22997450131</button>
+</div>
+
+<div class="card"><h4 class="gold">Minhas Corridas</h4><div id="corridas"></div></div>
+
+<script>
+firebase.initializeApp(firebaseConfig); const db=firebase.firestore(); const auth=firebase.auth();
+let precoL=0, precoM=0, km=0;
+
+async function calcular(){
+  const cid=cidade.value.toLowerCase();
+  const doc=await db.collection("config").doc("cidades").collection(cid).doc("precos").get();
+  const cfg=doc.data() || {lojistaBase:10,motoboyBase:7.5,superLojista:8,retornoMotoboy:2};
+  // simulando 3km por enquanto, depois liga Maps com MINHA_CHAVE
+  km=3.5;
+  let base=cfg.lojistaBase||10; if(tipo.value=="super") base+=cfg.superLojista||8;
+  precoL=base+ (km>5?(km-5)*2:0);
+  precoM=(cfg.motoboyBase||7.5)+ (tipo.value=="retorno"?(cfg.retornoMotoboy||2):0);
+  if(dinamica.checked){ precoL+=4.5; precoM+=3; }
+  if(tipo.value=="retorno") precoL=precoL*0.5;
+  resultado.innerHTML=`Distância: ${km}km | Lojista paga: R$${precoL.toFixed(2)} | Motoboy recebe: R$${precoM.toFixed(2)}`;
+}
+
+async function pedir(){
+  const user=auth.currentUser; if(!user){alert("Faça login no index.html primeiro");return;}
+  await db.collection("corridas").add({
+    lojistaId:user.uid, origem:origem.value, destino:destino.value, cidade:cidade.value.toLowerCase(),
+    tipo:tipo.value, km:km, precoLojista:precoL, precoMotoboy:precoM, status:"pendente",
+    codigo: Math.floor(1000+Math.random()*9000).toString(), criadoEm:new Date()
+  });
+  alert("Corrida pedida! Código: vai aparecer quando motoboy finalizar");
+  carregarCorridas();
+}
+function carregarCorridas(){
+  const user=auth.currentUser; if(!user) return;
+  db.collection("corridas").where("lojistaId","==",user.uid).orderBy("criadoEm","desc").onSnapshot(s=>{
+    let h=""; s.forEach(d=>{const c=d.data(); h+=`<div style="border-bottom:1px solid #333;padding:8px">${c.origem} → ${c.destino} | R$${c.precoLojista} | ${c.status} ${c.status=="finalizada"?"- COD:"+c.codigo:""}</div>`}); corridas.innerHTML=h;
+  });
+}
+auth.onAuthStateChanged(u=>{if(u) carregarCorridas();});
+
+// Mural
+db.collection("avisos").where("ativo","==",true).orderBy("criadoEm","desc").limit(1).onSnapshot(s=>{
+ if(!s.empty){const d=s.docs[0].data(); if(d.para=="todos"||d.para=="lojista"){avisoMural.style.display='block'; avisoMural.innerText=d.titulo+": "+d.mensagem}}
+});
+
+</script></body></html>
