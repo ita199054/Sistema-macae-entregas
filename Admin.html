@@ -1,81 +1,55 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Fix 2 - Botoes Reais</title>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Anjos Flash</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>
 body{background:#000;color:#fff;font-family:Arial;margin:0}
-header{background:#111;border-bottom:2px solid #D4AF37;padding:12px;display:flex;justify-content:space-between}
-h1{color:#D4AF37;margin:0;font-size:14px}
+header{background:#111;border-bottom:2px solid #D4AF37;padding:12px;display:flex;justify-content:space-between;align-items:center}
+h1{color:#D4AF37;margin:0;font-size:16px}
 .tabs{display:flex;gap:6px;padding:10px;background:#111;overflow:auto}
-.tab{padding:10px 14px;border:1px solid #D4AF37;background:#222;color:#D4AF37;border-radius:20px;font-weight:900}
+.tab{padding:10px 16px;border:1px solid #D4AF37;background:#222;color:#D4AF37;border-radius:20px;font-weight:900;cursor:pointer;white-space:nowrap}
 .tab.on{background:#D4AF37;color:#000}
 .card{background:#111;border:1px solid #333;border-radius:12px;padding:12px;margin:10px}
 .item{background:#1a1a1a;border-left:4px solid #D4AF37;padding:10px;margin:6px 0;border-radius:8px}
-input{width:100%;padding:11px;background:#222;color:#fff;border:1px solid #444;border-radius:10px;margin:5px 0;box-sizing:border-box}
-button{padding:12px 14px;border:none;border-radius:8px;font-weight:900;margin:3px;cursor:pointer;font-size:14px}
+input,select{width:100%;padding:11px;background:#222;color:#fff;border:1px solid #444;border-radius:10px;margin:5px 0;box-sizing:border-box}
+button{padding:10px 12px;border:none;border-radius:8px;font-weight:900;margin:2px;cursor:pointer}
 .gold{background:#D4AF37;color:#000}.green{background:#0f0;color:#000}.red{background:#f33;color:#fff}.dark{background:#333;color:#D4AF37}.blue{background:#0af;color:#000}
 .small{font-size:11px;color:#aaa}.hidden{display:none}
-.linha{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222}
+.linha{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #222}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 </style></head><body>
-<header><h1>👑 ANJOS FIX 2</h1><span id="userEmail" class="small"></span><button class="dark" onclick="location.href='index.html'">Sair</button></header>
+<header><h1>👑 ANJOS MASTER</h1><span id="userEmail" class="small"></span><button class="dark" onclick="location.href='index.html'">Sair</button></header>
+
 <div class="tabs">
 <button class="tab on" id="bt-dash" onclick="abrirAba('dash')">📊 Dash</button>
 <button class="tab" id="bt-config" onclick="abrirAba('config')">⚙️ Local %</button>
 <button class="tab" id="bt-motos" onclick="abrirAba('motos')">🏍️ Motos</button>
 <button class="tab" id="bt-lojas" onclick="abrirAba('lojas')">🏪 Lojas</button>
+<button class="tab" id="bt-corridas" onclick="abrirAba('corridas')">📦 Corridas</button>
 </div>
 
-<div id="dash"><div class="card"><div class="linha"><span>💰 Fat</span><b id="s-fat">R$0</b></div><div class="linha"><span>📈 Lucro</span><b id="s-lucro">R$0</b></div><div class="linha"><span>Qtd</span><b id="s-cont">0</b></div></div><div class="card"><b>Simulador KM</b><input id="simKM" type="number" placeholder="KM" oninput="simular()"><div id="simRes" class="item">Digite KM</div></div><div class="card" id="dash-corridas"></div></div>
+<div id="dash">
+<div class="card"><div class="linha"><span>💰 Faturamento</span><b id="s-fat" style="color:#D4AF37">R$0</b></div><div class="linha"><span>📈 Lucro Anjos</span><b id="s-lucro" style="color:#0f0">R$0</b></div><div class="linha"><span>📦 Hoje / Lojas / Motos</span><b id="s-cont">0/0/0</b></div></div>
+<div class="card"><b>Simulador KM</b><input id="simKM" type="number" placeholder="KM ex: 7" oninput="simular()"><div id="simRes" class="item">Digite KM pra ver cálculo</div></div>
+<div class="card"><b>Últimas Corridas</b><div id="dash-corridas">Carregando...</div></div>
+</div>
 
-<div id="config" class="hidden"><div class="card" style="border:2px solid #D4AF37">
-<h3 style="color:#D4AF37">⚙️ CONFIG</h3>
-<div class="linha"><span>🔥 DINÂMICA</span><input type="checkbox" id="c-ativo" checked style="width:30px;height:30px"></div>
-<div class="linha"><span>⛔ PAUSAR</span><input type="checkbox" id="c-pausa" style="width:30px;height:30px"></div>
-Base<input id="c-base" type="number" value="10"> Limite KM<input id="c-kmlim" type="number" value="5"> Add KM<input id="c-add" type="number" value="2">
-<div class="grid2"><div>Din Lojista R$<input id="c-dinLojista" type="number" value="5"></div><div>Din Moto R$<input id="c-dinMoto" type="number" value="3"></div></div>
-Moto até<input id="c-motoAte" type="number" value="7.5"> Limite<input id="c-limMoto" type="number" value="20"> Moto acima<input id="c-motoAcima" type="number" value="15"> % extra<input id="c-perc" type="number" value="0">
-<hr><input id="c-nome" placeholder="Bairro"><input id="c-taxa" type="number" placeholder="Taxa"><button class="gold" id="btnAddLocal">+ LOCAL</button><div id="listaLocais"></div>
-<button class="gold" id="btnSalvar" style="width:100%;padding:14px;margin-top:10px">💾 SALVAR</button><div id="msg" style="color:#0f0"></div><div id="prev" class="item small"></div>
-</div></div>
-
-<div id="motos" class="hidden"><div class="card"><h3>🏍️ Motoboys - CLICA EDITAR</h3><div id="listaMotos"></div></div>
-<div id="editMotoBox" class="card hidden" style="border:2px solid #0f0"><h3 style="color:#0f0">✏️ Editar Motoboy</h3>
-<input id="editMotoIdx" type="hidden"> Nome<input id="editMotoNome"> Email<input id="editMotoEmail"> Tel<input id="editMotoTel"> COD<input id="editMotoCod"> Saldo<input id="editMotoSaldo" type="number">
-<div class="grid2"><button class="green" id="btnSalvarMoto">💾 SALVAR MOTO</button><button class="dark" id="btnFecharMoto">Fechar</button></div>
-<div class="grid2"><button class="gold" id="btnAprovarMoto">Aprovar/Desaprovar</button><button class="red" id="btnDelMoto">Excluir</button></div>
-</div></div>
-
-<div id="lojas" class="hidden"><div class="card"><h3>🏪 Lojas - CLICA EDITAR SUPER LOJA</h3><div id="listaLojas"></div></div>
-<div id="editLojaBox" class="card hidden" style="border:2px solid #D4AF37"><h3 style="color:#D4AF37">✏️ Editar Super Loja</h3>
-<input id="editLojaIdx" type="hidden"> Nome Loja<input id="editLojaNome"> Email<input id="editLojaEmail"> End<input id="editLojaEnd"> Tel<input id="editLojaTel"> Saldo<input id="editLojaSaldo" type="number"> Taxa<input id="editLojaTaxa" type="number">
-<div class="grid2"><button class="gold" id="btnSalvarLoja">💾 SALVAR LOJA</button><button class="dark" id="btnFecharLoja">Fechar</button></div><button class="red" id="btnDelLoja" style="width:100%">Excluir Loja</button>
-</div></div>
-
-<script>
-var cfg={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.firebasestorage.app",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945"};
-firebase.initializeApp(cfg); var auth=firebase.auth(); var db=firebase.firestore();
-var allMotos=[], allLojas=[], conf={ativo:true,pausa:false,base:10,kmlim:5,add:2,dinLojista:5,dinMoto:3,motoAte:7.5,limMoto:20,motoAcima:15,perc:0,locais:[]};
-
-function abrirAba(id){ var ids=['dash','config','motos','lojas']; for(var k=0;k<ids.length;k++){ var el=document.getElementById(ids[k]); if(el) el.classList.add('hidden'); var bt=document.getElementById('bt-'+ids[k]); if(bt) bt.classList.remove('on'); } document.getElementById(id).classList.remove('hidden'); document.getElementById('bt-'+id).classList.add('on'); if(id==='config') simular(); }
-
-auth.onAuthStateChanged(function(u){ if(!u){ location.href='index.html'; return; } document.getElementById('userEmail').innerText=u.email; carregarConf(); iniciar(); bindBotoes(); });
-
-function bindBotoes(){
- document.getElementById('btnAddLocal').addEventListener('click', addLocal);
- document.getElementById('btnSalvar').addEventListener('click', salvar);
- document.getElementById('btnSalvarMoto').addEventListener('click', salvarMoto);
- document.getElementById('btnFecharMoto').addEventListener('click', fecharMoto);
- document.getElementById('btnAprovarMoto').addEventListener('click', toggleAprovar);
- document.getElementById('btnDelMoto').addEventListener('click', delMoto);
- document.getElementById('btnSalvarLoja').addEventListener('click', salvarLoja);
- document.getElementById('btnFecharLoja').addEventListener('click', fecharLoja);
- document.getElementById('btnDelLoja').addEventListener('click', delLoja);
-}
-
-async function carregarConf(){ try{ var d=await db.collection('configuracoes').doc('valores').get(); if(d.exists) conf=Object.assign(conf,d.data()); }catch(e){} document.getElementById('c-ativo').checked=conf.ativo!==false; document.getElementById('c-pausa').checked=conf.pausa===true; document.getElementById('c-base').value=conf.base; document.getElementById('c-kmlim').value=conf.kmlim; document.getElementById('c-add').value=conf.add; document.getElementById('c-dinLojista').value=conf.dinLojista||5; document.getElementById('c-dinMoto').value=conf.dinMoto||3; document.getElementById('c-motoAte').value=conf.motoAte; document.getElementById('c-limMoto').value=conf.limMoto; document.getElementById('c-motoAcima').value=conf.motoAcima; document.getElementById('c-perc').value=conf.perc||0; renderLocais(); simular(); }
-function renderLocais(){ var cont=document.getElementById('listaLocais'); cont.innerHTML=''; for(var i=0;i<conf.locais.length;i++){ var div=document.createElement('div'); div.className='item'; div.textContent=conf.locais[i].nome+' R$'+conf.locais[i].taxa+' '; var b=document.createElement('button'); b.className='red'; b.textContent='x'; b.dataset.idx=i; b.addEventListener('click', function(e){ remLocal(Number(e.target.dataset.idx)); }); div.appendChild(b); cont.appendChild(div); } }
-function addLocal(){ var n=document.getElementById('c-nome').value.trim(); var t=Number(document.getElementById('c-taxa').value); if(!n||!t){ alert('Digite bairro e taxa'); return; } conf.locais.push({nome:n,taxa:t}); renderLocais(); document.getElementById('c-nome').value=''; document.getElementById('c-taxa').value=''; }
-function remLocal(i){ conf.locais.splice(i,1); renderLocais(); }
-function getConf(){ return {ativo:document.getElementById('c-ativo').checked, pausa:document.getElementById('c-pausa').checked, base:Number(document.getElementById('c-base').value||10), kmlim:Number(document.getElementById('c-kmlim').value||5), add:Number(document.getElementById('c-add').value||2), dinLojista:Number(document.getElementById('c-dinLojista').value||0), dinMoto:Number(document.getElementById('c-dinMoto').value||0), motoAte:Number(document.getElementById('c-motoAte').value||7.5), limMoto:Number(document.getElementById('c-limMoto').value||20), motoAcima:Number(document.getElementById('c-motoAcima').value||15), perc:Number(document.getElementById('c-perc').value||0), locais:conf.locais}; }
-function calc(km){ var c=getConf(); var baseCalc=c.base + (km>c.kmlim?(km-c.kmlim)*c.add:0); var loj,moto; if(!c.ativo){ loj=baseCalc; moto=loj < c.limMoto? c.motoAte : c.motoAcima;
+<div id="config" class="hidden">
+<div class="card" style="border:2px solid #D4AF37">
+<h3 style="color:#D4AF37;margin:0 0 10px">⚙️ CONFIG DINÂMICA - LIGA/DESLIGA</h3>
+<div class="linha"><span><b>🔥 DINÂMICA GERAL</b><br><span class="small">Desligado = cobra só R$ base</span></span><input type="checkbox" id="c-ativo" checked style="width:28px;height:28px"></div>
+<div class="linha"><span><b>⛔ PAUSAR SISTEMA</b><br><span class="small">Ligado = lojista não cria corrida</span></span><input type="checkbox" id="c-pausa" style="width:28px;height:28px"></div>
+<hr style="border-color:#333">
+Base até limite R$<input id="c-base" type="number" value="10">
+KM limite (sem extra)<input id="c-kmlim" type="number" value="5">
+Adicional por KM extra R$<input id="c-add" type="number" value="2">
+Moto recebe até limite R$<input id="c-motoAte" type="number" value="7.5">
+Limite valor pra mudar R$<input id="c-limMoto" type="number" value="20">
+Moto recebe acima limite R$<input id="c-motoAcima" type="number" value="15">
+% Retorno seu (lucro extra %)<input id="c-perc" type="number" value="0" min="0" max="50" oninput="simular()">
+<div style="background:#1a1500;border:1px solid #D4AF37;border-radius:10px;padding:10px;margin-top:10px">
+<b style="color:#D4AF37">🔥 VALOR DINÂMICA EXTRA</b>
+<div class="grid2"><div>Valor Dinâmica Lojista R$<input id="c-dinLojista" type="number" value="5" oninput="simular()"></div><div>Valor Dinâmica Moto R$<input id="c-dinMoto" type="number" value="3" oninput="simular()"></div></div>
+</div>
+<hr>
+<b>Local
