@@ -1,149 +1,37 @@
-<!DOCTYPE html>
-<html><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Anjos Flash</title>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Anjos Flash</title>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 <script src="config.js"></script>
-<style>
-body{background:#0A0A0A;color:#fff;font-family:Arial;padding:12px;margin:0}
-.card{background:#171717;border:1px solid #D4AF3733;border-radius:16px;padding:16px;margin:12px auto;max-width:420px}
-.input{width:94%;padding:14px;border-radius:12px;border:1px solid #D4AF3733;background:#1F1F1F;color:#fff;margin:6px 0;font-size:15px}
-.btn{background:#D4AF37;color:#000;font-weight:bold;padding:14px;border:none;border-radius:12px;width:100%;cursor:pointer;font-size:16px;margin-top:8px}
-.btn2{background:#222;color:#D4AF37;border:1px solid #D4AF37}
-h1{color:#D4AF37;text-align:center}
-label{color:#D4AF37;font-size:13px;font-weight:bold}
-#msg{margin-top:10px;color:#ffaa00;background:#222;padding:10px;border-radius:8px;display:none;white-space:pre-line}
-</style>
-</head>
-<body>
-<h1>ANJOS FLASH - TESTE</h1>
-
-<div class="card" id="boxLogin">
-<input id="email" class="input" placeholder="Email" value="">
-<input id="senha" class="input" type="password" placeholder="Senha (min 6)">
-<select id="tipoCadastro" class="input" onchange="mudarTipo()">
+<style>body{background:#0A0A0A;color:#fff;font-family:Arial;padding:12px;margin:0}.card{background:#171717;border:1px solid #D4AF3733;border-radius:16px;padding:16px;margin:12px auto;max-width:420px}.input{width:94%;padding:14px;border-radius:12px;border:1px solid #D4AF3733;background:#1F1F1F;color:#fff;margin:6px 0}.btn{background:#D4AF37;color:#000;font-weight:bold;padding:14px;border:none;border-radius:12px;width:100%;cursor:pointer;margin-top:8px}.btn2{background:#222;color:#D4AF37;border:1px solid #D4AF37}label{color:#D4AF37;font-size:13px;font-weight:bold}#msg{margin-top:10px;color:#ffaa00;background:#222;padding:10px;border-radius:8px;display:none;white-space:pre-line}</style>
+</head><body><h1 style="color:#D4AF37;text-align:center">ANJOS FLASH</h1>
+<div class="card">
+<input id="email" class="input" placeholder="Email">
+<input id="senha" class="input" type="password" placeholder="Senha min 6">
+<select id="tipoCadastro" class="input" onchange="document.getElementById('boxMotoboy').style.display=this.value=='lojista'?'none':'block'">
 <option value="lojista">🏪 Sou Lojista</option>
 <option value="motoboy">🏍️ Sou Motoboy</option>
-<option value="motorista">🚚 Sou Motorista (Fiorino/Caminhão/Carreta)</option>
+<option value="motorista">🚚 Sou Motorista</option>
 </select>
-
 <div id="boxMotoboy" style="display:none;border-top:1px solid #333;margin-top:10px;padding-top:10px">
-<label>Dados para aprovação no app - Lojista vai ver</label>
+<label>Dados para aprovação - só admin vê docs</label>
 <input id="nomeComp" class="input" placeholder="Nome completo">
-<input id="telefone" class="input" placeholder="Telefone zap ex: 22 99999-9999">
+<input id="telefone" class="input" placeholder="Telefone zap">
 <input id="endereco" class="input" placeholder="Endereço completo">
-<select id="tipoVeiculo" class="input">
-<option value="moto">Moto</option>
-<option value="utilitario">Utilitário Fiorino</option>
-<option value="caminhao">Caminhão 3/4</option>
-<option value="carreta">Carreta</option>
-</select>
-<input id="placa" class="input" placeholder="Placa do veículo">
-
-<label>📸 Selfie (rosto)</label>
-<input id="fileSelfie" type="file" accept="image/*" class="input">
-<label>🪪 CNH - foto ou PDF</label>
-<input id="fileCNH" type="file" accept="image/*,.pdf" class="input">
-<label>📄 CRLV do veículo - foto ou PDF</label>
-<input id="fileCRLV" type="file" accept="image/*,.pdf" class="input">
-<p style="font-size:11px;color:#aaa">Tem que enviar os 3 pra ser aprovado pelo admin e aparecer pro lojista.</p>
+<select id="tipoVeiculo" class="input"><option value="moto">Moto</option><option value="fiorino">Fiorino</option><option value="caminhao">Caminhão 3/4</option><option value="carreta">Carreta</option></select>
+<input id="placa" class="input" placeholder="Placa">
+<label>📸 Selfie (essa o lojista vai ver)</label><input id="fileSelfie" type="file" accept="image/*" class="input">
+<label>🪪 CNH foto</label><input id="fileCNH" type="file" accept="image/*" class="input">
+<label>📄 CRLV foto</label><input id="fileCRLV" type="file" accept="image/*" class="input">
 </div>
-
 <button class="btn" onclick="entrar()">ENTRAR</button>
 <button class="btn btn2" onclick="cadastrar()">CADASTRAR NOVO</button>
-<div id="msg"></div>
-</div>
-
+<div id="msg"></div></div>
 <script>
 firebase.initializeApp(firebaseConfig);
-const auth=firebase.auth(); const db=firebase.firestore(); const storage=firebase.storage();
-
-function mudarTipo(){
-  const t=document.getElementById("tipoCadastro").value;
-  document.getElementById("boxMotoboy").style.display = (t==="lojista"?"none":"block");
-}
-function showMsg(t){ const m=document.getElementById("msg"); m.style.display="block"; m.innerText=t; }
-
-async function uploadFile(file, path){
-  if(!file) return null;
-  const ref=storage.ref().child(path);
-  await ref.put(file);
-  return await ref.getDownloadURL();
-}
-
-async function entrar(){
-  const email=document.getElementById("email").value.trim().toLowerCase();
-  const senha=document.getElementById("senha").value.trim();
-  if(!email||!senha) return showMsg("Digite email e senha");
-  showMsg("Entrando...");
-  try{
-    await auth.signInWithEmailAndPassword(email,senha);
-    const doc=await db.collection("usuarios").doc(email).get();
-    if(!doc.exists) return showMsg("Usuário não está na coleção usuarios");
-    const d=doc.data(); const tipo=(d.tipo||"lojista").toLowerCase();
-    if((tipo==="motoboy"||tipo==="motorista") && d.status==="pendente"){
-      return showMsg("⏳ Seu cadastro de motoboy/motorista está em ANÁLISE.\nAdmin precisa aprovar seus documentos.\nAguarde liberação.");
-    }
-    if(tipo==="admin"||tipo==="super") location.href="admin.html";
-    else if(tipo==="franqueado") location.href="franqueado.html";
-    else if(tipo==="motoboy"||tipo==="motorista") location.href="motoboy.html";
-    else location.href="lojista.html";
-  }catch(e){ showMsg("Erro: "+e.message); }
-}
-
-async function cadastrar(){
-  const email=document.getElementById("email").value.trim().toLowerCase();
-  const senha=document.getElementById("senha").value.trim();
-  const tipo=document.getElementById("tipoCadastro").value;
-  if(!email||!senha) return showMsg("Email e senha");
-  if(senha.length<6) return showMsg("Senha min 6");
-  showMsg("Cadastrando... aguarde upload dos docs se for motoboy");
-
-  try{
-    await auth.createUserWithEmailAndPassword(email,senha);
-
-    if(tipo==="lojista"){
-      await db.collection("usuarios").doc(email).set({
-        email:email, tipo:"lojista", saldo:0, criadoEm:new Date(), status:"ativo"
-      },{merge:true});
-      showMsg("✅ Lojista cadastrado! Saldo R$0 - admin precisa colocar saldo. Clica ENTRAR");
-    } else {
-      const nome=document.getElementById("nomeComp").value.trim();
-      const tel=document.getElementById("telefone").value.trim();
-      const end=document.getElementById("endereco").value.trim();
-      const veic=document.getElementById("tipoVeiculo").value;
-      const placa=document.getElementById("placa").value.trim();
-      const fSelfie=document.getElementById("fileSelfie").files[0];
-      const fCNH=document.getElementById("fileCNH").files[0];
-      const fCRLV=document.getElementById("fileCRLV").files[0];
-
-      if(!nome||!tel||!end||!placa) return showMsg("Motoboy tem que preencher nome, telefone, endereço e placa");
-      if(!fSelfie||!fCNH||!fCRLV) return showMsg("Tem que mandar SELFIE, CNH e CRLV pra ser aprovado");
-
-      const urlSelfie=await uploadFile(fSelfie, `docs/${email}/selfie_${Date.now()}`);
-      const urlCNH=await uploadFile(fCNH, `docs/${email}/cnh_${Date.now()}`);
-      const urlCRLV=await uploadFile(fCRLV, `docs/${email}/crlv_${Date.now()}`);
-
-      const codigoMotoboy = String(Math.floor(1000+Math.random()*9000));
-
-      await db.collection("usuarios").doc(email).set({
-        email:email, nome:nome, nomeCompleto:nome, telefone:tel, endereco:end,
-        tipo:tipo, tipoVeiculo:veic, placa:placa,
-        selfieUrl:urlSelfie, cnhUrl:urlCNH, crlvUrl:urlCRLV,
-        codigoMotoboy:codigoMotoboy,
-        saldo:0, status:"pendente", criadoEm:new Date()
-      },{merge:true});
-
-      showMsg(`✅ ${tipo.toUpperCase()} #${codigoMotoboy} cadastrado!\n\nEnviou:\n- Selfie ✓\n- CNH ✓\n- CRLV ✓\n\nAgora está em ANÁLISE. Admin vai aprovar e você vai aparecer pro lojista ver seus docs.`);
-    }
-  }catch(e){
-    if(e.code==="auth/email-already-in-use") showMsg("Email já existe, clica ENTRAR");
-    else showMsg("Erro: "+e.message);
-  }
-}
-</script>
-</body>
-</html>
+const auth=firebase.auth(), db=firebase.firestore();
+function showMsg(t){let m=document.getElementById("msg");m.style.display="block";m.innerText=t}
+function fileToBase64(file){return new Promise((res,rej)=>{if(!file)return res(null);const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);})}
+async function entrar(){const email=document.getElementById("email").value.trim().toLowerCase(),senha=document.getElementById("senha").value.trim();if(!email||!senha)return showMsg("Email e senha");showMsg("Entrando...");try{await auth.signInWithEmailAndPassword(email,senha);const doc=await db.collection("usuarios").doc(email).get();if(!doc.exists)return showMsg("Sem cadastro usuarios");let d=doc.data(),tipo=(d.tipo||"lojista").toLowerCase();if((tipo=="motoboy"||tipo=="motorista")&&d.status=="pendente")return showMsg("⏳ Em ANÁLISE");if(tipo=="admin"||tipo=="super")location.href="super.html";else if(tipo=="motoboy"||tipo=="motorista")location.href="motoboy.html";else location.href="lojista.html";}catch(e){showMsg("Erro: "+e.message)}}
+async function cadastrar(){const email=document.getElementById("email").value.trim().toLowerCase(),senha=document.getElementById("senha").value.trim(),tipo=document.getElementById("tipoCadastro").value;if(!email||!senha)return showMsg("Email senha");showMsg("Cadastrando...");try{await auth.createUserWithEmailAndPassword(email,senha);if(tipo=="lojista"){await db.collection("usuarios").doc(email).set({email:email,tipo:"lojista",saldo:0,status:"ativo",criadoEm:new Date()},{merge:true});showMsg("✅ Lojista OK! Clica ENTRAR");return;}const nome=document.getElementById("nomeComp").value.trim(),tel=document.getElementById("telefone").value.trim(),end=document.getElementById("endereco").value.trim(),veic=document.getElementById("tipoVeiculo").value,placa=document.getElementById("placa").value.trim();if(!nome||!tel||!end||!placa)return showMsg("Preenche nome/tel/end/placa");let fS=document.getElementById("fileSelfie").files[0],fC=document.getElementById("fileCNH").files[0],fR=document.getElementById("fileCRLV").files[0];if(!fS||!fC||!fR)return showMsg("Manda os 3: Selfie, CNH, CRLV");showMsg("Salvando fotos...");let bS=await fileToBase64(fS),bC=await fileToBase64(fC),bR=await fileToBase64(fR);let cod=String(Math.floor(1000+Math.random()*9000));await db.collection("usuarios").doc(email).set({email:email,nome:nome,nomeCompleto:nome,telefone:tel,endereco:end,tipo:tipo,tipoVeiculo:veic,placa:placa,selfieBase64:bS,cnhBase64:bC,crlvBase64:bR,status:"pendente",codigoMotoboy:cod,saldo:0,criadoEm:new Date()},{merge:true});showMsg(`✅ ${tipo} #${cod} CADASTRADO! Em análise`);}catch(e){if(e.code=="auth/email-already-in-use")showMsg("Já existe, clica ENTRAR");else showMsg("Erro: "+e.message)}}
+</script></body></html>
