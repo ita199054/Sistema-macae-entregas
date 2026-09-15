@@ -1,13 +1,31 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Anjos Flash</title>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<style>
-:root{--gold:#D4AF37;--bg:#000;--card:#111}
-body{background:var(--bg);color:#fff;font-family:Arial;margin:0}
-header{background:#0a0a0a;border-bottom:2px solid var(--gold);padding:12px;display:flex;justify-content:space-between;align-items:center}
-.tabs{display:flex;gap:6px;overflow:auto;padding:10px;background:#0a0a0a}
-.tab{padding:10px 16px;border-radius:20px;border:1px solid var(--gold);background:#222;color:var(--gold);font-weight:900;cursor:pointer;white-space:nowrap}
-.tab.ativo{background:var(--gold);color:#000}
-.card{background:var(--card);border:1px solid #333;border-radius:12px;padding:12px;margin:10px}
-.item{background:#1a1a1a
+<style>body{background:#000;color:#fff;font-family:Arial;padding:10px}.card{background:#111;border:1px solid #D4AF37;padding:12px;border-radius:12px;margin-bottom:12px} button{padding:8px 12px;border:none;border-radius:8px;font-weight:900;margin:3px}.gold{background:#D4AF37;color:#000}.green{background:#0f0;color:#000}.red{background:#f33;color:#fff} input{padding:10px;background:#222;color:#fff;border:1px solid #444;border-radius:8px;width:95%;margin:4px 0}</style>
+</head><body>
+<h2 style="color:#D4AF37">👑 ADMIN - VOLTANDO AO QUE FUNCIONA</h2>
+<div id="status" class="card">Verificando...</div>
+<div class="card"><b>Saldo lojista rápido:</b><br><input id="emailAdd" placeholder="email lojista"><input id="valorAdd" type="number" placeholder="50"><button class="gold" onclick="addSaldo()">ADD SALDO</button><div id="msgAdd"></div></div>
+<div id="pendentes" class="card">Carregando motoboys...</div>
+<div id="corridas" class="card">Carregando corridas...</div>
+<script>
+var cfg={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.firebasestorage.app",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945"};
+firebase.initializeApp(cfg); var auth=firebase.auth(); var db=firebase.firestore();
+auth.onAuthStateChanged(function(u){
+  if(!u){ document.getElementById('status').innerHTML='NÃO LOGADO <a href=index.html style=color:#D4AF37>Login</a>'; return; }
+  document.getElementById('status').innerText='Logado: '+u.email;
+  db.collection('usuarios').onSnapshot(function(ss){
+    var h='<b>Motoboys:</b><br>'; var c=0; ss.forEach(function(d){ var u=d.data(); if((u.role||'').indexOf('motor')>=0){ c++; h+='<div style=background:#222;padding:8px;margin:4px;border-radius:8px>'+u.email+' COD:'+(u.codigoMotorista||'')+' '+(u.aprovado?'APROVADO':'PENDENTE')+' <button class=green onclick="aprovar(\''+d.id+'\','+!u.aprovado+')">'+(u.aprovado?'Desaprovar':'Aprovar')+'</button></div>'; } });
+    if(c==0) h+='Nenhum motoboy cadastrado ainda';
+    document.getElementById('pendentes').innerHTML=h;
+  }, function(e){ document.getElementById('pendentes').innerText='Erro: '+e.message; });
+  db.collection('corridas').limit(20).onSnapshot(function(ss){
+    var h='<b>Corridas:</b><br>'; ss.forEach(function(d){ var r=d.data(); h+='<div style=background:#222;padding:8px;margin:4px;border-radius:8px>'+(r.lojaNome||'?')+' -> '+(r.clienteEndereco||'?')+' R$'+(r.valorLojista||0)+' '+r.status+'</div>'; });
+    if(h=='<b>Corridas:</b><br>') h+='Sem corridas';
+    document.getElementById('corridas').innerHTML=h;
+  }, function(e){ document.getElementById('corridas').innerText='Erro corridas: '+e.message; });
+});
+async function aprovar(id,val){ await db.collection('usuarios').doc(id).update({aprovado:val}); }
+async function addSaldo(){ var email=document.getElementById('emailAdd').value.trim().toLowerCase(); var v=Number(document.getElementById('valorAdd').value); var q=await db.collection('usuarios').where('email','==',email).get(); if(q.empty) return document.getElementById('msgAdd').innerText='Não achado'; await db.collection('usuarios').doc(q.docs[0].id).update({saldo:(q.docs[0].data().saldo||0)+v}); document.getElementById('msgAdd').innerText='OK R$'+v; }
+</script></body></html>
