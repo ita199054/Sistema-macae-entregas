@@ -1,41 +1,8 @@
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, doc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { CONFIG_PADRAO, calcularCorrida, formatarMoeda } from "./config.js";
-
-const firebaseConfig = { apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44", authDomain:"anjos-flash.firebaseapp.com", projectId:"anjos-flash", storageBucket:"anjos-flash.firebasestorage.app", messagingSenderId:"725133182752", appId:"1:725133182752:web:5f9a98fa97269dcdcab945", measurementId:"G-9CSJXXNR0C" };
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app); const auth=getAuth(app);
-window.db=db; window.auth=auth;
-
-// SUA LÓGICA DE CRIAR CORRIDA - CORRIGIDA
-window.criarCorrida = async function(dados){
-  const uid=auth.currentUser.uid;
-  await runTransaction(db, async (transaction)=>{
-    const lojistaRef=doc(db,"usuarios",uid);
-    const lojistaSnap=await transaction.get(lojistaRef);
-    const lojista=lojistaSnap.data();
-    const calc=calcularCorrida(dados.km, dados.opcoes);
-    if(Number(lojista.saldo||0) < calc.valorLojista) throw new Error("SEM_SALDO");
-    
-    const corridaRef=doc(collection(db,"corridas"));
-    transaction.set(corridaRef, {
-      id: corridaRef.id,
-      lojaNome: dados.lojaNome, lojaEndereco: dados.lojaEndereco,
-      clienteEndereco: dados.clienteEndereco, clienteTelefone: dados.clienteTelefone,
-      km: Number(dados.km), tipoVeiculo: dados.tipoVeiculo,
-      motoboyDestino: (dados.codigoMotoboy||"TODOS").toUpperCase(),
-      codigoCliente: dados.codigoCliente,
-      opcoes: dados.opcoes,
-      valorLojista: calc.valorLojista, valorMotorista: calc.ganhoMotorista,
-      status: "PROCURANDO_MOTORISTA",
-      lojistaId: uid,
-      criadoEm: serverTimestamp()
-    });
-    transaction.update(lojistaRef, { saldo: Number((Number(lojista.saldo)-calc.valorLojista).toFixed(2)) });
-    const movRef=doc(collection(db,"movimentacoes"));
-    transaction.set(movRef, { usuarioId:uid, corridaId:corridaRef.id, tipo:"DEBITO", valor:calc.valorLojista, descricao:"Pagamento corrida", data:serverTimestamp() });
-  });
-};
-</script>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lojista</title><script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script><style>body{background:#000;color:#fff;font-family:Arial;padding:12px;margin:0}.card{background:#111;border:1px solid #D4AF37;padding:14px;border-radius:12px;margin-bottom:12px}input{width:100%;padding:12px;margin:6px 0;background:#222;color:#fff;border:1px solid #333;border-radius:8px;box-sizing:border-box}button{width:100%;padding:14px;border:none;border-radius:10px;font-weight:900} .gold{background:#D4AF37;color:#000}#saldo{color:#D4AF37;font-size:22px;font-weight:900}</style></head><body>
+<div class="card">Saldo: <span id="saldo">R$ 0,00</span> <button onclick="location.href='index.html'" style="width:auto;padding:4px 10px">Sair</button></div>
+<div class="card"><input id="lojaNome" placeholder="Loja"><input id="lojaEnd" placeholder="End Loja"><input id="cliEnd" placeholder="End Cliente"><input id="cliTel" placeholder="Tel Cliente"><input id="km" type="number" placeholder="KM"><input id="codigoMoto" placeholder="COD Moto ou TODOS"><div id="msg" style="color:yellow"></div><button class="gold" onclick="criar()">CRIAR R$10</button></div>
+<script>
+const cfg={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.firebasestorage.app",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945"};firebase.initializeApp(cfg);const auth=firebase.auth();const db=firebase.firestore();
+let meuUid=null,meuSaldo=0;auth.onAuthStateChanged(async u=>{if(!u)location.href="index.html";meuUid=u.uid;const s=await db.collection("usuarios").doc(u.uid).get();meuSaldo=s.data().saldo||0;document.getElementById("saldo").innerText="R$ "+meuSaldo.toFixed(2);document.getElementById("lojaNome").value=s.data().nome||"";});
+async function criar(){const n=document.getElementById("lojaNome").value,le=document.getElementById("lojaEnd").value,ce=document.getElementById("cliEnd").value,ct=document.getElementById("cliTel").value,km=Number(document.getElementById("km").value||0),cod=(document.getElementById("codigoMoto").value||"TODOS").toUpperCase();const valor=10+(km>5?(km-5)*2:0);if(!ce)return document.getElementById("msg").innerText="End cliente";if(meuSaldo<valor)return document.getElementById("msg").innerText="SEM SALDO PIX 22997450131";document.getElementById("msg").innerText="Criando...";try{await db.runTransaction(async t=>{const rl=db.collection("usuarios").doc(meuUid);const sl=await t.get(rl);if(sl.data().saldo<valor)throw"saldo";const rc=db.collection("corridas").doc();t.set(rc,{id:rc.id,lojaNome:n,lojaEndereco:le,clienteEndereco:ce,clienteTelefone:ct,km,tipoVeiculo:"moto",motoboyDestino:cod,valorLojista:valor,valorMotorista:valor>=20?15:7.5,status:"PROCURANDO_MOTORISTA",lojistaId:meuUid,criadoEm:firebase.firestore.FieldValue.serverTimestamp()});t.update(rl,{saldo:sl.data().saldo-valor});});document.getElementById("msg").innerText="CRIADA!";meuSaldo-=valor;document.getElementById("saldo").innerText="R$ "+meuSaldo.toFixed(2);}catch(e){document.getElementById("msg").innerText=e.toString();}}
+</script></body></html>
