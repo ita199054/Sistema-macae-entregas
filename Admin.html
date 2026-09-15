@@ -1,104 +1,30 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Master PRO - Anjos Flash</title>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin PRO MAX - Liga/Desliga</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<style>
-:root{--gold:#D4AF37;--bg:#000;--card:#111;--card2:#1a1a1a;--line:#2a2a2a}
-body{background:var(--bg);color:#fff;font-family:Inter,Arial;margin:0;padding:0}
-header{background:#0a0a0a;border-bottom:2px solid var(--gold);padding:14px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
-header h1{margin:0;color:var(--gold);font-size:20px}
-.tabs{display:flex;gap:6px;overflow:auto;padding:10px;background:#0a0a0a;border-bottom:1px solid var(--line)}
-.tab{padding:10px 16px;border-radius:20px;border:1px solid var(--gold);background:#222;color:var(--gold);font-weight:800;white-space:nowrap;cursor:pointer}
-.tab.active{background:var(--gold);color:#000}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
-.stat{background:var(--card);border:1px solid var(--gold);border-radius:12px;padding:14px}
-.stat b{color:var(--gold);font-size:12px;display:block}
-.stat span{font-size:22px;font-weight:900}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin:12px}
-.card h3{margin:0 0 10px;color:var(--gold);font-size:16px}
-.item{background:var(--card2);border:1px solid #333;border-left:4px solid var(--gold);border-radius:10px;padding:10px;margin-bottom:10px}
-input,select{width:100%;padding:12px;background:#222;color:#fff;border:1px solid #333;border-radius:10px;box-sizing:border-box;margin:6px 0}
-button{padding:10px 14px;border:none;border-radius:10px;font-weight:900;cursor:pointer;margin:2px}
-.gold{background:var(--gold);color:#000}.green{background:#0f0;color:#000}.red{background:#ff3333;color:#fff}.dark{background:#222;color:var(--gold);border:1px solid var(--gold)}
-.small{font-size:12px;color:#aaa}
-.badge{padding:3px 8px;border-radius:10px;font-size:11px;font-weight:900}
-.b-pend{background:#ffcc00;color:#000}.b-ok{background:#0f0;color:#000}.b-proc{background:#00ccff;color:#000}
-.hidden{display:none}
-</style>
-</head>
-<body>
-<header>
-<h1>👑 ANJOS FLASH - MASTER</h1>
-<div><span id="userEmail" class="small"></span> <button class="dark" onclick="location.href='index.html'">Sair</button></div>
-</header>
-
+<style>:root{--gold:#D4AF37;--bg:#000;--card:#111;--card2:#1a1a1a}body{background:var(--bg);color:#fff;font-family:Arial;margin:0}header{background:#0a0a0a;border-bottom:2px solid var(--gold);padding:12px;display:flex;justify-content:space-between;align-items:center}h1{margin:0;color:var(--gold);font-size:16px}.tabs{display:flex;gap:5px;overflow:auto;padding:8px;background:#0a0a0a;border-bottom:1px solid #333}.tab{padding:8px 14px;border-radius:20px;border:1px solid var(--gold);background:#222;color:var(--gold);font-weight:800;font-size:12px;white-space:nowrap}.tab.active{background:var(--gold);color:#000}.card{background:var(--card);border:1px solid #333;border-radius:12px;padding:12px;margin:10px}.item{background:var(--card2);border:1px solid #333;border-left:4px solid var(--gold);border-radius:10px;padding:10px;margin-bottom:8px}input,select{width:100%;padding:12px;background:#222;color:#fff;border:1px solid #333;border-radius:10px;margin:5px 0;box-sizing:border-box}button{padding:10px 14px;border:none;border-radius:8px;font-weight:900;margin:2px}.gold{background:var(--gold);color:#000}.green{background:#0f0;color:#000}.red{background:#f33;color:#fff}.dark{background:#222;color:var(--gold);border:1px solid var(--gold)}.small{font-size:11px;color:#aaa}.hidden{display:none}
+/* SWITCH LIGA DESLIGA */
+.switch{position:relative;display:inline-block;width:52px;height:28px}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#333;transition:.3s;border-radius:28px}.slider:before{position:absolute;content:"";height:22px;width:22px;left:3px;bottom:3px;background:#fff;transition:.3s;border-radius:50%}input:checked+.slider{background:var(--gold)}input:checked+.slider:before{transform:translateX(24px)} .row{display:flex;justify-content:space-between;align-items:center;margin:8px 0}
+</style></head><body>
+<header><h1>👑 ANJOS MASTER - LIGA/DESLIGA</h1><button class="dark" onclick="location.href='index.html'">Sair</button></header>
 <div class="tabs">
-<button class="tab active" onclick="showTab('dash')">📊 Dashboard</button>
-<button class="tab" onclick="showTab('motos')">🏍️ Motoboys</button>
-<button class="tab" onclick="showTab('lojas')">🏪 Lojistas</button>
-<button class="tab" onclick="showTab('corridas')">📦 Corridas</button>
-<button class="tab" onclick="showTab('fin')">💰 Financeiro</button>
+<button class="tab active" onclick="showTab(event,'dash')">📊 Dash</button>
+<button class="tab" onclick="showTab(event,'config')">⚙️ Local % Dinâmico</button>
+<button class="tab" onclick="showTab(event,'motos')">🏍️ Motos</button>
+<button class="tab" onclick="showTab(event,'lojas')">🏪 Lojas</button>
 </div>
+<div id="dash"><div class="card"><div class="row"><span>💰 Faturamento</span><b id="s-fat" style="color:var(--gold);font-size:20px">R$0</b></div><div class="row"><span>📈 Lucro Anjos</span><b id="s-lucro" style="color:#0f0;font-size:20px">R$0</b></div><div class="row"><span>📦 Hoje / Lojas / Motos</span><b id="s-counts">0 / 0 / 0</b></div></div><div class="card"><h3 style="color:var(--gold);margin:0">Simulador</h3><input id="simKM" type="number" placeholder="KM ex: 7" oninput="simular()"><div id="simRes" class="item" style="margin-top:8px">Digite KM</div></div></div>
 
-<div id="dash">
-<div class="stats">
-<div class="stat"><b>Faturamento Total</b><span id="s-fat">R$ 0</span></div>
-<div class="stat"><b>Corridas Hoje</b><span id="s-hoje">0</span></div>
-<div class="stat"><b>Lojistas</b><span id="s-lojas">0</span></div>
-<div class="stat"><b>Motoboys</b><span id="s-motos">0 / <small id="s-motos-ap">0 aprov</small></span></div>
-</div>
-<div class="card"><h3>Saldo Rápido Lojista</h3><input id="emailAdd" placeholder="email do lojista"><input id="valorAdd" type="number" placeholder="Valor ex: 50"><button class="gold" onclick="addSaldo()">ADD SALDO +</button><button class="red" onclick="addSaldoNeg()">REMOVER SALDO -</button><div id="msgAdd" style="color:#ffcc00;margin-top:8px"></div><div class="small">PIX Recarga: 22997450131 - Italo Rossi</div></div>
-<div class="card"><h3>Últimas Corridas</h3><div id="dash-corridas">Carregando...</div></div>
-</div>
+<div id="config" class="hidden">
+<div class="card" style="border:2px solid var(--gold)">
+<div class="row"><div><b style="color:var(--gold)">🔥 MODO DINÂMICO GERAL</b><br><span class="small">Liga/Desliga toda a taxa extra</span></div><label class="switch"><input type="checkbox" id="c-ativo" checked onchange="toggleGeral()"><span class="slider"></span></label></div>
+<div class="row"><div><b>⏸️ PAUSAR TODAS CORRIDAS</b><br><span class="small">Lojista não cria se ligado</span></div><label class="switch"><input type="checkbox" id="c-pausado" onchange="togglePausa()"><span class="slider"></span></label></div>
 
-<div id="motos" class="hidden">
-<div class="card"><h3>Filtro Motoboys</h3><select id="fMoto" onchange="renderMotos()"><option value="todos">Todos</option><option value="pend">Pendentes</option><option value="aprov">Aprovados</option></select><input id="buscaMoto" placeholder="Buscar email ou COD..." oninput="renderMotos()"></div>
-<div class="card"><h3>Motoboys</h3><div id="listaMotos">Carregando...</div></div>
-</div>
-
-<div id="lojas" class="hidden">
-<div class="card"><h3>Lojistas</h3><div id="listaLojas">Carregando...</div></div>
-</div>
-
-<div id="corridas" class="hidden">
-<div class="card"><h3>Filtro Corridas</h3><select id="fCorr" onchange="renderCorridas()"><option value="todos">Todas</option><option value="PROCURANDO_MOTORISTA">Procurando</option><option value="ACEITA">Aceitas</option><option value="ENTREGUE">Entregues</option></select></div>
-<div class="card"><h3>Corridas (100 últimas)</h3><div id="listaCorridas">Carregando...</div></div>
-</div>
-
-<div id="fin" class="hidden">
-<div class="card"><h3>Financeiro</h3><div class="small">Cada corrida: Lojista paga R$10 base + R$2/km após 5km. Motorista recebe R$7,50 até 19km e R$15 acima. Lucro Anjos = diferença.</div><div id="finResumo" style="margin-top:10px">Calculando...</div></div>
-<div class="card"><h3>Movimentações</h3><div id="listaMov">Carregando...</div></div>
-</div>
-
-<script>
-const cfg={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.firebasestorage.app",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945"};
-firebase.initializeApp(cfg); const auth=firebase.auth(); const db=firebase.firestore();
-
-let allMotos=[], allLojas=[], allCorridas=[], allMov=[];
-
-auth.onAuthStateChanged(u=>{
-  if(!u){location.href='index.html'; return;}
-  document.getElementById('userEmail').innerText=u.email;
-  if(u.email.toLowerCase()!=='italorossi.generali@gmail.com'){
-    db.collection('usuarios').doc(u.uid).get().then(s=>{
-      if(!s.exists || s.data().role!=='admin'){ alert('Sem permissão admin'); location.href='index.html'; }
-    });
-  }
-  start();
-});
-
-function showTab(id){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  event.target.classList.add('active');
-  ['dash','motos','lojas','corridas','fin'].forEach(x=>document.getElementById(x).classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-}
-
-function start(){
-  db.collection('usuarios').onSnapshot(ss=>{
-    allMotos=[]; allLojas=[];
-    ss.forEach(d=>{ const u={id:d.id, ...d.data()}; if(u.role
+<div id="configCampos" style="margin-top:14px">
+<b>Base Lojista (até limite)</b><input id="c-base" type="number" value="10">
+<b>KM Limite</b><input id="c-kmLimite" type="number" value="5">
+<b>Adicional por KM extra</b><input id="c-addKm" type="number" value="2">
+<b>Moto recebe até limite</b><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><input id="c-motoAte" type="number" value="7.5"><input id="c-limiteMoto" type="number" value="20"></div>
+<b>Moto recebe acima limite</b><input id="c-motoAcima" type="number" value="15">
+<b>% Retorno LOCAL (seu extra)</b><div class="row"><input id="c-perc" type="range" min="0" max="50" value="0" oninput="document.getElementById('percLabel').innerText=this.value+'%'; simular()"><span id="percLabel" style="color:var(--gold);font-weight:900">0%</span></div>
+<b>
