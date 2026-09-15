@@ -1,4 +1,39 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Saldo Loja</title><script src="https://cdn.tailwindcss.com"></script><script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script></head><body class="bg-gray-900 text-white p-2"><h1 class="text-yellow-400 font-bold">Lojas - Adicionar Saldo</h1><div id="l" class="mt-3"></div><script>
-const cfg={apiKey:"AIzaSy...",authDomain:"macae-entregas.firebaseapp.com",projectId:"macae-entregas"};firebase.initializeApp(cfg);const db=firebase.firestore();
-async function load(){const s=await db.collection("lojas").get();let h="";s.forEach(d=>{let x=d.data();h+=`<div class="bg-zinc-800 p-3 rounded mb-2"><b>${x.nomeFantasia||x.nome}</b><br>R$${x.saldo||0}<br><button onclick="add('${d.id}',10)" class="bg-green-500 px-3 py-1 rounded mr-1">+10</button><button onclick="add('${d.id}',50)" class="bg-green-600 px-3 py-1 rounded mr-1">+50</button><button onclick="add('${d.id}',100)" class="bg-yellow-500 px-3 py-1 rounded">+100</button><button onclick="zerar('${d.id}')" class="bg-red-600 px-3 py-1 rounded ml-2">Zerar</button></div>`});document.getElementById("l").innerHTML=h}async function add(id,v){await db.collection("lojas").doc(id).set({saldo:firebase.firestore.FieldValue.increment(v)},{merge:true});load()}async function zerar(id){if(confirm("Zerar?")){await db.collection("lojas").doc(id).set({saldo:0},{merge:true});load()}}load();
+<!DOCTYPE html><html><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Saldo Loja - FINAL</title>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="config.js"></script>
+<style>body{background:#0A0A0A;color:#fff;font-family:Arial;padding:12px}.card{background:#171717;border:1px solid #D4AF3733;border-radius:14px;padding:12px;margin:10px auto;max-width:500px} .btn{border:none;padding:10px 14px;border-radius:8px;font-weight:900;cursor:pointer;margin:2px} .g{background:#25D366;color:#fff} .y{background:#D4AF37;color:#000} .r{background:#ff4444;color:#fff} .b{background:#333;color:#fff} .input{background:#222;border:1px solid #D4AF37;color:#fff;padding:10px;border-radius:8px;width:90px}</style>
+</head><body>
+<h2 style="color:#D4AF37;text-align:center">💰 COLOCAR SALDO LOJISTA - FINAL</h2>
+<div id="lista"></div>
+<script>
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+db.collection("usuarios").where("tipo","==","lojista").onSnapshot(s=>{
+  let h="";
+  s.forEach(doc=>{
+    let u=doc.data();
+    let saldo = Number(u.saldo || 0);
+    h+=`<div class="card">
+      <b style="font-size:16px">${u.nomeLoja||u.nome||doc.id}</b><br>
+      <span style="font-size:12px;color:#aaa">${doc.id}</span><br>
+      Saldo: <b style="color:#D4AF37;font-size:22px">R$${saldo.toFixed(2)}</b><br><br>
+      <button class="btn g" onclick="add('${doc.id}',10)">+10 LOJA</button>
+      <button class="btn g" onclick="add('${doc.id}',50)">+50 LOJA</button>
+      <button class="btn y" onclick="add('${doc.id}',100)">+100 LOJA</button>
+      <button class="btn r" onclick="zerar('${doc.id}')">ZERAR LOJA</button>
+    </div>`;
+  });
+  document.getElementById("lista").innerHTML=h||"Nenhuma loja";
+});
+async function add(id,v){
+  await db.collection("usuarios").doc(id).update({saldo: firebase.firestore.FieldValue.increment(v)});
+}
+async function zerar(id){
+  if(confirm("Zerar?")){
+    await db.collection("usuarios").doc(id).update({saldo:0});
+  }
+}
 </script></body></html>
