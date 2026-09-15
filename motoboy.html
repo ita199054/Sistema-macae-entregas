@@ -1,21 +1,36 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DEBUG</title><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script><script src="config.js"></script></head><body style="background:#000;color:#fff;font-family:Arial;padding:15px">
-<h2 style="color:#D4AF37">DEBUG - TODAS CORRIDAS</h2>
-<div id="log">Conectando...</div>
-<div id="lista"></div>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Motoboy</title><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script><script src="config.js"></script><style>body{background:#000;color:#fff;font-family:Arial;padding:12px;max-width:500px;margin:auto}.box{border:1px solid #D4AF37;border-radius:16px;padding:12px;margin:10px 0}.btn{padding:12px;border:none;border-radius:10px;font-weight:900;width:100%;cursor:pointer;margin-top:6px}.amarelo{background:#D4AF37;color:#000}</style></head><body>
+<h1 style="color:#D4AF37">🏍️ MOTOBOY #<span id="cod">...</span></h1>
+<div id="disp">Carregando...</div>
 <script>
-firebase.initializeApp(firebaseConfig);const db=firebase.firestore();
-const log = m => document.getElementById("log").innerHTML += "<br>" + m;
-
-log("Firebase conectado...");
-db.collection("corridas").onSnapshot(s=>{
-  log("Snapshot retornou: "+s.size+" docs");
-  let h="";
-  s.forEach(d=>{
-    let x=d.data();
-    h+=`<div style="background:#222;padding:10px;margin:8px 0;border-radius:10px">ID:${d.id}<br>Loja:${x.nomeLoja}<br>Status:${x.status}<br>Destino field:${x.motoboyDestino}<br>Origem:${x.origem}<br><hr></div>`;
-  });
-  document.getElementById("lista").innerHTML = h || "ZERO corridas no banco - coleção corridas vazia ou Rules bloqueando";
-}, err=>{
-  log("ERRO: "+err.message);
+firebase.initializeApp(firebaseConfig);const db=firebase.firestore();let MEU_CODIGO="";
+firebase.auth().onAuthStateChanged(async u=>{
+ if(!u)return location.href="index.html";
+ const d=await db.collection("usuarios").doc(u.uid).get();
+ MEU_CODIGO=(d.data().codigoMotoboy||"").replace("#","").trim().toLowerCase();
+ document.getElementById("cod").innerText=MEU_CODIGO;
+ ouvir();
 });
+function ouvir(){
+ db.collection("corridas").where("status","==","pendente").onSnapshot(s=>{
+  let h="";
+  s.forEach(doc=>{
+   let x=doc.data();
+   let dest = (x.motoboyDestino || "").toString().replace("#","").trim().toLowerCase();
+   // SE NULL OU VAZIO = MOSTRA PRA TODOS
+   // SE TEM VALOR = SÓ MOSTRA SE FOR IGUAL AO MEU CÓDIGO
+   if(dest !== "" && dest !== MEU_CODIGO) return;
+   let tag = dest==="" ? "🌍 TODOS" : "🎯 SÓ PRA VOCÊ #"+dest.toUpperCase();
+   h+=`<div style="background:#222;padding:12px;border-radius:12px;margin:10px 0;border:1px solid #D4AF37">
+   <b>${x.nomeLoja||x.localizacao||"Loja"}</b> <small style="color:#D4AF37">${tag}</small><br>
+   De: ${x.origem||"-"}<br>Para: ${x.destino||"-"}<br>R$ ${x.valor}<br>
+   <button class="btn amarelo" onclick="aceitar('${doc.id}')">ACEITAR CORRIDA</button></div>`;
+  });
+  document.getElementById("disp").innerHTML = h || "Nenhuma corrida. Crie uma no lojista com campo # vazio = todos";
+ });
+}
+async function aceitar(id){
+ const uid=firebase.auth().currentUser.uid;
+ await db.collection("corridas").doc(id).update({status:"aceita",motoboyId:uid});
+ alert("Corrida aceita!");
+}
 </script></body></html>
