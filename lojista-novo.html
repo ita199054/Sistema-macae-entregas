@@ -616,4 +616,258 @@ window.dispararCorrida = async function(){
 
 };
 
+</script><!-- PARTE 4 — EXTRATO LOJISTA -->
+
+<script type="module">
+
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const db=window.db;
+const auth=window.auth;
+
+window.montarExtratoLojista = async function(){
+
+  const inicio =
+    DATA_90_DIAS();
+
+  const q=query(
+    collection(db,"movimentacoes"),
+    where(
+      "usuarioId",
+      "==",
+      auth.currentUser.uid
+    ),
+    where(
+      "tipo",
+      "==",
+      "DEBITO"
+    ),
+    orderBy(
+      "data",
+      "desc"
+    )
+  );
+
+  const snap=await getDocs(q);
+
+  let total=0;
+  let linhas=[];
+
+  snap.forEach(d=>{
+
+    const m=d.data();
+
+    if(!m.data)return;
+
+    const data=
+      typeof m.data.toDate==="function"
+      ?m.data.toDate()
+      :new Date(m.data);
+
+    if(data < inicio)return;
+
+    total += Number(m.valor||0);
+
+    linhas.push({
+
+      data:formatarData(m.data),
+
+      corrida:m.corridaId || "-",
+
+      valor:Number(m.valor||0)
+
+    });
+
+  });
+
+  return {linhas,total};
+
+};
+
+window.mostrarExtratoLojista=async function(){
+
+  const resultado =
+    await montarExtratoLojista();
+
+  let html=`
+
+    <div class="card">
+
+      <h3>
+        EXTRATO DOS ÚLTIMOS 90 DIAS
+      </h3>
+
+      <p>
+        Total gasto:
+        <b>
+          ${formatarMoeda(resultado.total)}
+        </b>
+      </p>
+
+      <table
+        style="
+        width:100%;
+        border-collapse:collapse;
+        ">
+
+        <tr>
+          <th>Data</th>
+          <th>Corrida</th>
+          <th>Valor</th>
+        </tr>
+
+  `;
+
+  resultado.linhas.forEach(l=>{
+
+    html += `
+
+      <tr>
+
+        <td>${l.data}</td>
+
+        <td>${l.corrida}</td>
+
+        <td>
+          ${formatarMoeda(l.valor)}
+        </td>
+
+      </tr>
+
+    `;
+
+  });
+
+  html += `
+
+      </table>
+
+    </div>
+
+  `;
+
+  $("extratoLojista").innerHTML =
+    html;
+
+};
+
+window.imprimirExtratoLojista=async function(){
+
+  const resultado =
+    await montarExtratoLojista();
+
+  let linhas="";
+
+  resultado.linhas.forEach(l=>{
+
+    linhas += `
+
+      <tr>
+
+        <td>${l.data}</td>
+
+        <td>${l.corrida}</td>
+
+        <td>${formatarMoeda(l.valor)}</td>
+
+      </tr>
+
+    `;
+
+  });
+
+  const janela =
+    window.open(
+      "",
+      "_blank"
+    );
+
+  janela.document.write(`
+
+    <html>
+
+    <head>
+
+      <title>
+        Extrato Lojista — 90 dias
+      </title>
+
+      <style>
+
+        body{
+          font-family:Arial;
+          padding:30px;
+        }
+
+        h1{
+          color:#b08d20;
+        }
+
+        table{
+          width:100%;
+          border-collapse:collapse;
+        }
+
+        th,td{
+          border:1px solid #999;
+          padding:8px;
+        }
+
+      </style>
+
+    </head>
+
+    <body>
+
+      <h1>
+        ANJOS EM DUAS RODAS
+      </h1>
+
+      <h2>
+        EXTRATO DO LOJISTA
+      </h2>
+
+      <p>
+        Período: últimos 90 dias
+      </p>
+
+      <table>
+
+        <tr>
+          <th>Data</th>
+          <th>Corrida</th>
+          <th>Valor pago</th>
+        </tr>
+
+        ${linhas}
+
+      </table>
+
+      <h3>
+        Total:
+        ${formatarMoeda(resultado.total)}
+      </h3>
+
+      <script>
+        window.onload=function(){
+          window.print();
+        };
+      <\/script>
+
+    </body>
+
+    </html>
+
+  `);
+
+  janela.document.close();
+
+};
+
 </script>
