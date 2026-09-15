@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lojista OSM</title>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lojista Automático OSM</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -10,156 +10,111 @@ header{background:#111;border-bottom:2px solid #D4AF37;padding:12px}
 .item{background:#1a1a1a;border-left:4px solid #D4AF37;padding:10px;margin:6px 0;border-radius:8px}
 input{width:100%;padding:11px;background:#222;color:#fff;border:1px solid #444;border-radius:10px;margin:4px 0;box-sizing:border-box}
 button{padding:12px;border:none;border-radius:10px;font-weight:900;cursor:pointer;width:100%;margin-top:6px}
-.gold{background:#D4AF37;color:#000}.dark{background:#333;color:#D4AF37}
+.gold{background:#D4AF37;color:#000}.dark{background:#333;color:#D4AF37}.green{background:#0f0;color:#000}
 .small{font-size:11px;color:#aaa}.hidden{display:none}
-#map{height:300px;border-radius:12px;border:2px solid #D4AF37}
+#map{height:320px;border-radius:12px;border:2px solid #D4AF37}
 #map2{height:340px;border-radius:12px;border:2px solid #D4AF37}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.topNome{color:#D4AF37;font-size:18px;font-weight:900;margin:0}
+.topNome{color:#D4AF37;font-size:18px;font-weight:900}
+.calcBox{background:#1a1a1a;border:2px solid #D4AF37;border-radius:10px;padding:10px;text-align:center;margin:8px 0}
 </style>
 <script>
-var map, markerCli;
-function initMap(){ map=L.map('map').setView([-22.3708,-41.7868],13); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map); map.on('click', async function(e){ setPin(e.latlng.lat,e.latlng.lng); try{ var r=await fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat='+e.latlng.lat+'&lon='+e.latlng.lng); var j=await r.json(); if(j.display_name) document.getElementById('enderecoCli').value=j.display_name; }catch(e){} }); }
-function setPin(lat,lng){ if(markerCli) map.removeLayer(markerCli); markerCli=L.marker([lat,lng],{draggable:true}).addTo(map).bindPopup('Cliente').openPopup(); document.getElementById('latCli').value=lat; document.getElementById('lngCli').value=lng; }
-function calcDist(a,b,c,d){ var R=6371; var dLat=(c-a)*Math.PI/180; var dLon=(d-b)*Math.PI/180; var x=Math.sin(dLat/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dLon/2)**2; return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x)); }
-async function buscarCEPCliente(v){ var cep=v.replace(/\D/g,''); if(cep.length!=8) return; try{ var r=await fetch('https://viacep.com.br/ws/'+cep+'/json/'); var j=await r.json(); if(!j.erro){ document.getElementById('ruaCli').value=j.logradouro; document.getElementById('bairroCli').value=j.bairro; var full=j.logradouro+', '+j.bairro+', '+j.localidade+'/'+j.uf; document.getElementById('enderecoCli').value=full; var g=await fetch('https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(full)); var gj=await g.json(); if(gj[0]){ setPin(parseFloat(gj[0].lat),parseFloat(gj[0].lon)); map.setView([gj[0].lat,gj[0].lon],16); } } }catch(e){} }
-async function buscarCEPLoja(v){ var cep=v.replace(/\D/g,''); if(cep.length!=8) return; try{ var r=await fetch('https://viacep.com.br/ws/'+cep+'/json/'); var j=await r.json(); if(!j.erro){ document.getElementById('lojaRua').value=j.logradouro; document.getElementById('lojaBairro').value=j.bairro; document.getElementById('lojaEndereco').value=j.logradouro+', '+j.bairro+', '+j.localidade+'/'+j.uf; } }catch(e){} }
+var map, markerLoja, markerCli, map2, mMoto, mCli, linha;
+var lojaLat=null, lojaLng=null;
+function initMap(){
+  map=L.map('map').setView([-22.3708,-41.7868],13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map);
+  map.on('click', async function(e){ setCliente(e.latlng.lat,e.latlng.lng,true); });
+}
+function setLoja(lat,lng){ lojaLat=lat; lojaLng=lng; if(markerLoja) map.removeLayer(markerLoja); markerLoja=L.marker([lat,lng],{icon:L.divIcon({html:'🏪',iconSize:[30,30],className:''})}).addTo(map).bindPopup('Sua Loja'); }
+function setCliente(lat,lng,buscaEnd){
+  if(markerCli) map.removeLayer(markerCli);
+  markerCli=L.marker([lat,lng],{draggable:true}).addTo(map).bindPopup('Cliente').openPopup();
+  document.getElementById('latCli').value=lat; document.getElementById('lngCli').value=lng;
+  if(buscaEnd){ fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat='+lat+'&lon='+lng).then(r=>r.json()).then(j=>{ if(j.display_name) document.getElementById('enderecoCli').value=j.display_name; calcularKMAutomatico(); }); } else { calcularKMAutomatico(); }
+  markerCli.on('dragend',function(ev){ var p=ev.target.getLatLng(); document.getElementById('latCli').value=p.lat; document.getElementById('lngCli').value=p.lng; calcularKMAutomatico(); });
+}
+async function calcularKMAutomatico(){
+  var latC=document.getElementById('latCli').value; var lngC=document.getElementById('lngCli').value;
+  if(!lojaLat||!latC){ document.getElementById('calcAuto').innerHTML='📍 Coloque endereço do cliente no mapa (loja já está salva)'; return; }
+  document.getElementById('calcAuto').innerHTML='⏳ Calculando KM automático OSM...';
+  try{
+    var url='https://router.project-osrm.org/route/v1/driving/'+lojaLng+','+lojaLat+';'+lngC+','+latC+'?overview=false';
+    var r=await fetch(url); var j=await r.json();
+    if(j.routes && j.routes[0]){
+      var distKm=j.routes[0].distance/1000; var durMin=Math.round(j.routes[0].duration/60);
+      var conf=window.confGlobal||{base:10,kmlim:5,add:2,perc:0};
+      var valor=conf.base + (distKm>conf.kmlim? (distKm-conf.kmlim)*conf.add : 0); valor=valor*(1+(conf.perc||0)/100);
+      document.getElementById('calcAuto').innerHTML='📏 <b>KM Automático: '+distKm.toFixed(2)+'km</b><br>⏱️ Tempo: '+durMin+'min<br>💰 <b style="color:#D4AF37">Valor: R$'+valor.toFixed(2)+'</b><br><span class="small">Loja (salva) até Cliente (mapa)</span>';
+      document.getElementById('kmCalc').value=distKm.toFixed(2); document.getElementById('valorCalc').value=valor.toFixed(2);
+      // desenha linha
+      if(linha) map.removeLayer(linha); linha=L.polyline([[lojaLat,lojaLng],[latC,lngC]],{color:'#D4AF37',weight:4,dashArray:'10,10'}).addTo(map); map.fitBounds(linha.getBounds(),{padding:[40,40]});
+    } else { document.getElementById('calcAuto').innerHTML='Erro rota, usando linha reta'; var d=calcHaversine(lojaLat,lojaLng,latC,lngC); document.getElementById('calcAuto').innerHTML='📏 KM reta: '+d.toFixed(2)+'km'; }
+  }catch(e){ var d=calcHaversine(lojaLat,lojaLng,latC,lngC); document.getElementById('calcAuto').innerHTML='📏 KM reta (sem internet rota): '+d.toFixed(2)+'km'; }
+}
+function calcHaversine(a,b,c,d){ var R=6371; var dLat=(c-a)*Math.PI/180; var dLon=(d-b)*Math.PI/180; var x=Math.sin(dLat/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dLon/2)**2; return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x)); }
+async function buscarCEPCliente(v){ var cep=v.replace(/\D/g,''); if(cep.length!=8) return; try{ var r=await fetch('https://viacep.com.br/ws/'+cep+'/json/'); var j=await r.json(); if(!j.erro){ document.getElementById('ruaCli').value=j.logradouro; document.getElementById('bairroCli').value=j.bairro; var full=j.logradouro+', '+j.bairro+', '+j.localidade; document.getElementById('enderecoCli').value=full; var g=await fetch('https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(full)); var gj=await g.json(); if(gj[0]){ setCliente(parseFloat(gj[0].lat),parseFloat(gj[0].lon),false); map.setView([gj[0].lat,gj[0].lon],16); } } }catch(e){} }
+async function buscarCEPLoja(v){ var cep=v.replace(/\D/g,''); if(cep.length!=8) return; try{ var r=await fetch('https://viacep.com.br/ws/'+cep+'/json/'); var j=await r.json(); if(!j.erro){ document.getElementById('lojaRua').value=j.logradouro; document.getElementById('lojaBairro').value=j.bairro; document.getElementById('lojaEndereco').value=j.logradouro+', '+j.bairro+', '+j.localidade+'/'+j.uf; var g=await fetch('https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(j.logradouro+', '+j.localidade)); var gj=await g.json(); if(gj[0]){ lojaLat=parseFloat(gj[0].lat); lojaLng=parseFloat(gj[0].lon); setLoja(lojaLat,lojaLng); } } }catch(e){} }
 </script>
 </head><body onload="initMap()">
 <header>
-<div style="display:flex;justify-content:space-between;align-items:center">
-<div><p id="topNomeLoja" class="topNome">Carregando loja...</p><span id="topEnderecoLoja" class="small">carregando endereço...</span><br><span id="userEmail" class="small"></span></div>
-<button onclick="location.href='index.html'" class="dark" style="width:auto;padding:8px 14px">Sair</button>
-</div>
+<div style="display:flex;justify-content:space-between"><div><p id="topNome" class="topNome">Carregando...</p><span id="topEnd" class="small"></span><br><span id="userEmail" class="small"></span></div><button onclick="location.href='index.html'" class="dark" style="width:auto">Sair</button></div>
 </header>
 
 <div class="card" style="border:2px solid #D4AF37">
-<h3 style="color:#D4AF37;margin:0 0 8px">🏪 Minha Loja - Salvo (pode editar)</h3>
-<div class="grid2"><div>Nome da Loja<input id="lojaNome" placeholder="Nome da sua loja"></div><div>Telefone<input id="lojaTel" placeholder="WhatsApp loja"></div></div>
-<div class="grid2"><div>CEP Loja<input id="lojaCep" placeholder="28000-000" onblur="buscarCEPLoja(this.value)"></div><div>Número<input id="lojaNumero" placeholder="123"></div></div>
-Rua Loja<input id="lojaRua" placeholder="Rua">
-Bairro Loja<input id="lojaBairro" placeholder="Bairro">
-Endereço completo Loja (salvo)<input id="lojaEndereco" placeholder="Endereço completo da loja">
-<button class="gold" onclick="salvarLoja()">💾 SALVAR DADOS DA LOJA</button>
-<div id="msgLoja" class="small" style="color:#0f0"></div>
+<h3 style="color:#D4AF37;margin:0">🏪 Minha Loja - Salva no topo (pode editar)</h3>
+<div class="grid2"><div>Nome<input id="lojaNome"></div><div>Tel<input id="lojaTel"></div></div>
+<div class="grid2"><div>CEP Loja<input id="lojaCep" onblur="buscarCEPLoja(this.value)"></div><div>Nº<input id="lojaNum"></div></div>
+Rua<input id="lojaRua">Bairro<input id="lojaBairro">Endereço completo salvo<input id="lojaEndereco">
+<button class="gold" onclick="salvarLoja()">💾 SALVAR LOJA (fica no topo)</button><div id="msgLoja" class="small"></div>
 </div>
 
-<div style="padding:8px;display:flex;gap:6px">
-<button id="b1" onclick="document.getElementById('aba-nova').classList.remove('hidden');document.getElementById('aba-lista').classList.add('hidden')" class="gold" style="width:auto;padding:10px 18px;border-radius:20px">➕ Nova Entrega</button>
-<button id="b2" onclick="document.getElementById('aba-nova').classList.add('hidden');document.getElementById('aba-lista').classList.remove('hidden')" class="dark" style="width:auto;padding:10px 18px;border-radius:20px;border:1px solid #D4AF37;color:#D4AF37">📦 Ao vivo + Mapa OSM</button>
-</div>
+<div style="padding:8px;display:flex;gap:6px"><button class="gold" style="width:auto;padding:10px 18px;border-radius:20px" onclick="document.getElementById('aba-nova').classList.remove('hidden');document.getElementById('aba-lista').classList.add('hidden')">➕ Nova Entrega</button><button class="dark" style="width:auto;padding:10px 18px;border-radius:20px;border:1px solid #D4AF37;color:#D4AF37" onclick="document.getElementById('aba-nova').classList.add('hidden');document.getElementById('aba-lista').classList.remove('hidden')">📦 Ver Moto Chegando</button></div>
 
 <div id="aba-nova">
 <div class="card" style="border:2px solid #D4AF37">
-<h3 style="color:#D4AF37;margin:0">Nova entrega - Endereço cliente + Mapa OSM</h3>
+<h3 style="color:#D4AF37;margin:0">📍 Onde colocar endereço do cliente? AQUI + MAPA OSM</h3>
+<span class="small">Loja já está no mapa 🏪 - Clique no mapa OSM onde o cliente mora OU digite CEP abaixo</span>
 <div id="map"></div>
-<div class="grid2"><div>CEP Cliente<input id="cepCli" placeholder="28000-000" onblur="buscarCEPCliente(this.value)"></div><div>Nº Cliente<input id="numeroCli" placeholder="123"></div></div>
-Rua Cliente<input id="ruaCli" placeholder="Auto CEP">
-Bairro Cliente<input id="bairroCli" placeholder="Auto CEP">
-Endereço completo cliente<input id="enderecoCli" placeholder="Clique no mapa ou digite">
+<div id="calcAuto" class="calcBox">📍 Aguardando endereço cliente - KM automático aqui</div>
+<input id="kmCalc" type="hidden"><input id="valorCalc" type="hidden">
+<div class="grid2"><div>CEP Cliente<input id="cepCli" onblur="buscarCEPCliente(this.value)" placeholder="28000-000"></div><div>Nº<input id="numCli" placeholder="123"></div></div>
+Rua Cliente<input id="ruaCli" placeholder="auto CEP">Bairro<input id="bairroCli" placeholder="auto">Endereço completo cliente (OSM)<input id="enderecoCli" placeholder="Clique no mapa ou digite aqui">
 <input id="latCli" type="hidden"><input id="lngCli" type="hidden">
-Cliente<input id="clienteNome" placeholder="Nome quem recebe">
-Whats Cliente<input id="clienteTel" placeholder="Telefone">
-<button class="gold" onclick="criarCorrida()">🚀 CRIAR ENTREGA</button>
-<div id="msgNova" class="small"></div>
+Nome quem recebe<input id="nomeCli" placeholder="Nome">Whats<input id="telCli" placeholder="WhatsApp">
+<button class="gold" onclick="criar()">🚀 CRIAR - KM AUTOMÁTICO</button><div id="msgNova" class="small"></div>
 </div>
 </div>
 
 <div id="aba-lista" class="hidden">
-<div class="card"><h3>Corridas</h3><div id="listaCorridas">Carregando...</div></div>
-<div class="card" style="border:2px solid #D4AF37"><h3 style="color:#D4AF37;margin:0">📍 Motoboy no mapa - KM e tempo</h3><div id="map2"></div><div id="infoMoto" class="item small">Clique em "Ver no mapa" numa corrida ACEITA</div></div>
+<div class="card"><div id="lista"></div></div>
+<div class="card" style="border:2px solid #D4AF37"><h3 style="color:#D4AF37;margin:0">🏍️ Onde lojista vê tempo e KM pro motoboy chegar? AQUI</h3><div id="map2"></div><div id="infoMoto" class="item">Clique em "Ver motoboy chegando" numa corrida ACEITA</div></div>
 </div>
 
 <script>
 var cfg={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.firebasestorage.app",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945"};
-firebase.initializeApp(cfg); var auth=firebase.auth(); var db=firebase.firestore();
-var map2, mMoto, mCli, linha;
+firebase.initializeApp(cfg); var auth=firebase.auth(); var db=firebase.firestore(); var confGlobal={base:10,kmlim:5,add:2,perc:0};
 auth.onAuthStateChanged(async function(u){
   if(!u){ location.href='index.html'; return; }
   document.getElementById('userEmail').innerText=u.email;
+  var confDoc=await db.collection('configuracoes').doc('valores').get(); if(confDoc.exists) confGlobal=confDoc.data();
   var doc=await db.collection('usuarios').doc(u.uid).get();
   if(doc.exists){
     var d=doc.data();
-    document.getElementById('topNomeLoja').innerText=d.nomeLoja||d.nome||'Minha Loja';
-    document.getElementById('topEnderecoLoja').innerText=d.endereco||d.enderecoLoja||'Sem endereço salvo';
-    document.getElementById('lojaNome').value=d.nomeLoja||d.nome||'';
-    document.getElementById('lojaTel').value=d.telefone||'';
-    document.getElementById('lojaCep').value=d.cepLoja||d.cep||'';
-    document.getElementById('lojaNumero').value=d.numeroLoja||d.numero||'';
-    document.getElementById('lojaRua').value=d.ruaLoja||d.rua||'';
-    document.getElementById('lojaBairro').value=d.bairroLoja||d.bairro||'';
-    document.getElementById('lojaEndereco').value=d.enderecoLoja||d.endereco||'';
+    document.getElementById('topNome').innerText=d.nomeLoja||d.nome||'Minha Loja';
+    document.getElementById('topEnd').innerText=d.enderecoLoja||d.endereco||'Sem endereço';
+    document.getElementById('lojaNome').value=d.nomeLoja||''; document.getElementById('lojaTel').value=d.telefone||''; document.getElementById('lojaCep').value=d.cepLoja||''; document.getElementById('lojaNum').value=d.numeroLoja||''; document.getElementById('lojaRua').value=d.ruaLoja||''; document.getElementById('lojaBairro').value=d.bairroLoja||''; document.getElementById('lojaEndereco').value=d.enderecoLoja||'';
+    if(d.latLoja&&d.lngLoja){ lojaLat=d.latLoja; lojaLng=d.lngLoja; setTimeout(function(){ setLoja(lojaLat,lojaLng); },800); }
+    else if(d.enderecoLoja){ var g=await fetch('https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(d.enderecoLoja)); var gj=await g.json(); if(gj[0]){ lojaLat=parseFloat(gj[0].lat); lojaLng=parseFloat(gj[0].lon); setTimeout(function(){ setLoja(lojaLat,lojaLng); },800); } }
   }
-  setTimeout(function(){ map2=L.map('map2').setView([-22.3708,-41.7868],13); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map2); },600);
-  escutarCorridas();
+  setTimeout(function(){ map2=L.map('map2').setView([lojaLat||-22.3708,lojaLng||-41.7868],13); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map2); },800);
+  escutar();
 });
 async function salvarLoja(){
-  var uid=auth.currentUser.uid;
-  await db.collection('usuarios').doc(uid).update({
-    nomeLoja: document.getElementById('lojaNome').value,
-    nome: document.getElementById('lojaNome').value,
-    telefone: document.getElementById('lojaTel').value,
-    cepLoja: document.getElementById('lojaCep').value,
-    numeroLoja: document.getElementById('lojaNumero').value,
-    ruaLoja: document.getElementById('lojaRua').value,
-    bairroLoja: document.getElementById('lojaBairro').value,
-    enderecoLoja: document.getElementById('lojaEndereco').value,
-    endereco: document.getElementById('lojaEndereco').value,
-    cep: document.getElementById('lojaCep').value
-  });
-  document.getElementById('topNomeLoja').innerText=document.getElementById('lojaNome').value;
-  document.getElementById('topEnderecoLoja').innerText=document.getElementById('lojaEndereco').value;
-  document.getElementById('msgLoja').innerText='✅ Loja salva! Nome e endereço no topo atualizados';
-  setTimeout(function(){ document.getElementById('msgLoja').innerText=''; },3000);
+  var lat=lojaLat, lng=lojaLng;
+  if(!lat){ try{ var g=await fetch('https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(document.getElementById('lojaEndereco').value)); var gj=await g.json(); if(gj[0]){ lat=parseFloat(gj[0].lat); lng=parseFloat(gj[0].lon); } }catch(e){} }
+  await db.collection('usuarios').doc(auth.currentUser.uid).update({nomeLoja:document.getElementById('lojaNome').value,nome:document.getElementById('lojaNome').value,telefone:document.getElementById('lojaTel').value,cepLoja:document.getElementById('lojaCep').value,numeroLoja:document.getElementById('lojaNum').value,ruaLoja:document.getElementById('lojaRua').value,bairroLoja:document.getElementById('lojaBairro').value,enderecoLoja:document.getElementById('lojaEndereco').value,endereco:document.getElementById('lojaEndereco').value,latLoja:lat,lngLoja:lng});
+  document.getElementById('topNome').innerText=document.getElementById('lojaNome').value; document.getElementById('topEnd').innerText=document.getElementById('lojaEndereco').value; lojaLat=lat; lojaLng=lng; setLoja(lat,lng); document.getElementById('msgLoja').innerText='✅ Salvo no topo!'; setTimeout(function(){document.getElementById('msgLoja').innerText='';},2000);
 }
-async function criarCorrida(){
-  var end=document.getElementById('enderecoCli').value.trim(); if(!end){ alert('Digite endereço cliente ou clique no mapa'); return; }
-  var lat=document.getElementById('latCli').value; var lng=document.getElementById('lngCli').value;
-  if(!lat){ try{ var g=await fetch('https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(end)); var gj=await g.json(); if(gj[0]){ lat=gj[0].lat; lng=gj[0].lon; } }catch(e){} }
-  var conf=(await db.collection('configuracoes').doc('valores').get()).data()||{base:10};
-  await db.collection('corridas').add({
-    lojaId: auth.currentUser.uid,
-    lojaEmail: auth.currentUser.email,
-    lojaNome: document.getElementById('lojaNome').value,
-    lojaEndereco: document.getElementById('lojaEndereco').value,
-    clienteEndereco: end + ' Nº ' + document.getElementById('numeroCli').value + ' CEP ' + document.getElementById('cepCli').value,
-    clienteNome: document.getElementById('clienteNome').value,
-    clienteTelefone: document.getElementById('clienteTel').value,
-    ruaCliente: document.getElementById('ruaCli').value,
-    bairroCliente: document.getElementById('bairroCli').value,
-    cepCliente: document.getElementById('cepCli').value,
-    latCliente: parseFloat(lat)||null,
-    lngCliente: parseFloat(lng)||null,
-    valorLojista: conf.base||10,
-    status:'PENDENTE',
-    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-  });
-  document.getElementById('msgNova').innerText='✅ Entrega criada!';
-  document.getElementById('enderecoCli').value='';
-}
-function escutarCorridas(){
-  db.collection('corridas').where('lojaId','==',auth.currentUser.uid).onSnapshot(function(ss){
-    var h=''; ss.forEach(function(d){ var c=d.data(); c.id=d.id;
-      var btn=c.status==='ACEITA'?'<button class="gold" onclick="verMoto(\''+c.id+'\')">📍 Ver motoboy - KM e tempo</button>':'';
-      h+='<div class="item"><b>'+(c.clienteNome||'Cliente')+'</b><br>'+c.clienteEndereco+'<br><span class="small">'+c.status+' R$'+(c.valorLojista||0)+'</span><br>'+btn+'</div>';
-    });
-    document.getElementById('listaCorridas').innerHTML=h||'Sem corridas';
-  });
-}
-function verMoto(id){
-  document.getElementById('aba-nova').classList.add('hidden'); document.getElementById('aba-lista').classList.remove('hidden');
-  db.collection('corridas').doc(id).get().then(function(dc){
-    var c=dc.data();
-    db.collection('usuarios').doc(c.motoId).onSnapshot(function(md){
-      if(!md.exists||!map2) return; var m=md.data(); if(!m.lat||!m.lng) return;
-      var dist=calcDist(m.lat,m.lng,c.latCliente,c.lngCliente); var tempo=Math.round(dist/28*60);
-      document.getElementById('infoMoto').innerHTML='🏍️ <b>'+(m.nome||m.email)+'</b> está a <b>'+dist.toFixed(2)+'km</b> - chega em <b>'+tempo+'min</b><br>📍 Cliente: '+c.clienteEndereco;
-      if(mMoto) map2.removeLayer(mMoto); if(mCli) map2.removeLayer(mCli); if(linha) map2.removeLayer(linha);
-      mMoto=L.marker([m.lat,m.lng],{icon:L.divIcon({html:'🏍️',iconSize:[30,30],className:''})}).addTo(map2);
-      mCli=L.marker([c.latCliente,c.lngCliente]).addTo(map2).bindPopup(c.clienteEndereco);
-      linha=L.polyline([[m.lat,m.lng],[c.latCliente,c.lngCliente]],{color:'#D4AF37',weight:5,dashArray:'10,10'}).addTo(map2);
-      map2.fitBounds(linha.getBounds(),{padding:[40,40]});
-    });
-  });
-}
-</script></body></html>
+async function criar(){
+  var end=document.getElementById('enderecoCli').value; if(!end){ alert('Coloque endereço cliente -
