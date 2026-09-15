@@ -2,22 +2,18 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<style>
-body{background:#000;color:#fff;font-family:Arial;margin:0}
-header{background:#111;border-bottom:2px solid #D4AF37;padding:12px;display:flex;justify-content:space-between;align-items:center}
-h1{color:#D4AF37;margin:0;font-size:16px}
-.tabs{display:flex;gap:6px;padding:10px;background:#111;overflow:auto}
-.tab{padding:10px 16px;border:1px solid #D4AF37;background:#222;color:#D4AF37;border-radius:20px;font-weight:900;cursor:pointer;white-space:nowrap}
-.tab.on{background:#D4AF37;color:#000}
-.card{background:#111;border:1px solid #333;border-radius:12px;padding:12px;margin:10px}
-.item{background:#1a1a1a;border-left:4px solid #D4AF37;padding:10px;margin:6px 0;border-radius:8px}
-input,select{width:100%;padding:11px;background:#222;color:#fff;border:1px solid #444;border-radius:10px;margin:5px 0;box-sizing:border-box}
-button{padding:10px 12px;border:none;border-radius:8px;font-weight:900;margin:2px;cursor:pointer}
-.gold{background:#D4AF37;color:#000}.green{background:#0f0;color:#000}.red{background:#f33;color:#fff}.dark{background:#333;color:#D4AF37}.blue{background:#0af;color:#000}
-.small{font-size:11px;color:#aaa}.hidden{display:none}
-.linha{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #222}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-</style></head><body>
+<style>body{background:#000;color:#fff;font-family:Arial;margin:0}header{background:#111;border-bottom:2px solid #D4AF37;padding:12px;display:flex;justify-content:space-between;align-items:center}h1{color:#D4AF37;margin:0;font-size:16px}.tabs{display:flex;gap:6px;padding:10px;background:#111;overflow:auto}.tab{padding:10px 16px;border:1px solid #D4AF37;background:#222;color:#D4AF37;border-radius:20px;font-weight:900;cursor:pointer;white-space:nowrap}.tab.on{background:#D4AF37;color:#000}.card{background:#111;border:1px solid #333;border-radius:12px;padding:12px;margin:10px}.item{background:#1a1a1a;border-left:4px solid #D4AF37;padding:10px;margin:6px 0;border-radius:8px}input,select{width:100%;padding:11px;background:#222;color:#fff;border:1px solid #444;border-radius:10px;margin:5px 0;box-sizing:border-box}button{padding:10px 12px;border:none;border-radius:8px;font-weight:900;margin:2px;cursor:pointer}.gold{background:#D4AF37;color:#000}.green{background:#0f0;color:#000}.red{background:#f33;color:#fff}.dark{background:#333;color:#D4AF37}.blue{background:#0af;color:#000}.small{font-size:11px;color:#aaa}.hidden{display:none}.linha{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #222}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}</style>
+<script>
+// BOTAO DEFINIDO PRIMEIRO - NUNCA TRAVA
+function abrirAba(id){
+  try{
+    var ids=['dash','config','motos','lojas','corridas'];
+    for(var k=0;k<ids.length;k++){ var a=document.getElementById(ids[k]); var b=document.getElementById('bt-'+ids[k]); if(a) a.classList.add('hidden'); if(b) b.classList.remove('on'); }
+    var c=document.getElementById(id); var d=document.getElementById('bt-'+id); if(c) c.classList.remove('hidden'); if(d) d.classList.add('on');
+  }catch(e){ alert('Erro aba: '+e.message); }
+}
+</script>
+</head><body>
 <header><h1>👑 ANJOS MASTER</h1><span id="userEmail" class="small"></span><button class="dark" onclick="location.href='index.html'">Sair</button></header>
 <div class="tabs">
 <button class="tab on" id="bt-dash" onclick="abrirAba('dash')">📊 Dash</button>
@@ -33,30 +29,93 @@ button{padding:10px 12px;border:none;border-radius:8px;font-weight:900;margin:2p
 </div>
 <div id="config" class="hidden">
 <div class="card" style="border:2px solid #D4AF37">
-<h3 style="color:#D4AF37;margin:0 0 10px">⚙️ CONFIG DINÂMICA - LIGA/DESLIGA</h3>
-<div class="linha"><span><b>🔥 DINÂMICA GERAL</b><br><span class="small">Desligado = cobra só R$ base</span></span><input type="checkbox" id="c-ativo" checked style="width:28px;height:28px"></div>
-<div class="linha"><span><b>⛔ PAUSAR SISTEMA</b><br><span class="small">Ligado = lojista não cria corrida</span></span><input type="checkbox" id="c-pausa" style="width:28px;height:28px"></div>
+<h3 style="color:#D4AF37;margin:0 0 10px">⚙️ CONFIG DINÂMICA</h3>
+<div class="linha"><span><b>🔥 DINÂMICA GERAL</b></span><input type="checkbox" id="c-ativo" checked style="width:28px;height:28px"></div>
+<div class="linha"><span><b>⛔ PAUSAR SISTEMA</b></span><input type="checkbox" id="c-pausa" style="width:28px;height:28px"></div>
 <hr style="border-color:#333">
 Base até limite R$<input id="c-base" type="number" value="10">
-KM limite (sem extra)<input id="c-kmlim" type="number" value="5">
+KM limite<input id="c-kmlim" type="number" value="5">
 Adicional por KM extra R$<input id="c-add" type="number" value="2">
-Moto recebe até limite R$<input id="c-motoAte" type="number" value="7.5">
+Moto até limite R$<input id="c-motoAte" type="number" value="7.5">
 Limite valor pra mudar R$<input id="c-limMoto" type="number" value="20">
-Moto recebe acima limite R$<input id="c-motoAcima" type="number" value="15">
-% Retorno seu (lucro extra %)<input id="c-perc" type="number" value="0" min="0" max="50" oninput="simular()">
+Moto acima limite R$<input id="c-motoAcima" type="number" value="15">
+% Retorno<input id="c-perc" type="number" value="0" oninput="simular()">
 <div class="grid2"><div>Valor Dinâmica Lojista R$<input id="c-dinLojista" type="number" value="5"></div><div>Valor Dinâmica Moto R$<input id="c-dinMoto" type="number" value="3"></div></div>
 <hr>
-<b>Local com taxa diferente</b>
+<b>Local diferente</b>
 <input id="c-nome" placeholder="Bairro ex: Imbetiba">
 <input id="c-taxa" type="number" placeholder="Taxa R$ ex: 12">
 <button class="gold" onclick="addLocal()">+ ADICIONAR LOCAL</button>
 <div id="listaLocais" style="margin-top:8px"></div>
-<button class="gold" style="width:100%;padding:14px;margin-top:12px" onclick="salvar()">💾 SALVAR - APLICA NA HORA</button>
+<button class="gold" style="width:100%;padding:14px;margin-top:12px" onclick="salvar()">💾 SALVAR</button>
 <div id="msg" style="color:#0f0;font-weight:900;margin-top:8px"></div>
 <div id="prev" class="item small"></div>
 </div>
 </div>
 <div id="motos" class="hidden"><div class="card"><h3>Motoboys</h3><div id="listaMotos">Carregando...</div></div></div>
 <div id="lojas" class="hidden">
-<div class="card"><h3>Lojistas + Saldo</h3><div id="listaLojas">Carregando...</div><div class="card"><input id="emailAdd" placeholder="email lojista"><input id="valorAdd" type="number" placeholder="50"><button class="gold" onclick="addSaldoEmail()">ADD SALDO</button><div id="msgAdd" class="small"></div></div></div>
-<div id="boxEditLoja" class="card hidden" style="border:2px solid #D4AF37"><h3 style="color:#D4AF37">✏️ EDITAR SUPER LOJA - SUPER + RETORNO</h3><input id="elId" type="hidden">Nome Loja<input id="elNome">Email<input id="elEmail">Endereço<input id="elEnd">Telefone<input id="elTel"><div class="grid2"><div>Saldo R$<input id="elSaldo" type="number"></div><div>Taxa Super Loja R$<input id="el
+<div class="card"><h3>Lojistas</h3><div id="listaLojas">Carregando...</div><div class="card"><input id="emailAdd" placeholder="email lojista"><input id="valorAdd" type="number" placeholder="50"><button class="gold" onclick="addSaldoEmail()">ADD SALDO</button><div id="msgAdd" class="small"></div></div></div>
+<div id="boxEditLoja" class="card hidden" style="border:2px solid #D4AF37"><h3 style="color:#D4AF37">✏️ EDITAR SUPER LOJA - SUPER + RETORNO</h3><input id="elId" type="hidden">Nome Loja<input id="elNome">Email<input id="elEmail">Endereço<input id="elEnd">Telefone<input id="elTel"><div class="grid2"><div>Saldo R$<input id="elSaldo" type="number"></div><div>Taxa Super Loja R$<input id="elTaxa" type="number"></div></div><div class="grid2"><div>Valor Dinâmica Lojista R$<input id="elDin" type="number"></div><div>% Retorno Loja<input id="elPerc" type="number"></div></div><div class="grid2"><button class="gold" onclick="salvarEditLoja()">💾 SALVAR SUPER LOJA</button><button class="dark" onclick="document.getElementById('boxEditLoja').classList.add('hidden')">Fechar</button></div></div>
+</div>
+<div id="corridas" class="hidden"><div class="card"><h3>Corridas</h3><div id="listaCorridas">Carregando...</div></div></div>
+<script>
+var allMotos=[], allLojas=[], allCorridas=[], conf={ativo:true, pausa:false, base:10, kmlim:5, add:2, motoAte:7.5, limMoto:20, motoAcima:15, perc:0, dinLojista:5, dinMoto:3, locais:[]};
+var db, auth;
+try{
+var cfg={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.firebasestorage.app",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945"};
+firebase.initializeApp(cfg); auth=firebase.auth(); db=firebase.firestore();
+auth.onAuthStateChanged(function(u){ if(!u){ location.href='index.html'; return; } try{document.getElementById('userEmail').innerText=u.email;}catch(e){} carregarConf(); iniciar(); });
+}catch(e){ console.log('Firebase erro mas botoes continuam: '+e.message); }
+async function carregarConf(){
+  try{ var d=await db.collection('configuracoes').doc('valores').get(); if(d.exists){ conf = Object.assign(conf, d.data()); } }catch(e){}
+  try{
+  document.getElementById('c-ativo').checked = conf.ativo!==false;
+  document.getElementById('c-pausa').checked = conf.pausa===true;
+  document.getElementById('c-base').value = conf.base;
+  document.getElementById('c-kmlim').value = conf.kmlim;
+  document.getElementById('c-add').value = conf.add;
+  document.getElementById('c-motoAte').value = conf.motoAte;
+  document.getElementById('c-limMoto').value = conf.limMoto;
+  document.getElementById('c-motoAcima').value = conf.motoAcima;
+  document.getElementById('c-perc').value = conf.perc||0;
+  document.getElementById('c-dinLojista').value = conf.dinLojista||5;
+  document.getElementById('c-dinMoto').value = conf.dinMoto||3;
+  renderLocais(); simular();
+  }catch(e){}
+}
+function renderLocais(){
+  var h=''; for(var i=0;i<conf.locais.length;i++){ var l=conf.locais[i]; h+='<div class="item">'+l.nome+' - R$'+l.taxa+' <button class="red" onclick="remLocal('+i+')">x</button></div>'; }
+  var el=document.getElementById('listaLocais'); if(el) el.innerHTML = h || '<span class="small">Nenhum local especial</span>';
+}
+function addLocal(){ var n=document.getElementById('c-nome').value.trim(); var t=Number(document.getElementById('c-taxa').value); if(!n||!t){ alert('Digite nome e taxa'); return; } conf.locais.push({nome:n, taxa:t}); renderLocais(); document.getElementById('c-nome').value=''; document.getElementById('c-taxa').value=''; }
+function remLocal(i){ conf.locais.splice(i,1); renderLocais(); }
+function getConf(){ return {ativo:document.getElementById('c-ativo').checked, pausa:document.getElementById('c-pausa').checked, base:Number(document.getElementById('c-base').value||10), kmlim:Number(document.getElementById('c-kmlim').value||5), add:Number(document.getElementById('c-add').value||2), motoAte:Number(document.getElementById('c-motoAte').value||7.5), limMoto:Number(document.getElementById('c-limMoto').value||20), motoAcima:Number(document.getElementById('c-motoAcima').value||15), perc:Number(document.getElementById('c-perc').value||0), dinLojista:Number(document.getElementById('c-dinLojista').value||5), dinMoto:Number(document.getElementById('c-dinMoto').value||3), locais:conf.locais}; }
+function calc(km){ var c=getConf(); var loj; if(!c.ativo){ loj=c.base; } else { loj=c.base + (km>c.kmlim? (km-c.kmlim)*c.add : 0); loj = loj * (1 + c.perc/100); } var moto = loj < c.limMoto? c.motoAte : c.motoAcima; return {loj:loj, moto:moto, lucro:loj-moto}; }
+function simular(){ try{ var km=Number(document.getElementById('simKM').value||0); var r=calc(km); var c=getConf(); document.getElementById('simRes').innerHTML='KM '+km+' | Lojista R$'+r.loj.toFixed(2)+' | Moto R$'+r.moto.toFixed(2)+' | Lucro R$'+r.lucro.toFixed(2)+' '+(c.ativo?'🟢ON':'🔴OFF'); document.getElementById('prev').innerText = c.pausa? '⛔ PAUSADO' : 'Dinamica Lojista +'+c.dinLojista+' Moto +'+c.dinMoto; }catch(e){} }
+async function salvar(){ var c=getConf(); await db.collection('configuracoes').doc('valores').set(c); conf=c; document.getElementById('msg').innerText='✅ SALVO!'; setTimeout(function(){ document.getElementById('msg').innerText=''; },3000); }
+function iniciar(){
+  if(!db) return;
+  db.collection('usuarios').onSnapshot(function(ss){
+    allMotos=[]; allLojas=[]; ss.forEach(function(d){ var u=d.data(); u.id=d.id; if((u.role||'').indexOf('motor')>=0) allMotos.push(u); if((u.role||'').indexOf('loj')>=0) allLojas.push(u); });
+    var hm=''; for(var i=0;i<allMotos.length;i++){ var m=allMotos[i]; hm+='<div class="item">'+m.email+' COD '+(m.codigoMotorista||'')+' '+(m.aprovado?'✅ APROVADO':'🟡 PENDENTE')+'<br><button class="green" onclick="aprovar(\''+m.id+'\','+!m.aprovado+')">'+(m.aprovado?'Desaprovar':'Aprovar')+'</button> <button class="red" onclick="delU(\''+m.id+'\')">X</button></div>'; }
+    var elM=document.getElementById('listaMotos'); if(elM) elM.innerHTML = hm || 'Nenhum motoboy';
+    var hl=''; for(var j=0;j<allLojas.length;j++){ var l=allLojas[j]; hl+='<div class="item">'+l.email+' - Saldo R$'+(l.saldo||0).toFixed(2)+' | Super R$'+(l.taxaFixa||10)+' Din R$'+(l.dinLojista||0)+' %'+(l.percLoja||0)+'<br><button class="gold" onclick="addS(\''+l.id+'\')">+Saldo</button> <button class="blue" onclick="editarLoja(\''+l.id+'\')">✏️ EDITAR SUPER LOJA</button></div>'; }
+    var elL=document.getElementById('listaLojas'); if(elL) elL.innerHTML = hl || 'Nenhum lojista';
+  });
+  db.collection('corridas').limit(50).onSnapshot(function(ss){
+    allCorridas=[]; ss.forEach(function(d){ var c=d.data(); c.id=d.id; allCorridas.push(c); });
+    var tot=0,luc=0,hoje=0; var hojeStr=new Date().toDateString(); for(var k=0;k<allCorridas.length;k++){ tot+=allCorridas[k].valorLojista||0; luc+=(allCorridas[k].valorLojista||0)-(allCorridas[k].valorMotorista||0); try{ if(allCorridas[k].criadoEm && allCorridas[k].criadoEm.toDate().toDateString()===hojeStr) hoje++; }catch(e){} }
+    var s1=document.getElementById('s-fat'); if(s1) s1.innerText='R$'+tot.toFixed(2); var s2=document.getElementById('s-lucro'); if(s2) s2.innerText='R$'+luc.toFixed(2); var s3=document.getElementById('s-cont'); if(s3) s3.innerText=hoje+'/'+allLojas.length+'/'+allMotos.length;
+    var h=''; for(var r=0;r<Math.min(15,allCorridas.length);r++){ var cr=allCorridas[r]; h+='<div class="item">'+(cr.lojaNome||'?')+' -> '+(cr.clienteEndereco||'?')+' R$'+(cr.valorLojista||0)+' '+cr.status+'<br><button class="dark" onclick="entregar(\''+cr.id+'\')">Entregue</button> <button class="red" onclick="delC(\''+cr.id+'\')">Apagar</button></div>'; }
+    var d1=document.getElementById('dash-corridas'); if(d1) d1.innerHTML = h || 'Sem corridas'; var d2=document.getElementById('listaCorridas'); if(d2) d2.innerHTML = h || 'Sem corridas';
+  });
+}
+async function aprovar(id,v){ await db.collection('usuarios').doc(id).update({aprovado:v}); }
+async function delU(id){ if(confirm('Excluir?')) await db.collection('usuarios').doc(id).delete(); }
+async function addS(id){ var v=Number(prompt('Valor saldo?')); if(!v) return; var s=await db.collection('usuarios').doc(id).get(); await db.collection('usuarios').doc(id).update({saldo:(s.data().saldo||0)+v}); }
+async function addSaldoEmail(){ var email=document.getElementById('emailAdd').value.trim().toLowerCase(); var v=Number(document.getElementById('valorAdd').value); if(!email||!v) return; var q=await db.collection('usuarios').where('email','==',email).get(); if(q.empty){ document.getElementById('msgAdd').innerText='Não achado'; return; } await db.collection('usuarios').doc(q.docs[0].id).update({saldo:(q.docs[0].data().saldo||0)+v}); document.getElementById('msgAdd').innerText='OK R$'+v; }
+async function entregar(id){ await db.collection('corridas').doc(id).update({status:'ENTREGUE'}); }
+async function delC(id){ if(confirm('Apagar corrida?')) await db.collection('corridas').doc(id).delete(); }
+function editarLoja(id){ var l=null; for(var j=0;j<allLojas.length;j++){ if(allLojas[j].id===id) l=allLojas[j]; } if(!l) return; document.getElementById('elId').value=l.id; document.getElementById('elNome').value=l.nomeLoja||l.nome||''; document.getElementById('elEmail').value=l.email||''; document.getElementById('elEnd').value=l.endereco||''; document.getElementById('elTel').value=l.telefone||''; document.getElementById('elSaldo').value=l.saldo||0; document.getElementById('elTaxa').value=l.taxaFixa||10; document.getElementById('elDin').value=l.dinLojista||''; document.getElementById('elPerc').value=l.percLoja||''; document.getElementById('boxEditLoja').classList.remove('hidden'); abrirAba('lojas'); window.scrollTo(0,document.getElementById('boxEditLoja').offsetTop); }
+async function salvarEditLoja(){ var id=document.getElementById('elId').value; await db.collection('usuarios').doc(id).update({nomeLoja:document.getElementById('elNome').value, nome:document.getElementById('elNome').value, email:document.getElementById('elEmail').value.toLowerCase(), endereco:document.getElementById('elEnd').value, telefone:document.getElementById('elTel').value, saldo:Number(document.getElementById('elSaldo').value||0), taxaFixa:Number(document.getElementById('elTaxa').value||10), dinLojista:Number(document.getElementById('elDin').value||0), percLoja:Number(document.getElementById('elPerc').value||0)}); alert('Super Loja salva! Super + Retorno editados'); document.getElementById('boxEditLoja').classList.add('hidden'); }
+</script></body></html>
