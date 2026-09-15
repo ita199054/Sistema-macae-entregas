@@ -1,130 +1,63 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin - Anjos Flash</title>
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SUPER - Admin / Franqueado</title>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="config.js"></script>
 <style>
-body{background:#0A0A0A;color:#fff;font-family:Arial;margin:0;padding:0}
-.top{background:#111;padding:12px;display:flex;justify-content:space-between;border-bottom:2px solid #D4AF37;position:sticky;top:0;z-index:10}
-.card{background:#171717;border:1px solid #2a2a2a;border-radius:18px;padding:14px;margin:12px auto;max-width:650px}
-.titulo{color:#D4AF37;font-weight:900;font-size:18px;margin-bottom:10px}
-.btn{border:none;padding:8px 12px;border-radius:8px;font-weight:900;cursor:pointer;margin:2px}
-.g{background:#25D366;color:#fff} .y{background:#D4AF37;color:#000} .r{background:#ff4444;color:#fff} .d{background:#333;color:#fff}
-.input{background:#222;border:1px solid #D4AF37;color:#fff;border-radius:8px;padding:8px}
+body{background:#0A0A0A;color:#fff;font-family:Arial;padding:12px;margin:0}
+.card{background:#171717;border:1px solid #D4AF3733;border-radius:16px;padding:14px;margin-bottom:12px}
+.input{background:#1F1F1F;border:1px solid #D4AF3733;border-radius:10px;padding:10px;color:#fff;margin:4px 0;width:95%}
+.btn{background:#D4AF37;color:#000;font-weight:bold;padding:8px 12px;border:none;border-radius:10px;cursor:pointer;margin:2px;font-size:12px}
+.btn-red{background:#ff4444;color:#fff}.btn-green{background:#00c851;color:#fff}
+.saldo{color:#D4AF37;font-weight:bold} h1,h2{color:#D4AF37} table{width:100%;border-collapse:collapse} th,td{padding:8px;border-bottom:1px solid #222;font-size:12px;text-align:left}
+.badge{background:#D4AF3733;color:#D4AF37;padding:4px 8px;border-radius:6px;font-size:11px}
 </style>
-</head><body>
-<div class="top"><b style="color:#D4AF37;font-size:22px">ADMIN</b><button class="btn r" onclick="firebase.auth().signOut().then(()=>location.href='index.html')">SAIR</button></div>
+</head>
+<body>
+<div style="display:flex;justify-content:space-between"><h1 id="titulo">SUPER</h1><button class="btn btn-red" onclick="firebase.auth().signOut().then(()=>location.href='index.html')">SAIR</button></div>
+<p style="font-size:11px">Logado: <span id="meuTipo" style="color:#D4AF37"></span> | PIX: 22997450131</p>
 
-<div class="card">
-<div class="titulo">💰 Financeiro</div>
-<div id="fin" style="font-size:13px">Carregando...</div>
-<input id="pixSaque" class="input" placeholder="PIX" style="width:150px"><button class="btn y" onclick="alert('Saque PIX '+document.getElementById('pixSaque').value)">SACAR</button>
+<div class="card" style="border:2px solid #D4AF37">
+💰 Devendo: <span id="totalLoja" class="saldo">R$0</span> | Lucro: <span id="meuLucro" class="saldo">R$0</span> | Moto p/ pagar: <span id="totalMoto" class="saldo">R$0</span><br>
+<button class="btn" style="width:100%" onclick="sacar()">SACAR PIX 22997450131</button>
 </div>
 
-<div class="card" style="border:2px solid #ff4444">
-<div class="titulo">🌧️ DINÂMICA - SÓ ADMIN / FRANQUEADO</div>
-Status: <span id="dinStatus">DESLIGADA</span> Valor R$ <input id="dinValor" class="input" style="width:50px" value="3">
-<button class="btn r" onclick="setDin(true)">LIGAR</button><button class="btn g" onclick="setDin(false)">DESLIGAR</button>
-</div>
+<div class="card"><h2>⏳ Pendentes - Aprovar com #0001</h2><div id="pendentes"></div></div>
 
-<div class="card">
-<div class="titulo">📍 PREÇO POR VEÍCULO</div>
-Cidade <input id="cfgCidade" class="input" value="macae" style="width:70px">
-<select id="cfgVeiculo" class="input"><option>moto</option><option>fiorino</option><option>caminhao</option><option>carreta</option></select>
-Base <input id="cfgBase" class="input" style="width:50px" value="10"> KM <input id="cfgKm" class="input" style="width:50px" value="2">
-<button class="btn y" onclick="salvarPreco()">SALVAR</button>
-<div id="listaPrecos" style="font-size:11px;color:#aaa;margin-top:6px"></div>
-</div>
+<div class="card"><h2>🏍️ Motoboys - Código #0001 + Saldo</h2><table><thead><tr><th>#</th><th>Nome / Veículo</th><th>Saldo</th><th>Ação</th></tr></thead><tbody id="listaMoto"></tbody></table></div>
 
-<div class="card">
-<div class="titulo">🛵 Motoboys</div>
-<div id="pendentes"></div><hr style="border-color:#222"><div id="ativos"></div>
-</div>
+<div class="card"><h2>🏪 Lojas - Saldo + Dono Franqueado</h2><table><thead><tr><th>Loja</th><th>Saldo</th><th>Dono</th><th>Ação</th></tr></thead><tbody id="listaLoja"></tbody></table></div>
 
-<div class="card">
-<div class="titulo">🏪 Lojas - Caixa endereço salvo + Saldo + Dono</div>
-<div style="display:flex;color:#aaa;font-size:12px;border-bottom:1px solid #333;padding:6px 0"><div style="flex:2">Loja / Endereço Caixa</div><div style="flex:1.5">Saldo</div><div style="flex:1">Dono Franqueado</div></div>
-<div id="listaLojas">Carregando lojas...</div>
-</div>
-
-<div class="card">
-<div class="titulo">📦 Últimos pedidos #0001 + Código entrega + Motoboy específico</div>
-<div id="listaPedidos"></div>
-</div>
+<div class="card"><h2>📦 Últimos pedidos #0001 + Código entrega</h2><div id="listaCorridas"></div></div>
 
 <script>
-firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore();
+firebase.initializeApp(firebaseConfig); const db=firebase.firestore(); const auth=firebase.auth();
+let MEU_TIPO="", MEU_EMAIL="";
+auth.onAuthStateChanged(async u=>{ if(!u) return location.href="index.html"; MEU_EMAIL=u.email.toLowerCase(); let d=await db.collection("usuarios").doc(MEU_EMAIL).get(); if(!d.exists) d=await db.collection("usuarios").doc(u.uid).get(); MEU_TIPO=(d.data().tipo||"").toLowerCase(); document.getElementById("meuTipo").innerText=MEU_TIPO.toUpperCase(); document.getElementById("titulo").innerText=MEU_TIPO=="admin"?"ADMIN":"FRANQUEADO"; if(MEU_TIPO!="admin" && MEU_TIPO!="franqueado" && MEU_TIPO!="super"){ alert("Só admin/franqueado"); location.href="index.html"; return; } carregarTudo(); });
 
-firebase.auth().onAuthStateChanged(u=>{ if(!u) location.href="index.html"; });
+async function carregarTudo(){
+ const pend=await db.collection("usuarios").where("status","==","pendente").get(); let hp=""; pend.forEach(doc=>{ const x=doc.data(); hp+=`<div style="border:1px solid #333;padding:6px;margin:3px">${x.nome||x.email} - ${x.tipo} <button class="btn" onclick="aprovar('${doc.id}')">Aprovar #0001</button> <button class="btn btn-red" onclick="reprovar('${doc.id}')">Reprovar</button></div>`; }); document.getElementById("pendentes").innerHTML=hp||"Nenhum pendente";
 
-async function loadDin(){ let d=await db.collection("config").doc("dinamica").get(); if(d.exists){ let v=d.data(); document.getElementById("dinStatus").innerText=(v.ligada?"🔴 LIGADA":"DESLIGADA")+" R$"+(v.valor||0); document.getElementById("dinValor").value=v.valor||0; } }
-async function setDin(liga){ let v=parseFloat(document.getElementById("dinValor").value)||0; await db.collection("config").doc("dinamica").set({ligada:liga,valor:v}); loadDin(); }
-async function salvarPreco(){ let cid=document.getElementById("cfgCidade").value.toLowerCase(); let vei=document.getElementById("cfgVeiculo").value; let base=parseFloat(document.getElementById("cfgBase").value); let km=parseFloat(document.getElementById("cfgKm").value); let o={}; o[vei]=base; o[vei+"_km"]=km; o.cidade=cid; await db.collection("config").doc("precos").set(o,{merge:true}); alert("Salvo "+vei); }
+ // MOTOBOY COM BOTÃO DE SALDO
+ const motos=await db.collection("usuarios").where("tipo","==","motoboy").get(); let totM=0, hm=""; motos.forEach(doc=>{ const x=doc.data(); totM+=(x.saldo||0); hm+=`<tr><td><b style="color:#D4AF37">#${x.codigoMotoboy||'0000'}</b></td><td>${x.nome||x.email}<br><span class="badge">${(x.veiculo||'moto').toUpperCase()}</span></td><td class="saldo">R$${(x.saldo||0).toFixed(2)}<br><button class="btn btn-green" onclick="alterarSaldo('${doc.id}',10)">+10</button><button class="btn btn-green" onclick="alterarSaldo('${doc.id}',50)">+50</button><br><button class="btn btn-red" onclick="alterarSaldo('${doc.id}',-10)">-10</button></td><td><input id="s_${doc.id}" style="width:50px;background:#222;color:#fff;border:1px solid #444;border-radius:6px;padding:4px" placeholder="R$"><br><button class="btn" onclick="salvaMoto('${doc.id}')">Salvar</button><br><button class="btn btn-red" style="font-size:9px;margin-top:4px" onclick="gerarCodigoMoto('${doc.id}')">Gerar #</button></td></tr>`; }); document.getElementById("listaMoto").innerHTML=hm; document.getElementById("totalMoto").innerText="R$"+totM.toFixed(2);
 
-// LOJAS - AQUI ESTÁ O BOTÃO QUE VC QUER
-function carregarLojas(){
- db.collection("usuarios").onSnapshot(snap=>{
-  let html="";
-  snap.forEach(doc=>{
-   let u=doc.data();
-   if(!String(u.tipo||"").toLowerCase().includes("loj")) return;
-   let saldo = Number(u.saldo ?? u.caixa ?? 0);
-   html+=`<div style="display:flex;align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid #222">
-     <div style="flex:2;font-size:13px"><b>${u.loja||u.nome||doc.id}</b><br>📦 ${u.endereco||"sem endereço"}<br><span style="color:#aaa">${u.cidade||"macaé"}</span></div>
-     <div style="flex:1.5">
-       <b style="color:#D4AF37;font-size:16px">R$${saldo.toFixed(2)}</b><br>
-       <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap">
-         <button class="btn g" onclick="alterarSaldo('${doc.id}',10)">+10</button>
-         <button class="btn g" onclick="alterarSaldo('${doc.id}',50)">+50</button>
-         <button class="btn r" onclick="alterarSaldo('${doc.id}',-10)">-10</button>
-       </div>
-       <div style="display:flex;gap:4px;margin-top:4px">
-         <input id="inp-${doc.id}" type="number" class="input" style="width:55px" placeholder="valor">
-         <button class="btn y" onclick="definirSaldo('${doc.id}')">Salvar</button>
-         <button class="btn d" onclick="definirSaldo('${doc.id}',0)">Zerar</button>
-       </div>
-     </div>
-     <div style="flex:1;font-size:12px">${u.donoFranqueado||"sem"}<br><button class="btn y" style="border-radius:20px;font-size:11px;margin-top:6px" onclick="vincular('${doc.id}')">Vincular</button></div>
-   </div>`;
-  });
-  document.getElementById("listaLojas").innerHTML=html||"Nenhuma loja";
- });
-}
-async function alterarSaldo(id, qtd){ await db.collection("usuarios").doc(id).update({saldo: firebase.firestore.FieldValue.increment(qtd), caixa: firebase.firestore.FieldValue.increment(qtd)}); }
-async function definirSaldo(id, forcar){ let v = forcar!=null ? forcar : parseFloat(document.getElementById("inp-"+id).value); if(isNaN(v)) return alert("Digite valor"); await db.collection("usuarios").doc(id).update({saldo:v, caixa:v}); }
-async function vincular(id){ let e=prompt("Email do franqueado dono:"); if(e) await db.collection("usuarios").doc(id).update({donoFranqueado:e.toLowerCase()}); }
+ // LOJA COM BOTÃO DE SALDO + DONO
+ const lojas=await db.collection("usuarios").where("tipo","==","lojista").get(); let totL=0, hl=""; lojas.forEach(doc=>{ const x=doc.data(); if(x.email=="super@macae.com") return; totL+=(x.saldo||0); hl+=`<tr><td><b>${x.nomeLoja||x.nome||doc.id}</b><br><span style="font-size:10px;color:#888">📦 ${x.enderecoLoja||x.endereco||'sem endereço'}<br>${x.cidade||''}</span></td><td class="saldo">R$${(x.saldo||0).toFixed(2)}<br><button class="btn btn-green" onclick="alterarSaldo('${doc.id}',10)">+10</button><button class="btn btn-green" onclick="alterarSaldo('${doc.id}',50)">+50</button><br><button class="btn btn-red" onclick="alterarSaldo('${doc.id}',-10)">-10</button></td><td style="font-size:11px;max-width:100px;word-break:break-all">${x.dono||'sem'}<br><button class="btn" style="font-size:10px;padding:4px 8px" onclick="vincularDono('${doc.id}','${x.email||doc.id}')">Vincular</button></td><td><input id="l_${doc.id}" style="width:45px;background:#222;color:#fff;border:1px solid #444;border-radius:6px;padding:4px" placeholder="R$"><br><button class="btn" onclick="salvaLoja('${doc.id}')">OK</button><br><button class="btn btn-red" style="font-size:9px;margin-top:4px" onclick="zerarLoja('${doc.id}')">Zerar</button></td></tr>`; }); document.getElementById("listaLoja").innerHTML=hl; document.getElementById("totalLoja").innerText="R$"+totL.toFixed(2); document.getElementById("meuLucro").innerText="R$"+(totL*0.2).toFixed(2);
 
-// PEDIDOS - LIBERA PRO MOTOBOY
-function carregarPedidos(){
- db.collection("pedidos").orderBy("criadoEm","desc").limit(20).onSnapshot(snap=>{
-  let h="";
-  snap.forEach(d=>{
-   let p=d.data();
-   h+=`<div style="border-bottom:1px solid #222;padding:8px 0;font-size:12px">
-   <b>#${d.id.slice(-4)} - ${p.loja||""} -> ${p.entrega||p.endereco||""} | ${p.tipoVeiculo||"moto"} | Código: ${p.numero||p.codigo||"-"} | 📢 ${p.status} | Motoboy: ${p.motoboyEmail||"-"}</b><br>
-   <div style="margin-top:6px">
-   <button class="btn g" onclick="mudarStatus('${d.id}','aberto')">Liberar p/ motoboy</button>
-   <button class="btn r" onclick="mudarStatus('${d.id}','cancelado')">Cancelar / Devolver</button>
-   </div></div>`;
-  });
-  document.getElementById("listaPedidos").innerHTML=h||"Nenhum pedido";
- });
-}
-async function mudarStatus(id, novo){
- if(novo=="cancelado"){
-   let doc=await db.collection("pedidos").doc(id).get(); let p=doc.data();
-   if(p.lojaEmail) await db.collection("usuarios").doc(p.lojaEmail).update({saldo: firebase.firestore.FieldValue.increment(p.valor||10)});
- }
- await db.collection("pedidos").doc(id).update({status:novo, cidade:"macae"});
+ const corridas=await db.collection("corridas").orderBy("criadoEm","desc").limit(20).get(); let hc=""; corridas.forEach(doc=>{ const x=doc.data(); hc+=`<div style="border-bottom:1px solid #222;padding:6px;font-size:12px"><b>${x.numero||'#0001'}</b> - ${x.nomeLoja||''} -> ${x.destino||''} | Código: <b>${x.codigoEntrega||'----'}</b> | ${x.status||''}</div>`; }); document.getElementById("listaCorridas").innerHTML=hc||"Nenhum pedido";
 }
 
-// MOTOBOYS
-function carregarMotos(){
- db.collection("usuarios").where("status","==","pendente").onSnapshot(s=>{let h="<b>⏳ Pendentes ("+s.size+")</b><br>"; s.forEach(d=>{let u=d.data(); if((u.tipo||"").includes("moto")) h+=`<div style="background:#222;padding:8px;border-radius:8px;margin:4px 0">${u.nome} ${u.email} <button class="btn g" onclick="db.collection('usuarios').doc('${d.id}').update({status:'ativo'})">Aprovar</button></div>`}); document.getElementById("pendentes").innerHTML=h;});
- db.collection("usuarios").where("status","==","ativo").onSnapshot(s=>{let h="<b>✅ Ativos ("+s.size+")</b><br>"; s.forEach(d=>{let u=d.data(); if((u.tipo||"").includes("moto")) h+=`<div style="background:#222;padding:8px;border-radius:8px;margin:4px 0">${u.nome} #${u.codigoMotoboy||""}</div>`}); document.getElementById("ativos").innerHTML=h;});
-}
-
-loadDin(); carregarLojas(); carregarPedidos(); carregarMotos();
+async function alterarSaldo(id,qtd){ await db.collection("usuarios").doc(id).update({saldo: firebase.firestore.FieldValue.increment(qtd)}); carregarTudo(); }
+async function salvaMoto(id){ let v=parseFloat(document.getElementById("s_"+id).value); if(!isNaN(v)){ await db.collection("usuarios").doc(id).update({saldo:v}); carregarTudo(); } }
+async function salvaLoja(id){ let v=parseFloat(document.getElementById("l_"+id).value); if(!isNaN(v)){ await db.collection("usuarios").doc(id).update({saldo:v}); carregarTudo(); } }
+async function aprovar(id){ const counterRef=db.collection("config").doc("contadorMotoboys"); const num=await db.runTransaction(async t=>{ const doc=await t.get(counterRef); let n=1; if(doc.exists) n=(doc.data().ultimo||0)+1; t.set(counterRef,{ultimo:n},{merge:true}); return n; }); const codigo=String(num).padStart(4,'0'); await db.collection("usuarios").doc(id).update({status:"aprovado",codigoMotoboy:codigo}); alert("Aprovado #"+codigo); carregarTudo(); }
+async function reprovar(id){ await db.collection("usuarios").doc(id).update({status:"reprovado"}); carregarTudo(); }
+async function gerarCodigoMoto(id){ const counterRef=db.collection("config").doc("contadorMotoboys"); const num=await db.runTransaction(async t=>{ const doc=await t.get(counterRef); let n=1; if(doc.exists) n=(doc.data().ultimo||0)+1; t.set(counterRef,{ultimo:n},{merge:true}); return n; }); const codigo=String(num).padStart(4,'0'); await db.collection("usuarios").doc(id).update({codigoMotoboy:codigo}); alert("Novo código #"+codigo); carregarTudo(); }
+async function zerarLoja(id){ if(confirm("Zerar saldo da loja?")){ await db.collection("usuarios").doc(id).update({saldo:0}); carregarTudo(); } }
+async function vincularDono(idLoja,emailLoja){ const emailFranq=prompt("Email franqueado dono de "+emailLoja+":",""); if(!emailFranq) return; await db.collection("usuarios").doc(idLoja).update({dono:emailFranq.toLowerCase()}); const fr=await db.collection("usuarios").doc(emailFranq.toLowerCase()).get(); let lojas=fr.exists?(fr.data().lojas||[]):[]; if(!lojas.includes(emailLoja)) lojas.push(emailLoja); await db.collection("usuarios").doc(emailFranq.toLowerCase()).set({email:emailFranq.toLowerCase(),tipo:"franqueado",lojas:lojas,status:"aprovado"},{merge:true}); alert("Vinculado"); carregarTudo(); }
+async function sacar(){ await db.collection("saques").add({pix:"22997450131",valor:document.getElementById("meuLucro").innerText,por:MEU_EMAIL,criadoEm:new Date()}); alert("Saque solicitado"); }
 </script>
-</body></html>
+</body>
+</html>
