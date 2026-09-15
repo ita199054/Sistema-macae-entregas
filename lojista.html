@@ -1,138 +1,41 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lojista - Anjos Flash</title>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script src="config.js"></script>
-<style>
-body{background:#0A0A0A;color:#fff;font-family:Arial;margin:0}
-.top{background:#111;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #D4AF37;position:sticky;top:0;z-index:10}
-.card{background:#171717;border:1px solid #FFFFFF0D;border-radius:16px;padding:16px;margin:12px auto;max-width:560px}
-.input{width:100%;box-sizing:border-box;padding:14px;border-radius:12px;border:1px solid #D4AF3733;background:#1F1F1F;color:#fff;margin:6px 0;outline:none}
-.btn{background:#D4AF37;color:#000;font-weight:900;padding:15px;border:none;border-radius:12px;width:100%;cursor:pointer}
-.btnZap{background:#25D366;color:#fff;font-size:16px}
-.btn:disabled{background:#333;color:#777}
-.numBox{font-size:38px;font-weight:900;color:#D4AF37;letter-spacing:3px;text-align:center;background:#111;border:2px dashed #D4AF37;border-radius:16px;padding:18px;margin:12px 0}
-.badge{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:900}
-.b-aberto{background:#FFA50022;color:#FFA500}.b-aceito{background:#25D36622;color:#25D366}
-</style></head><body>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, doc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { CONFIG_PADRAO, calcularCorrida, formatarMoeda } from "./config.js";
 
-<!-- TOPO COM SAIR -->
-<div class="top">
-  <b style="color:#D4AF37">⚡ ANJOS FLASH</b>
-  <div style="display:flex;gap:10px;align-items:center">
-    <div style="text-align:right"><div style="font-size:10px;color:#888">SALDO</div><b id="saldo" style="color:#D4AF37;font-size:18px">R$ 0,00</b></div>
-    <button onclick="sair()" style="background:#ff4444;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-weight:900;cursor:pointer">SAIR</button>
-  </div>
-</div>
+const firebaseConfig = { apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44", authDomain:"anjos-flash.firebaseapp.com", projectId:"anjos-flash", storageBucket:"anjos-flash.firebasestorage.app", messagingSenderId:"725133182752", appId:"1:725133182752:web:5f9a98fa97269dcdcab945", measurementId:"G-9CSJXXNR0C" };
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app); const auth=getAuth(app);
+window.db=db; window.auth=auth;
 
-<div style="max-width:560px;margin:0 auto;padding:8px">
-<div class="card">
-<input id="nomeLoja" class="input" placeholder="Nome da loja (fica salvo)" onblur="salvarLoja()">
-<input id="coleta" class="input" placeholder="📍 Endereço coleta (fica salvo)" onblur="salvarLoja()">
-
-<div style="display:flex;gap:8px;margin:8px 0">
-<label style="flex:1;background:#1F1F1F;border:1px solid #333;border-radius:12px;padding:12px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="retorno" onchange="calcPreco()"> <span style="font-size:13px">Retorno</span></label>
-<label style="flex:1;background:#1F1F1F;border:1px solid #333;border-radius:12px;padding:12px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="super" onchange="calcPreco()"> <span style="font-size:13px">Super</span></label>
-</div>
-
-<input id="entrega" class="input" placeholder="🏁 Endereço entrega cliente">
-<div style="display:flex;gap:8px">
-<input id="nomeCliente" class="input" placeholder="Nome cliente">
-<input id="telCliente" class="input" placeholder="Zap cliente" value="22999999999">
-</div>
-
-<input id="codigoMotoboy" class="input" placeholder="Motoboy #0001? deixe vazio = qualquer" style="border-color:#25D36655">
-
-<div id="boxPreco" style="background:#1F1F1F;border:1px dashed #D4AF37;border-radius:12px;padding:12px;margin:8px 0;display:none">
-<div style="display:flex;justify-content:space-between;font-size:13px"><span>Corrida:</span><b id="vBase">R$ 15.00</b></div>
-<div style="display:flex;justify-content:space-between"><span style="color:#D4AF37;font-weight:bold">VOCÊ PAGA:</span><b id="vTotal" style="color:#D4AF37;font-size:20px">R$ 15.00</b></div>
-<div id="kmInfo" style="font-size:11px;color:#888">2.5 km • 15 min</div>
-</div>
-
-<div id="msg" style="text-align:center;margin:8px 0;font-weight:bold;color:#ff4444">❌ SEM SALDO! Tem R$0.00 precisa R$15.00</div>
-
-<button id="btnChamar" class="btn" onclick="pedir()">SEM SALDO</button>
-
-<!-- LOCAL ONDE APARECE O CÓDIGO PARA ENVIAR PRO CLIENTE -->
-<div id="boxCodigo" style="display:none;background:#0f1f15;border:2px solid #25D366;border-radius:16px;padding:14px;margin-top:14px;text-align:center">
-<div style="color:#25D366;font-weight:900;font-size:14px">✅ PEDIDO CRIADO!</div>
-<div class="numBox" id="numeroEntrega">#AF00000</div>
-<div style="color:#aaa;font-size:12px;margin-bottom:10px">Esse é o código que o cliente vai usar</div>
-<button class="btn btnZap" onclick="enviarZap()">📲 ENVIAR CÓDIGO PARA CLIENTE NO ZAP</button>
-<button class="btn" style="background:#222;color:#fff;margin-top:8px" onclick="copiarNumero()">📋 COPIAR CÓDIGO</button>
-<input id="textoZap" class="input" readonly style="font-size:11px;text-align:center;margin-top:8px;color:#25D366">
-</div>
-
-</div>
-
-<div class="card"><h3 style="color:#D4AF37;margin:0 0 10px 0">📦 Meus Pedidos</h3><div id="lista">Carregando...</div></div>
-</div>
-
-<script>
-firebase.initializeApp(firebaseConfig);
-const auth=firebase.auth(), db=firebase.firestore();
-let meuEmail="", saldo=0, TABELA={moto:15,fiorino:35,caminhao:80,carreta:150}, DIN=0, ultimoPedido="", ultimoTel="", dist=2.5;
-
-function sair(){ auth.signOut().then(()=>location.href="index.html"); }
-
-auth.onAuthStateChanged(async u=>{
-  if(!u){ location.href="index.html"; return; }
-  meuEmail=u.email.toLowerCase();
-  try{
-    let doc=await db.collection("usuarios").doc(meuEmail).get();
-    if(doc.exists){ let d=doc.data(); saldo=d.saldo||0; if(d.loja) document.getElementById("nomeLoja").value=d.loja; if(d.endereco) document.getElementById("coleta").value=d.endereco; document.getElementById("saldo").innerText="R$ "+saldo.toFixed(2); }
-    let cfg=await db.collection("config").doc("precos").get(); if(cfg.exists){ let c=cfg.data(); TABELA={moto:c.moto||15,fiorino:c.fiorino||35,caminhao:c.caminhao||80,carreta:c.carreta||150}; DIN=c.dinamica||0; }
-  }catch(e){ saldo=0; }
-  calcPreco(); carregar();
-});
-
-function salvarLoja(){ let loja=document.getElementById("nomeLoja").value.trim(); let end=document.getElementById("coleta").value.trim(); if(loja||end) db.collection("usuarios").doc(meuEmail).set({loja:loja,nome:loja,endereco:end},{merge:true}); }
-
-function calcPreco(){
-  let tipo="moto"; // fixo moto por enquanto igual sua tela
-  let base=TABELA[tipo]||15; let total=base+DIN;
-  if(document.getElementById("retorno").checked) total=total*1.5;
-  if(document.getElementById("super").checked) total+=10;
-  document.getElementById("boxPreco").style.display="block";
-  document.getElementById("vBase").innerText="R$ "+base.toFixed(2);
-  document.getElementById("vTotal").innerText="R$ "+total.toFixed(2) + (document.getElementById("retorno").checked?" (RETORNO)":"");
-  let msg=document.getElementById("msg"), btn=document.getElementById("btnChamar");
-  if(saldo<total){ msg.style.color="#ff4444"; msg.innerText="❌ SEM SALDO! Tem R$"+saldo.toFixed(2)+" precisa R$"+total.toFixed(2); btn.disabled=true; btn.innerText="SEM SALDO"; btn.style.background="#333"; btn.style.color="#777"; }
-  else { msg.style.color="#25D366"; msg.innerText="✅ Saldo OK"; btn.disabled=false; btn.innerText="CHAMAR MOTOBOY AGORA"; btn.style.background="#D4AF37"; btn.style.color="#000"; }
-  return total;
-}
-
-async function pedir(){
-  let total=calcPreco(); if(saldo<total) return alert("SEM SALDO! Fale com admin para recarregar.");
-  let loja=document.getElementById("nomeLoja").value.trim(); let col=document.getElementById("coleta").value.trim(); let ent=document.getElementById("entrega").value.trim();
-  if(!loja||!col||!ent) return alert("Preenche loja, coleta e entrega");
-  let codigoPref=document.getElementById("codigoMotoboy").value.trim().replace("#","").replace(/\D/g,""); if(codigoPref) codigoPref=codigoPref.padStart(4,"0");
-  let numeroEntrega="AF"+Math.floor(10000+Math.random()*90000); ultimoPedido=numeroEntrega; ultimoTel=document.getElementById("telCliente").value.trim();
-  salvarLoja();
-  document.getElementById("btnChamar").innerText="ENVIANDO..."; document.getElementById("btnChamar").disabled=true;
-  await db.collection("pedidos").add({numero:numeroEntrega, lojista:meuEmail, loja:loja, coleta:col, entrega:ent, cliente:document.getElementById("nomeCliente").value, telCliente:ultimoTel, tipoVeiculo:"moto", retorno:document.getElementById("retorno").checked, super:document.getElementById("super").checked, motoboyPreferido:codigoPref||null, valor:total, status:"aberto", criadoEm:firebase.firestore.FieldValue.serverTimestamp()});
-  await db.collection("usuarios").doc(meuEmail).update({saldo:firebase.firestore.FieldValue.increment(-total)});
-  saldo-=total; document.getElementById("saldo").innerText="R$ "+saldo.toFixed(2);
-  document.getElementById("numeroEntrega").innerText="#"+numeroEntrega;
-  document.getElementById("textoZap").value="Seu pedido "+numeroEntrega+" da loja "+loja+" está a caminho! Código: "+numeroEntrega;
-  document.getElementById("boxCodigo").style.display="block";
-  document.getElementById("entrega").value=""; calcPreco(); window.scrollTo(0,0);
-}
-
-function enviarZap(){
-  if(!ultimoTel) ultimoTel=prompt("Zap do cliente:"); if(!ultimoTel) return;
-  let tel=ultimoTel.replace(/\D/g,""); if(!tel.startsWith("55")) tel="55"+tel;
-  let loja=document.getElementById("nomeLoja").value;
-  let msg=`Olá! Seu pedido *${ultimoPedido}* da loja *${loja}* está a caminho! 🚀\n\n📦 Código de entrega: *${ultimoPedido}*\n🏍️ Motoboy ANJOS FLASH acionado\n\nMostre esse código pro motoboy na entrega!`;
-  window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`,"_blank");
-}
-function copiarNumero(){ navigator.clipboard.writeText(ultimoPedido); alert("Código "+ultimoPedido+" copiado!"); }
-
-function carregar(){
-  db.collection("pedidos").where("lojista","==",meuEmail).orderBy("criadoEm","desc").limit(20).onSnapshot(snap=>{
-    let h=""; snap.forEach(d=>{ let p=d.data();
-      h+=`<div style="border-bottom:1px solid #222;padding:10px 0"><div style="display:flex;justify-content:space-between"><b>${p.numero||''} ${p.loja}</b><span class="badge ${p.status=="aceito"?"b-aceito":"b-aberto"}">${p.status}</span></div><div style="font-size:12px;color:#aaa">${p.coleta} → ${p.entrega} • R$ ${p.valor?.toFixed(2)}</div><button onclick="ultimoPedido='${p.numero}';ultimoTel='${p.telCliente||''}';enviarZap()" style="margin-top:6px;background:#25D366;color:#fff;border:none;padding:6px 10px;border-radius:6px">📲 ENVIAR CÓDIGO ${p.numero}</button></div>`;
-    }); document.getElementById("lista").innerHTML=h||"Nenhum pedido";
+// SUA LÓGICA DE CRIAR CORRIDA - CORRIGIDA
+window.criarCorrida = async function(dados){
+  const uid=auth.currentUser.uid;
+  await runTransaction(db, async (transaction)=>{
+    const lojistaRef=doc(db,"usuarios",uid);
+    const lojistaSnap=await transaction.get(lojistaRef);
+    const lojista=lojistaSnap.data();
+    const calc=calcularCorrida(dados.km, dados.opcoes);
+    if(Number(lojista.saldo||0) < calc.valorLojista) throw new Error("SEM_SALDO");
+    
+    const corridaRef=doc(collection(db,"corridas"));
+    transaction.set(corridaRef, {
+      id: corridaRef.id,
+      lojaNome: dados.lojaNome, lojaEndereco: dados.lojaEndereco,
+      clienteEndereco: dados.clienteEndereco, clienteTelefone: dados.clienteTelefone,
+      km: Number(dados.km), tipoVeiculo: dados.tipoVeiculo,
+      motoboyDestino: (dados.codigoMotoboy||"TODOS").toUpperCase(),
+      codigoCliente: dados.codigoCliente,
+      opcoes: dados.opcoes,
+      valorLojista: calc.valorLojista, valorMotorista: calc.ganhoMotorista,
+      status: "PROCURANDO_MOTORISTA",
+      lojistaId: uid,
+      criadoEm: serverTimestamp()
+    });
+    transaction.update(lojistaRef, { saldo: Number((Number(lojista.saldo)-calc.valorLojista).toFixed(2)) });
+    const movRef=doc(collection(db,"movimentacoes"));
+    transaction.set(movRef, { usuarioId:uid, corridaId:corridaRef.id, tipo:"DEBITO", valor:calc.valorLojista, descricao:"Pagamento corrida", data:serverTimestamp() });
   });
-}
-</script></body></html>
+};
+</script>
