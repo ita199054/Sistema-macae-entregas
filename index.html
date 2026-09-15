@@ -1,64 +1,85 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Anjos Flash</title>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script src="config.js"></script>
-<style>body{background:#0A0A0A;color:#fff;font-family:Arial;padding:12px;margin:0}.card{background:#171717;border:1px solid #D4AF3733;border-radius:16px;padding:16px;margin:12px auto;max-width:420px}.input{width:94%;padding:14px;border-radius:12px;border:1px solid #D4AF3733;background:#1F1F1F;color:#fff;margin:6px 0}.btn{background:#D4AF37;color:#000;font-weight:bold;padding:14px;border:none;border-radius:12px;width:100%;cursor:pointer;margin-top:8px}.btn2{background:#222;color:#D4AF37;border:1px solid #D4AF37}#msg{margin-top:10px;color:#ffaa00;background:#222;padding:10px;border-radius:8px;display:none;white-space:pre-line}</style>
-</head><body><h1 style="color:#D4AF37;text-align:center">ANJOS FLASH</h1>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Anjos Flash - Login</title>
+<style>
+body{background:#000;color:#fff;font-family:Arial;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
+.card{background:#111;border:1px solid #D4AF37;padding:20px;border-radius:16px;width:90%;max-width:400px}
+h1{color:#D4AF37;text-align:center}
+input,select{width:100%;padding:14px;margin:8px 0;background:#222;color:#fff;border:1px solid #333;border-radius:10px;box-sizing:border-box}
+button{width:100%;padding:14px;border:none;border-radius:10px;font-weight:900;margin-top:8px}
+.gold{background:#D4AF37;color:#000}.dark{background:#222;color:#D4AF37;border:1px solid #D4AF37}
+#msg{color:#ffcc00;margin-top:10px;font-size:14px}
+</style>
+</head>
+<body>
 <div class="card">
-<input id="email" class="input" placeholder="Email">
-<input id="senha" class="input" type="password" placeholder="Senha min 6">
-<select id="tipoCadastro" class="input"><option value="lojista">🏪 Sou Lojista</option><option value="motoboy">🏍️ Motoboy</option><option value="motorista">🚚 Motorista</option></select>
-<div id="boxMotoboy" style="display:none;border-top:1px solid #333;margin-top:10px;padding-top:10px">
-<input id="nomeComp" class="input" placeholder="Nome"><input id="telefone" class="input" placeholder="Telefone"><input id="endereco" class="input" placeholder="Endereço"><select id="tipoVeiculo" class="input"><option value="moto">Moto</option><option value="fiorino">Fiorino</option><option value="caminhao">Caminhão</option></select><input id="placa" class="input" placeholder="Placa"><label>📸 Selfie (lojista vê)</label><input id="fileSelfie" type="file" accept="image/*" class="input"><label>🪪 CNH</label><input id="fileCNH" type="file" accept="image/*" class="input"><label>📄 CRLV</label><input id="fileCRLV" type="file" accept="image/*" class="input"></div>
-<button class="btn" onclick="entrar()">ENTRAR</button><button class="btn btn2" onclick="cadastrar()">CADASTRAR</button><div id="msg"></div></div>
-<script>
-firebase.initializeApp(firebaseConfig);
-const auth=firebase.auth(), db=firebase.firestore();
-document.getElementById("tipoCadastro").addEventListener("change",function(){document.getElementById("boxMotoboy").style.display=this.value=='lojista'?'none':'block'});
-function showMsg(t){let m=document.getElementById("msg");m.style.display="block";m.innerText=t}
-function fileToBase64(f){return new Promise((r,j)=>{if(!f)return r(null);let rd=new FileReader();rd.onload=()=>r(rd.result);rd.onerror=j;rd.readAsDataURL(f);})}
+<h1>ANJOS FLASH</h1>
+<input id="email" type="email" placeholder="Email">
+<input id="senha" type="password" placeholder="Senha">
+<select id="tipo"><option value="lojista">🏪 Sou Lojista</option><option value="motorista">🏍️ Sou Motorista</option><option value="admin">👑 Admin</option></select>
+<button class="gold" id="btnEntrar">ENTRAR</button>
+<button class="dark" id="btnCad">CADASTRAR</button>
+<div id="msg"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
+  authDomain: "anjos-flash.firebaseapp.com",
+  projectId: "anjos-flash",
+  storageBucket: "anjos-flash.firebasestorage.app",
+  messagingSenderId: "725133182752",
+  appId: "1:725133182752:web:5f9a98fa97269dcdcab945",
+  measurementId: "G-9CSJXXNR0C"
+};
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+window.db=db; window.auth=auth;
+
+const $=id=>document.getElementById(id);
+const mostrar=m=>$("msg").innerText=m;
+
 async function entrar(){
-  let email=document.getElementById("email").value.trim().toLowerCase(), senha=document.getElementById("senha").value.trim();
-  if(!email||!senha)return showMsg("Email e senha"); showMsg("Entrando...");
+  const e=$("email").value.trim(); const s=$("senha").value;
+  if(!e||!s) return mostrar("Digite email e senha");
   try{
-    await auth.signInWithEmailAndPassword(email,senha);
-    // TENTA POR ID
-    let doc=await db.collection("usuarios").doc(email).get();
-    // SE NÃO ACHA POR ID, PROCURA POR CAMPO email
-    if(!doc.exists){
-      let q=await db.collection("usuarios").where("email","==",email).limit(1).get();
-      if(!q.empty) doc=q.docs[0];
-    }
-    // SE É SUPER E NÃO EXISTE, CRIA
-    if(!doc ||!doc.exists){
-      if(email.includes("super")||email=="super@macae.com"){
-        await db.collection("usuarios").doc(email).set({email:email,tipo:"super",status:"ativo",saldo:0,criadoEm:new Date()},{merge:true});
-        location.href="super.html"; return;
-      }
-      return showMsg("Sem cadastro usuarios. Mas login OK. Vou criar como lojista...");
-    }
-    let d=doc.data(), tipo=(d.tipo||"lojista").toLowerCase();
-    if((tipo=="motoboy"||tipo=="motorista")&&d.status=="pendente")return showMsg("⏳ Em ANÁLISE");
-    if(tipo=="super"||tipo=="admin"||tipo=="franqueado") location.href="super.html";
-    else if(tipo=="motoboy"||tipo=="motorista") location.href="motoboy.html";
-    else location.href="lojista.html";
-  }catch(e){showMsg("Erro: "+e.message+" Verifique Authentication")}
+    mostrar("Entrando...");
+    const cred=await signInWithEmailAndPassword(auth,e,s);
+    const snap=await getDoc(doc(db,"usuarios",cred.user.uid));
+    if(!snap.exists()){ mostrar("Sem perfil, cadastre"); return; }
+    const u=snap.data();
+    if(u.role==="lojista") location.href="lojista.html";
+    else if(u.role==="motorista") location.href="motoboy.html";
+    else location.href="Admin.html";
+  }catch(err){ mostrar(err.message); }
 }
 async function cadastrar(){
-  let email=document.getElementById("email").value.trim().toLowerCase(), senha=document.getElementById("senha").value.trim(), tipo=document.getElementById("tipoCadastro").value;
-  if(!email||!senha)return showMsg("Email senha"); showMsg("Cadastrando...");
+  const e=$("email").value.trim(); const s=$("senha").value; const tipo=$("tipo").value;
+  if(!e||!s) return mostrar("Digite email e senha");
   try{
-    await auth.createUserWithEmailAndPassword(email,senha);
-    if(tipo=="lojista"){await db.collection("usuarios").doc(email).set({email:email,tipo:"lojista",status:"ativo",saldo:0,criadoEm:new Date()},{merge:true}); showMsg("✅ Lojista OK! Clica ENTRAR"); return;}
-    let nome=document.getElementById("nomeComp").value, tel=document.getElementById("telefone").value, end=document.getElementById("endereco").value, veic=document.getElementById("tipoVeiculo").value, placa=document.getElementById("placa").value;
-    let fS=document.getElementById("fileSelfie").files[0], fC=document.getElementById("fileCNH").files[0], fR=document.getElementById("fileCRLV").files[0];
-    if(!nome||!tel||!end||!placa||!fS||!fC||!fR)return showMsg("Preenche tudo e 3 fotos");
-    showMsg("Salvando...");
-    let bS=await fileToBase64(fS), bC=await fileToBase64(fC), bR=await fileToBase64(fR);
-    let cod=String(Math.floor(1000+Math.random()*9000));
-    await db.collection("usuarios").doc(email).set({email:email,nome:nome,telefone:tel,endereco:end,tipo:tipo,tipoVeiculo:veic,placa:placa,selfieBase64:bS,cnhBase64:bC,crlvBase64:bR,status:"pendente",codigoMotoboy:cod,saldo:0,criadoEm:new Date()},{merge:true});
-    showMsg("✅ Cadastrado pendente");
-  }catch(e){if(e.code=="auth/email-already-in-use")showMsg("Já existe, clica ENTRAR"); else showMsg(e.message)}
+    mostrar("Cadastrando...");
+    const cred=await createUserWithEmailAndPassword(auth,e,s);
+    await setDoc(doc(db,"usuarios",cred.user.uid), {
+      email:e, role:tipo, nome:e.split("@")[0],
+      saldo: tipo==="lojista"?70:0,
+      aprovado: tipo==="motorista"?false:true,
+      veiculo: tipo==="motorista"?"moto":null,
+      codigoMotorista: tipo==="motorista"?"M"+Math.floor(1000+Math.random()*9000):null,
+      criadoEm: serverTimestamp()
+    });
+    mostrar("Cadastrado! Entrando...");
+    setTimeout(entrar,1000);
+  }catch(err){ mostrar(err.message); }
 }
-</script></body></html>
+$("btnEntrar").onclick=entrar;
+$("btnCad").onclick=cadastrar;
+</script>
+</body>
+</html>
