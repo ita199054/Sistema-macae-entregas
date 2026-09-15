@@ -1,0 +1,82 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Motoboy - Anjos Flash</title>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="config.js"></script>
+<style>body{background:#0A0A0A;color:#fff;font-family:Arial;padding:15px}.card{background:#171717;border:1px solid #D4AF3733;border-radius:16px;padding:15px;margin-bottom:12px}.btn{background:#D4AF37;color:#000;font-weight:bold;padding:12px;width:100%;border:none;border-radius:12px;margin-top:6px}.btn2{background:#1F1F1F;border:1px solid #D4AF37;color:#D4AF37;padding:10px;border-radius:10px;width:100%}.input{width:100%;background:#1F1F1F;border:1px solid #D4AF3733;border-radius:10px;padding:10px;color:#fff;margin:5px 0}.gold{color:#D4AF37}</style>
+</head><body>
+<h2 class="gold">MOTOBOY / MOTORISTA</h2>
+<div id="saldo" class="card gold" style="font-size:20px;font-weight:bold">Saldo: R$ 0,00</div>
+<div id="aviso" style="background:#D4AF37;color:#000;padding:10px;border-radius:10px;display:none"></div>
+
+<div class="card">
+<label><input type="checkbox" id="online" onchange="toggleOnline()"> ESTOU ONLINE - Receber corridas</label>
+<p id="status" class="gold">Offline</p>
+</div>
+
+<div class="card"><h4 class="gold">Corridas disponíveis na sua cidade</h4><div id="disponiveis"></div></div>
+<div class="card"><h4 class="gold">Minha corrida atual</h4><div id="atual"></div>
+<div id="chat" style="display:none"><input id="msg" class="input" placeholder="Mensagem pro lojista"><button class="btn2" onclick="enviarChat()">Enviar</button><div id="msgs"></div></div>
+</div>
+
+<script>
+firebase.initializeApp(firebaseConfig); const db=firebase.firestore(); const auth=firebase.auth();
+let minhaCidade="", corridaAtualId=null;
+
+auth.onAuthStateChanged(async u=>{
+ if(!u) return; const doc=await db.collection("usuarios").doc(u.uid).get(); minhaCidade=doc.data().cidade; saldo.innerText="Saldo: R$ "+(doc.data().saldo||0).toFixed(2)+" | Cidade: "+minhaCidade;
+ carregarDisponiveis();
+ db.collection("avisos").where("ativo","==",true).orderBy("criadoEm","desc").limit(1).onSnapshot(s=>{if(!s.empty){const d=s.docs[0].data(); if(d.para=="todos"||d.para=="motoboy"){aviso.style.display='block'; aviso.innerText=d.titulo+": "+d.mensagem}}});
+});
+
+function toggleOnline(){ status.innerText=online.checked?"Online - Procurando corridas em "+minhaCidade:"Offline"; carregarDisponiveis(); }
+
+function carregarDisponiveis(){
+ if(!online.checked) {disponiveis.innerHTML="Fique online"; return;}
+ // TRAVADO POR CIDADE - só vê da sua cidade
+ db.collection("corridas").where("cidade","==",minhaCidade).where("status","==","pendente").onSnapshot(s=>{
+  let h=""; s.forEach(d=>{const c=d.data(); h+=`<div style="border:1px solid #D4AF3733;padding:10px;border-radius:10px;margin:5px 0">${c.origem} → ${c.destino}<br><b class="gold">R$${c.precoMotoboy}</b> | ${c.km}km<br><button class="btn" onclick="aceitar('${d.id}')">ACEITAR CORRIDA</button></div>`});
+  disponiveis.innerHTML=h||"Nenhuma corrida agora";
+ });
+}
+
+async function aceitar(id){
+ const user=auth.currentUser;
+ await db.collection("corridas").doc(id).update({status:"aceita", motoboyId:user.uid, aceitaEm:new Date()});
+ corridaAtualId=id; carregarAtual();
+}
+
+function carregarAtual(){
+ if(!corridaAtualId) return;
+ db.collection("corridas").doc(corridaAtualId).onSnapshot(doc=>{
+  const c=doc.data(); if(!c) return;
+  atual.innerHTML=`${c.origem} → ${c.destino}<br>Código: <b class="gold">${c.codigo}</b> (peça pro cliente no final)<br>
+  <button class="btn" onclick="cheguei()">CHEGUEI NA ORIGEM</button>
+  <input id="codFinal" class="input" placeholder="Digite o código do cliente pra finalizar">
+  <button class="btn" onclick="finalizar()">FINALIZAR E RECEBER R$${c.precoMotoboy}</button>`;
+  chat.style.display='block'; carregarChat();
+ });
+}
+
+async function cheguei(){ await db.collection("corridas").doc(corridaAtualId).update({status:"cheguei_origem"}); alert("Lojista avisado que chegou!"); }
+async function finalizar(){
+ const cod=codFinal.value; const doc=await db.collection("corridas").doc(corridaAtualId).get(); const c=doc.data();
+ if(cod!==c.codigo){alert("Código errado!");return;}
+ const user=auth.currentUser;
+ await db.collection("corridas").doc(corridaAtualId).update({status:"finalizada", finalizadaEm:new Date()});
+ const uDoc=await db.collection("usuarios").doc(user.uid).get(); const novoSaldo=(uDoc.data().saldo||0)+c.precoMotoboy;
+ await db.collection("usuarios").doc(user.uid).update({saldo:novoSaldo});
+ alert("Finalizada! R$"+c.precoMotoboy+" adicionado. Pix: 22997450131 já tem sua comissão guardada");
+ location.reload();
+}
+async function enviarChat(){
+ await db.collection("corridas").doc(corridaAtualId).collection("chat").add({de:"motoboy", texto:msg.value, em:new Date()}); msg.value="";
+}
+function carregarChat(){
+ db.collection("corridas").doc(corridaAtualId).collection("chat").orderBy("em").onSnapshot(s=>{
+  let h=""; s.forEach(d=>{h+=`<div><b>${d.data().de}:</b> ${d.data().texto}</div>`}); msgs.innerHTML=h;
+ });
+}
+</script></body></html>
