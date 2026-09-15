@@ -1,72 +1,158 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lojista - Anjos Flash</title>
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lojista - Anjos Flash</title>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="config.js"></script>
-<style>body{background:#0A0A0A;color:#fff;font-family:Arial;padding:12px;margin:0}.card{background:#171717;border:1px solid #D4AF3733;border-radius:16px;padding:14px;margin:10px auto;max-width:450px}.input{width:92%;padding:12px;border-radius:10px;border:1px solid #333;background:#1F1F1F;color:#fff;margin:5px 0}.btn{background:#D4AF37;color:#000;font-weight:bold;padding:12px;border:none;border-radius:10px;width:100%;cursor:pointer}</style>
-</head><body>
-<h2 style="color:#D4AF37;text-align:center">PAINEL LOJISTA</h2>
-<div class="card">
-<input id="nomeLoja" class="input" placeholder="Nome da loja">
-<input id="enderecoColeta" class="input" placeholder="Endereço coleta">
-<input id="enderecoEntrega" class="input" placeholder="Endereço entrega">
-<input id="valor" class="input" type="number" placeholder="Valor da corrida R$">
-<button class="btn" onclick="criarPedido()">PEDIR MOTOBOY</button>
+<style>
+body{background:#0A0A0A;color:#fff;font-family:Arial;margin:0}.top{background:#111;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #D4AF3733;position:sticky;top:0;z-index:10}.card{background:#171717;border:1px solid #FFFFFF0D;border-radius:16px;padding:16px;margin:12px auto;max-width:560px}.input{width:100%;box-sizing:border-box;padding:14px;border-radius:12px;border:1px solid #D4AF3733;background:#1F1F1F;color:#fff;margin:6px 0}.btn{background:#D4AF37;color:#000;font-weight:900;padding:15px;border:none;border-radius:12px;width:100%;cursor:pointer;letter-spacing:1px}.badge{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:900}.b-aberto{background:#FFA50022;color:#FFA500}.b-aceito{background:#25D36622;color:#25D366}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.moto-box{background:#111;border:2px solid #D4AF37;border-radius:18px;padding:14px;display:flex;gap:14px;align-items:center}
+.moto-box img{width:85px;height:85px;border-radius:50%;object-fit:cover;border:3px solid #D4AF37}
+.info-line{font-size:12px;color:#aaa;margin:2px 0}
+.info-line b{color:#fff}
+</style></head><body>
+<div class="top">
+<div style="color:#D4AF37;font-weight:900">⚡ ANJOS FLASH LOJISTA</div>
+<div style="text-align:right"><div style="font-size:10px;color:#888">SEU SALDO</div><b id="saldo" style="color:#D4AF37;font-size:18px">R$ 0,00</b><div id="saldoAviso" style="font-size:10px;color:#ff4444;display:none">SEM SALDO</div></div>
 </div>
-<div id="listaPedidos"></div>
-<div id="boxMotoboy"></div>
+
+<div style="max-width:560px;margin:0 auto;padding:8px">
+<div class="card">
+<h3 style="color:#D4AF37;margin:0 0 10px 0">🚀 NOVA ENTREGA</h3>
+
+<label style="color:#D4AF37;font-size:11px">NOME DA LOJA (fica salvo)</label>
+<input id="nomeLoja" class="input" placeholder="Ex: Drogaria Macaé" onblur="salvarLoja()">
+
+<label style="color:#D4AF37;font-size:11px">ENDEREÇO DA LOJA - COLETA (fica salvo)</label>
+<input id="coleta" class="input" placeholder="Rua, número, bairro" onblur="salvarLoja()">
+
+<label style="color:#D4AF37;font-size:11px">🚚 QUAL VEÍCULO VOCÊ QUER? *</label>
+<select id="tipoVeiculo" class="input" onchange="calcPreco()">
+<option value="">-- ESCOLHA --</option>
+<option value="moto">🏍️ Moto - até 10kg</option>
+<option value="fiorino">🚐 Fiorino - até 300kg</option>
+<option value="caminhao">🚚 Caminhão 3/4 - até 3 ton</option>
+<option value="carreta">🚛 Carreta</option>
+</select>
+
+<div style="display:flex;gap:8px;margin:8px 0">
+<label style="flex:1;background:#1F1F1F;border:1px solid #333;border-radius:12px;padding:10px;display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="retorno" onchange="calcPreco()"> <span style="font-size:12px">🔄 Retorno<br><small style="color:#888">-50%</small></span></label>
+<label style="flex:1;background:#1F1F1F;border:1px solid #D4AF37;border-radius:12px;padding:10px;display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="super" onchange="calcPreco()"> <span style="font-size:12px">⚡ Super<br><small style="color:#D4AF37">+R$10</small></span></label>
+</div>
+
+<input id="entrega" class="input" placeholder="🏁 Endereço de entrega (cliente)">
+<div class="grid2"><input id="nomeCliente" class="input" placeholder="Nome cliente"><input id="telCliente" class="input" placeholder="Zap cliente"></div>
+<input id="obs" class="input" placeholder="Obs: bloco, apto">
+
+<div id="boxPreco" style="background:#1F1F1F;border:1px dashed #D4AF37;border-radius:12px;padding:12px;margin:8px 0;display:none">
+<div style="display:flex;justify-content:space-between"><span>Valor base:</span><b id="vBase">R$ 0</b></div>
+<div id="linhaDin" style="display:flex;justify-content:space-between;color:#ffaa00;display:none"><span>⚡ Dinâmica:</span><b id="vDin">+R$0</b></div>
+<div style="border-top:1px solid #333;margin:8px 0"></div>
+<div style="display:flex;justify-content:space-between"><span style="color:#D4AF37;font-weight:bold">VOCÊ PAGA:</span><b id="vTotal" style="color:#D4AF37;font-size:22px">R$ 0</b></div>
+</div>
+
+<button class="btn" onclick="pedir()">CHAMAR MOTOBOY</button>
+<div id="msg" style="text-align:center;margin-top:8px;font-weight:bold"></div>
+</div>
+
+<div class="card"><h3 style="color:#D4AF37">📦 Meus Pedidos</h3><div id="lista">Carregando...</div></div>
+<div id="boxMoto"></div>
+</div>
 
 <script>
 firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth(), db=firebase.firestore();
-let meuEmail="";
-auth.onAuthStateChanged(async u=>{ if(!u) location.href="index.html"; else{ meuEmail=u.email.toLowerCase(); carregarPedidos(); }});
+let meuEmail="", saldo=0, TABELA={moto:15,fiorino:35,caminhao:80,carreta:150}, DIN=0;
 
-async function criarPedido(){
-  let v=parseFloat(document.getElementById("valor").value);
-  if(!v) return alert("Coloca valor");
+auth.onAuthStateChanged(async u=>{
+  if(!u) location.href="index.html"; else{
+    meuEmail=u.email.toLowerCase();
+    let doc=await db.collection("usuarios").doc(meuEmail).get();
+    if(doc.exists){
+      let d=doc.data(); saldo=d.saldo||0;
+      // nome e endereco salvos
+      if(d.loja) document.getElementById("nomeLoja").value=d.loja;
+      if(d.endereco) document.getElementById("coleta").value=d.endereco;
+      if(d.nome) document.getElementById("nomeLoja").value=d.nome;
+      document.getElementById("saldo").innerText="R$ "+saldo.toFixed(2);
+      if(saldo<5) document.getElementById("saldoAviso").style.display="block";
+    }
+    let cfg=await db.collection("config").doc("precos").get();
+    if(cfg.exists){ let c=cfg.data(); TABELA={moto:c.moto||15,fiorino:c.fiorino||35,caminhao:c.caminhao||80,carreta:c.carreta||150}; DIN=c.dinamica||0; }
+    calcPreco(); carregar();
+  }
+});
+
+function salvarLoja(){
+  let loja=document.getElementById("nomeLoja").value.trim();
+  let end=document.getElementById("coleta").value.trim();
+  if(loja||end){
+    db.collection("usuarios").doc(meuEmail).set({loja:loja, nome:loja, endereco:end},{merge:true});
+    localStorage.setItem("loja_"+meuEmail, loja);
+    localStorage.setItem("coleta_"+meuEmail, end);
+  }
+}
+
+function calcPreco(){
+  let tipo=document.getElementById("tipoVeiculo").value;
+  if(!tipo){ document.getElementById("boxPreco").style.display="none"; return; }
+  let base=TABELA[tipo]||15; let total=base+DIN;
+  if(document.getElementById("retorno").checked) total*=0.5;
+  if(document.getElementById("super").checked) total+=10;
+  document.getElementById("boxPreco").style.display="block";
+  document.getElementById("vBase").innerText="R$ "+base.toFixed(2);
+  if(DIN>0){ document.getElementById("linhaDin").style.display="flex"; document.getElementById("vDin").innerText="+ R$ "+DIN.toFixed(2); }
+  document.getElementById("vTotal").innerText="R$ "+total.toFixed(2);
+  let msg=document.getElementById("msg");
+  if(saldo < total){ msg.style.color="#ff4444"; msg.innerText="❌ SEM SALDO! Você tem R$ "+saldo.toFixed(2)+" precisa R$ "+total.toFixed(2)+" - Fale com admin"; }
+  else{ msg.style.color="#25D366"; msg.innerText="✅ Saldo OK para chamar"; }
+  return total;
+}
+
+async function pedir(){
+  let tipo=document.getElementById("tipoVeiculo").value;
+  if(!tipo) return alert("ESCOLHA O VEÍCULO!");
+  let total=calcPreco();
+  if(saldo < total) return alert("SEM SALDO! Recarregue com admin.\nSaldo: R$ "+saldo.toFixed(2));
+  let loja=document.getElementById("nomeLoja").value.trim();
+  let col=document.getElementById("coleta").value.trim();
+  let ent=document.getElementById("entrega").value.trim();
+  if(!loja||!col||!ent) return alert("Preenche nome loja, coleta e entrega");
+  salvarLoja();
   await db.collection("pedidos").add({
-    lojista:meuEmail,
-    loja:document.getElementById("nomeLoja").value,
-    coleta:document.getElementById("enderecoColeta").value,
-    entrega:document.getElementById("enderecoEntrega").value,
-    valor:v,
-    status:"aberto",
-    criadoEm:new Date()
+    lojista:meuEmail, loja:loja, coleta:col, entrega:ent,
+    cliente:document.getElementById("nomeCliente").value, telCliente:document.getElementById("telCliente").value,
+    obs:document.getElementById("obs").value, tipoVeiculo:tipo,
+    retorno:document.getElementById("retorno").checked, super:document.getElementById("super").checked,
+    valor:total, valorBase:TABELA[tipo], dinamica:DIN, status:"aberto",
+    criadoEm:firebase.firestore.FieldValue.serverTimestamp()
   });
-  alert("Pedido criado!");
+  await db.collection("usuarios").doc(meuEmail).update({saldo:firebase.firestore.FieldValue.increment(-total)});
+  saldo-=total; document.getElementById("saldo").innerText="R$ "+saldo.toFixed(2);
+  alert("✅ Chamando motoboy! R$ "+total.toFixed(2)+" descontado");
+  document.getElementById("entrega").value="";
 }
 
-function carregarPedidos(){
-  db.collection("pedidos").where("lojista","==",meuEmail).orderBy("criadoEm","desc").onSnapshot(snap=>{
-    let html="";
-    snap.forEach(doc=>{
-      let p=doc.data(), id=doc.id;
-      html+=`<div class="card"><b>${p.loja||'Pedido'}</b><br>${p.coleta} -> ${p.entrega}<br>R$ ${p.valor} - <b style="color:#D4AF37">${p.status}</b>`;
-      if(p.status=="aceito" && p.motoboyEmail){
-        html+=`<br><button class="btn" onclick="verMotoboy('${p.motoboyEmail}')">VER MOTOBOY</button>`;
-      }
-      html+=`</div>`;
+function carregar(){
+  db.collection("pedidos").where("lojista","==",meuEmail).orderBy("criadoEm","desc").limit(30).onSnapshot(snap=>{
+    let h="";
+    snap.forEach(d=>{
+      let p=d.data();
+      let cls=p.status=="aceito"?"b-aceito":"b-aberto";
+      h+=`<div style="border-bottom:1px solid #222;padding:10px 0"><div style="display:flex;justify-content:space-between"><b>${p.loja} [${(p.tipoVeiculo||'').toUpperCase()}${p.retorno?' - RETORNO':''}${p.super?' - SUPER':''}]</b><span class="badge ${cls}">${p.status.toUpperCase()}</span></div>
+      <div style="font-size:12px;color:#aaa">📍 ${p.coleta}<br>🏁 ${p.entrega}<br><b style="color:#D4AF37">R$ ${p.valor?.toFixed(2)}</b></div>`;
+      if(p.status=="aceito"&&p.motoboyEmail) h+=`<button class="btn" style="padding:8px;margin-top:6px" onclick="verMoto('${p.motoboyEmail}','${p.coleta}')">👁️ VER MOTORISTA + TEMPO</button>`;
+      h+=`</div>`;
     });
-    document.getElementById("listaPedidos").innerHTML=html;
+    document.getElementById("lista").innerHTML=h||"Nenhum pedido";
   });
 }
 
-async function verMotoboy(email){
+async function verMoto(email, enderecoLoja){
   let doc=await db.collection("usuarios").doc(email).get();
-  if(!doc.exists) return alert("Motoboy não encontrado");
+  if(!doc.exists){ let q=await db.collection("usuarios").where("email","==",email).limit(1).get(); if(!q.empty) doc=q.docs[0]; }
+  if(!doc.exists) return;
   let m=doc.data();
-  // SÓ NOME E FOTO DO ROSTO - SEM CNH/CRLV/TELEFONE/ENDEREÇO
-  let foto=m.selfieBase64 || m.selfieUrl || "https://via.placeholder.com/150";
-  let nome=m.nome || m.nomeCompleto || email;
-  document.getElementById("boxMotoboy").innerHTML=`
-    <div class="card" style="text-align:center;border:2px solid #D4AF37">
-      <img src="${foto}" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #D4AF37"><br>
-      <h2 style="color:#D4AF37;margin:10px 0 5px 0">${nome}</h2>
-      <p style="color:#aaa">Motoboy a caminho da sua loja</p>
-      <button class="btn" onclick="document.getElementById('boxMotoboy').innerHTML=''">FECHAR</button>
-    </div>
-  `;
-  window.scrollTo(0,0);
-}
-</script></body></html>
+  let foto=m.selfieBase64||m.selfieUrl||"https://via.placeholder.com/200";
+  let nome=m.nome||m.nomeCompleto||email;
+  // calcula KM e minutos estimado (simulação - quando motoboy tiver GPS pega real)
+  let km = (Math.random()*3+0.8).toFixed(1); //
