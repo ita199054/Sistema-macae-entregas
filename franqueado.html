@@ -1,0 +1,33 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Franqueado - Anjos Flash</title>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="config.js"></script>
+<style>body{background:#0A0A0A;color:#fff;font-family:Arial;padding:15px}.card{background:#171717;border:1px solid #D4AF3733;border-radius:16px;padding:15px;margin-bottom:12px}.btn{background:#D4AF37;color:#000;font-weight:bold;padding:10px;border:none;border-radius:10px}.input{width:100%;background:#1F1F1F;border:1px solid #D4AF3733;border-radius:10px;padding:10px;color:#fff;margin:5px 0}.gold{color:#D4AF37}</style>
+</head><body>
+<h2 class="gold">FRANQUEADO</h2>
+<div id="info" class="card"></div>
+<div class="card"><h4 class="gold">Aprovar motoboys da MINHA cidade</h4><div id="pend"></div></div>
+<div class="card"><h4 class="gold">Financeiro hoje - Pix: 22997450131</h4><div id="fin">Carregando...</div></div>
+<script>
+firebase.initializeApp(firebaseConfig); const db=firebase.firestore(); const auth=firebase.auth();
+let minhaCidade="";
+auth.onAuthStateChanged(async u=>{
+ if(!u) return; const doc=await db.collection("usuarios").doc(u.uid).get(); minhaCidade=doc.data().cidade; info.innerHTML=`Cidade: <b class="gold">${minhaCidade}</b> | Franqueado: ${doc.data().nome}`;
+ carregarPend(); carregarFin();
+});
+async function carregarPend(){
+ const s=await db.collection("usuarios").where("cidade","==",minhaCidade).where("status","==","pendente").get();
+ let h=""; s.forEach(d=>{const u=d.data(); h+=`<div style="border-bottom:1px solid #333;padding:8px">${u.nome} - ${u.placa} <a class="gold" href="${u.cnhUrl}" target="_blank">CNH</a> <button class="btn" onclick="aprovar('${d.id}')">Aprovar</button></div>`});
+ pend.innerHTML=h||"Nenhum pendente";
+}
+async function aprovar(id){await db.collection("usuarios").doc(id).update({status:"aprovado"}); carregarPend();}
+async function carregarFin(){
+ db.collection("corridas").where("cidade","==",minhaCidade).where("status","==","finalizada").onSnapshot(s=>{
+  let total=0,totalMoto=0; s.forEach(d=>{const c=d.data(); if(new Date(c.finalizadaEm.toDate()).toDateString()==new Date().toDateString()){total+=c.precoLojista; totalMoto+=c.precoMotoboy;}});
+  fin.innerHTML=`Hoje: ${s.size} corridas | Entrou: R$${total.toFixed(2)} | Pago motoboys: R$${totalMoto.toFixed(2)} | Seu lucro: R$${(total-totalMoto).toFixed(2)}`;
+ });
+}
+</script></body></html>
