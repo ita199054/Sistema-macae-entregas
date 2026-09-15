@@ -1,98 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Anjos Flash - Preto e Dourado</title>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-<script src="config.js"></script>
-<style>
-body{background:#0A0A0A;color:#fff;font-family:Arial;margin:0;padding:15px}
-.card{background:#171717;border:1px solid #D4AF3733;border-radius:16px;padding:20px;margin-bottom:15px}
-.btn{background:#D4AF37;color:#000;font-weight:bold;padding:12px;width:100%;border:none;border-radius:12px}
-.input{width:100%;background:#1F1F1F;border:1px solid #D4AF3733;border-radius:12px;padding:12px;color:#fff;margin:6px 0;box-sizing:border-box}
-h1{color:#D4AF37}.gold{color:#D4AF37}
-#aviso{background:#D4AF37;color:#000;padding:12px;border-radius:12px;font-weight:bold;margin-bottom:15px;display:none}
-</style>
-</head>
-<body>
-<h1>ANJOS FLASH</h1>
-<div id="aviso"></div>
-
-<div class="card">
-<h3 class="gold">LOGIN</h3>
-<input id="email" class="input" placeholder="Email">
-<input id="senha" class="input" type="password" placeholder="Senha">
-<button class="btn" onclick="login()">ENTRAR</button>
-<p><a class="gold" onclick="show('cadM')">Cadastrar Motoboy</a> | <a class="gold" onclick="show('cadL')">Cadastrar Lojista</a></p>
-</div>
-
-<div id="cadM" class="card" style="display:none">
-<h3 class="gold">CADASTRO MOTOBOY / MOTORISTA</h3>
-<input id="mNome" class="input" placeholder="Nome completo">
-<input id="mCidade" class="input" placeholder="Cidade (ex: macae)">
-<input id="mPlaca" class="input" placeholder="Placa moto/carro">
-<input id="mEmail" class="input" placeholder="Email">
-<input id="mSenha" class="input" type="password" placeholder="Senha">
-<label class="gold">CNH</label><input type="file" id="mCNH">
-<label class="gold">Selfie com CNH</label><input type="file" id="mSelfie">
-<label class="gold">CRLV</label><input type="file" id="mCRLV">
-<button class="btn" onclick="cadastrarMoto()">CADASTRAR</button>
-</div>
-
-<div id="cadL" class="card" style="display:none">
-<h3 class="gold">CADASTRO LOJISTA</h3>
-<input id="lNome" class="input" placeholder="Nome da Loja">
-<input id="lCidade" class="input" placeholder="Cidade">
-<input id="lEmail" class="input" placeholder="Email">
-<input id="lSenha" class="input" type="password" placeholder="Senha">
-<button class="btn" onclick="cadastrarLoja()">CADASTRAR LOJA</button>
-</div>
-
-<script>
-firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore(); const auth=firebase.auth(); const storage=firebase.storage();
-
-function show(id){document.getElementById(id).style.display='block'}
-
 async function login(){
- const e=email.value,s=senha.value;
+ const e=email.value.trim().toLowerCase(),s=senha.value;
+ btnLogin.innerText="ENTRANDO...";
  const cred=await auth.signInWithEmailAndPassword(e,s);
- const doc=await db.collection("usuarios").doc(cred.user.uid).get();
- const tipo=doc.data().tipo;
- if(tipo=="admin") location.href="super.html";
- else alert("Logado como "+tipo);
+ let doc=await db.collection("usuarios").doc(cred.user.uid).get();
+ if(!doc.exists) doc=await db.collection("usuarios").doc(e).get();
+ const tipo=(doc.data().tipo||"").toLowerCase();
+ if(tipo=="super"||tipo=="admin") location.href="super.html";
+ else if(tipo=="lojista") location.href="lojista.html";
+ else if(tipo=="motoboy") location.href="motoboy.html";
 }
-
-async function upload(file,path){ const r=storage.ref(path); await r.put(file); return await r.getDownloadURL(); }
-
-async function cadastrarMoto(){
- const cred=await auth.createUserWithEmailAndPassword(mEmail.value,mSenha.value);
- let cnh="",selfie="",crlv="";
- if(mCNH.files[0]) cnh=await upload(mCNH.files[0],"cnh/"+cred.user.uid);
- if(mSelfie.files[0]) selfie=await upload(mSelfie.files[0],"selfie/"+cred.user.uid);
- if(mCRLV.files[0]) crlv=await upload(mCRLV.files[0],"crlv/"+cred.user.uid);
- await db.collection("usuarios").doc(cred.user.uid).set({
-  tipo:"motoboy", nome:mNome.value, cidade:mCidade.value.toLowerCase(),
-  placa:mPlaca.value, status:"pendente", cnhUrl:cnh, selfieUrl:selfie, crlvUrl:crlv, saldo:0, criadoEm:new Date()
- });
- alert("Enviado! Aguarde aprovação de "+mCidade.value);
-}
-
-async function cadastrarLoja(){
- const cred=await auth.createUserWithEmailAndPassword(lEmail.value,lSenha.value);
- await db.collection("usuarios").doc(cred.user.uid).set({
-  tipo:"lojista", nome:lNome.value, cidade:lCidade.value.toLowerCase(), status:"aprovado", criadoEm:new Date()
- });
- alert("Lojista cadastrado!");
-}
-
-// Mural de avisos
-db.collection("avisos").where("ativo","==",true).orderBy("criadoEm","desc").limit(1).onSnapshot(s=>{
- if(!s.empty){ const d=s.docs[0].data(); aviso.style.display='block'; aviso.innerText=d.titulo+": "+d.mensagem; }
-});
-</script>
-</body>
-</html>
