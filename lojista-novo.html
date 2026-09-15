@@ -1,0 +1,24 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lojista - Criar Corrida</title><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script><script src="config.js"></script><style>body{background:#111;color:#fff;font-family:Arial;padding:12px;max-width:500px;margin:auto}input{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:1px solid #D4AF37;background:#222;color:#fff;box-sizing:border-box}button{width:100%;padding:14px;background:#D4AF37;color:#000;border:none;border-radius:10px;font-weight:900;margin-top:10px;cursor:pointer}.saldo{background:#171717;border:1px solid #D4AF37;padding:10px;border-radius:10px;text-align:center;margin-bottom:10px}</style></head><body>
+<div class="saldo">Saldo: R$<span id="s">0,00</span> | Loja: <span id="lj">-</span></div>
+<h2 style="color:#D4AF37">CRIAR ENTREGA</h2>
+<input id="origem" placeholder="Origem - sua loja">
+<input id="destino" placeholder="Destino - cliente">
+<input id="tel" placeholder="Zap cliente 22999999999 (só números)">
+<input id="valor" type="number" placeholder="Valor R$ 15">
+<input id="motoboyDestino" placeholder="#0001 opcional (vazio = todos)">
+<button onclick="criar()">🚀 CRIAR CORRIDA</button>
+<div id="lista" style="margin-top:15px"></div>
+<script>
+firebase.initializeApp(firebaseConfig);const db=firebase.firestore();let MEU_UID="",MINHA_LOJA="";
+firebase.auth().onAuthStateChanged(async u=>{if(!u)return location.href="index.html";MEU_UID=u.uid;const d=await db.collection("usuarios").doc(u.uid).get();MINHA_LOJA=d.data().nomeLoja||d.data().nome||"Loja";document.getElementById("lj").innerText=MINHA_LOJA;document.getElementById("s").innerText=(d.data().saldo||0).toFixed(2);load();});
+async function criar(){
+const origem=document.getElementById("origem").value, destino=document.getElementById("destino").value, tel=document.getElementById("tel").value, valor=Number(document.getElementById("valor").value), motoboyDestino=document.getElementById("motoboyDestino").value.trim();
+if(!destino||!valor)return alert("Destino e valor obrigatório");
+const cod=String(Math.floor(1000+Math.random()*9000));
+const meu=await db.collection("usuarios").doc(MEU_UID).get();if((meu.data().saldo||0)<valor)return alert("Saldo insuficiente! Recarrega no admin.");
+await db.collection("corridas").add({origem,destino,valor,codigoEntrega:cod,motoboyDestino,status:"pendente",nomeLoja:MINHA_LOJA,lojistaId:MEU_UID,criadoEm:firebase.firestore.FieldValue.serverTimestamp(),telCliente:tel});
+await db.collection("usuarios").doc(MEU_UID).update({saldo:firebase.firestore.FieldValue.increment(-valor)});
+const msg=`🚀 *Anjos Flash Macaé*%0ASeu código é *${cod}*%0AFale pro motoboy quando chegar.`;window.open(`https://wa.me/55${tel}?text=${msg}`,"_blank");alert("Corrida criada! Código: "+cod);location.reload();
+}
+async function load(){const s=await db.collection("corridas").where("lojistaId","==",MEU_UID).orderBy("criadoEm","desc").limit(10).get();let h="";s.forEach(d=>{let x=d.data();h+=`<div style="background:#222;padding:10px;border-radius:8px;margin:6px 0">📦 ${x.destino}<br>Código: <b>${x.codigoEntrega}</b> | R$${x.valor} | ${x.status} ${x.motoboyDestino?"| Só #"+x.motoboyDestino:"| Todos"}</div>`});document.getElementById("lista").innerHTML=h}
+</script></body></html>
