@@ -1,0 +1,57 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin - Anjos Flash</title>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="config.js"></script>
+<style>body{background:#0A0A0A;color:#fff;font-family:Arial;padding:10px;margin:0}.card{background:#171717;border:1px solid #D4AF3733;border-radius:12px;padding:12px;margin:10px auto;max-width:500px}.btn{background:#D4AF37;color:#000;font-weight:bold;padding:10px;border:none;border-radius:8px;cursor:pointer;margin:5px}.btn2{background:#25D366;color:#fff}</style>
+</head><body>
+<h2 style="color:#D4AF37;text-align:center">ADMIN - APROVAR MOTOBOYS</h2>
+<div id="pendentes"><h3 style="color:#ffaa00">⏳ Pendentes para aprovar</h3></div>
+<div id="ativos"><h3 style="color:#25D366">✅ Ativos</h3></div>
+
+<script>
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+
+function cardUsuario(doc, pendente){
+  let u=doc.data();
+  let foto=u.selfieBase64 || u.selfieUrl || "";
+  let cnh=u.cnhBase64 || u.cnhUrl || "";
+  let crlv=u.crlvBase64 || u.crlvUrl || "";
+  
+  return `<div class="card" style="${pendente?'border:2px solid orange':''}">
+    <div style="display:flex;gap:10px">
+      <img src="${foto}" style="width:70px;height:70px;border-radius:50%;object-fit:cover">
+      <div>
+        <b>${u.nome||'Sem nome'} #${u.codigoMotoboy||''}</b><br>
+        ${u.email}<br>
+        ${u.tipo} - ${u.tipoVeiculo||''} - Placa: ${u.placa||''}<br>
+        Tel: ${u.telefone||''}<br>
+        End: ${u.endereco||''}
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      ${foto?`<a href="${foto}" target="_blank"><button class="btn2 btn">📸 Selfie</button></a>`:''}
+      ${cnh?`<a href="${cnh}" target="_blank"><button class="btn btn2">🪪 CNH</button></a>`:''}
+      ${crlv?`<a href="${crlv}" target="_blank"><button class="btn btn2">📄 CRLV</button></a>`:''}
+    </div>
+    ${pendente?`<br><button class="btn" style="width:100%;background:#25D366;color:#fff" onclick="aprovar('${u.email}')">✅ APROVAR MOTOBOY</button>
+    <button class="btn" style="width:100%;background:red;color:#fff" onclick="reprovar('${u.email}')">❌ REPROVAR</button>`:''}
+  </div>`;
+}
+
+db.collection("usuarios").where("status","==","pendente").onSnapshot(snap=>{
+  let h="<h3 style='color:#ffaa00'>⏳ Pendentes ("+snap.size+")</h3>";
+  snap.forEach(d=>{ if((d.data().tipo||"").includes("moto") || (d.data().tipo||"").includes("motorista")) h+=cardUsuario(d,true); });
+  document.getElementById("pendentes").innerHTML=h;
+});
+
+db.collection("usuarios").where("status","==","ativo").onSnapshot(snap=>{
+  let h="<h3 style='color:#25D366'>✅ Ativos ("+snap.size+")</h3>";
+  snap.forEach(d=>{ if((d.data().tipo||"").includes("moto") || (d.data().tipo||"").includes("motorista")) h+=cardUsuario(d,false); });
+  document.getElementById("ativos").innerHTML=h;
+});
+
+function aprovar(email){ if(confirm("Aprovar "+email+"?")) db.collection("usuarios").doc(email).update({status:"ativo"}); }
+function reprovar(email){ if(confirm("Reprovar e apagar?")) db.collection("usuarios").doc(email).delete(); }
+</script></body></html>
