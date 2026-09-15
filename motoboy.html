@@ -1,87 +1,29 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Motoboy #0001</title><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script><script src="config.js"></script><style>
 body{background:#000;color:#fff;font-family:Arial;padding:12px;max-width:500px;margin:auto}
-.top{background:#171717;border:1px solid #D4AF37;border-radius:12px;padding:12px;display:flex;justify-content:space-between}
-.card{background:#222;padding:14px;border-radius:14px;margin:12px 0;border-left:5px solid #D4AF37}
+.top{background:#171717;border:1px solid #D4AF37;border-radius:12px;padding:12px;display:flex;justify-content:space-between;position:sticky;top:0;z-index:10}
+.card{background:#222;padding:14px;border-radius:14px;margin:12px 0;border-left:5px solid #D4AF37;animation: entra .3s}
 .card.ativa{border-left-color:#25D366;background:#1a2a1a;border:2px solid #25D366}
 .btn{width:100%;padding:14px;border:none;border-radius:10px;font-weight:900;margin-top:8px;cursor:pointer}
 .a{background:#D4AF37;color:#000}.r{background:#333;color:#fff;border:1px solid #555}.f{background:#25D366;color:#fff;font-size:18px}
-input.cod{width:100%;padding:16px;border-radius:10px;border:3px solid #25D366;background:#000;color:#fff;font-size:24px;text-align:center;letter-spacing:8px;box-sizing:border-box;margin:10px 0}
-.codigoBox{background:#000;border:2px dashed #D4AF37;padding:12px;border-radius:10px;text-align:center;margin:8px 0}
-.aviso{background:#D4AF37;color:#000;padding:10px;border-radius:8px;text-align:center;font-weight:900}
+input.cod{width:100%;padding:16px;border-radius:10px;border:3px solid #25D366;background:#000;color:#fff;font-size:22px;text-align:center;letter-spacing:4px;box-sizing:border-box;margin:10px 0;text-transform:uppercase}
+@keyframes entra{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.piscar{animation: pisca 1s infinite} @keyframes pisca{0%{background:#D4AF37}50%{background:#ff0000}100%{background:#D4AF37}}
 </style></head><body>
 
+<audio id="som" preload="auto"><source src="https://assets.mixkit.co/active_storage/sfx/235/235-preview.mp3" type="audio/mpeg"></audio>
+
 <div class="top">
-<div>🏍️ <b style="color:#D4AF37">#<span id="cod">0001</span></b><br><small id="mail"></small></div>
+<div>🏍️ <b style="color:#D4AF37">#<span id="cod">0001</span></b><br><small id="mail"></small><br><button onclick="ativarSom()" style="background:#D4AF37;border:none;border-radius:6px;padding:4px 8px;font-weight:900;margin-top:4px">🔊 ATIVAR SOM</button></div>
 <div style="text-align:right">Saldo<br><b id="saldo" style="color:#D4AF37;font-size:22px">R$0,00</b><br><small id="qtd">0 ativas</small></div>
 </div>
 
 <h3>📦 Disponíveis (<span id="num">0</span>)</h3>
 <div id="disp">Carregando...</div>
 
-<h3 style="color:#25D366;margin-top:20px">✅ MINHAS CORRIDAS - COLOCAR CÓDIGO DO CLIENTE</h3>
+<h3 style="color:#25D366;margin-top:20px">✅ MINHAS CORRIDAS</h3>
 <div id="minhas"></div>
 
 <script>
-firebase.initializeApp(firebaseConfig);const db=firebase.firestore();let MEU_UID="",MEU_COD="0001";
-firebase.auth().onAuthStateChanged(async u=>{
- if(!u)return location.href="index.html";
- MEU_UID=u.uid; document.getElementById("mail").innerText=u.email;
- try{const d=await db.collection("usuarios").doc(u.uid).get(); MEU_COD=(d.data().codigoMotoboy||"0001").replace("#","").toLowerCase(); document.getElementById("cod").innerText=MEU_COD.toUpperCase(); document.getElementById("saldo").innerText="R$"+(d.data().saldo||0).toFixed(2);}catch(e){}
- ouvirDisp(); ouvirMinhas();
-});
+firebase.initializeApp(firebaseConfig);const db=firebase.firestore();let MEU_UID="",MEU_COD="0001", JA_TOCANDO=false, ULTIMO_TOTAL=0, SOM_ATIVO=false;
 
-function ouvirDisp(){
- db.collection("corridas").where("status","==","pendente").onSnapshot(s=>{
-  document.getElementById("num").innerText=s.size;
-  let h="";
-  s.forEach(doc=>{
-   let x=doc.data(); let dest=(x.motoboyDestino||"").toString().replace("#","").toLowerCase();
-   if(dest!==""&&dest!=="null"&&dest!=="todos"&&dest!==MEU_COD) return;
-   let tag = (dest===""||dest==="null")?"🌍 TODOS":"🎯 SÓ VOCÊ #"+MEU_COD.toUpperCase();
-   h+=`<div class="card">
-   <b>${x.nomeLoja}</b> <small style="color:#D4AF37">${tag}</small> ${x.dinamicaAtiva?'<span style="background:#D4AF37;color:#000;padding:2px 6px;border-radius:4px;font-size:10px">🔥 DINÂMICA +R$2</span>':''}<br>
-   De: ${x.origem||"-"}<br>Para: ${x.destino}<br>
-   <b>R$ ${x.valor}</b><br>
-   <small style="color:#888">Código só aparece depois de aceitar</small>
-   <button class="btn a" onclick="aceitar('${doc.id}')">✅ ACEITAR</button>
-   <button class="btn r" onclick="recusar('${doc.id}')">❌ RECUSAR</button>
-   </div>`;
-  });
-  document.getElementById("disp").innerHTML=h||"Nenhuma pendente";
- });
-}
-
-function ouvirMinhas(){
- db.collection("corridas").where("motoboyId","==",MEU_UID).onSnapshot(s=>{
-  let h="",c=0;
-  s.forEach(doc=>{
-   let x=doc.data(); if(x.status!=="aceita") return; c++;
-   h+=`<div class="card ativa">
-   <b>${x.nomeLoja}</b> -> ${x.destino}<br>De: ${x.origem}<br>R$ ${x.valor} ${x.dinamicaAtiva?"🔥DINÂMICA":""}<br><br>
-   <div style="background:#000;padding:10px;border-radius:8px;text-align:center;border:1px solid #25D366">
-   <span style="color:#fff">PEÇA O CÓDIGO PRO CLIENTE</span><br>
-   <span style="font-size:12px;color:#888">Cliente recebeu por WhatsApp</span>
-   </div>
-   <input class="cod" id="c_${doc.id}" maxlength="4" inputmode="numeric" placeholder="DIGITE AQUI">
-   <button class="btn f" onclick="finalizar('${doc.id}')">✅ CONFIRMAR CÓDIGO E FINALIZAR - R$${x.valor}</button>
-   <button class="btn r" onclick="cancelar('${doc.id}')">↩️ Devolver corrida</button>
-   </div>`;
-  });
-  document.getElementById("minhas").innerHTML=h||="Nenhuma corrida aceita. Aceite uma acima.";
-  document.getElementById("qtd").innerText=c+" ativas";
- });
-}
-
-async function aceitar(id){await db.collection("corridas").doc(id).update({status:"aceita",motoboyId:MEU_UID,motoboyCodigo:MEU_COD,aceitaEm:firebase.firestore.FieldValue.serverTimestamp()});}
-async function recusar(id){await db.collection("corridas").doc(id).update({recusados:firebase.firestore.FieldValue.arrayUnion(MEU_COD)});}
-async function cancelar(id){if(!confirm("Devolver?"))return;await db.collection("corridas").doc(id).update({status:"pendente",motoboyId:firebase.firestore.FieldValue.delete()});}
-async function finalizar(id){
- const cod=document.getElementById("c_"+id).value.trim();
- if(cod.length<4)return alert("Digite os 4 números que o cliente falar");
- const snap=await db.collection("corridas").doc(id).get(); const real=snap.data().codigoEntrega;
- if(cod!==real)return alert("❌ CÓDIGO ERRADO! O cliente tem que falar o código correto. Tenta de novo.");
- await db.collection("corridas").doc(id).update({status:"entregue",entregueEm:firebase.firestore.FieldValue.serverTimestamp()});
- await db.collection("usuarios").doc(MEU_UID).update({saldo:firebase.firestore.FieldValue.increment(snap.data().valor)});
- alert("✅ ENTREGUE! +R$"+snap.data().valor+" creditado no seu saldo!"); location.reload();
-}
-</script></body></html>
+function ativarSom(){ SOM_ATIVO=true; document.getElementById("som").play().then(()=>{document.getElementById("som").pause(); alert("✅ Som ativado! Quando chegar corrida vai tocar!");}).
