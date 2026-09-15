@@ -1,29 +1,459 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Motoboy #0001</title><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script><script src="config.js"></script><style>
-body{background:#000;color:#fff;font-family:Arial;padding:12px;max-width:500px;margin:auto}
-.top{background:#171717;border:1px solid #D4AF37;border-radius:12px;padding:12px;display:flex;justify-content:space-between;position:sticky;top:0;z-index:10}
-.card{background:#222;padding:14px;border-radius:14px;margin:12px 0;border-left:5px solid #D4AF37;animation: entra .3s}
-.card.ativa{border-left-color:#25D366;background:#1a2a1a;border:2px solid #25D366}
-.btn{width:100%;padding:14px;border:none;border-radius:10px;font-weight:900;margin-top:8px;cursor:pointer}
-.a{background:#D4AF37;color:#000}.r{background:#333;color:#fff;border:1px solid #555}.f{background:#25D366;color:#fff;font-size:18px}
-input.cod{width:100%;padding:16px;border-radius:10px;border:3px solid #25D366;background:#000;color:#fff;font-size:22px;text-align:center;letter-spacing:4px;box-sizing:border-box;margin:10px 0;text-transform:uppercase}
-@keyframes entra{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
-.piscar{animation: pisca 1s infinite} @keyframes pisca{0%{background:#D4AF37}50%{background:#ff0000}100%{background:#D4AF37}}
-</style></head><body>
+<!-- PARTE 3 — MOTORISTA / MOTOBOY -->
 
-<audio id="som" preload="auto"><source src="https://assets.mixkit.co/active_storage/sfx/235/235-preview.mp3" type="audio/mpeg"></audio>
+<script type="module">
 
-<div class="top">
-<div>🏍️ <b style="color:#D4AF37">#<span id="cod">0001</span></b><br><small id="mail"></small><br><button onclick="ativarSom()" style="background:#D4AF37;border:none;border-radius:6px;padding:4px 8px;font-weight:900;margin-top:4px">🔊 ATIVAR SOM</button></div>
-<div style="text-align:right">Saldo<br><b id="saldo" style="color:#D4AF37;font-size:22px">R$0,00</b><br><small id="qtd">0 ativas</small></div>
-</div>
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  doc,
+  getDoc,
+  runTransaction,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-<h3>📦 Disponíveis (<span id="num">0</span>)</h3>
-<div id="disp">Carregando...</div>
+const db=window.db;
+const auth=window.auth;
 
-<h3 style="color:#25D366;margin-top:20px">✅ MINHAS CORRIDAS</h3>
-<div id="minhas"></div>
+window.renderMotorista=async function(data){
 
-<script>
-firebase.initializeApp(firebaseConfig);const db=firebase.firestore();let MEU_UID="",MEU_COD="0001", JA_TOCANDO=false, ULTIMO_TOTAL=0, SOM_ATIVO=false;
+  if(data.aprovado !== true){
 
-function ativarSom(){ SOM_ATIVO=true; document.getElementById("som").play().then(()=>{document.getElementById("som").pause(); alert("✅ Som ativado! Quando chegar corrida vai tocar!");}).
+    $("panel").innerHTML=`
+
+      <div class="card">
+
+        <h2>⏳ CADASTRO EM ANÁLISE</h2>
+
+        <p>
+          Seus documentos ainda precisam
+          ser aprovados pelo Admin ou
+          Franqueado autorizado.
+        </p>
+
+        <div class="badge">
+          PENDENTE
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+  $("panel").innerHTML=`
+
+    <div class="card">
+
+      <h2>🏍️ PAINEL MOTORISTA</h2>
+
+      <div class="badge">
+        ${TIPOS_VEICULO[data.veiculo] ||
+          data.veiculo ||
+          "Veículo não informado"}
+      </div>
+
+      <h3>Meu código</h3>
+
+      <div class="money">
+        ${data.codigoMotorista || "—"}
+      </div>
+
+      <h3>Meu saldo</h3>
+
+      <div
+        class="money"
+        id="saldoMoto">
+
+        ${formatarMoeda(data.saldo)}
+
+      </div>
+
+      <button
+        id="onlineBtn"
+        class="${data.online ? "green":"red"}"
+        onclick="alternarOnline()">
+
+        ${data.online ? "🟢 ONLINE":"🔴 OFFLINE"}
+
+      </button>
+
+    </div>
+
+    <div class="card">
+
+      <h2>🚀 CORRIDAS DISPONÍVEIS</h2>
+
+      <div id="corridasMotorista">
+        Carregando...
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <h2>📊 MEU EXTRATO</h2>
+
+      <button
+        class="gold"
+        onclick="mostrarExtratoMotorista()">
+
+        EXTRATO — ÚLTIMOS 90 DIAS
+
+      </button>
+
+      <button
+        class="dark"
+        onclick="imprimirExtratoMotorista()">
+
+        🖨️ IMPRIMIR EXTRATO
+
+      </button>
+
+      <div id="extratoMotorista"></div>
+
+    </div>
+
+    <div class="card">
+
+      <h2>💬 CHAT COM ADMIN</h2>
+
+      <button
+        class="gold"
+        onclick="abrirChatAdmin()">
+
+        ABRIR CHAT
+
+      </button>
+
+    </div>
+
+  `;
+
+  ouvirCorridasMotorista(data.veiculo);
+
+};
+
+function ouvirCorridasMotorista(tipoVeiculo){
+
+  const q=query(
+    collection(db,"corridas"),
+    where(
+      "status",
+      "==",
+      "PROCURANDO_MOTORISTA"
+    ),
+    where(
+      "tipoVeiculo",
+      "==",
+      tipoVeiculo
+    ),
+    orderBy(
+      "criadoEm",
+      "desc"
+    )
+  );
+
+  onSnapshot(q,snap=>{
+
+    let html="";
+
+    snap.forEach(d=>{
+
+      const r=d.data();
+
+      let ganho =
+        Number(
+          window.CONFIG_PADRAO.ganhoBase
+        );
+
+      if(Number(r.km)>5){
+
+        ganho +=
+          (Number(r.km)-5) *
+          Number(
+            window.CONFIG_PADRAO
+              .adicionalMotorista
+          );
+
+      }
+
+      if(r.opcoes?.super){
+
+        ganho =
+          Number(
+            window.CONFIG_PADRAO
+              .superMotorista
+          );
+
+      }
+
+      html += `
+
+        <div class="ride">
+
+          <h3>🚀 NOVA CORRIDA</h3>
+
+          <b>Tipo:</b>
+          ${TIPOS_VEICULO[r.tipoVeiculo]}
+
+          <br>
+
+          <b>Loja:</b>
+          ${r.lojaNome}
+
+          <br>
+
+          <b>Origem:</b>
+          ${r.lojaEndereco}
+
+          <br>
+
+          <b>Destino:</b>
+          ${r.clienteEndereco}
+
+          <br>
+
+          <b>Distância:</b>
+          ${Number(r.km).toFixed(1)} km
+
+          <div class="money">
+            Você recebe
+            ${formatarMoeda(ganho)}
+          </div>
+
+          <button
+            class="green"
+            onclick="aceitarCorrida('${r.id}')">
+
+            ACEITAR
+
+          </button>
+
+          <button
+            class="red"
+            onclick="recusarCorrida('${r.id}')">
+
+            RECUSAR
+
+          </button>
+
+        </div>
+
+      `;
+
+    });
+
+    $("corridasMotorista").innerHTML =
+      html || "Nenhuma corrida disponível.";
+
+  });
+
+}
+
+window.aceitarCorrida=async function(corridaId){
+
+  const uid=auth.currentUser.uid;
+
+  try{
+
+    await runTransaction(
+      db,
+      async(transaction)=>{
+
+        const corridaRef =
+          doc(db,"corridas",corridaId);
+
+        const motoristaRef =
+          doc(db,"usuarios",uid);
+
+        const corridaSnap =
+          await transaction.get(corridaRef);
+
+        const motoristaSnap =
+          await transaction.get(
+            motoristaRef
+          );
+
+        if(!corridaSnap.exists())
+          throw new Error(
+            "CORRIDA_NAO_EXISTE"
+          );
+
+        const r=
+          corridaSnap.data();
+
+        const m=
+          motoristaSnap.data();
+
+        if(m.aprovado!==true)
+          throw new Error(
+            "MOTORISTA_NAO_APROVADO"
+          );
+
+        if(m.online!==true)
+          throw new Error(
+            "MOTORISTA_OFFLINE"
+          );
+
+        if(r.status !==
+           "PROCURANDO_MOTORISTA"){
+
+          throw new Error(
+            "CORRIDA_JA_ACEITA"
+          );
+
+        }
+
+        /*
+          Segurança adicional:
+          o tipo do veículo precisa
+          ser exatamente igual.
+        */
+
+        if(
+          String(m.veiculo) !==
+          String(r.tipoVeiculo)
+        ){
+
+          throw new Error(
+            "VEICULO_INCOMPATIVEL"
+          );
+
+        }
+
+        let ganho =
+          Number(
+            window.CONFIG_PADRAO.ganhoBase
+          );
+
+        if(Number(r.km)>5){
+
+          ganho +=
+            (Number(r.km)-5) *
+            Number(
+              window.CONFIG_PADRAO
+                .adicionalMotorista
+            );
+
+        }
+
+        if(r.opcoes?.super){
+
+          ganho =
+            Number(
+              window.CONFIG_PADRAO
+                .superMotorista
+            );
+
+        }
+
+        ganho=
+          Number(ganho.toFixed(2));
+
+        const saldoAtual =
+          Number(m.saldo || 0);
+
+        /*
+          O valor do motorista
+          entra no saldo dele
+          somente quando ele aceita.
+        */
+
+        transaction.update(
+          corridaRef,
+          {
+
+            motoristaId:uid,
+            motoristaNome:m.nome,
+
+            valorMotorista:ganho,
+
+            status:"ACEITA",
+
+            aceitaEm:serverTimestamp()
+
+          }
+        );
+
+        transaction.update(
+          motoristaRef,
+          {
+
+            saldo:
+              Number(
+                (saldoAtual+ganho)
+                .toFixed(2)
+              )
+
+          }
+        );
+
+        const movRef =
+          doc(
+            collection(
+              db,
+              "movimentacoes"
+            )
+          );
+
+        transaction.set(
+          movRef,
+          {
+
+            usuarioId:uid,
+
+            corridaId,
+
+            tipo:"CREDITO",
+
+            valor:ganho,
+
+            descricao:
+              "Ganho de corrida",
+
+            data:
+              serverTimestamp()
+
+          }
+        );
+
+      }
+    );
+
+    toast(
+      "✅ Corrida aceita e saldo creditado."
+    );
+
+  }catch(e){
+
+    const mensagens={
+
+      CORRIDA_JA_ACEITA:
+        "Essa corrida já foi aceita.",
+
+      VEICULO_INCOMPATIVEL:
+        "Essa corrida é para outro tipo de veículo.",
+
+      MOTORISTA_NAO_APROVADO:
+        "Seu cadastro ainda não foi aprovado.",
+
+      MOTORISTA_OFFLINE:
+        "Você está OFFLINE."
+
+    };
+
+    toast(
+      mensagens[e.message] ||
+      "Não foi possível aceitar."
+    );
+
+  }
+
+};
+
+</script>
