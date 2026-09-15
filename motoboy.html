@@ -1,44 +1,9 @@
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, query, where, orderBy, onSnapshot, doc, getDoc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { CONFIG_PADRAO, TIPOS_VEICULO, formatarMoeda } from "./config.js";
-
-const firebaseConfig = { apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44", authDomain:"anjos-flash.firebaseapp.com", projectId:"anjos-flash", storageBucket:"anjos-flash.firebasestorage.app", messagingSenderId:"725133182752", appId:"1:725133182752:web:5f9a98fa97269dcdcab945", measurementId:"G-9CSJXXNR0C" };
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app); const auth=getAuth(app);
-window.db=db; window.auth=auth;
-
-let somLiberado=false;
-window.ativarSom=function(){ document.getElementById("som").play(); somLiberado=true; }
-
-window.ouvirCorridasMotorista=function(tipoVeiculo, meuCodigo){
-  const q=query(collection(db,"corridas"), where("status","==","PROCURANDO_MOTORISTA"), where("tipoVeiculo","==",tipoVeiculo), orderBy("criadoEm","desc"));
-  onSnapshot(q,snap=>{
-    let html="";
-    snap.forEach(d=>{
-      const r=d.data();
-      let destino=(r.motoboyDestino||"TODOS").toUpperCase();
-      if(destino!=="TODOS" && destino!==meuCodigo.toUpperCase()) return;
-      if(somLiberado) document.getElementById("som").play();
-      html+=`<div class="ride"><h3>🚀 ${r.lojaNome}</h3><b>${destino}</b><br>${r.clienteEndereco}<br><b>${r.km}km</b><div class="money">${formatarMoeda(r.valorMotorista)}</div><button class="green" onclick="aceitarCorrida('${r.id}')">ACEITAR</button></div>`;
-    });
-    document.getElementById("corridasMotorista").innerHTML=html||"Nenhuma";
-  });
-};
-
-window.aceitarCorrida=async function(corridaId){
-  const uid=auth.currentUser.uid;
-  await runTransaction(db, async(transaction)=>{
-    const corridaRef=doc(db,"corridas",corridaId); const motoristaRef=doc(db,"usuarios",uid);
-    const corridaSnap=await transaction.get(corridaRef); const motoristaSnap=await transaction.get(motoristaRef);
-    const r=corridaSnap.data(); const m=motoristaSnap.data();
-    if(r.status!=="PROCURANDO_MOTORISTA") throw new Error("CORRIDA_JA_ACEITA");
-    if(String(m.veiculo)!==String(r.tipoVeiculo)) throw new Error("VEICULO_INCOMPATIVEL");
-    transaction.update(corridaRef,{motoristaId:uid, motoristaNome:m.nome, status:"ACEITA", aceitaEm:serverTimestamp()});
-    transaction.update(motoristaRef,{saldo:Number((Number(m.saldo||0)+Number(r.valorMotorista)).toFixed(2))});
-    const movRef=doc(collection(db,"movimentacoes"));
-    transaction.set(movRef,{usuarioId:uid, corridaId, tipo:"CREDITO", valor:r.valorMotorista, descricao:"Ganho corrida", data:serverTimestamp()});
-  });
-};
-</script>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Moto</title><script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script><style>body{background:#000;color:#fff;font-family:Arial;padding:12px;margin:0}.card{background:#111;border:1px solid #D4AF37;padding:12px;border-radius:12px;margin-bottom:12px}.ride{background:#222;padding:10px;border-radius:10px;margin-bottom:10px;border:1px solid #333}button{width:100%;padding:12px;border:none;border-radius:8px;font-weight:900}.green{background:#0f0;color:#000}</style></head><body>
+<div class="card"><span id="cod" style="color:#D4AF37;font-weight:900">COD: ...</span> <button onclick="ativar()" style="width:auto;background:#D4AF37;color:#000;padding:6px 10px">🔊 TRIM TRIM</button></div><div id="lista">Carregando...</div><audio id="som" src="https://assets.mixkit.co/sfx/preview/mixkit-classic-alarm-995.mp3"></audio>
+<script>
+const cfg={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.firebasestorage.app",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945"};firebase.initializeApp(cfg);const auth=firebase.auth();const db=firebase.firestore();
+let somOk=false,uid=null,cod="TODOS",veic="moto";function ativar(){document.getElementById("som").play();somOk=true;alert("TRIM TRIM ON");}
+auth.onAuthStateChanged(async u=>{if(!u)location.href="index.html";uid=u.uid;const s=await db.collection("usuarios").doc(uid).get();const d=s.data();veic=d.veiculo||"moto";cod=(d.codigoMotorista||"TODOS").toUpperCase();document.getElementById("cod").innerText="COD: "+cod+" | "+veic;ouvir();});
+function ouvir(){db.collection("corridas").where("status","==","PROCURANDO_MOTORISTA").where("tipoVeiculo","==",veic).orderBy("criadoEm","desc").onSnapshot(ss=>{let h="";ss.forEach(doc=>{const r=doc.data();const dest=(r.motoboyDestino||"TODOS").toUpperCase();if(dest!=="TODOS"&&dest!==cod)return;if(somOk)document.getElementById("som").play();h+=`<div class="ride">${r.lojaNome} -> ${r.clienteEndereco}<br>${r.km}km R$${r.valorMotorista}<br>Dest:${dest}<button class="green" onclick="aceitar('${r.id}')">ACEITAR</button></div>`;});document.getElementById("lista").innerHTML=h||"Sem corridas";});}
+async function aceitar(id){try{await db.runTransaction(async t=>{const rc=db.collection("corridas").doc(id);const ru=db.collection("usuarios").doc(uid);const sc=await t.get(rc);if(sc.data().status!=="PROCURANDO_MOTORISTA")throw"Ja aceita";const su=await t.get(ru);t.update(rc,{motoristaId:uid,status:"ACEITA",aceitaEm:firebase.firestore.FieldValue.serverTimestamp()});t.update(ru,{saldo:(su.data().saldo||0)+sc.data().valorMotorista});});alert("ACEITA!");}catch(e){alert(e);}}
+</script></body></html>
