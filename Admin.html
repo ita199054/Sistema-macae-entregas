@@ -1,8 +1,25 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin</title><script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script><style>body{background:#000;color:#fff;font-family:Arial;padding:12px} .card{background:#111;border:1px solid #D4AF37;padding:12px;border-radius:12px;margin-bottom:12px} button{padding:10px;border:none;border-radius:8px;font-weight:900;margin:4px} .g{background:#D4AF37;color:#000} .gr{background:#0f0;color:#000}</style></head><body>
-<h2 style="color:#D4AF37">👑 ADMIN MASTER</h2><div id="pendentes" class="card">Carregando motoboys...</div><div id="corridas" class="card">Carregando corridas...</div>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Master - Anjos Flash</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<style>body{background:#000;color:#fff;font-family:Arial;padding:12px;margin:0} h2{color:#D4AF37}.card{background:#111;border:1px solid #D4AF37;padding:12px;border-radius:12px;margin-bottom:12px}.item{background:#222;padding:10px;border-radius:8px;margin-bottom:8px;border:1px solid #333} button{padding:8px 12px;border:none;border-radius:8px;font-weight:900;margin:4px}.gr{background:#0f0;color:#000}.gold{background:#D4AF37;color:#000} input{padding:10px;background:#222;color:#fff;border:1px solid #333;border-radius:8px}</style>
+</head><body>
+<h2>👑 ADMIN MASTER</h2>
+<div class="card"><b>Adicionar saldo lojista:</b><br><input id="emailAdd" placeholder="email lojista"><input id="valorAdd" type="number" placeholder="valor ex: 50"><button class="gold" onclick="addSaldo()">ADD SALDO</button><div id="msgAdd" style="color:yellow"></div></div>
+<div id="pendentes" class="card">Carregando motoboys...</div>
+<div id="corridas" class="card">Carregando corridas...</div>
+<div id="erro" class="card" style="display:none;color:#ff6666"></div>
 <script>
 const cfg={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.firebasestorage.app",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945"};firebase.initializeApp(cfg);const db=firebase.firestore();
-db.collection("usuarios").where("role","==","motorista").where("aprovado","==",false).onSnapshot(ss=>{let h="<b>Pendentes:</b><br>";ss.forEach(d=>{const u=d.data();h+=`${u.email} COD ${u.codigoMotorista} <button class="gr" onclick="aprovar('${d.id}')">Aprovar</button><br>`;});document.getElementById("pendentes").innerHTML=h;});
-db.collection("corridas").orderBy("criadoEm","desc").limit(20).onSnapshot(ss=>{let h="<b>Últimas Corridas:</b><br>";ss.forEach(d=>{const r=d.data();h+=`${r.id.slice(0,5)} ${r.status} R$${r.valorLojista} ${r.lojaNome}->${r.clienteEndereco}<br>`;});document.getElementById("corridas").innerHTML=h;});
+async function addSaldo(){const email=document.getElementById("emailAdd").value.trim().toLowerCase();const v=Number(document.getElementById("valorAdd").value);if(!email||!v)return document.getElementById("msgAdd").innerText="Digite email e valor";try{const q=await db.collection("usuarios").where("email","==",email).get();if(q.empty)return document.getElementById("msgAdd").innerText="Email não achado";const doc=q.docs[0];await db.collection("usuarios").doc(doc.id).update({saldo:(doc.data().saldo||0)+v});document.getElementById("msgAdd").innerText="Saldo adicionado!";}catch(e){document.getElementById("msgAdd").innerText=e.toString();}}
+// BUSCA SIMPLES SEM ÍNDICE
+db.collection("usuarios").where("role","==","motorista").onSnapshot(ss=>{
+  let h="<b>Motoboys (pendentes em amarelo):</b><br>";if(ss.empty){h+="Nenhum motorista";}ss.forEach(d=>{const u=d.data();const cor=u.aprovado?"#0f0":"#ffcc00";h+=`<div class="item" style="border-left:4px solid ${cor}">${u.email}<br>COD: ${u.codigoMotorista} | ${u.veiculo} | Aprov: ${u.aprovado}<br>${!u.aprovado?`<button class="gr" onclick="aprovar('${d.id}')">APROVAR</button>`:''} <button onclick="remover('${d.id}')" style="background:#f33;color:#fff">Remover</button></div>`;});document.getElementById("pendentes").innerHTML=h;
+},err=>{document.getElementById("erro").style.display="block";document.getElementById("erro").innerText="Erro motoboys: "+err.message;});
+// CORRIDAS SEM ORDERBY PRA NÃO PRECISAR INDICE
+db.collection("corridas").limit(20).onSnapshot(ss=>{
+  let h="<b>Últimas 20 corridas:</b><br>";ss.forEach(d=>{const r=d.data();h+=`<div class="item">${r.lojaNome||'?'} -> ${r.clienteEndereco||'?'}<br>R$${r.valorLojista||0} | ${r.status} | Dest: ${r.motoboyDestino}<br><small>${d.id}</small></div>`;});document.getElementById("corridas").innerHTML=h||"Sem corridas";
+},err=>{document.getElementById("erro").style.display="block";document.getElementById("erro").innerText+=" | Erro corridas: "+err.message;});
 async function aprovar(id){await db.collection("usuarios").doc(id).update({aprovado:true});alert("Aprovado");}
+async function remover(id){if(!confirm("Remover?"))return;await db.collection("usuarios").doc(id).delete();alert("Removido");}
 </script></body></html>
