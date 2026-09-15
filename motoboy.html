@@ -456,4 +456,268 @@ window.aceitarCorrida=async function(corridaId){
 
 };
 
+</script><!-- PARTE 5 — EXTRATO MOTORISTA -->
+
+<script type="module">
+
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const db=window.db;
+const auth=window.auth;
+
+window.montarExtratoMotorista=async function(){
+
+  const inicio =
+    DATA_90_DIAS();
+
+  const q=query(
+    collection(db,"movimentacoes"),
+    where(
+      "usuarioId",
+      "==",
+      auth.currentUser.uid
+    ),
+    where(
+      "tipo",
+      "==",
+      "CREDITO"
+    ),
+    orderBy(
+      "data",
+      "desc"
+    )
+  );
+
+  const snap=
+    await getDocs(q);
+
+  let total=0;
+  let linhas=[];
+
+  snap.forEach(d=>{
+
+    const m=d.data();
+
+    if(!m.data)return;
+
+    const data=
+      typeof m.data.toDate==="function"
+      ?m.data.toDate()
+      :new Date(m.data);
+
+    if(data < inicio)return;
+
+    total +=
+      Number(m.valor||0);
+
+    linhas.push({
+
+      data:
+        formatarData(m.data),
+
+      corrida:
+        m.corridaId || "-",
+
+      valor:
+        Number(m.valor||0)
+
+    });
+
+  });
+
+  return {
+    linhas,
+    total
+  };
+
+};
+
+window.mostrarExtratoMotorista=async function(){
+
+  const resultado =
+    await montarExtratoMotorista();
+
+  let html=`
+
+    <div class="card">
+
+      <h3>
+        MEU EXTRATO — 90 DIAS
+      </h3>
+
+      <p>
+        Total recebido:
+        <b>
+          ${formatarMoeda(resultado.total)}
+        </b>
+      </p>
+
+      <table
+        style="
+        width:100%;
+        border-collapse:collapse;
+        ">
+
+        <tr>
+
+          <th>Data</th>
+          <th>Corrida</th>
+          <th>Você recebeu</th>
+
+        </tr>
+
+  `;
+
+  resultado.linhas.forEach(l=>{
+
+    html += `
+
+      <tr>
+
+        <td>${l.data}</td>
+
+        <td>${l.corrida}</td>
+
+        <td>
+          ${formatarMoeda(l.valor)}
+        </td>
+
+      </tr>
+
+    `;
+
+  });
+
+  html += `
+
+      </table>
+
+    </div>
+
+  `;
+
+  $("extratoMotorista").innerHTML =
+    html;
+
+};
+
+window.imprimirExtratoMotorista=async function(){
+
+  const resultado =
+    await montarExtratoMotorista();
+
+  let linhas="";
+
+  resultado.linhas.forEach(l=>{
+
+    linhas += `
+
+      <tr>
+
+        <td>${l.data}</td>
+
+        <td>${l.corrida}</td>
+
+        <td>${formatarMoeda(l.valor)}</td>
+
+      </tr>
+
+    `;
+
+  });
+
+  const janela =
+    window.open(
+      "",
+      "_blank"
+    );
+
+  janela.document.write(`
+
+    <html>
+
+    <head>
+
+      <title>
+        Extrato Motorista — 90 dias
+      </title>
+
+      <style>
+
+        body{
+          font-family:Arial;
+          padding:30px;
+        }
+
+        h1{
+          color:#b08d20;
+        }
+
+        table{
+          width:100%;
+          border-collapse:collapse;
+        }
+
+        th,td{
+          border:1px solid #999;
+          padding:8px;
+        }
+
+      </style>
+
+    </head>
+
+    <body>
+
+      <h1>
+        ANJOS EM DUAS RODAS
+      </h1>
+
+      <h2>
+        EXTRATO DO MOTORISTA
+      </h2>
+
+      <p>
+        Período: últimos 90 dias
+      </p>
+
+      <table>
+
+        <tr>
+          <th>Data</th>
+          <th>Corrida</th>
+          <th>Valor recebido</th>
+        </tr>
+
+        ${linhas}
+
+      </table>
+
+      <h3>
+        Total recebido:
+        ${formatarMoeda(resultado.total)}
+      </h3>
+
+      <script>
+        window.onload=function(){
+          window.print();
+        };
+      <\/script>
+
+    </body>
+
+    </html>
+
+  `);
+
+  janela.document.close();
+
+};
+
 </script>
