@@ -13,7 +13,7 @@ h1{color:#D4AF37;margin:0;font-size:16px}
 .item{background:#1a1a1a;border-left:4px solid #D4AF37;padding:10px;margin:6px 0;border-radius:8px}
 input,select{width:100%;padding:11px;background:#222;color:#fff;border:1px solid #444;border-radius:10px;margin:5px 0;box-sizing:border-box}
 button{padding:10px 12px;border:none;border-radius:8px;font-weight:900;margin:2px;cursor:pointer}
-.gold{background:#D4AF37;color:#000}.green{background:#0f0;color:#000}.red{background:#f33;color:#fff}.dark{background:#333;color:#D4AF37}
+.gold{background:#D4AF37;color:#000}.green{background:#0f0;color:#000}.red{background:#f33;color:#fff}.dark{background:#333;color:#D4AF37}.blue{background:#0af;color:#000}
 .small{font-size:11px;color:#aaa}.hidden{display:none}
 .linha{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #222}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -57,65 +57,6 @@ Moto recebe acima limite R$<input id="c-motoAcima" type="number" value="15">
 </div>
 </div>
 <div id="motos" class="hidden"><div class="card"><h3>Motoboys</h3><div id="listaMotos">Carregando...</div></div></div>
-<div id="lojas" class="hidden"><div class="card"><h3>Lojistas + Saldo</h3><div id="listaLojas">Carregando...</div><div class="card"><input id="emailAdd" placeholder="email lojista"><input id="valorAdd" type="number" placeholder="50"><button class="gold" onclick="addSaldoEmail()">ADD SALDO</button><div id="msgAdd" class="small"></div></div></div></div>
-<div id="corridas" class="hidden"><div class="card"><h3>Corridas</h3><div id="listaCorridas">Carregando...</div></div></div>
-<script>
-var cfg={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.firebasestorage.app",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945"};
-firebase.initializeApp(cfg); var auth=firebase.auth(); var db=firebase.firestore();
-var allMotos=[], allLojas=[], allCorridas=[], conf={ativo:true, pausa:false, base:10, kmlim:5, add:2, motoAte:7.5, limMoto:20, motoAcima:15, perc:0, dinLojista:5, dinMoto:3, locais:[]};
-function abrirAba(id){
-  var ids=['dash','config','motos','lojas','corridas'];
-  for(var k=0;k<ids.length;k++){ document.getElementById(ids[k]).classList.add('hidden'); document.getElementById('bt-'+ids[k]).classList.remove('on'); }
-  document.getElementById(id).classList.remove('hidden');
-  document.getElementById('bt-'+id).classList.add('on');
-  if(id==='config') simular();
-}
-auth.onAuthStateChanged(function(u){ if(!u){ location.href='index.html'; return; } document.getElementById('userEmail').innerText=u.email; carregarConf(); iniciar(); });
-async function carregarConf(){
-  try{ var d=await db.collection('configuracoes').doc('valores').get(); if(d.exists){ conf = Object.assign(conf, d.data()); } }catch(e){}
-  document.getElementById('c-ativo').checked = conf.ativo!==false;
-  document.getElementById('c-pausa').checked = conf.pausa===true;
-  document.getElementById('c-base').value = conf.base;
-  document.getElementById('c-kmlim').value = conf.kmlim;
-  document.getElementById('c-add').value = conf.add;
-  document.getElementById('c-motoAte').value = conf.motoAte;
-  document.getElementById('c-limMoto').value = conf.limMoto;
-  document.getElementById('c-motoAcima').value = conf.motoAcima;
-  document.getElementById('c-perc').value = conf.perc||0;
-  document.getElementById('c-dinLojista').value = conf.dinLojista||5;
-  document.getElementById('c-dinMoto').value = conf.dinMoto||3;
-  renderLocais(); simular();
-}
-function renderLocais(){
-  var h=''; for(var i=0;i<conf.locais.length;i++){ var l=conf.locais[i]; h+='<div class="item">'+l.nome+' - R$'+l.taxa+' <button class="red" onclick="remLocal('+i+')">x</button></div>'; }
-  document.getElementById('listaLocais').innerHTML = h || '<span class="small">Nenhum local especial</span>';
-}
-function addLocal(){ var n=document.getElementById('c-nome').value.trim(); var t=Number(document.getElementById('c-taxa').value); if(!n||!t){ alert('Digite nome e taxa'); return; } conf.locais.push({nome:n, taxa:t}); renderLocais(); document.getElementById('c-nome').value=''; document.getElementById('c-taxa').value=''; }
-function remLocal(i){ conf.locais.splice(i,1); renderLocais(); }
-function getConf(){ return {ativo:document.getElementById('c-ativo').checked, pausa:document.getElementById('c-pausa').checked, base:Number(document.getElementById('c-base').value||10), kmlim:Number(document.getElementById('c-kmlim').value||5), add:Number(document.getElementById('c-add').value||2), motoAte:Number(document.getElementById('c-motoAte').value||7.5), limMoto:Number(document.getElementById('c-limMoto').value||20), motoAcima:Number(document.getElementById('c-motoAcima').value||15), perc:Number(document.getElementById('c-perc').value||0), dinLojista:Number(document.getElementById('c-dinLojista').value||5), dinMoto:Number(document.getElementById('c-dinMoto').value||3), locais:conf.locais}; }
-function calc(km){ var c=getConf(); var loj; if(!c.ativo){ loj=c.base; } else { loj=c.base + (km>c.kmlim? (km-c.kmlim)*c.add : 0); loj = loj * (1 + c.perc/100); } var moto = loj < c.limMoto? c.motoAte : c.motoAcima; return {loj:loj, moto:moto, lucro:loj-moto}; }
-function simular(){ var km=Number(document.getElementById('simKM').value||0); var r=calc(km); var c=getConf(); document.getElementById('simRes').innerHTML='KM '+km+' | Lojista <b style="color:#D4AF37">R$'+r.loj.toFixed(2)+'</b> | Moto <b style="color:#0f0">R$'+r.moto.toFixed(2)+'</b> | Lucro <b style="color:#0f0">R$'+r.lucro.toFixed(2)+'</b> '+(c.ativo?'🟢ON':'🔴OFF'); document.getElementById('prev').innerText = c.pausa? '⛔ SISTEMA PAUSADO - lojista não cria' : (c.ativo? 'Dinâmica ligada Lojista +'+c.dinLojista+' Moto +'+c.dinMoto : 'Desligada - só base R$'+c.base); }
-async function salvar(){ var c=getConf(); await db.collection('configuracoes').doc('valores').set(c); conf=c; document.getElementById('msg').innerText='✅ SALVO!'; setTimeout(function(){ document.getElementById('msg').innerText=''; },3000); }
-function iniciar(){
-  db.collection('usuarios').onSnapshot(function(ss){
-    allMotos=[]; allLojas=[]; ss.forEach(function(d){ var u=d.data(); u.id=d.id; if((u.role||'').indexOf('motor')>=0) allMotos.push(u); if((u.role||'').indexOf('loj')>=0) allLojas.push(u); });
-    var hm=''; for(var i=0;i<allMotos.length;i++){ var m=allMotos[i]; hm+='<div class="item">'+m.email+' COD '+(m.codigoMotorista||'')+' '+(m.aprovado?'✅ APROVADO':'🟡 PENDENTE')+'<br><button class="green" onclick="aprovar(\''+m.id+'\','+!m.aprovado+')">'+(m.aprovado?'Desaprovar':'Aprovar')+'</button> <button class="red" onclick="delU(\''+m.id+'\')">X</button></div>'; }
-    document.getElementById('listaMotos').innerHTML = hm || 'Nenhum motoboy ainda';
-    var hl=''; for(var j=0;j<allLojas.length;j++){ var l=allLojas[j]; hl+='<div class="item">'+l.email+' - Saldo R$'+(l.saldo||0).toFixed(2)+' <button class="gold" onclick="addS(\''+l.id+'\')">+Saldo</button></div>'; }
-    document.getElementById('listaLojas').innerHTML = hl || 'Nenhum lojista';
-  });
-  db.collection('corridas').limit(50).onSnapshot(function(ss){
-    allCorridas=[]; ss.forEach(function(d){ var c=d.data(); c.id=d.id; allCorridas.push(c); });
-    var tot=0,luc=0,hoje=0; var hojeStr=new Date().toDateString(); for(var k=0;k<allCorridas.length;k++){ tot+=allCorridas[k].valorLojista||0; luc+=(allCorridas[k].valorLojista||0)-(allCorridas[k].valorMotorista||0); try{ if(allCorridas[k].criadoEm && allCorridas[k].criadoEm.toDate().toDateString()===hojeStr) hoje++; }catch(e){} }
-    document.getElementById('s-fat').innerText='R$'+tot.toFixed(2); document.getElementById('s-lucro').innerText='R$'+luc.toFixed(2); document.getElementById('s-cont').innerText=hoje+'/'+allLojas.length+'/'+allMotos.length;
-    var h=''; for(var r=0;r<Math.min(15,allCorridas.length);r++){ var cr=allCorridas[r]; h+='<div class="item">'+(cr.lojaNome||'?')+' -> '+(cr.clienteEndereco||'?')+' R$'+(cr.valorLojista||0)+' '+cr.status+'<br><button class="dark" onclick="entregar(\''+cr.id+'\')">Entregue</button> <button class="red" onclick="delC(\''+cr.id+'\')">Apagar</button></div>'; }
-    document.getElementById('dash-corridas').innerHTML = h || 'Sem corridas'; document.getElementById('listaCorridas').innerHTML = h || 'Sem corridas';
-  });
-}
-async function aprovar(id,v){ await db.collection('usuarios').doc(id).update({aprovado:v}); }
-async function delU(id){ if(confirm('Excluir?')) await db.collection('usuarios').doc(id).delete(); }
-async function addS(id){ var v=Number(prompt('Valor saldo?')); if(!v) return; var s=await db.collection('usuarios').doc(id).get(); await db.collection('usuarios').doc(id).update({saldo:(s.data().saldo||0)+v}); }
-async function addSaldoEmail(){ var email=document.getElementById('emailAdd').value.trim().toLowerCase(); var v=Number(document.getElementById('valorAdd').value); if(!email||!v) return; var q=await db.collection('usuarios').where('email','==',email).get(); if(q.empty){ document.getElementById('msgAdd').innerText='Não achado'; return; } await db.collection('usuarios').doc(q.docs[0].id).update({saldo:(q.docs[0].data().saldo||0)+v}); document.getElementById('msgAdd').innerText='OK R$'+v; }
-async function entregar(id){ await db.collection('corridas').doc(id).update({status:'ENTREGUE'}); }
-async function delC(id){ if(confirm('Apagar corrida?')) await db.collection('corridas').doc(id).delete(); }
-</script></body></html>
+<div id="lojas" class="hidden">
+<div class="card"><h3>Lojistas + Saldo</h3><div id="listaLojas">Carregando...</div><div class="card"><input id="emailAdd" placeholder="email lojista"><input id="valorAdd" type="number" placeholder="50"><button class="gold" onclick="addSaldoEmail()">ADD SALDO</button><div id="msgAdd" class="small"></div></div></div>
+<div id="boxEditLoja" class="card hidden" style="border:2px solid #D4AF37"><h3 style="color:#D4AF37">✏️ EDITAR SUPER LOJA - SUPER + RETORNO</h3><input id="elId" type="hidden">Nome Loja<input id="elNome">Email<input id="elEmail">Endereço<input id="elEnd">Telefone<input id="elTel"><div class="grid2"><div>Saldo R$<input id="elSaldo" type="number"></div><div>Taxa Super Loja R$<input id="el
