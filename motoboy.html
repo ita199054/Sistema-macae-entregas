@@ -1,39 +1,93 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Motoboy</title><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script><script src="config.js"></script><style>body{background:#000;color:#fff;font-family:Arial;padding:12px} .c{background:#222;padding:12px;border-radius:12px;margin:10px 0;border-left:4px solid #D4AF37}</style></head><body>
-<h2 style="color:#D4AF37">🏍️ MOTOBOY #<span id="cod">0001</span> - TODAS</h2>
-<div id="status">Conectando...</div>
-<div id="lista">Carregando corridas...</div>
-<script>
-firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore();
-document.getElementById("status").innerText="Firebase OK, buscando corridas pendentes...";
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Motoboy #0001</title><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script><script src="config.js"></script><style>
+body{background:#000;color:#fff;font-family:Arial;padding:12px;max-width:500px;margin:auto}
+.top{background:#171717;border:1px solid #D4AF37;border-radius:12px;padding:12px;display:flex;justify-content:space-between}
+.card{background:#222;padding:14px;border-radius:14px;margin:12px 0;border-left:5px solid #D4AF37}
+.card.ativa{border-left-color:#25D366;background:#1a2a1a}
+.btn{width:100%;padding:14px;border:none;border-radius:10px;font-weight:900;margin-top:8px;cursor:pointer}
+.a{background:#D4AF37;color:#000}.r{background:#333;color:#fff;border:1px solid #555}.f{background:#25D366;color:#fff;font-size:16px}
+input{width:100%;padding:14px;border-radius:10px;border:2px solid #D4AF37;background:#000;color:#fff;font-size:18px;text-align:center;letter-spacing:5px;box-sizing:border-box;margin:8px 0}
+.aviso{background:#D4AF37;color:#000;padding:10px;border-radius:8px;text-align:center;font-weight:900;animation:pisca 1s infinite}@keyframes pisca{50%{opacity:.6}}
+.codigoBox{background:#000;border:2px dashed #D4AF37;padding:12px;border-radius:10px;text-align:center;margin:8px 0}
+</style></head><body>
 
-// NÃO PRECISA LOGIN PRA TESTAR DISPARO PRA TODOS
-db.collection("corridas").where("status","==","pendente").onSnapshot(s=>{
-  document.getElementById("status").innerText="Encontradas: "+s.size+" corridas pendentes";
-  let h="";
-  s.forEach(doc=>{
-    let x=doc.data();
-    let dest=(x.motoboyDestino||"").toString().toLowerCase();
-    // LÓGICA NOVA:
-    // null / "" / "todos" = MOSTRA
-    // "#0001" = MOSTRA TAMBÉM (porque você é 0001)
-    if(dest!=="" && dest!=="null" && dest!=="todos"){
-      if(!dest.includes("0001")) return;
-    }
-    h+=`<div class="c">
-    <b>${x.nomeLoja||x.localizacao||"LOJA"}</b> - R$ ${x.valor||0}<br>
-    De: ${x.origem||"-"}<br>Para: ${x.destino||x.localizacao||"-"}<br>
-    Destino: ${x.motoboyDestino} (${dest===""?"TODOS":dest})<br>
-    <button onclick="aceitar('${doc.id}')" style="width:100%;padding:12px;background:#D4AF37;border:none;border-radius:8px;font-weight:900;margin-top:8px">ACEITAR</button>
-    </div>`;
-  });
-  document.getElementById("lista").innerHTML = h || "Nenhuma corrida com status=pendente";
-}, err=>{
-  document.getElementById("status").innerText="ERRO: "+err.message;
+<div class="top">
+<div>🏍️ <b style="color:#D4AF37">#<span id="cod">0001</span></b><br><small id="mail"></small><br><span id="dinG" style="display:none;background:#D4AF37;color:#000;padding:2px 6px;border-radius:4px;font-size:11px">🔥 DINÂMICA GERAL ATIVA</span></div>
+<div style="text-align:right">Saldo<br><b id="saldo" style="color:#D4AF37;font-size:22px">R$0,00</b><br><small id="qtd">0 ativas</small></div>
+</div>
+
+<div id="dinCor" class="aviso" style="display:none;margin-top:10px">🔥 DINÂMICA ATIVADA PELO LOJISTA +R$2,00</div>
+
+<h3>📦 Disponíveis (<span id="num">0</span>) - null=TODOS</h3>
+<div id="disp">Carregando...</div>
+
+<h3 style="color:#25D366">✅ MINHAS CORRIDAS - COLOCAR CÓDIGO DO CLIENTE</h3>
+<div id="minhas"></div>
+
+<script>
+firebase.initializeApp(firebaseConfig);const db=firebase.firestore();let MEU_UID="",MEU_COD="0001";
+firebase.auth().onAuthStateChanged(async u=>{
+ if(!u)return location.href="index.html";
+ MEU_UID=u.uid; document.getElementById("mail").innerText=u.email;
+ try{const d=await db.collection("usuarios").doc(u.uid).get(); MEU_COD=(d.data().codigoMotoboy||d.data().codigo||"0001").replace("#","").toLowerCase(); document.getElementById("cod").innerText=MEU_COD.toUpperCase(); document.getElementById("saldo").innerText="R$"+(d.data().saldo||0).toFixed(2); if(d.data().dinamicaGeral) document.getElementById("dinG").style.display="inline-block";}catch(e){}
+ ouvirDisp(); ouvirMinhas();
 });
 
-async function aceitar(id){
-  await db.collection("corridas").doc(id).update({status:"aceita",aceitaEm: new Date()});
-  alert("Aceita! Status mudou pra aceita");
+function ouvirDisp(){
+ db.collection("corridas").where("status","==","pendente").onSnapshot(s=>{
+  document.getElementById("num").innerText=s.size;
+  let h="",temDin=false;
+  s.forEach(doc=>{
+   let x=doc.data(); let dest=(x.motoboyDestino||"").toString().replace("#","").toLowerCase();
+   if(dest!==""&&dest!=="null"&&dest!=="todos"&&dest!==MEU_COD) return;
+   if(x.dinamicaAtiva) temDin=true;
+   let tag = (dest===""||dest==="null")?"🌍 TODOS":"🎯 SÓ VOCÊ #"+MEU_COD.toUpperCase();
+   h+=`<div class="card">
+   ${x.dinamicaAtiva?'<div class="aviso" style="margin-bottom:8px">🔥 DINÂMICA +R$2</div>':''}
+   <b>${x.nomeLoja}</b> <small>${tag}</small><br>De: ${x.origem||"-"}<br>Para: ${x.destino}<br>
+   <div class="codigoBox">Código Cliente: <b style="font-size:22px;color:#D4AF37">${x.codigoEntrega}</b><br><small>Cliente vai falar esse código</small></div>
+   <b>R$ ${x.valor}</b>
+   <button class="btn a" onclick="aceitar('${doc.id}')">✅ ACEITAR</button>
+   <button class="btn r" onclick="recusar('${doc.id}')">❌ RECUSAR</button>
+   </div>`;
+  });
+  document.getElementById("disp").innerHTML=h||"Nenhuma pendente";
+  document.getElementById("dinCor").style.display=temDin?"block":"none";
+ });
+}
+
+function ouvirMinhas(){
+ db.collection("corridas").where("motoboyId","==",MEU_UID).onSnapshot(s=>{
+  let h="",c=0;
+  s.forEach(doc=>{
+   let x=doc.data(); if(x.status!=="aceita") return; c++;
+   h+=`<div class="card ativa">
+   <b>${x.nomeLoja}</b> -> ${x.destino}<br>
+   De: ${x.origem}<br>
+   <div class="codigoBox" style="border-color:#25D366">
+   CLIENTE TEM QUE FALAR:<br>
+   <b style="font-size:32px;letter-spacing:8px;color:#25D366">${x.codigoEntrega}</b><br>
+   <small>Valor: R$${x.valor} ${x.dinamicaAtiva?"🔥com dinâmica":""}</small>
+   </div>
+   <label style="color:#D4AF37;font-weight:900">DIGITE O CÓDIGO DO CLIENTE AQUI:</label>
+   <input id="c_${doc.id}" maxlength="4" inputmode="numeric" placeholder="0000">
+   <button class="btn f" onclick="finalizar('${doc.id}')">✅ CONFIRMAR ENTREGA E RECEBER R$${x.valor}</button>
+   <button class="btn r" onclick="cancelar('${doc.id}')">↩️ Devolver corrida</button>
+   </div>`;
+  });
+  document.getElementById("minhas").innerHTML=h||="Nenhuma corrida aceita. Aceite uma acima.";
+  document.getElementById("qtd").innerText=c+" ativas";
+ });
+}
+
+async function aceitar(id){await db.collection("corridas").doc(id).update({status:"aceita",motoboyId:MEU_UID,motoboyCodigo:MEU_COD,aceitaEm:firebase.firestore.FieldValue.serverTimestamp()});}
+async function recusar(id){await db.collection("corridas").doc(id).update({recusados:firebase.firestore.FieldValue.arrayUnion(MEU_COD)});}
+async function cancelar(id){if(!confirm("Devolver?"))return;await db.collection("corridas").doc(id).update({status:"pendente",motoboyId:firebase.firestore.FieldValue.delete()});}
+async function finalizar(id){
+ const cod=document.getElementById("c_"+id).value.trim();
+ const snap=await db.collection("corridas").doc(id).get(); const real=snap.data().codigoEntrega;
+ if(cod!==real)return alert("CÓDIGO ERRADO! Cliente tem que falar: "+real);
+ await db.collection("corridas").doc(id).update({status:"entregue",entregueEm:firebase.firestore.FieldValue.serverTimestamp()});
+ await db.collection("usuarios").doc(MEU_UID).update({saldo:firebase.firestore.FieldValue.increment(snap.data().valor)});
+ alert("✅ ENTREGUE! +R$"+snap.data().valor+" no seu saldo!"); location.reload();
 }
 </script></body></html>
