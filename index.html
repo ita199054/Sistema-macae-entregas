@@ -401,7 +401,7 @@ REGISTRAR PAGAMENTO
 
 </section>
 
-</div><!-- =========================================================
+ </div><!-- =========================================================
      PARTE 2 — FIREBASE / LOGIN / PERFIS
      ANJOS EM DUAS RODAS
      ========================================================= -->
@@ -1417,139 +1417,814 @@ async function sair() {
 
 }
 
-</script>rules_version = '2';
+</script><script>
 
-service cloud.firestore {
+async function pedirRecarga(){
 
-  match /databases/{database}/documents {
+ try{
 
-    function logado() {
-      return request.auth != null;
-    }
+  await db.collection("transactions")
+   .add({
+    uid:usuarioAtual.uid,
+    tipo:"recarga_50",
+    valor:50,
+    status:"pendente",
+    criadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
 
-    function admin() {
-      return logado()
-        && get(
-          /databases/$(database)/documents/profiles/$(request.auth.uid)
-        ).data.tipo == "admin";
-    }
+  mostrarMensagem(
+   "Recarga de R$ 50,00 enviada para aprovação do ADMIN.",
+   "ok"
+  );
 
-    match /profiles/{uid} {
+ }catch(e){
 
-      allow read:
-        if logado()
-        && (
-          request.auth.uid == uid
-          || admin()
-        );
+  mostrarMensagem(
+   "Erro ao solicitar recarga:\n"+
+   erroHumano(e),
+   "erro"
+  );
 
-      allow create:
-        if logado()
-        && request.auth.uid == uid
-        && request.resource.data.tipo != "admin";
+ }
 
-      allow update:
-        if admin()
-        || (
-          logado()
-          && request.auth.uid == uid
-        );
-
-      allow delete:
-        if admin();
-    }
-
-    match /wallets/{uid} {
-
-      allow read:
-        if logado()
-        && (
-          request.auth.uid == uid
-          || admin()
-        );
-
-      allow create:
-        if logado()
-        && request.auth.uid == uid
-        && request.resource.data.saldo == 0;
-
-      allow update:
-        if admin()
-        || (
-          logado()
-          && request.auth.uid == uid
-          && request.resource.data.saldo ==
-             resource.data.saldo - 8
-        );
-
-      allow delete:
-        if admin();
-    }
-
-    match /orders/{id} {
-
-      allow create:
-        if logado()
-        && request.resource.data.lojistaId ==
-           request.auth.uid;
-
-      allow read:
-        if logado()
-        && (
-          admin()
-          || resource.data.lojistaId == request.auth.uid
-          || resource.data.motoboyId == request.auth.uid
-        );
-
-      allow update:
-        if admin()
-        || (
-          logado()
-          && (
-            resource.data.lojistaId == request.auth.uid
-            || resource.data.motoboyId == request.auth.uid
-          )
-        );
-
-      allow delete:
-        if admin();
-    }
-
-    match /transactions/{id} {
-
-      allow create:
-        if admin()
-        || (
-          logado()
-          && request.resource.data.uid ==
-             request.auth.uid
-          && request.resource.data.tipo ==
-             "recarga_50"
-          && request.resource.data.valor == 50
-          && request.resource.data.status ==
-             "pendente"
-        )
-        || (
-          logado()
-          && request.resource.data.uid ==
-             request.auth.uid
-          && request.resource.data.tipo ==
-             "taxa_pedido"
-          && request.resource.data.valor == -8
-        );
-
-      allow read:
-        if logado()
-        && (
-          admin()
-          || resource.data.uid == request.auth.uid
-        );
-
-      allow update:
-        if admin();
-
-      allow delete:
-        if admin();
-    }
-  }
 }
+
+async function criarPedido(){
+
+ if(saldoAtual<8){
+
+  mostrarMensagem(
+   "Saldo insuficiente. Recarregue seu saldo.",
+   "erro"
+  );
+
+  return;
+ }
+
+ const nome=document
+ .getElementById("clienteNome")
+ .value.trim();
+
+ const endereco=document
+ .getElementById("clienteEndereco")
+ .value.trim();
+
+ const valor=Number(
+  document.getElementById("valorProduto").value
+ );
+
+ if(!nome || !endereco){
+
+  mostrarMensagem(
+   "Informe nome e endereço do cliente.",
+   "erro"
+  );
+
+  return;
+ }
+
+ if(!valor || valor<0){
+
+  mostrarMensagem(
+   "Informe o valor do produto.",
+   "erro"
+  );
+
+  return;
+ }
+
+ const codigo=
+  Math.floor(1000+Math.random()*9000)
+  .toString();
+
+ const walletRef=db
+  .collection("wallets")
+  .doc(usuarioAtual.uid);
+
+ const orderRef=db
+  .collection("orders")
+  .doc();
+
+ const txRef=db
+  .collection("transactions")
+  .doc();
+
+ try{
+
+  await db.runTransaction(async t=>{
+
+   const wallet=await t.get(walletRef);
+
+   if(!wallet.exists)
+    throw new Error("Carteira não encontrada.");
+
+   const saldo=Number(
+    wallet.data().saldo||0
+   );
+
+   if(saldo<8)
+    throw new Error(
+     "Saldo insuficiente para criar o pedido."
+    );
+
+   t.update(walletRef,{
+    saldo:firebase.firestore.FieldValue.increment(-8),
+    atualizadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+   t.set(orderRef,{
+    lojistaId:usuarioAtual.uid,
+    lojistaNome:perfilAtual.nome,
+    clienteNome:nome,
+    enderecoEntrega:endereco,
+    valorProduto:valor,
+    valorPedido:8,
+    codigo4Digitos:codigo,
+    status:"pendente",
+    motoboyId:null,
+    criadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+   t.set(txRef,{
+    uid:usuarioAtual.uid,
+    tipo:"taxa_pedido",
+    valor:-8,
+    orderId:orderRef.id,
+    status:"aprovado",
+    criadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+  });
+
+  saldoAtual-=8;
+  atualizarSaldo();
+
+  document.getElementById("clienteNome").value="";
+  document.getElementById("clienteEndereco").value="";
+  document.getElementById("valorProduto").value="";
+
+  mostrarMensagem(
+   "Pedido criado!\nCódigo de entrega: "+codigo,
+   "ok"
+  );
+
+  carregarLojista();
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Não foi possível criar o pedido.\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function carregarLojista(){
+
+ try{
+
+  const snap=await db.collection("orders")
+   .where("lojistaId","==",usuarioAtual.uid)
+   .get();
+
+  let html="";
+
+  snap.forEach(doc=>{
+
+   const o=doc.data();
+
+   html+=`
+   <div class="item">
+    <b>Pedido ${doc.id.substring(0,6)}</b><br>
+    Cliente: ${o.clienteNome||"-"}<br>
+    Endereço: ${o.enderecoEntrega||"-"}<br>
+    Produto: R$ ${Number(o.valorProduto||0)
+      .toFixed(2).replace(".",",")}<br>
+    Status: <b>${o.status||"-"}</b>
+   </div>`;
+
+  });
+
+  document.getElementById("listaLojista")
+   .innerHTML=
+   html||"<div class='small'>Nenhum pedido.</div>";
+
+  carregarExtrato(
+   "extratoLojista",
+   usuarioAtual.uid
+  );
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro ao carregar pedidos:\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function carregarExtrato(elemento,uid){
+
+ try{
+
+  const snap=await db.collection("transactions")
+   .where("uid","==",uid)
+   .get();
+
+  const limite=
+   Date.now()-90*24*60*60*1000;
+
+  let html="";
+
+  snap.forEach(doc=>{
+
+   const t=doc.data();
+
+   let data=null;
+
+   if(t.criadoEm && t.criadoEm.toDate)
+    data=t.criadoEm.toDate();
+
+   if(data && data.getTime()<limite)
+    return;
+
+   html+=`
+   <div class="item">
+    <b>${t.tipo||"-"}</b><br>
+    Valor: R$ ${Number(t.valor||0)
+     .toFixed(2).replace(".",",")}<br>
+    Status: ${t.status||"-"}
+   </div>`;
+
+  });
+
+  document.getElementById(elemento)
+   .innerHTML=
+   html||"<div class='small'>Nenhuma movimentação nos últimos 90 dias.</div>";
+
+ }catch(e){
+
+  document.getElementById(elemento)
+   .innerHTML=
+   "Erro: "+erroHumano(e);
+
+ }
+
+}
+
+async function alternarOnline(){
+
+ const ref=db.collection("profiles")
+  .doc(usuarioAtual.uid);
+
+ const novo=
+  perfilAtual.online!==true;
+
+ try{
+
+  await ref.update({
+   online:novo
+  });
+
+  perfilAtual.online=novo;
+
+  atualizarStatusMoto();
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro ao alterar status:\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+function atualizarStatusMoto(){
+
+ const online=perfilAtual.online===true;
+
+ document.getElementById("statusMoto")
+ .textContent=
+ online?"ONLINE":"OFFLINE";
+
+ const btn=document.getElementById("btnOnline");
+
+ btn.textContent=
+ online?"FICAR OFFLINE":"FICAR ONLINE";
+
+}
+
+async function carregarMotoboy(){
+
+ atualizarStatusMoto();
+
+ try{
+
+  const snap=await db.collection("orders")
+   .where("status","==","pendente")
+   .get();
+
+  let html="";
+
+  snap.forEach(doc=>{
+
+   const o=doc.data();
+
+   html+=`
+   <div class="item">
+    <b>Pedido ${doc.id.substring(0,6)}</b><br>
+    Loja: ${o.lojistaNome||"-"}<br>
+    Cliente: ${o.clienteNome||"-"}<br>
+    Endereço: ${o.enderecoEntrega||"-"}<br>
+
+    <button onclick="aceitarPedido('${doc.id}')">
+    ACEITAR
+    </button>
+   </div>`;
+
+  });
+
+  document.getElementById("listaPedidosMoto")
+   .innerHTML=
+   html||"<div class='small'>Nenhum pedido disponível.</div>";
+
+  const minhas=await db.collection("orders")
+   .where("motoboyId","==",usuarioAtual.uid)
+   .get();
+
+  let html2="";
+
+  minhas.forEach(doc=>{
+
+   const o=doc.data();
+
+   html2+=`
+   <div class="item">
+    <b>${o.clienteNome||"-"}</b><br>
+    ${o.enderecoEntrega||"-"}<br>
+    Status: <b>${o.status||"-"}</b>
+    ${
+     o.status==="em_rota"
+     ?
+     `<input id="codigo_${doc.id}"
+       maxlength="4"
+       inputmode="numeric"
+       placeholder="Código 4 dígitos">
+
+      <button onclick="finalizarPedido('${doc.id}')">
+       FINALIZAR
+      </button>`
+     :""
+    }
+   </div>`;
+
+  });
+
+  document.getElementById("listaEntregasMoto")
+   .innerHTML=
+   html2||"<div class='small'>Nenhuma entrega.</div>";
+
+  carregarExtrato(
+   "extratoMoto",
+   usuarioAtual.uid
+  );
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro no painel do motoboy:\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function aceitarPedido(id){
+
+ try{
+
+  const ref=db.collection("orders").doc(id);
+
+  await db.runTransaction(async t=>{
+
+   const snap=await t.get(ref);
+
+   if(!snap.exists)
+    throw new Error("Pedido não encontrado.");
+
+   const o=snap.data();
+
+   if(o.status!=="pendente")
+    throw new Error("Esse pedido já foi aceito.");
+
+   t.update(ref,{
+    status:"em_rota",
+    motoboyId:usuarioAtual.uid,
+    motoboyNome:perfilAtual.nome,
+    aceitoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+  });
+
+  mostrarMensagem(
+   "Pedido aceito!",
+   "ok"
+  );
+
+  carregarMotoboy();
+
+ }catch(e){
+
+  mostrarMensagem(
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function finalizarPedido(id){
+
+ const campo=document
+ .getElementById("codigo_"+id);
+
+ const codigo=campo
+ ? campo.value.trim()
+ : "";
+
+ if(!/^\d{4}$/.test(codigo)){
+
+  mostrarMensagem(
+   "Digite o código de 4 dígitos.",
+   "erro"
+  );
+
+  return;
+ }
+
+ try{
+
+  const ref=db.collection("orders").doc(id);
+
+  const snap=await ref.get();
+
+  if(!snap.exists)
+   throw new Error("Pedido não encontrado.");
+
+  const o=snap.data();
+
+  if(o.motoboyId!==usuarioAtual.uid)
+   throw new Error("Esse pedido não pertence a você.");
+
+  if(o.codigo4Digitos!==codigo)
+   throw new Error("Código incorreto.");
+
+  await ref.update({
+   status:"finalizado",
+   finalizadoEm:
+   firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  mostrarMensagem(
+   "Entrega finalizada com sucesso!",
+   "ok"
+  );
+
+  carregarMotoboy();
+
+ }catch(e){
+
+  mostrarMensagem(
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+</script><script>
+
+async function carregarAdmin(){
+
+ try{
+
+  const usuarios=await db
+   .collection("profiles")
+   .get();
+
+  let html="";
+
+  usuarios.forEach(doc=>{
+
+   const u=doc.data();
+
+   html+=`
+   <div class="item">
+    <b>${u.nome||"-"}</b><br>
+    E-mail: ${u.email||"-"}<br>
+    Telefone: ${u.telefone||"-"}<br>
+    Tipo: ${u.tipo||"-"}<br>
+    UID: ${doc.id}
+
+    <button onclick="editarSaldo('${doc.id}')">
+     AJUSTAR SALDO
+    </button>
+   </div>`;
+
+  });
+
+  document.getElementById("adminUsuarios")
+   .innerHTML=html;
+
+  const pedidos=await db
+   .collection("orders")
+   .get();
+
+  let hp="";
+
+  pedidos.forEach(doc=>{
+
+   const o=doc.data();
+
+   hp+=`
+   <div class="item">
+    <b>${o.clienteNome||"-"}</b><br>
+    Loja: ${o.lojistaNome||"-"}<br>
+    Endereço: ${o.enderecoEntrega||"-"}<br>
+    Status: ${o.status||"-"}<br>
+    Motoboy: ${o.motoboyNome||"Não aceito"}
+   </div>`;
+
+  });
+
+  document.getElementById("adminPedidos")
+   .innerHTML=
+   hp||"<div class='small'>Nenhum pedido.</div>";
+
+  const tx=await db
+   .collection("transactions")
+   .get();
+
+  let receitas=0;
+  let pagamentos=0;
+  let recargasHtml="";
+
+  tx.forEach(doc=>{
+
+   const t=doc.data();
+   const valor=Number(t.valor||0);
+
+   if(t.tipo==="recarga_50" &&
+      t.status==="aprovado"){
+
+    receitas+=valor;
+   }
+
+   if(t.tipo==="pagamento_motoboy" &&
+      t.status==="aprovado"){
+
+    pagamentos+=Math.abs(valor);
+   }
+
+   if(t.tipo==="recarga_50" &&
+      t.status==="pendente"){
+
+    recargasHtml+=`
+    <div class="item">
+     Valor: R$ 50,00<br>
+     UID: ${t.uid}
+
+     <button
+      onclick="aprovarRecarga('${doc.id}')">
+      APROVAR
+     </button>
+    </div>`;
+   }
+
+  });
+
+  document.getElementById("adminRecargas")
+   .innerHTML=
+   recargasHtml||
+   "<div class='small'>Nenhuma recarga pendente.</div>";
+
+  document.getElementById("adminReceitas")
+   .textContent=
+   "R$ "+receitas.toFixed(2).replace(".",",");
+
+  document.getElementById("adminPagamentos")
+   .textContent=
+   "R$ "+pagamentos.toFixed(2).replace(".",",");
+
+  document.getElementById("adminLucro")
+   .textContent=
+   "R$ "+(receitas-pagamentos)
+   .toFixed(2).replace(".",",");
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro no painel ADMIN:\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function aprovarRecarga(txId){
+
+ try{
+
+  await db.runTransaction(async t=>{
+
+   const txRef=db
+    .collection("transactions")
+    .doc(txId);
+
+   const tx=await t.get(txRef);
+
+   if(!tx.exists)
+    throw new Error("Recarga não encontrada.");
+
+   const d=tx.data();
+
+   if(d.status!=="pendente")
+    throw new Error("Essa recarga já foi processada.");
+
+   const walletRef=db
+    .collection("wallets")
+    .doc(d.uid);
+
+   const wallet=await t.get(walletRef);
+
+   const saldo=wallet.exists
+    ? Number(wallet.data().saldo||0)
+    : 0;
+
+   t.set(walletRef,{
+    saldo:saldo+50,
+    atualizadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   },{
+    merge:true
+   });
+
+   t.update(txRef,{
+    status:"aprovado",
+    aprovadoPor:usuarioAtual.uid,
+    aprovadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+  });
+
+  mostrarMensagem(
+   "Recarga aprovada.",
+   "ok"
+  );
+
+  carregarAdmin();
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro ao aprovar:\n"+erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function editarSaldo(uid){
+
+ const valor=prompt(
+  "Digite o novo saldo do usuário:"
+ );
+
+ if(valor===null)
+  return;
+
+ const numero=Number(valor);
+
+ if(isNaN(numero)){
+
+  mostrarMensagem(
+   "Valor inválido.",
+   "erro"
+  );
+
+  return;
+ }
+
+ try{
+
+  await db.collection("wallets")
+   .doc(uid)
+   .set({
+    saldo:numero,
+    atualizadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   },{
+    merge:true
+   });
+
+  mostrarMensagem(
+   "Saldo alterado com sucesso.",
+   "ok"
+  );
+
+  carregarAdmin();
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro ao alterar saldo:\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function pagarMotoboy(){
+
+ const uid=document
+ .getElementById("pagMotoUid")
+ .value.trim();
+
+ const valor=Number(
+  document.getElementById("pagMotoValor")
+  .value
+ );
+
+ if(!uid || !valor || valor<=0){
+
+  mostrarMensagem(
+   "Informe UID e valor do pagamento.",
+   "erro"
+  );
+
+  return;
+ }
+
+ try{
+
+  await db.collection("transactions")
+   .add({
+    uid:uid,
+    tipo:"pagamento_motoboy",
+    valor:-Math.abs(valor),
+    status:"aprovado",
+    aprovadoPor:usuarioAtual.uid,
+    criadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+  document.getElementById("pagMotoUid").value="";
+  document.getElementById("pagMotoValor").value="";
+
+  mostrarMensagem(
+   "Pagamento registrado.",
+   "ok"
+  );
+
+  carregarAdmin();
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro no pagamento:\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+</script>
+
+</body>
+</html>
