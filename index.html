@@ -3,1394 +3,223 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Anjos em Duas Rodas</title>
 
 <style>
-
 *{
-box-sizing:border-box;
+  box-sizing:border-box;
 }
 
 body{
-margin:0;
-background:#111;
-color:#fff;
-font-family:Arial,sans-serif;
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#080808;
+  color:#fff;
 }
 
 header{
-background:#000;
-padding:18px 10px;
-text-align:center;
-border-bottom:2px solid #ffc400;
+  background:#111;
+  border-bottom:2px solid #ffd400;
+  padding:18px 12px;
+  text-align:center;
+}
+
+.logo{
+  color:#ffd400;
+  font-size:30px;
+  font-weight:900;
 }
 
 header h1{
-margin:0;
-color:#ffc400;
-font-size:24px;
+  margin:4px 0;
+  font-size:21px;
 }
 
 header p{
-margin:6px 0 0;
-color:#ccc;
+  margin:4px 0 0;
+  color:#ccc;
+  font-size:13px;
 }
 
 .container{
-width:100%;
-max-width:700px;
-margin:auto;
-padding:15px;
+  width:100%;
+  max-width:900px;
+  margin:auto;
+  padding:15px;
 }
 
 .card{
-background:#1d1d1d;
-border-radius:12px;
-padding:16px;
-margin-bottom:15px;
+  background:#141414;
+  border:1px solid #333;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:15px;
 }
 
-h2,h3{
-color:#ffc400;
-margin-top:0;
+.card h2,
+.card h3{
+  color:#ffd400;
+  margin-top:0;
 }
 
 input,
 select,
 textarea{
-width:100%;
-padding:13px;
-margin:6px 0;
-border-radius:8px;
-border:1px solid #555;
-background:#292929;
-color:#fff;
-font-size:16px;
+  width:100%;
+  background:#080808;
+  color:#fff;
+  border:1px solid #555;
+  border-radius:8px;
+  padding:12px;
+  margin:6px 0;
+  font-size:15px;
 }
 
 textarea{
-min-height:80px;
-resize:vertical;
-}
-
-input[type="file"]{
-padding:10px;
+  min-height:80px;
+  resize:vertical;
 }
 
 button{
-width:100%;
-padding:13px;
-margin:6px 0;
-border:0;
-border-radius:8px;
-background:#ffc400;
-color:#000;
-font-weight:bold;
-font-size:16px;
-cursor:pointer;
+  width:100%;
+  border:0;
+  border-radius:8px;
+  padding:13px;
+  margin:6px 0;
+  font-weight:bold;
+  font-size:15px;
+  cursor:pointer;
+  background:#ffd400;
+  color:#000;
 }
 
-button:disabled{
-opacity:.5;
-cursor:not-allowed;
+button:hover{
+  opacity:.9;
 }
 
 .verde{
-background:#16a85b;
-color:#fff;
+  background:#00c853;
+  color:#fff;
 }
 
 .vermelho{
-background:#d83232;
-color:#fff;
-}
-
-.azul{
-background:#1674c9;
-color:#fff;
+  background:#d50000;
+  color:#fff;
 }
 
 .cinza{
-background:#444;
-color:#fff;
+  background:#444;
+  color:#fff;
+}
+
+.azul{
+  background:#1976d2;
+  color:#fff;
 }
 
 .oculto{
-display:none!important;
+  display:none !important;
 }
 
 .mensagem{
-padding:12px;
-border-radius:8px;
-margin-top:10px;
-background:#292929;
-border:1px solid #555;
-text-align:center;
-white-space:pre-line;
-}
-
-.sucesso{
-border-color:#16c765;
-color:#45e98a;
-}
-
-.erro{
-border-color:#e33;
-color:#ff7777;
-}
-
-.info{
-border-color:#2986d8;
-color:#69b5ff;
-}
-
-.usuario{
-background:#080808;
-padding:12px;
-border-radius:10px;
-margin-bottom:15px;
-}
-
-.saldo{
-background:#000;
-border-radius:10px;
-padding:16px;
-text-align:center;
-font-size:28px;
-font-weight:bold;
-color:#24d66f;
-margin:10px 0;
-}
-
-.pix{
-background:#000;
-border:1px solid #ffc400;
-border-radius:8px;
-padding:14px;
-text-align:center;
-font-size:20px;
-color:#ffc400;
+  padding:10px;
+  margin:8px 0;
+  border-radius:8px;
+  white-space:pre-line;
 }
 
 .item{
-background:#292929;
-border-left:4px solid #ffc400;
-border-radius:8px;
-padding:12px;
-margin:8px 0;
-word-break:break-word;
+  background:#0d0d0d;
+  border:1px solid #333;
+  border-radius:9px;
+  padding:12px;
+  margin:8px 0;
 }
 
-.pequeno{
-font-size:12px;
-color:#aaa;
+.item strong{
+  color:#ffd400;
 }
 
 .status{
-text-align:center;
-font-size:22px;
-font-weight:bold;
-padding:8px;
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:10px;
 }
 
 .online{
-color:#20d96d;
+  background:#064d20;
+  color:#00ff66;
 }
 
 .offline{
-color:#ff4d4d;
+  background:#400909;
+  color:#ff4444;
 }
 
-.aprovado{
-color:#20d96d;
-font-weight:bold;
+.saldo{
+  font-size:25px;
+  font-weight:bold;
+  color:#00ff66;
+  text-align:center;
+  margin:10px 0;
 }
 
-.pendente{
-color:#ffc400;
-font-weight:bold;
+.pix{
+  background:#171717;
+  padding:12px;
+  border-radius:8px;
+  text-align:center;
+  color:#ffd400;
+  font-weight:bold;
 }
 
-.aviso{
-padding:12px;
-margin:10px 0;
-border:1px solid #ffc400;
-border-radius:10px;
-text-align:center;
-font-weight:bold;
-color:#ffc400;
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
 }
 
-.codigo-grande{
-font-size:30px;
-font-weight:bold;
-text-align:center;
-color:#ffc400;
-padding:15px;
-background:#000;
-border-radius:10px;
-margin:10px 0;
+.grid3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
 }
 
-.rastreio{
-font-size:22px;
-font-weight:bold;
-color:#ffc400;
-}
-
-.tag{
-display:inline-block;
-padding:5px 9px;
-border-radius:6px;
-background:#000;
-color:#ffc400;
-font-size:12px;
-font-weight:bold;
-margin:3px;
-}
-
-.valor-admin{
-color:#20d96d;
-font-weight:bold;
+@media(max-width:600px){
+  .grid,
+  .grid3{
+    grid-template-columns:1fr;
+  }
 }
 
 .modal{
-position:fixed;
-z-index:9999;
-left:0;
-top:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.88);
-display:flex;
-align-items:center;
-justify-content:center;
-padding:15px;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
 }
 
-.modal-caixa{
-width:100%;
-max-width:600px;
-max-height:90vh;
-overflow:auto;
-background:#1d1d1d;
-border:2px solid #ffc400;
-border-radius:15px;
-padding:18px;
+.modalBox{
+  width:100%;
+  max-width:500px;
+  max-height:90vh;
+  overflow:auto;
+  background:#151515;
+  border:2px solid #ffd400;
+  border-radius:14px;
+  padding:18px;
 }
 
-.separador{
-height:1px;
-background:#444;
-margin:15px 0;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-font-size:13px;
-}
-
-th,
-td{
-border:1px solid #555;
-padding:7px;
-}
-
-th{
-background:#000;
-color:#ffc400;
-}
-
-.logo{
-font-size:30px;
-font-weight:bold;
-color:#ffc400;
-}
-
-@media(max-width:480px){
-
-header h1{
-font-size:20px;
-}
-
-.logo{
-font-size:25px;
-}
-
-.container{
-padding:10px;
-}
-
-.card{
-padding:13px;
-}
-
-button{
-font-size:15px;
-}
-
-}
-
-</style>
-</head>
-
-<body>
-
-<header>
-
-<div class="logo">
-ANJOS
-</div>
-
-<h1>
-ANJOS EM DUAS RODAS
-</h1>
-
-<p>
-Entregas • Motoboy • Utilitário • Caminhão • Carreta
-</p>
-
-</header>
-
-<div class="container">
-
-
-<!-- LOGIN -->
-
-<div id="telaLogin">
-
-<div class="card">
-
-<h2>ENTRAR</h2>
-
-<input
-id="loginEmail"
-type="email"
-placeholder="E-mail"
-autocomplete="username"
->
-
-<input
-id="loginSenha"
-type="password"
-placeholder="Senha"
-autocomplete="current-password"
->
-
-<button
-id="btnLogin"
-onclick="loginUser()"
->
-ENTRAR
-</button>
-
-<button
-class="cinza"
-onclick="mostrarCadastro()"
->
-CRIAR CONTA
-</button>
-
-<div
-id="mensagemLogin"
-class="mensagem oculto"
-></div>
-
-</div>
-
-</div>
-
-
-<!-- CADASTRO -->
-
-<div
-id="telaCadastro"
-class="oculto"
->
-
-<div class="card">
-
-<h2>
-CRIAR CONTA
-</h2>
-
-<input
-id="cadNome"
-type="text"
-placeholder="Nome completo"
->
-
-<input
-id="cadEmail"
-type="email"
-placeholder="E-mail"
->
-
-<input
-id="cadTelefone"
-type="tel"
-placeholder="Telefone / WhatsApp"
->
-
-<input
-id="cadSenha"
-type="password"
-placeholder="Senha"
->
-
-<select
-id="cadTipo"
-onchange="alterarTipoCadastro()"
->
-
-<option value="lojista">
-Lojista
-</option>
-
-<option value="super_lojista">
-Super Lojista
-</option>
-
-<option value="motoboy">
-Motoboy / Motorista
-</option>
-
-<option value="franqueado">
-Franqueado
-</option>
-
-</select>
-
-
-<div
-id="cadVeiculoBox"
-class="oculto"
->
-
-<h3>
-🚚 VEÍCULO
-</h3>
-
-<select id="cadVeiculo">
-
-<option value="moto">
-Moto
-</option>
-
-<option value="utilitario">
-Utilitário
-</option>
-
-<option value="caminhao">
-Caminhão
-</option>
-
-<option value="carreta">
-Carreta
-</option>
-
-</select>
-
-</div>
-
-
-<textarea
-id="cadEndereco"
-placeholder="Endereço completo"
-></textarea>
-
-
-<div
-id="cadDocumentosBox"
-class="oculto"
->
-
-<h3>
-📄 DOCUMENTOS
-</h3>
-
-<label>
-CNH - foto ou PDF
-</label>
-
-<input
-id="cadCNH"
-type="file"
-accept="image/*,.pdf"
->
-
-<label>
-CRLV - documento do veículo
-</label>
-
-<input
-id="cadCRLV"
-type="file"
-accept="image/*,.pdf"
->
-
-<label>
-Selfie
-</label>
-
-<input
-id="cadSelfie"
-type="file"
-accept="image/*"
->
-
-</div>
-
-
-<button
-onclick="registrarUser()"
->
-CADASTRAR
-</button>
-
-<button
-class="cinza"
-onclick="mostrarLogin()"
->
-VOLTAR
-</button>
-
-<div
-id="mensagemCadastro"
-class="mensagem oculto"
-></div>
-
-</div>
-
-</div>
-
-
-<!-- APLICATIVO -->
-
-<div
-id="telaApp"
-class="oculto"
->
-
-<div class="usuario">
-
-<div>
-<strong>Nome:</strong>
-<span id="nomeAtual">---</span>
-</div>
-
-<div>
-<strong>Perfil:</strong>
-<span id="tipoAtual">---</span>
-</div>
-
-<div class="pequeno">
-UID:
-<span id="uidAtual">---</span>
-</div>
-
-<div
-id="codigoMotoboyAtual"
-class="codigo-grande oculto"
-></div>
-
-<button
-class="vermelho"
-onclick="sair()"
->
-SAIR
-</button>
-
-</div>
-
-
-<!-- PAINEL LOJISTA -->
-
-<div
-id="painelLojista"
-class="oculto"
->
-
-<div class="card">
-
-<h2>
-🏪 PAINEL LOJISTA
-</h2>
-
-<div class="saldo">
-R$
-<span id="saldoLojista">
-0,00
-</span>
-</div>
-
-<h3>
-PIX PARA RECARGA
-</h3>
-
-<div class="pix">
-22997450131
-</div>
-
-<button
-class="azul"
-onclick="copiarPix()"
->
-COPIAR PIX
-</button>
-
-<button
-onclick="pedirRecarga()"
->
-SOLICITAR RECARGA R$ 50,00
-</button>
-
-</div>
-
-
-<!-- LOJAS -->
-
-<div class="card">
-
-<h3>
-🏪 MINHAS LOJAS
-</h3>
-
-<div id="listaLojasLojista">
-Carregando lojas...
-</div>
-
-<button
-id="btnNovaLoja"
-class="oculto"
-onclick="abrirModalNovaLoja()"
->
-+ CADASTRAR NOVA LOJA
-</button>
-
-</div>
-
-
-<!-- NOVA ENTREGA -->
-
-<div class="card">
-
-<h3>
-📦 NOVA ENTREGA
-</h3>
-
-<div class="aviso">
-🔒 Valor travado por região - calculado automaticamente
-</div>
-
-
-<label>
-Loja de saída
-</label>
-
-<select id="pedidoLoja">
-<option value="">
-Carregando lojas...
-</option>
-</select>
-
-
-<input
-id="pedidoCliente"
-placeholder="Nome do cliente"
->
-
-
-<input
-id="pedidoTelefone"
-placeholder="Telefone do cliente"
->
-
-
-<textarea
-id="pedidoEndereco"
-placeholder="Endereço de entrega"
-></textarea>
-
-
-<input
-id="pedidoLat"
-type="number"
-step="any"
-placeholder="Latitude destino (opcional)"
->
-
-
-<input
-id="pedidoLng"
-type="number"
-step="any"
-placeholder="Longitude destino (opcional)"
->
-
-
-<label>
-MARCA / TIPO DA ENTREGA
-</label>
-
-<select id="pedidoTipoEntrega">
-
-<option value="normal">
-Normal
-</option>
-
-<option value="express">
-Express
-</option>
-
-<option value="super">
-Super
-</option>
-
-</select>
-
-
-<input
-id="pedidoMotoboyCodigo"
-placeholder="Código Motoboy: ex #0001 (vazio = todos)"
-maxlength="5"
->
-
-
-<button
-onclick="criarPedido()"
->
-PEDIR ENTREGA
-</button>
-
-</div>
-
-
-<!-- MOTOBOYS -->
-
-<div class="card">
-
-<h3>
-🏍️ MOTOBOYS APROVADOS
-</h3>
-
-<div id="listaMotoboysAprovados">
-Carregando...
-</div>
-
-</div>
-
-
-<!-- PEDIDOS -->
-
-<div class="card">
-
-<h3>
-🚚 MINHAS ENTREGAS
-</h3>
-
-<div id="listaPedidosLojista">
-Carregando...
-</div>
-
-</div>
-
-
-<!-- EXTRATO -->
-
-<div class="card">
-
-<h3>
-🧾 EXTRATO — 90 DIAS
-</h3>
-
-<button
-onclick="carregarExtrato('lojista')"
->
-ATUALIZAR EXTRATO
-</button>
-
-<div id="extratoLojista">
-Nenhum movimento.
-</div>
-
-</div>
-
-</div>
-
-
-<!-- PAINEL MOTOBOY -->
-
-<div
-id="painelMotoboy"
-class="oculto"
->
-
-<div class="card">
-
-<h2>
-🏍️ PAINEL MOTOBOY
-</h2>
-
-<div
-id="codigoMotoboyPainel"
-class="codigo-grande"
->
-CÓDIGO: ----
-</div>
-
-<div class="saldo">
-R$
-<span id="saldoMotoboy">
-0,00
-</span>
-</div>
-
-<div
-id="statusAprovacaoMotoboy"
-class="aviso"
->
-Verificando aprovação...
-</div>
-
-<div
-id="statusMotoboy"
-class="status offline"
->
-OFFLINE
-</div>
-
-<button
-id="btnOnline"
-class="verde"
-onclick="alternarOnline()"
->
-FICAR ONLINE
-</button>
-
-</div>
-
-
-<div class="card">
-
-<h3>
-📦 ENTREGAS DISPONÍVEIS
-</h3>
-
-<div id="listaPedidosMotoboy">
-Fique online para receber entregas.
-</div>
-
-</div>
-
-
-<div class="card">
-
-<h3>
-🚚 MINHAS ENTREGAS
-</h3>
-
-<div id="listaAceitasMotoboy">
-Nenhuma entrega.
-</div>
-
-</div>
-
-
-<div class="card">
-
-<h3>
-💳 MINHA CHAVE PIX
-</h3>
-
-<input
-id="pixMotoboy"
-placeholder="Digite sua chave PIX"
->
-
-<button
-onclick="salvarPixMotoboy()"
->
-SALVAR PIX
-</button>
-
-<button
-onclick="solicitarSaque()"
->
-SOLICITAR SAQUE
-</button>
-
-</div>
-
-
-<div class="card">
-
-<h3>
-🧾 EXTRATO — 90 DIAS
-</h3>
-
-<button
-onclick="carregarExtrato('motoboy')"
->
-ATUALIZAR EXTRATO
-</button>
-
-<div id="extratoMotoboy">
-Nenhum movimento.
-</div>
-
-</div>
-
-</div>
-
-
-<!-- FRANQUEADO -->
-
-<div
-id="painelFranqueado"
-class="oculto"
->
-
-<div class="card">
-
-<h2>
-🤝 PAINEL FRANQUEADO
-</h2>
-
-<div class="saldo">
-R$
-<span id="saldoFranqueado">
-0,00
-</span>
-</div>
-
-<p>
-Painel do franqueado.
-</p>
-
-</div>
-
-</div>
-
-
-<!-- ADMIN -->
-
-<div
-id="painelAdmin"
-class="oculto"
->
-
-<div class="card">
-
-<h2>
-👑 PAINEL ADMINISTRADOR
-</h2>
-
-<div class="item">
-<strong>Receitas:</strong>
-R$
-<span id="adminReceitas">
-0,00
-</span>
-</div>
-
-<div class="item">
-<strong>Pagamentos:</strong>
-R$
-<span id="adminPagamentos">
-0,00
-</span>
-</div>
-
-<div class="item">
-<strong>Resultado:</strong>
-R$
-<span id="adminLucro">
-0,00
-</span>
-</div>
-
-</div>
-
-
-<!-- TAXAS -->
-
-<div class="card">
-
-<h3>
-💰 ABA TAXAS
-</h3>
-
-<label>
-KM Base
-</label>
-
-<input
-id="taxaKmBase"
-type="number"
-step="0.01"
->
-
-<label>
-Valor Base R$
-</label>
-
-<input
-id="taxaValorBase"
-type="number"
-step="0.01"
->
-
-<label>
-Valor por KM extra R$
-</label>
-
-<input
-id="taxaValorAdicionalKm"
-type="number"
-step="0.01"
->
-
-<button
-class="verde"
-onclick="salvarConfigTaxas()"
->
-SALVAR TAXAS
-</button>
-
-<div id="statusTaxas"></div>
-
-</div>
-
-
-<!-- SUPER / RETORNO -->
-
-<div class="card">
-
-<h3>
-⚡ SUPER / RETORNO %
-</h3>
-
-<label>
-Retorno %
-</label>
-
-<input
-id="taxaRetornoPct"
-type="number"
-step="0.01"
-placeholder="Ex: 5"
->
-
-<label>
-Super %
-</label>
-
-<input
-id="taxaSuperPct"
-type="number"
-step="0.01"
-placeholder="Ex: 10"
->
-
-<button
-class="verde"
-onclick="salvarPercentuaisTaxas()"
->
-SALVAR SUPER / RETORNO
-</button>
-
-<div id="statusPercentuais"></div>
-
-</div>
-
-
-<!-- APROVAÇÃO MOTOBOYS -->
-
-<div class="card">
-
-<h3>
-🏍️ APROVAÇÃO DE MOTOBOYS
-</h3>
-
-<div id="adminMotoboys">
-Carregando...
-</div>
-
-</div>
-
-
-<!-- RECARGAS -->
-
-<div class="card">
-
-<h3>
-💰 RECARGAS PENDENTES
-</h3>
-
-<div id="adminRecargas">
-Carregando...
-</div>
-
-</div>
-
-
-<!-- USUÁRIOS -->
-
-<div class="card">
-
-<h3>
-👥 USUÁRIOS
-</h3>
-
-<div id="adminUsuarios">
-Carregando...
-</div>
-
-</div>
-
-
-<!-- ENTREGAS -->
-
-<div class="card">
-
-<h3>
-📦 ENTREGAS
-</h3>
-
-<div id="adminPedidos">
-Carregando...
-</div>
-
-</div>
-
-
-<!-- CÁLCULOS -->
-
-<div class="card">
-
-<h3>
-📊 CÁLCULOS SUPER / RETORNO
-</h3>
-
-<div id="adminCalculos">
-Carregando...
-</div>
-
-</div>
-
-
-<!-- PAGAR MOTOBOY -->
-
-<div class="card">
-
-<h3>
-💵 PAGAR MOTOBOY
-</h3>
-
-<input
-id="pagamentoMotoboyUid"
-placeholder="UID do motoboy"
->
-
-<input
-id="pagamentoMotoboyValor"
-type="number"
-step="0.01"
-placeholder="Valor"
->
-
-<input
-id="pagamentoMotoboyPix"
-placeholder="Chave PIX"
->
-
-<button
-onclick="pagarMotoboy()"
->
-REGISTRAR PAGAMENTO
-</button>
-
-</div>
-
-
-<!-- EDITAR SALDO -->
-
-<div class="card">
-
-<h3>
-💳 EDITAR SALDO
-</h3>
-
-<input
-id="editarSaldoUid"
-placeholder="UID do usuário"
->
-
-<input
-id="editarSaldoValor"
-type="number"
-step="0.01"
-placeholder="Novo saldo"
->
-
-<select id="editarSaldoTipo">
-
-<option value="lojista">
-Lojista
-</option>
-
-<option value="super_lojista">
-Super Lojista
-</option>
-
-<option value="motoboy">
-Motoboy
-</option>
-
-<option value="franqueado">
-Franqueado
-</option>
-
-</select>
-
-<button
-class="verde"
-onclick="editarSaldoAdmin()"
->
-SALVAR SALDO
-</button>
-
-</div>
-
-</div>
-
-
-<!-- MODAL NOVA LOJA -->
-
-<div
-id="modalNovaLoja"
-class="modal oculto"
->
-
-<div class="modal-caixa">
-
-<h2>
-🏪 CADASTRAR NOVA LOJA
-</h2>
-
-<input
-id="novaLojaNome"
-placeholder="Nome da loja"
->
-
-<textarea
-id="novaLojaEndereco"
-placeholder="Endereço completo"
-></textarea>
-
-<input
-id="novaLojaLat"
-type="number"
-step="any"
-placeholder="Latitude"
->
-
-<input
-id="novaLojaLng"
-type="number"
-step="any"
-placeholder="Longitude"
->
-
-<button
-class="azul"
-onclick="geocodificarNovaLoja()"
->
-📍 BUSCAR COORDENADAS PELO ENDEREÇO
-</button>
-
-<button
-class="verde"
-onclick="salvarNovaLoja()"
->
-SALVAR LOJA
-</button>
-
-<button
-class="cinza"
-onclick="fecharModalNovaLoja()"
->
-CANCELAR
-</button>
-
-<div
-id="mensagemNovaLoja"
-class="mensagem oculto"
-></div>
-
-</div>
-
-</div>
-
-
-<!-- MODAL FINALIZAÇÃO -->
-
-<div
-id="modalFinalizar"
-class="modal oculto"
->
-
-<div class="modal-caixa">
-
-<h2>
-✅ FINALIZAR ENTREGA
-</h2>
-
-<div class="aviso">
-Digite o código de finalização informado pelo cliente.
-</div>
-
-<input
-id="codigoFinalizacao"
-maxlength="4"
-inputmode="numeric"
-placeholder="Código de 4 dígitos"
->
-
-<button
-class="verde"
-onclick="confirmarFinalizacao()"
->
-FINALIZAR
-</button>
-
-<button
-class="cinza"
-onclick="fecharModalFinalizar()"
->
-CANCELAR
-</button>
-
-</div>
-
-</div><!-- =========================================================
-     PARTE — FIREBASE + LOGIN COMPLETO CORRIGIDO
-     ANJOS EM DUAS RODAS / ANJOS FLASH
-     ========================================================= -->
-
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
-
-<script>
-
-/* =========================================================
-   CONFIGURAÇÃO FIREBASE
-   ========================================================= */
+.tag/* =========================================================
+   FIREBASE
+========================================================= */
 
 const firebaseConfig = {
   apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
@@ -1402,45 +231,13 @@ const firebaseConfig = {
   measurementId: "G-9CSJXXNR0C"
 };
 
-
-/* =========================================================
-   INICIALIZAÇÃO
-   ========================================================= */
-
-let appFirebase;
-
-try {
-
-  if (!firebase.apps.length) {
-    appFirebase = firebase.initializeApp(firebaseConfig);
-  } else {
-    appFirebase = firebase.app();
-  }
-
-} catch (erro) {
-
-  console.error("ERRO AO INICIAR FIREBASE:", erro);
-
-  const mensagem = document.getElementById("mensagemLogin");
-
-  if (mensagem) {
-    mensagem.style.display = "block";
-    mensagem.style.color = "#ff4444";
-    mensagem.innerText =
-      "ERRO AO INICIAR FIREBASE:\n" +
-      (erro.message || erro);
-  }
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
 }
-
 
 const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
-
-
-/* =========================================================
-   VARIÁVEIS DO SISTEMA
-   ========================================================= */
 
 let usuarioAtual = null;
 let perfilAtual = null;
@@ -1456,4605 +253,4221 @@ let configTaxas = {
 
 
 /* =========================================================
-   FUNÇÃO AUXILIAR
-   ========================================================= */
+   AUXILIARES
+========================================================= */
 
-function $(id) {
+function $(id){
   return document.getElementById(id);
+}
+
+function dinheiro(valor){
+  return Number(valor || 0)
+    .toLocaleString("pt-BR",{
+      minimumFractionDigits:2,
+      maximumFractionDigits:2
+    });
+}
+
+function mensagem(id,texto,erro=false){
+
+  const el = $(id);
+
+  if(!el) return;
+
+  el.style.display = "block";
+  el.style.color = erro ? "#ff4444" : "#00ff66";
+  el.innerText = texto;
+}
+
+function gerarCodigo4(){
+  return String(
+    Math.floor(1000 + Math.random()*9000)
+  );
+}
+
+function geraRastreio(){
+  return String(
+    Math.floor(1000 + Math.random()*9000)
+  );
+}
+
+function normalizarCodigo(codigo){
+
+  codigo = String(codigo || "")
+    .trim()
+    .toUpperCase();
+
+  if(codigo && !codigo.startsWith("#")){
+    codigo = "#" + codigo;
+  }
+
+  return codigo;
 }
 
 
 /* =========================================================
-   MOSTRAR ERRO DE LOGIN
-   ========================================================= */
+   CAMPOS DE CADASTRO
+========================================================= */
 
-function mostrarErroLogin(texto) {
+function atualizarCamposCadastro(){
 
-  const msg = $("mensagemLogin");
+  const tipo = $("cadTipo").value;
 
-  if (!msg) {
-    alert(texto);
-    return;
+  const areaTipoConta = $("areaTipoConta");
+  const dadosLojista = $("dadosLojista");
+  const documentos = $("documentosMotoboy");
+
+  if(tipo === "lojista"){
+
+    areaTipoConta.classList.remove("oculto");
+    dadosLojista.classList.remove("oculto");
+    documentos.classList.add("oculto");
+
+  }else if(tipo === "motoboy"){
+
+    areaTipoConta.classList.add("oculto");
+    dadosLojista.classList.add("oculto");
+    documentos.classList.remove("oculto");
+
+  }else{
+
+    areaTipoConta.classList.add("oculto");
+    dadosLojista.classList.add("oculto");
+    documentos.classList.add("oculto");
+
   }
-
-  msg.style.display = "block";
-  msg.style.color = "#ff4444";
-  msg.style.background = "#220000";
-  msg.style.border = "1px solid #ff4444";
-  msg.style.padding = "12px";
-  msg.style.borderRadius = "8px";
-  msg.style.whiteSpace = "pre-line";
-
-  msg.innerText = texto;
 }
 
 
 /* =========================================================
    LOGIN
-   ========================================================= */
+========================================================= */
 
-async function entrar() {
+async function entrar(){
 
-  const email = $("loginEmail")
-    ? $("loginEmail").value.trim().toLowerCase()
-    : "";
+  const email = $("loginEmail").value
+    .trim()
+    .toLowerCase();
 
-  const senha = $("loginSenha")
-    ? $("loginSenha").value
-    : "";
+  const senha = $("loginSenha").value;
 
-  const msg = $("mensagemLogin");
+  mensagem(
+    "mensagemLogin",
+    "Entrando...",
+    false
+  );
 
-  if (msg) {
-    msg.style.display = "block";
-    msg.style.color = "#ffd400";
-    msg.style.background = "";
-    msg.style.border = "";
-    msg.innerText = "Entrando...";
-  }
+  if(!email){
 
-  if (!email) {
-    mostrarErroLogin("Digite seu e-mail.");
+    mensagem(
+      "mensagemLogin",
+      "Digite o e-mail.",
+      true
+    );
+
     return;
   }
 
-  if (!senha) {
-    mostrarErroLogin("Digite sua senha.");
+  if(!senha){
+
+    mensagem(
+      "mensagemLogin",
+      "Digite a senha.",
+      true
+    );
+
     return;
   }
 
-  try {
+  try{
 
-    console.log("Tentando fazer login:", email);
-
-    const credencial =
+    const cred =
       await auth.signInWithEmailAndPassword(
         email,
         senha
       );
 
-    usuarioAtual = credencial.user;
+    usuarioAtual = cred.user;
 
     console.log(
-      "LOGIN FIREBASE REALIZADO COM SUCESSO:",
+      "LOGIN OK:",
       usuarioAtual.uid
     );
-
-    if (msg) {
-      msg.style.color = "#00ff66";
-      msg.innerText = "Login realizado. Carregando painel...";
-    }
 
     await carregarUsuario();
 
-  } catch (error) {
-
-    console.error("ERRO COMPLETO DO LOGIN:", error);
-
-    let mensagem = "";
-
-    switch (error.code) {
-
-      case "auth/invalid-email":
-        mensagem =
-          "E-MAIL INVÁLIDO.\n\n" +
-          "Digite um e-mail válido.";
-        break;
-
-      case "auth/user-not-found":
-        mensagem =
-          "USUÁRIO NÃO ENCONTRADO.\n\n" +
-          "Verifique o e-mail cadastrado.";
-        break;
-
-      case "auth/wrong-password":
-        mensagem =
-          "SENHA INCORRETA.\n\n" +
-          "Confira a senha e tente novamente.";
-        break;
-
-      case "auth/invalid-credential":
-        mensagem =
-          "E-MAIL OU SENHA INCORRETOS.\n\n" +
-          "O Firebase recusou as credenciais.";
-        break;
-
-      case "auth/user-disabled":
-        mensagem =
-          "USUÁRIO DESATIVADO.\n\n" +
-          "Esse usuário foi bloqueado no Firebase.";
-        break;
-
-      case "auth/too-many-requests":
-        mensagem =
-          "MUITAS TENTATIVAS.\n\n" +
-          "Aguarde alguns minutos e tente novamente.";
-        break;
-
-      case "auth/network-request-failed":
-        mensagem =
-          "ERRO DE INTERNET.\n\n" +
-          "Verifique sua conexão.";
-        break;
-
-      case "auth/operation-not-allowed":
-        mensagem =
-          "LOGIN POR E-MAIL E SENHA DESATIVADO.\n\n" +
-          "Ative E-mail/Senha em Firebase Authentication.";
-        break;
-
-      case "auth/api-key-not-valid":
-        mensagem =
-          "CHAVE API DO FIREBASE INVÁLIDA.\n\n" +
-          "Confira a configuração do projeto anjos-flash.";
-        break;
-
-      case "auth/app-not-authorized":
-        mensagem =
-          "APLICATIVO NÃO AUTORIZADO PELO FIREBASE.\n\n" +
-          "Confira os domínios autorizados.";
-        break;
-
-      default:
-        mensagem =
-          "ERRO AO FAZER LOGIN.\n\n" +
-          "Código: " +
-          (error.code || "desconhecido") +
-          "\n\nMensagem:\n" +
-          (error.message || "Erro desconhecido.");
-    }
-
-    mostrarErroLogin(mensagem);
-  }
-}
-
-
-/* =========================================================
-   CARREGAR USUÁRIO LOGADO
-   ========================================================= */
-
-async function carregarUsuario() {
-
-  try {
-
-    if (!auth.currentUser) {
-
-      mostrarErroLogin(
-        "Nenhum usuário está conectado."
-      );
-
-      return;
-    }
-
-    usuarioAtual = auth.currentUser;
-
-    console.log(
-      "Carregando perfil:",
-      usuarioAtual.uid
-    );
-
-    const perfilRef =
-      db.collection("profiles")
-        .doc(usuarioAtual.uid);
-
-    const perfilSnap =
-      await perfilRef.get();
-
-    if (!perfilSnap.exists) {
-
-      mostrarErroLogin(
-        "LOGIN REALIZADO, MAS O PERFIL NÃO FOI ENCONTRADO.\n\n" +
-        "UID:\n" +
-        usuarioAtual.uid +
-        "\n\n" +
-        "Verifique a coleção profiles no Firestore."
-      );
-
-      return;
-    }
-
-    perfilAtual = perfilSnap.data();
-
-    console.log(
-      "PERFIL CARREGADO:",
-      perfilAtual
-    );
-
-
-    /* =====================================================
-       VERIFICAÇÃO DO TIPO DE USUÁRIO
-       ===================================================== */
-
-    const tiposPermitidos = [
-      "admin",
-      "motoboy",
-      "lojista",
-      "franqueado"
-    ];
-
-    if (!tiposPermitidos.includes(perfilAtual.tipo)) {
-
-      await auth.signOut();
-
-      mostrarErroLogin(
-        "TIPO DE USUÁRIO INVÁLIDO.\n\n" +
-        "Tipo encontrado: " +
-        (perfilAtual.tipo || "não informado")
-      );
-
-      return;
-    }
-
-
-    /* =====================================================
-       ESCONDE LOGIN
-       ===================================================== */
-
-    if ($("telaLogin")) {
-      $("telaLogin").classList.add("oculto");
-    }
-
-    if ($("loginArea")) {
-      $("loginArea").classList.add("oculto");
-    }
-
-    if ($("cadastroArea")) {
-      $("cadastroArea").classList.add("oculto");
-    }
-
-
-    /* =====================================================
-       MOSTRA APP
-       ===================================================== */
-
-    if ($("app")) {
-      $("app").classList.remove("oculto");
-    }
-
-    if ($("painelApp")) {
-      $("painelApp").classList.remove("oculto");
-    }
-
-
-    /* =====================================================
-       ABRIR PAINEL CORRETO
-       ===================================================== */
-
-    if (typeof abrirPainel === "function") {
-
-      await abrirPainel(
-        perfilAtual.tipo
-      );
-
-    }
-
-
-    /* =====================================================
-       SALDO
-       ===================================================== */
-
-    if (typeof atualizarSaldo === "function") {
-
-      await atualizarSaldo();
-
-    }
-
-
-    /* =====================================================
-       PIX MOTOBOY
-       ===================================================== */
-
-    if (
-      perfilAtual.tipo === "motoboy" &&
-      typeof carregarPixMotoboy === "function"
-    ) {
-
-      await carregarPixMotoboy();
-
-    }
-
-
-    /* =====================================================
-       LOJISTA / SUPER LOJISTA
-       ===================================================== */
-
-    if (
-      perfilAtual.tipo === "lojista" &&
-      typeof carregarLojasLojista === "function"
-    ) {
-
-      await carregarLojasLojista();
-
-    }
-
-  } catch (error) {
+  }catch(error){
 
     console.error(
-      "ERRO AO CARREGAR USUÁRIO:",
+      "ERRO LOGIN:",
       error
     );
 
-    mostrarErroLogin(
-      "LOGIN FOI FEITO, MAS DEU ERRO AO CARREGAR O PERFIL.\n\n" +
-      "Código: " +
-      (error.code || "desconhecido") +
-      "\n\n" +
-      (error.message || error)
+    let texto =
+      "ERRO AO ENTRAR.\n\n";
+
+    switch(error.code){
+
+      case "auth/invalid-email":
+        texto += "E-mail inválido.";
+        break;
+
+      case "auth/user-not-found":
+        texto += "Usuário não encontrado.";
+        break;
+
+      case "auth/wrong-password":
+        texto += "Senha incorreta.";
+        break;
+
+      case "auth/invalid-credential":
+        texto +=
+          "E-mail ou senha incorretos.";
+        break;
+
+      case "auth/user-disabled":
+        texto +=
+          "Usuário desativado.";
+        break;
+
+      case "auth/too-many-requests":
+        texto +=
+          "Muitas tentativas. Aguarde.";
+        break;
+
+      case "auth/network-request-failed":
+        texto +=
+          "Falha de conexão com a internet.";
+        break;
+
+      case "auth/operation-not-allowed":
+        texto +=
+          "E-mail/senha não está ativado no Firebase Authentication.";
+        break;
+
+      case "auth/api-key-not-valid":
+        texto +=
+          "A chave API do Firebase não é válida.";
+        break;
+
+      default:
+        texto +=
+          "Código: " +
+          (error.code || "desconhecido") +
+          "\n\n" +
+          (error.message || "");
+    }
+
+    mensagem(
+      "mensagemLogin",
+      texto,
+      true
     );
   }
 }
 
 
 /* =========================================================
-   OBSERVADOR DO FIREBASE AUTH
-   ========================================================= */
+   CADASTRO
+========================================================= */
 
-auth.onAuthStateChanged(async function(user) {
+async function registrarUser(){
 
-  console.log(
-    "AUTH STATE:",
-    user ? user.email : "ninguém logado"
-  );
+  const nome =
+    $("cadNome").value.trim();
 
-  if (user) {
+  const email =
+    $("cadEmail").value.trim().toLowerCase();
 
-    usuarioAtual = user;
+  const telefone =
+    $("cadTelefone").value.trim();
 
-    try {
+  const senha =
+    $("cadSenha").value;
 
-      await carregarUsuario();
+  const tipo =
+    $("cadTipo").value;
 
-    } catch (erro) {
+  const tipoConta =
+    tipo === "lojista"
+      ? $("cadTipoConta").value
+      : tipo;
 
-      console.error(
-        "Erro no carregamento automático:",
-        erro
-      );
+  const endereco =
+    $("cadEndereco")
+      ? $("cadEndereco").value.trim()
+      : "";
 
-    }
+  const nomeLoja =
+    $("cadNomeLoja")
+      ? $("cadNomeLoja").value.trim()
+      : "";
 
-  } else {
+  if(!nome || !email || !telefone || !senha){
 
-    usuarioAtual = null;
-    perfilAtual = null;
+    mensagem(
+      "mensagemCadastro",
+      "Preencha nome, e-mail, telefone e senha.",
+      true
+    );
 
+    return;
   }
 
-});
+  if(tipo === "lojista" && !endereco){
 
+    mensagem(
+      "mensagemCadastro",
+      "Informe o endereço da loja.",
+      true
+    );
 
-/* =========================================================
-   BOTÃO ENTER NO LOGIN
-   ========================================================= */
+    return;
+  }
 
-document.addEventListener(
-  "keydown",
-  function(event) {
+  if(tipo === "motoboy"){
 
-    if (event.key !== "Enter") {
+    if(!$("cadSelfie").files[0]){
+
+      mensagem(
+        "mensagemCadastro",
+        "Envie a selfie.",
+        true
+      );
+
       return;
     }
 
-    const campo =
-      document.activeElement;
+    if(!$("cadCNH").files[0]){
 
-    if (
-      campo &&
-      (
-        campo.id === "loginEmail" ||
-        campo.id === "loginSenha"
-      )
-    ) {
+      mensagem(
+        "mensagemCadastro",
+        "Envie a CNH.",
+        true
+      );
 
-      event.preventDefault();
-
-      entrar();
-
+      return;
     }
 
+    if(!$("cadCRLV").files[0]){
+
+      mensagem(
+        "mensagemCadastro",
+        "Envie o CRLV do veículo.",
+        true
+      );
+
+      return;
+    }
+  }
+
+  mensagem(
+    "mensagemCadastro",
+    "Criando cadastro...",
+    false
+  );
+
+  let cred = null;
+
+  try{
+
+    cred =
+      await auth.createUserWithEmailAndPassword(
+        email,
+        senha
+      );
+
+    const uid = cred.user.uid;
+
+    let documentos = {};
+
+    /* ================================================
+       DOCUMENTOS MOTOBOY
+    ================================================= */
+
+    if(tipo === "motoboy"){
+
+      const selfie =
+        $("cadSelfie").files[0];
+
+      const cnh =
+        $("cadCNH").files[0];
+
+      const crlv =
+        $("cadCRLV").files[0];
+
+      documentos.selfie =
+        await enviarArquivo(
+          selfie,
+          `documentos/${uid}/selfie`
+        );
+
+      documentos.cnh =
+        await enviarArquivo(
+          cnh,
+          `documentos/${uid}/cnh`
+        );
+
+      documentos.crlv =
+        await enviarArquivo(
+          crlv,
+          `documentos/${uid}/crlv`
+        );
+    }
+
+
+    /* ================================================
+       PERFIL
+    ================================================= */
+
+    const perfil = {
+
+      uid: uid,
+
+      nome: nome,
+
+      email: email,
+
+      telefone: telefone,
+
+      tipo: tipo,
+
+      tipoConta: tipoConta,
+
+      endereco: endereco,
+
+      ativo: true,
+
+      aprovado:
+        tipo === "motoboy"
+          ? false
+          : true,
+
+      online: false,
+
+      criadoEm:
+        firebase.firestore.FieldValue.serverTimestamp()
+
+    };
+
+
+    if(tipo === "motoboy"){
+
+      perfil.veiculo =
+        $("cadVeiculo").value;
+
+      perfil.documentos =
+        documentos;
+    }
+
+
+    await db
+      .collection("profiles")
+      .doc(uid)
+      .set(perfil);
+
+
+    /* ================================================
+       CARTEIRA
+    ================================================= */
+
+    await db
+      .collection("wallets")
+      .doc(uid)
+      .set({
+        uid: uid,
+        saldo: 0,
+        atualizadoEm:
+          firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+
+    /* ================================================
+       LOJISTA
+    ================================================= */
+
+    if(tipo === "lojista"){
+
+      await db
+        .collection("lojas")
+        .add({
+
+          donoId: uid,
+
+          nomeLoja:
+            nomeLoja || nome,
+
+          endereco: endereco,
+
+          lat: null,
+
+          lng: null,
+
+          criadoEm:
+            firebase.firestore.FieldValue.serverTimestamp()
+
+        });
+    }
+
+
+    /* ================================================
+       MOTOBOY
+    ================================================= */
+
+    if(tipo === "motoboy"){
+
+      const snap =
+        await db
+          .collection("motoboys")
+          .orderBy("numero","desc")
+          .limit(1)
+          .get();
+
+      let numero = 1;
+
+      if(!snap.empty){
+
+        numero =
+          Number(
+            snap.docs[0].data().numero || 0
+          ) + 1;
+      }
+
+      const codigo =
+        "#" +
+        String(numero).padStart(4,"0");
+
+
+      await db
+        .collection("motoboys")
+        .doc(uid)
+        .set({
+
+          uid: uid,
+
+          numero: numero,
+
+          codigo: codigo,
+
+          aprovado: false,
+
+          nome: nome,
+
+          email: email,
+
+          telefone: telefone,
+
+          veiculo:
+            $("cadVeiculo").value,
+
+          documentos: documentos,
+
+          criadoEm:
+            firebase.firestore.FieldValue.serverTimestamp()
+
+        });
+
+
+      await db
+        .collection("profiles")
+        .doc(uid)
+        .update({
+          motoboyCodigo: codigo
+        });
+
+
+      mensagem(
+        "mensagemCadastro",
+        "CADASTRO REALIZADO!\n\n" +
+        "Seu código: " +
+        codigo +
+        "\n\n" +
+        "Aguarde a aprovação do administrador.",
+        false
+      );
+
+      return;
+    }
+
+
+    mensagem(
+      "mensagemCadastro",
+      "Cadastro realizado com sucesso.\n\nAgora você pode entrar.",
+      false
+    );
+
+
+    await auth.signOut();
+
+  }catch(error){
+
+    console.error(
+      "ERRO CADASTRO:",
+      error
+    );
+
+    if(cred && cred.user){
+
+      try{
+        await cred.user.delete();
+      }catch(e){}
+    }
+
+    mensagem(
+      "mensagemCadastro",
+      "ERRO NO CADASTRO.\n\n" +
+      "Código: " +
+      (error.code || "desconhecido") +
+      "\n\n" +
+      (error.message || ""),
+      true
+    );
+  }
+}
+
+
+/* =========================================================
+   STORAGE
+========================================================= */
+
+async function enviarArquivo(file,path){
+
+  if(!file){
+    throw new Error(
+      "Arquivo não informado."
+    );
+  }
+
+  if(file.size > 10 * 1024 * 1024){
+
+    throw new Error(
+      "Arquivo maior que 10 MB: " +
+      file.name
+    );
+  }
+
+  const ref =
+    storage.ref().child(path);
+
+  await ref.put(file);
+
+  return await ref.getDownloadURL();
+}
+
+
+/* =========================================================
+   CARREGAR USUÁRIO
+========================================================= */
+
+async function carregarUsuario(){
+
+  try{
+
+    if(!auth.currentUser){
+
+      mensagem(
+        "mensagemLogin",
+        "Usuário não encontrado.",
+        true
+      );
+
+      return;
+    }
+
+    usuarioAtual =
+      auth.currentUser;
+
+    const snap =
+      await db
+        .collection("profiles")
+        .doc(usuarioAtual.uid)
+        .get();
+
+    if(!snap.exists){
+
+      mensagem(
+        "mensagemLogin",
+        "Login realizado, mas o perfil não foi encontrado no Firestore.",
+        true
+      );
+
+      return;
+    }
+
+    perfilAtual =
+      snap.data();
+
+
+    if(!perfilAtual.tipo){
+
+      mensagem(
+        "mensagemLogin",
+        "Perfil sem tipo de usuário.",
+        true
+      );
+
+      return;
+    }
+
+
+    $("telaLogin")
+      .classList.add("oculto");
+
+    $("app")
+      .classList.remove("oculto");
+
+
+    $("tituloPainel").innerText =
+      perfilAtual.nome ||
+      "PAINEL";
+
+
+    await abrirPainel(
+      perfilAtual.tipo
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "ERRO CARREGAR USUARIO:",
+      error
+    );
+
+    mensagem(
+      "mensagemLogin",
+      "ERRO AO CARREGAR PAINEL.\n\n" +
+      (error.code || "") +
+      "\n" +
+      (error.message || ""),
+      true
+    );
+  }
+}
+
+
+/* =========================================================
+   OBSERVADOR AUTH
+========================================================= */
+
+auth.onAuthStateChanged(
+  async function(user){
+
+    if(user){
+
+      usuarioAtual = user;
+
+      try{
+        await carregarUsuario();
+      }catch(error){
+        console.error(error);
+      }
+
+    }
   }
 );
+
+
+/* =========================================================
+   ABRIR PAINEL
+========================================================= */
+
+async function abrirPainel(tipo){
+
+  $("painelLojista")
+    .classList.add("oculto");
+
+  $("painelMotoboy")
+    .classList.add("oculto");
+
+  $("painelAdmin")
+    .classList.add("oculto");
+
+
+  if(tipo === "lojista"){
+
+    $("painelLojista")
+      .classList.remove("oculto");
+
+    await carregarLojista();
+
+    return;
+  }
+
+
+  if(tipo === "motoboy"){
+
+    $("painelMotoboy")
+      .classList.remove("oculto");
+
+    await carregarMotoboy();
+
+    return;
+  }
+
+
+  if(tipo === "admin"){
+
+    $("painelAdmin")
+      .classList.remove("oculto");
+
+    await carregarAdmin();
+
+    return;
+  }
+
+
+  if(tipo === "franqueado"){
+
+    alert(
+      "Painel de franqueado em configuração."
+    );
+
+    return;
+  }
+}
 
 
 /* =========================================================
    SAIR
-   ========================================================= */
+========================================================= */
 
-async function sair() {
+async function sair(){
 
-  try {
+  await auth.signOut();
 
-    await auth.signOut();
+  location.reload();
+}
 
-    usuarioAtual = null;
-    perfilAtual = null;
 
-    location.reload();
+/* =========================================================
+   CARTEIRA
+========================================================= */
 
-  } catch (error) {
+async function obterSaldo(uid){
 
-    console.error(
-      "Erro ao sair:",
-      error
-    );
+  const snap =
+    await db
+      .collection("wallets")
+      .doc(uid)
+      .get();
 
-    alert(
-      "Erro ao sair:\n" +
-      (error.message || error)
-    );
-
+  if(!snap.exists){
+    return 0;
   }
 
-}
-
-</script>/* =====================================================
-   LOJAS
-===================================================== */
-
-function abrirModalNovaLoja(){
-
-document.getElementById(
-"modalNovaLoja"
-).classList.remove("oculto");
-
+  return Number(
+    snap.data().saldo || 0
+  );
 }
 
 
-function fecharModalNovaLoja(){
+async function atualizarSaldo(){
 
-document.getElementById(
-"modalNovaLoja"
-).classList.add("oculto");
+  if(!usuarioAtual) return;
 
+  const saldo =
+    await obterSaldo(
+      usuarioAtual.uid
+    );
+
+  if(
+    perfilAtual &&
+    perfilAtual.tipo === "lojista"
+  ){
+
+    $("saldoLojista").innerText =
+      dinheiro(saldo);
+  }
+
+  if(
+    perfilAtual &&
+    perfilAtual.tipo === "motoboy"
+  ){
+
+    $("saldoMotoboy").innerText =
+      dinheiro(saldo);
+  }
 }
 
 
-async function geocodificarNovaLoja(){
+/* =========================================================
+   LOJAS DO LOJISTA
+========================================================= */
 
-const endereco=
-document.getElementById(
-"novaLojaEndereco"
-).value.trim();
+async function carregarLojasLojista(){
 
-if(!endereco){
+  if(!usuarioAtual) return;
 
-alert("Digite o endereço.");
+  const select =
+    $("pedidoLojaId");
 
-return;
+  select.innerHTML = "";
 
+  const snap =
+    await db
+      .collection("lojas")
+      .where(
+        "donoId",
+        "==",
+        usuarioAtual.uid
+      )
+      .get();
+
+  const lojas =
+    snap.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+  lojas.sort(
+    (a,b) =>
+      String(a.nomeLoja || "")
+      .localeCompare(
+        String(b.nomeLoja || "")
+      )
+  );
+
+
+  if(lojas.length === 0){
+
+    select.innerHTML =
+      '<option value="">Cadastre uma loja</option>';
+
+  }else{
+
+    lojas.forEach(loja => {
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        loja.id;
+
+      option.textContent =
+        loja.nomeLoja || "Loja";
+
+      select.appendChild(option);
+
+    });
+  }
+
+
+  if(
+    perfilAtual &&
+    perfilAtual.tipoConta ===
+    "super_lojista"
+  ){
+
+    $("areaSuperLojista")
+      .classList.remove("oculto");
+
+  }else{
+
+    $("areaSuperLojista")
+      .classList.add("oculto");
+  }
+
+
+  select.onchange =
+    atualizarOrigemSelecionada;
+
+  atualizarOrigemSelecionada();
 }
 
-try{
 
-msg(
-"mensagemNovaLoja",
-"Buscando coordenadas...",
-"info"
-);
+async function atualizarOrigemSelecionada(){
 
-const geo=
-await geocodificarEndereco(
-endereco
-);
+  const id =
+    $("pedidoLojaId").value;
 
-document.getElementById(
-"novaLojaLat"
-).value=
-geo.lat;
+  if(!id){
 
-document.getElementById(
-"novaLojaLng"
-).value=
-geo.lng;
+    $("pedidoOrigemInfo").innerText =
+      "Nenhuma loja cadastrada.";
 
-msg(
-"mensagemNovaLoja",
-"Coordenadas encontradas.",
-"sucesso"
-);
+    return;
+  }
 
-}catch(e){
+  const snap =
+    await db
+      .collection("lojas")
+      .doc(id)
+      .get();
 
-msg(
-"mensagemNovaLoja",
-erroHumano(e),
-"erro"
-);
+  if(!snap.exists) return;
 
+  const loja =
+    snap.data();
+
+  $("pedidoOrigemInfo").innerText =
+    "Origem: " +
+    (loja.endereco || "");
 }
 
+
+/* =========================================================
+   MODAL LOJA
+========================================================= */
+
+function abrirModalLoja(){
+
+  $("modalLoja")
+    .classList.remove("oculto");
+
+  $("nomeLoja").value = "";
+  $("enderecoLoja").value = "";
+  $("latLoja").value = "";
+  $("lngLoja").value = "";
+  $("msgLoja").style.display = "none";
+}
+
+
+function fecharModalLoja(){
+
+  $("modalLoja")
+    .classList.add("oculto");
+}
+
+
+async function buscarCoordenadasLoja(){
+
+  const endereco =
+    $("enderecoLoja")
+      .value.trim();
+
+  if(!endereco){
+
+    mensagem(
+      "msgLoja",
+      "Digite o endereço.",
+      true
+    );
+
+    return;
+  }
+
+  mensagem(
+    "msgLoja",
+    "Buscando coordenadas...",
+    false
+  );
+
+  try{
+
+    const url =
+      "https://nominatim.openstreetmap.org/search" +
+      "?format=jsonv2&limit=1&q=" +
+      encodeURIComponent(
+        endereco + ", Macaé, RJ, Brasil"
+      );
+
+    const resposta =
+      await fetch(url,{
+        headers:{
+          "Accept-Language":"pt-BR"
+        }
+      });
+
+    const dados =
+      await resposta.json();
+
+    if(!dados.length){
+
+      throw new Error(
+        "Endereço não encontrado."
+      );
+    }
+
+    $("latLoja").value =
+      dados[0].lat;
+
+    $("lngLoja").value =
+      dados[0].lon;
+
+    mensagem(
+      "msgLoja",
+      "Coordenadas encontradas.",
+      false
+    );
+
+  }catch(error){
+
+    mensagem(
+      "msgLoja",
+      "Não foi possível buscar automaticamente.\n\n" +
+      "Você pode informar latitude e longitude manualmente.",
+      true
+    );
+  }
 }
 
 
 async function salvarNovaLoja(){
 
-if(!usuarioAtual)return;
+  if(
+    !usuarioAtual ||
+    !perfilAtual ||
+    perfilAtual.tipoConta !== "super_lojista"
+  ){
 
-const nome=
-document.getElementById(
-"novaLojaNome"
-).value.trim();
+    mensagem(
+      "msgLoja",
+      "Somente Super Lojista pode cadastrar novas lojas.",
+      true
+    );
 
-const endereco=
-document.getElementById(
-"novaLojaEndereco"
-).value.trim();
+    return;
+  }
 
-const lat=
-Number(
-document.getElementById(
-"novaLojaLat"
-).value||0
-);
+  const nome =
+    $("nomeLoja").value.trim();
 
-const lng=
-Number(
-document.getElementById(
-"novaLojaLng"
-).value||0
-);
+  const endereco =
+    $("enderecoLoja").value.trim();
 
-if(!nome||!endereco){
+  const lat =
+    $("latLoja").value === ""
+      ? null
+      : Number($("latLoja").value);
 
-alert(
-"Informe nome e endereço."
-);
+  const lng =
+    $("lngLoja").value === ""
+      ? null
+      : Number($("lngLoja").value);
 
-return;
 
-}
+  if(!nome || !endereco){
 
-try{
+    mensagem(
+      "msgLoja",
+      "Informe nome e endereço da loja.",
+      true
+    );
 
-await db.collection("lojas")
-.add({
+    return;
+  }
 
-donoId:
-usuarioAtual.uid,
+  try{
 
-nomeLoja:nome,
+    await db
+      .collection("lojas")
+      .add({
 
-nome:nome,
+        donoId:
+          usuarioAtual.uid,
 
-endereco:endereco,
+        nomeLoja:
+          nome,
 
-lat:lat,
+        endereco:
+          endereco,
 
-lng:lng,
+        lat:
+          lat,
 
-ativo:true,
+        lng:
+          lng,
 
-principal:false,
+        criadoEm:
+          firebase.firestore.FieldValue.serverTimestamp()
 
-criadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
+      });
 
-});
 
-alert(
-"Loja cadastrada com sucesso."
-);
+    mensagem(
+      "msgLoja",
+      "Loja cadastrada com sucesso.",
+      false
+    );
 
-document.getElementById(
-"novaLojaNome"
-).value="";
+    await carregarLojasLojista();
 
-document.getElementById(
-"novaLojaEndereco"
-).value="";
+    setTimeout(
+      fecharModalLoja,
+      800
+    );
 
-document.getElementById(
-"novaLojaLat"
-).value="";
+  }catch(error){
 
-document.getElementById(
-"novaLojaLng"
-).value="";
-
-fecharModalNovaLoja();
-
-await carregarLojasLojista();
-
-}catch(e){
-
-alert(
-"Erro:\n"+
-erroHumano(e)
-);
-
-}
-
+    mensagem(
+      "msgLoja",
+      "Erro ao salvar loja:\n" +
+      error.message,
+      true
+    );
+  }
 }
 
 
-async function carregarLojasLojista(){
+/* =========================================================
+   GEOLOCALIZAÇÃO
+========================================================= */
 
-if(!usuarioAtual)return;
+async function geocodificarEndereco(endereco){
 
-const div=
-document.getElementById(
-"listaLojasLojista"
-);
+  const url =
+    "https://nominatim.openstreetmap.org/search" +
+    "?format=jsonv2&limit=1&q=" +
+    encodeURIComponent(
+      endereco + ", Macaé, RJ, Brasil"
+    );
 
-const select=
-document.getElementById(
-"pedidoLoja"
-);
+  const resposta =
+    await fetch(url,{
+      headers:{
+        "Accept-Language":"pt-BR"
+      }
+    });
 
-if(!div)return;
+  const dados =
+    await resposta.json();
 
-try{
+  if(!dados.length){
 
-const snap=
-await db.collection("lojas")
-.where(
-"donoId",
-"==",
-usuarioAtual.uid
-)
-.get();
+    throw new Error(
+      "Não foi possível localizar o endereço:\n" +
+      endereco
+    );
+  }
 
-let lojas=[];
-
-snap.forEach(function(doc){
-
-lojas.push({
-
-id:doc.id,
-
-...doc.data()
-
-});
-
-});
-
-
-lojas.sort(function(a,b){
-
-return Number(a.numero||0)-
-Number(b.numero||0);
-
-});
-
-
-if(!lojas.length){
-
-const perfil=
-await db.collection("profiles")
-.doc(usuarioAtual.uid)
-.get();
-
-const p=
-perfil.exists
-?perfil.data()
-:{};
-
-
-div.innerHTML=`
-
-<div class="item">
-
-<strong>🏪 ${p.nome||"Minha loja"}</strong><br>
-
-${p.endereco||"Endereço não informado"}
-
-</div>
-
-`;
-
-if(select){
-
-select.innerHTML=`
-
-<option value="principal">
-${p.nome||"Minha loja"}
-</option>
-
-`;
-
-}
-
-}else{
-
-let html="";
-
-lojas.forEach(function(loja){
-
-html+=`
-
-<div class="item">
-
-<strong>🏪
-${loja.nomeLoja||loja.nome||"-"}
-</strong>
-
-<br>
-
-${loja.endereco||"-"}
-
-</div>
-
-`;
-
-});
-
-div.innerHTML=html;
-
-
-if(select){
-
-select.innerHTML="";
-
-lojas.forEach(function(loja){
-
-const opt=
-document.createElement("option");
-
-opt.value=loja.id;
-
-opt.textContent=
-loja.nomeLoja||
-loja.nome||
-"Loja";
-
-opt.dataset.endereco=
-loja.endereco||"";
-
-opt.dataset.lat=
-loja.lat||"";
-
-opt.dataset.lng=
-loja.lng||"";
-
-select.appendChild(opt);
-
-});
-
-}
-
+  return {
+    lat:Number(dados[0].lat),
+    lng:Number(dados[0].lon)
+  };
 }
 
 
-const tipoConta=
-perfilAtual
-?perfilAtual.tipoConta||"lojista"
-:"lojista";
+function distanciaKm(
+  lat1,
+  lon1,
+  lat2,
+  lon2
+){
 
+  const R = 6371;
 
-const btn=
-document.getElementById(
-"btnNovaLoja"
-);
+  const dLat =
+    (lat2-lat1) *
+    Math.PI / 180;
 
-if(btn){
+  const dLon =
+    (lon2-lon1) *
+    Math.PI / 180;
 
-if(tipoConta==="super_lojista"){
+  const a =
+    Math.sin(dLat/2) *
+    Math.sin(dLat/2) +
 
-btn.classList.remove("oculto");
+    Math.cos(lat1 *
+      Math.PI / 180) *
 
-}else{
+    Math.cos(lat2 *
+      Math.PI / 180) *
 
-btn.classList.add("oculto");
+    Math.sin(dLon/2) *
+    Math.sin(dLon/2);
 
-}
+  const c =
+    2 *
+    Math.atan2(
+      Math.sqrt(a),
+      Math.sqrt(1-a)
+    );
 
-}
-
-}catch(e){
-
-console.error(e);
-
-div.innerHTML=
-'<div class="item">Erro ao carregar lojas.</div>';
-
-}
-
-}
-
-
-/* =====================================================
-   MOTOBOYS APROVADOS
-===================================================== */
-
-async function carregarMotoboysAprovados(){
-
-const div=
-document.getElementById(
-"listaMotoboysAprovados"
-);
-
-if(!div||!usuarioAtual)return;
-
-try{
-
-const snap=
-await db.collection("motoboys")
-.where(
-"aprovado",
-"==",
-true
-)
-.get();
-
-if(snap.empty){
-
-div.innerHTML=
-'<div class="item">Nenhum motoboy aprovado.</div>';
-
-return;
-
-}
-
-let lista=[];
-
-snap.forEach(function(doc){
-
-lista.push({
-
-id:doc.id,
-
-...doc.data()
-
-});
-
-});
-
-lista.sort(function(a,b){
-
-return Number(a.numero||0)-
-Number(b.numero||0);
-
-});
-
-let html="";
-
-lista.forEach(function(m){
-
-const codigo=
-normalizarCodigoMotoboy(
-m.codigo||""
-);
-
-html+=`
-
-<div class="item">
-
-<strong>
-${codigo}
-</strong>
-
-<br>
-
-${m.nome||"-"}
-
-<br>
-
-<span class="aprovado">
-● APROVADO
-</span>
-
-<button
-class="azul"
-onclick="selecionarMotoboyCodigo('${codigo}')"
->
-ESCOLHER ${codigo}
-</button>
-
-</div>
-
-`;
-
-});
-
-div.innerHTML=html;
-
-}catch(e){
-
-console.error(e);
-
-div.innerHTML=
-'<div class="item">Erro ao carregar motoboys.</div>';
-
-}
-
+  return R*c;
 }
 
 
-function selecionarMotoboyCodigo(codigo){
+function velocidadeMedia(veiculo){
 
-const input=
-document.getElementById(
-"pedidoMotoboyCodigo"
-);
+  if(veiculo === "moto")
+    return 30;
 
-if(!input)return;
+  if(veiculo === "utilitario")
+    return 25;
 
-input.value=
-normalizarCodigoMotoboy(codigo);
+  if(veiculo === "caminhao")
+    return 20;
 
-input.focus();
+  if(veiculo === "carreta")
+    return 18;
 
-}
-
-
-/* =====================================================
-   CONFIGURAÇÃO DE TAXAS
-===================================================== */
+  return 25;
+}/* =========================================================
+   CONFIG TAXAS
+========================================================= */
 
 async function carregarConfigTaxas(){
 
-try{
+  try{
 
-const snap=
-await db.collection("config_taxas")
-.doc("valores")
-.get();
+    const snap =
+      await db
+        .collection("config_taxas")
+        .doc("valores")
+        .get();
 
-const config={
+    if(snap.exists){
 
-kmBase:3,
+      configTaxas = {
+        ...configTaxas,
+        ...snap.data()
+      };
 
-valorBase:8,
+    }
 
-valorAdicionalKm:2,
+    preencherCamposTaxas();
 
-taxaApp:10,
+  }catch(error){
 
-retornoPct:5,
-
-superPct:10
-
-};
-
-if(snap.exists){
-
-Object.assign(
-config,
-snap.data()
-);
-
+    console.error(
+      "Erro config taxas:",
+      error
+    );
+  }
 }
 
 
-const km=
-document.getElementById(
-"taxaKmBase"
-);
+function preencherCamposTaxas(){
 
-const base=
-document.getElementById(
-"taxaValorBase"
-);
+  if($("taxaKmBase"))
+    $("taxaKmBase").value =
+      configTaxas.kmBase;
 
-const adicional=
-document.getElementById(
-"taxaValorAdicionalKm"
-);
+  if($("taxaValorBase"))
+    $("taxaValorBase").value =
+      configTaxas.valorBase;
 
-const retorno=
-document.getElementById(
-"taxaRetornoPct"
-);
+  if($("taxaValorAdicionalKm"))
+    $("taxaValorAdicionalKm").value =
+      configTaxas.valorAdicionalKm;
 
-const superPct=
-document.getElementById(
-"taxaSuperPct"
-);
+  if($("taxaApp"))
+    $("taxaApp").value =
+      configTaxas.taxaApp;
 
+  if($("retornoPorcentagem"))
+    $("retornoPorcentagem").value =
+      configTaxas.retornoPct;
 
-if(km)km.value=config.kmBase;
-
-if(base)base.value=config.valorBase;
-
-if(adicional)
-adicional.value=config.valorAdicionalKm;
-
-if(retorno)
-retorno.value=config.retornoPct;
-
-if(superPct)
-superPct.value=config.superPct;
-
-}catch(e){
-
-console.error(e);
-
-}
-
+  if($("superPorcentagem"))
+    $("superPorcentagem").value =
+      configTaxas.superPct;
 }
 
 
 async function salvarConfigTaxas(){
 
-if(!usuarioAtual)return;
+  if(
+    !perfilAtual ||
+    perfilAtual.tipo !== "admin"
+  ){
 
-try{
+    alert(
+      "Somente o administrador pode alterar as taxas."
+    );
 
-const kmBase=
-Number(
-document.getElementById(
-"taxaKmBase"
-).value
-);
+    return;
+  }
 
-const valorBase=
-Number(
-document.getElementById(
-"taxaValorBase"
-).value
-);
+  const novaConfig = {
 
-const valorAdicionalKm=
-Number(
-document.getElementById(
-"taxaValorAdicionalKm"
-).value
-);
+    kmBase:
+      Number($("taxaKmBase").value || 3),
 
-if(
-kmBase<0||
-valorBase<0||
-valorAdicionalKm<0
-){
+    valorBase:
+      Number($("taxaValorBase").value || 8),
 
-alert(
-"Os valores não podem ser negativos."
-);
+    valorAdicionalKm:
+      Number(
+        $("taxaValorAdicionalKm").value || 2
+      ),
 
-return;
+    taxaApp:
+      Number($("taxaApp").value || 10),
 
+    retornoPct:
+      Number(
+        $("retornoPorcentagem").value || 0
+      ),
+
+    superPct:
+      Number(
+        $("superPorcentagem").value || 0
+      ),
+
+    atualizadoEm:
+      firebase.firestore.FieldValue.serverTimestamp(),
+
+    atualizadoPor:
+      usuarioAtual.uid
+  };
+
+
+  await db
+    .collection("config_taxas")
+    .doc("valores")
+    .set(
+      novaConfig,
+      {merge:true}
+    );
+
+
+  configTaxas = {
+    ...configTaxas,
+    ...novaConfig
+  };
+
+  alert(
+    "Configurações salvas."
+  );
 }
 
 
-await db.collection("config_taxas")
-.doc("valores")
-.set({
+function calcularValorEntrega(km){
 
-kmBase:kmBase,
+  const base =
+    Number(configTaxas.kmBase);
 
-valorBase:valorBase,
+  const valorBase =
+    Number(configTaxas.valorBase);
 
-valorAdicionalKm:
-valorAdicionalKm,
+  const adicional =
+    Number(configTaxas.valorAdicionalKm);
 
-atualizadoPor:
-usuarioAtual.uid,
+  if(km <= base){
 
-atualizadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
+    return valorBase;
+  }
 
-},{
-merge:true
-});
-
-
-document.getElementById(
-"statusTaxas"
-).textContent=
-"✅ Taxas salvas com sucesso.";
-
-}catch(e){
-
-alert(
-"Erro ao salvar taxas:\n"+
-erroHumano(e)
-);
-
-}
-
+  return valorBase +
+    ((km-base) * adicional);
 }
 
 
-async function salvarPercentuaisTaxas(){
-
-if(!usuarioAtual)return;
-
-const retornoPct=
-Number(
-document.getElementById(
-"taxaRetornoPct"
-).value||0
-);
-
-const superPct=
-Number(
-document.getElementById(
-"taxaSuperPct"
-).value||0
-);
-
-if(
-retornoPct<0||
-superPct<0
-){
-
-alert(
-"Percentuais inválidos."
-);
-
-return;
-
-}
-
-try{
-
-await db.collection("config_taxas")
-.doc("valores")
-.set({
-
-retornoPct:
-retornoPct,
-
-superPct:
-superPct,
-
-atualizadoPor:
-usuarioAtual.uid,
-
-atualizadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
-
-},{
-merge:true
-});
-
-
-document.getElementById(
-"statusPercentuais"
-).textContent=
-"✅ Percentuais salvos.";
-
-}catch(e){
-
-alert(
-"Erro:\n"+
-erroHumano(e)
-);
-
-}
-
-}
-
-
-/* =====================================================
-   CÁLCULO INTERNO
-===================================================== */
-
-async function calcularValorEntregaPorKm(
-distanciaKm
-){
-
-const snap=
-await db.collection("config_taxas")
-.doc("valores")
-.get();
-
-const config={
-
-kmBase:3,
-
-valorBase:8,
-
-valorAdicionalKm:2
-
-};
-
-if(snap.exists){
-
-Object.assign(
-config,
-snap.data()
-);
-
-}
-
-const kmBase=
-Number(config.kmBase||3);
-
-const valorBase=
-Number(config.valorBase||8);
-
-const adicional=
-Number(
-config.valorAdicionalKm||2
-);
-
-const km=
-Math.max(
-0,
-Number(distanciaKm||0)
-);
-
-let valor=valorBase;
-
-if(km>kmBase){
-
-valor=
-valorBase+
-(
-(km-kmBase)*
-adicional
-);
-
-}
-
-return Number(
-valor.toFixed(2)
-);
-
-}
-
-
-/* =====================================================
-   RECARGA
-===================================================== */
-
-async function pedirRecarga(){
-
-if(!usuarioAtual)return;
-
-try{
-
-await db.collection("transactions")
-.add({
-
-uid:
-usuarioAtual.uid,
-
-tipo:
-"recarga_50",
-
-valor:50,
-
-status:
-"pendente",
-
-criadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
-
-});
-
-alert(
-"Solicitação enviada.\n\n"+
-"Faça o PIX para 22997450131.\n"+
-"Aguarde a aprovação do administrador."
-);
-
-}catch(e){
-
-alert(
-"Erro:\n"+
-erroHumano(e)
-);
-
-}
-
-}
-
-
-/* =====================================================
-   NOVO PEDIDO
-===================================================== */
+/* =========================================================
+   CRIAR PEDIDO
+========================================================= */
 
 async function criarPedido(){
 
-if(!usuarioAtual)return;
+  if(!usuarioAtual){
 
-const cliente=
-document.getElementById(
-"pedidoCliente"
-).value.trim();
+    mensagem(
+      "mensagemPedido",
+      "Faça login.",
+      true
+    );
 
-const telefone=
-document.getElementById(
-"pedidoTelefone"
-).value.trim();
+    return;
+  }
 
-const endereco=
-document.getElementById(
-"pedidoEndereco"
-).value.trim();
 
-const tipoEntrega=
-document.getElementById(
-"pedidoTipoEntrega"
-).value;
+  const lojaId =
+    $("pedidoLojaId").value;
 
-const codigoDigitado=
-document.getElementById(
-"pedidoMotoboyCodigo"
-).value.trim();
+  const cliente =
+    $("pedidoCliente").value.trim();
 
-const motoboyCodigo=
-normalizarCodigoMotoboy(
-codigoDigitado
-);
+  const telefone =
+    $("pedidoTelefone").value.trim();
 
-const selectLoja=
-document.getElementById(
-"pedidoLoja"
-);
+  const endereco =
+    $("pedidoEndereco").value.trim();
 
-const opcaoLoja=
-selectLoja &&
-selectLoja.options[
-selectLoja.selectedIndex
-];
+  const tipo =
+    $("pedidoTipo").value;
 
-if(
-!cliente||
-!telefone||
-!endereco
-){
+  const veiculo =
+    $("pedidoVeiculo").value;
 
-alert(
-"Preencha cliente, telefone e endereço."
-);
+  const codigoMoto =
+    normalizarCodigo(
+      $("pedidoMotoboyCodigo").value
+    );
 
-return;
 
-}
+  if(!lojaId){
 
-if(!opcaoLoja){
+    mensagem(
+      "mensagemPedido",
+      "Selecione a loja de origem.",
+      true
+    );
 
-alert(
-"Selecione a loja de saída."
-);
+    return;
+  }
 
-return;
+  if(!cliente || !telefone || !endereco){
 
-}
+    mensagem(
+      "mensagemPedido",
+      "Preencha cliente, telefone e endereço.",
+      true
+    );
 
+    return;
+  }
 
-try{
 
-let lojaLat=
-Number(
-opcaoLoja.dataset.lat||0
-);
+  mensagem(
+    "mensagemPedido",
+    "Calculando distância e criando entrega...",
+    false
+  );
 
-let lojaLng=
-Number(
-opcaoLoja.dataset.lng||0
-);
 
-const lojaEndereco=
-opcaoLoja.dataset.endereco||"";
+  try{
 
-const lojaNome=
-opcaoLoja.textContent;
+    await carregarConfigTaxas();
 
 
-const destinoLat=
-Number(
-document.getElementById(
-"pedidoLat"
-).value||0
-);
+    const lojaSnap =
+      await db
+        .collection("lojas")
+        .doc(lojaId)
+        .get();
 
-const destinoLng=
-Number(
-document.getElementById(
-"pedidoLng"
-).value||0
-);
+    if(!lojaSnap.exists){
 
+      throw new Error(
+        "Loja de origem não encontrada."
+      );
+    }
 
-/*
-  Se a loja não possui coordenadas,
-  busca pelo endereço.
-*/
+    const loja =
+      lojaSnap.data();
 
-if(
-(!lojaLat||!lojaLng)&&
-lojaEndereco
-){
 
-try{
+    let origemLat =
+      Number(loja.lat);
 
-const geoLoja=
-await geocodificarEndereco(
-lojaEndereco
-);
+    let origemLng =
+      Number(loja.lng);
 
-lojaLat=geoLoja.lat;
-lojaLng=geoLoja.lng;
 
-}catch(e){
+    if(
+      !Number.isFinite(origemLat) ||
+      !Number.isFinite(origemLng)
+    ){
 
-console.warn(
-"Não foi possível geocodificar loja.",
-e
-);
+      const origem =
+        await geocodificarEndereco(
+          loja.endereco
+        );
 
-}
+      origemLat =
+        origem.lat;
 
-}
+      origemLng =
+        origem.lng;
 
 
-let latDestino=destinoLat;
-let lngDestino=destinoLng;
+      await db
+        .collection("lojas")
+        .doc(lojaId)
+        .update({
 
+          lat: origemLat,
+          lng: origemLng
 
-/*
-  Se o cliente não informou coordenadas,
-  tenta buscar pelo endereço.
-*/
+        });
+    }
 
-if(
-(!latDestino||!lngDestino)
-){
 
-try{
+    const destino =
+      await geocodificarEndereco(
+        endereco
+      );
 
-const geoDestino=
-await geocodificarEndereco(
-endereco
-);
 
-latDestino=
-geoDestino.lat;
+    const km =
+      distanciaKm(
+        origemLat,
+        origemLng,
+        destino.lat,
+        destino.lng
+      );
 
-lngDestino=
-geoDestino.lng;
 
-}catch(e){
+    const kmFinal =
+      Number(km.toFixed(2));
 
-console.warn(
-"Destino não geocodificado.",
-e
-);
 
-}
+    const valorEntrega =
+      Number(
+        calcularValorEntrega(kmFinal)
+          .toFixed(2)
+      );
 
-}
 
+    const velocidade =
+      velocidadeMedia(
+        veiculo
+      );
 
-let distanciaKm=0;
 
-if(
-lojaLat&&
-lojaLng&&
-latDestino&&
-lngDestino
-){
+    const tempoMin =
+      Math.max(
+        1,
+        Math.round(
+          (kmFinal / velocidade) * 60
+        )
+      );
 
-distanciaKm=
-calcularDistanciaKm(
-lojaLat,
-lojaLng,
-latDestino,
-lngDestino
-);
 
-}
+    const rastreio =
+      geraRastreio();
 
+    const codigoFinalizacao =
+      gerarCodigo4();
 
-distanciaKm=
-Number(
-distanciaKm.toFixed(2)
-);
 
+    const numeroPedido =
+      String(
+        Date.now()
+      ).slice(-4);
 
-const veiculo=
-"moto";
 
+    const walletRef =
+      db.collection("wallets")
+        .doc(usuarioAtual.uid);
 
-/*
-  Cálculo interno.
-*/
 
-const valorEntrega=
-await calcularValorEntregaPorKm(
-distanciaKm
-);
+    const pedidoRef =
+      db.collection("pedidos")
+        .doc();
 
 
-const minutos=
-estimarMinutos(
-distanciaKm,
-veiculo
-);
+    await db.runTransaction(
+      async transaction => {
 
+        const walletSnap =
+          await transaction.get(
+            walletRef
+          );
 
-const rastreio=
-geraRastreio();
+        const saldo =
+          walletSnap.exists
+            ? Number(
+                walletSnap.data().saldo || 0
+              )
+            : 0;
 
 
-/*
-  Código antigo continua existindo
-  como código de finalização.
-*/
+        if(saldo < valorEntrega){
 
-const codigoFinalizacao=
-String(
-Math.floor(
-1000+Math.random()*9000
-)
-);
+          throw new Error(
+            "SALDO INSUFICIENTE.\n\n" +
+            "Necessário: R$ " +
+            dinheiro(valorEntrega) +
+            "\nSaldo: R$ " +
+            dinheiro(saldo)
+          );
+        }
 
 
-const walletRef=
-db.collection("wallets")
-.doc(usuarioAtual.uid);
+        transaction.set(
+          walletRef,
+          {
 
-const pedidoRef=
-db.collection("orders")
-.doc();
+            uid:usuarioAtual.uid,
 
-const transRef=
-db.collection("transactions")
-.doc();
+            saldo:
+              saldo - valorEntrega,
 
+            atualizadoEm:
+              firebase.firestore.FieldValue.serverTimestamp()
 
-await db.runTransaction(
-async function(transaction){
+          },
+          {merge:true}
+        );
 
-const wallet=
-await transaction.get(
-walletRef
-);
 
-let saldo=0;
+        transaction.set(
+          pedidoRef,
+          {
 
-if(wallet.exists){
+            pedidoNumero:
+              numeroPedido,
 
-saldo=
-Number(
-wallet.data().saldo||0
-);
+            lojistaId:
+              usuarioAtual.uid,
 
-}
+            lojistaNome:
+              perfilAtual.nome || "",
 
+            tipoPedido:
+              tipo,
 
-if(saldo<valorEntrega){
+            marca:
+              tipo,
 
-throw new Error(
-"SALDO_INSUFICIENTE"
-);
+            lojaId:
+              lojaId,
 
-}
+            lojaNome:
+              loja.nomeLoja || "",
 
+            origemEndereco:
+              loja.endereco || "",
 
-transaction.update(
-walletRef,
-{
+            origemLat:
+              origemLat,
 
-saldo:
-firebase.firestore.FieldValue
-.increment(-valorEntrega),
+            origemLng:
+              origemLng,
 
-atualizadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
+            clienteNome:
+              cliente,
 
-}
-);
+            telefoneCliente:
+              telefone,
 
+            enderecoEntrega:
+              endereco,
 
-transaction.set(
-pedidoRef,
-{
+            destinoLat:
+              destino.lat,
 
-lojistaId:
-usuarioAtual.uid,
+            destinoLng:
+              destino.lng,
 
-lojistaNome:
-perfilAtual.nome||"",
+            veiculo:
+              veiculo,
 
-lojaId:
-opcaoLoja.value,
+            distanciaKm:
+              kmFinal,
 
-lojaNome:
-lojaNome,
+            tempoMin:
+              tempoMin,
 
-lojaEndereco:
-lojaEndereco,
+            valorEntrega:
+              valorEntrega,
 
-lojaLat:
-lojaLat,
+            valorTaxa:
+              valorEntrega,
 
-lojaLng:
-lojaLng,
+            taxaApp:
+              Number(
+                configTaxas.taxaApp || 0
+              ),
 
-clienteNome:
-cliente,
+            retornoPct:
+              Number(
+                configTaxas.retornoPct || 0
+              ),
 
-telefoneCliente:
-telefone,
+            superPct:
+              Number(
+                configTaxas.superPct || 0
+              ),
 
-enderecoEntrega:
-endereco,
+            motoboyCodigo:
+              codigoMoto,
 
-destinoLat:
-latDestino,
+            rastreio:
+              rastreio,
 
-destinoLng:
-lngDestino,
+            codigo4Digitos:
+              codigoFinalizacao,
 
-tipoEntrega:
-tipoEntrega,
+            status:
+              "pendente",
 
-marca:
-tipoEntrega,
+            motoboyId:
+              null,
 
-veiculo:
-veiculo,
+            criadoEm:
+              firebase.firestore.FieldValue.serverTimestamp()
 
-motoboyCodigo:
-motoboyCodigo,
+          }
+        );
 
-rastreio:
-rastreio,
 
-codigo4Digitos:
-codigoFinalizacao,
+        const transacaoRef =
+          db.collection("transactions")
+            .doc();
 
-distanciaKm:
-distanciaKm,
 
-tempoEstimadoMin:
-minutos,
+        transaction.set(
+          transacaoRef,
+          {
 
-/*
-  Valores internos.
-  O painel lojista não os exibe.
-*/
+            uid:
+              usuarioAtual.uid,
 
-valorCalculado:
-valorEntrega,
+            tipo:
+              "taxa_pedido",
 
-valorTaxa:
-valorEntrega,
+            valor:
+              -valorEntrega,
 
-valorProduto:
-0,
+            orderId:
+              pedidoRef.id,
 
-valorPedido:
-0,
+            status:
+              "aprovado",
 
-status:
-"pendente",
+            criadoEm:
+              firebase.firestore.FieldValue.serverTimestamp()
 
-motoboyId:
-null,
+          }
+        );
 
-criadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
+      }
+    );
 
-}
-);
 
+    mensagem(
+      "mensagemPedido",
+      "ENTREGA CRIADA!\n\n" +
+      "Pedido #" +
+      numeroPedido +
+      "\n" +
+      "Rastreio do cliente: " +
+      rastreio +
+      "\n\n" +
+      "Aguardando motoboy/motorista.",
+      false
+    );
 
-transaction.set(
-transRef,
-{
 
-uid:
-usuarioAtual.uid,
+    $("pedidoCliente").value = "";
+    $("pedidoTelefone").value = "";
+    $("pedidoEndereco").value = "";
+    $("pedidoMotoboyCodigo").value = "";
 
-tipo:
-"taxa_pedido",
 
-valor:
--valorEntrega,
+    await atualizarSaldo();
+    await carregarLojista();
 
-orderId:
-pedidoRef.id,
+  }catch(error){
 
-status:
-"aprovado",
+    console.error(
+      "ERRO PEDIDO:",
+      error
+    );
 
-criadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
-
-}
-);
-
-});
-
-
-alert(
-"Entrega solicitada com sucesso!\n\n"+
-"Rastreio do cliente: "+
-rastreio
-);
-
-
-[
-"pedidoCliente",
-"pedidoTelefone",
-"pedidoEndereco",
-"pedidoLat",
-"pedidoLng",
-"pedidoMotoboyCodigo"
-].forEach(function(id){
-
-const el=
-document.getElementById(id);
-
-if(el)el.value="";
-
-});
-
-
-await atualizarSaldo();
-
-await carregarLojista();
-
-}catch(e){
-
-console.error(e);
-
-if(
-e.message==="SALDO_INSUFICIENTE"
-){
-
-alert(
-"Saldo insuficiente para solicitar a entrega."
-);
-
-return;
-
-}
-
-alert(
-"Erro ao criar entrega:\n"+
-erroHumano(e)
-);
-
-}
-
+    mensagem(
+      "mensagemPedido",
+      "ERRO AO CRIAR ENTREGA.\n\n" +
+      (error.message || error),
+      true
+    );
+  }
 }
 
 
-/* =====================================================
-   LOJISTA
-===================================================== */
+/* =========================================================
+   PAINEL LOJISTA
+========================================================= */
 
 async function carregarLojista(){
 
-if(!usuarioAtual)return;
+  if(!usuarioAtual) return;
 
-try{
+  $("nomeLojista").innerText =
+    perfilAtual.nome || "";
 
-await carregarLojasLojista();
+  await carregarConfigTaxas();
 
-await carregarMotoboysAprovados();
+  await atualizarSaldo();
 
+  await carregarLojasLojista();
 
-const div=
-document.getElementById(
-"listaPedidosLojista"
-);
+  await carregarMotoboysLojista();
 
-if(!div)return;
+  await carregarPedidosLojista();
 
-const snap=
-await db.collection("orders")
-.where(
-"lojistaId",
-"==",
-usuarioAtual.uid
-)
-.get();
-
-
-if(snap.empty){
-
-div.innerHTML=
-'<div class="item">Nenhuma entrega encontrada.</div>';
-
-return;
-
+  await carregarExtrato(
+    "extratoLojista",
+    usuarioAtual.uid
+  );
 }
 
 
-let pedidos=[];
+/* =========================================================
+   MOTOBOYS PARA ESCOLHA DO LOJISTA
+========================================================= */
 
-snap.forEach(function(doc){
+async function carregarMotoboysLojista(){
 
-pedidos.push({
+  const box =
+    $("listaMotoboysLojista");
 
-id:doc.id,
-
-...doc.data()
-
-});
-
-});
+  box.innerHTML =
+    "Carregando...";
 
 
-pedidos.sort(function(a,b){
-
-const ta=
-a.criadoEm &&
-a.criadoEm.toDate
-?a.criadoEm.toDate().getTime()
-:0;
-
-const tb=
-b.criadoEm &&
-b.criadoEm.toDate
-?b.criadoEm.toDate().getTime()
-:0;
-
-return tb-ta;
-
-});
+  const snap =
+    await db
+      .collection("motoboys")
+      .where(
+        "aprovado",
+        "==",
+        true
+      )
+      .get();
 
 
-let html="";
+  if(snap.empty){
+
+    box.innerText =
+      "Nenhum motoboy/motorista aprovado.";
+
+    return;
+  }
 
 
-pedidos.forEach(function(p){
-
-let status=
-p.status||"-";
-
-if(status==="pendente")
-status="Aguardando motoboy";
-
-if(status==="em_rota")
-status="Motoboy em rota";
-
-if(status==="finalizado")
-status="Finalizado";
+  const lista =
+    snap.docs.map(doc => ({
+      id:doc.id,
+      ...doc.data()
+    }));
 
 
-html+=`
-
-<div class="item">
-
-<strong>
-Pedido #${String(p.id).slice(-4).toUpperCase()}
-</strong>
-
-<br>
-
-<strong>
-Tipo:
-</strong>
-${String(
-p.tipoEntrega||"normal"
-).toUpperCase()}
-
-<br>
-
-<strong>
-Status:
-</strong>
-${status}
-
-<br>
-
-<strong>
-Cliente:
-</strong>
-${p.clienteNome||"-"}
-
-<br>
-
-<strong>
-Endereço:
-</strong>
-${p.enderecoEntrega||"-"}
-
-<br>
-
-<strong>
-Rastreio:
-</strong>
-
-<span class="rastreio">
-${p.rastreio||"-"}
-</span>
-
-<br>
-
-<strong>
-Distância:
-</strong>
-${Number(
-p.distanciaKm||0
-).toFixed(2)
-} km
-
-<br>
-
-<strong>
-Tempo estimado:
-</strong>
-${p.tempoEstimadoMin||"-"} min
-
-</div>
-
-`;
-
-});
+  lista.sort(
+    (a,b) =>
+      Number(a.numero || 0) -
+      Number(b.numero || 0)
+  );
 
 
-div.innerHTML=html;
+  box.innerHTML =
+    lista.map(m => `
 
-}catch(e){
+      <div class="item">
 
-console.error(e);
+        <strong>
+          ${m.codigo || ""}
+        </strong>
 
-const div=
-document.getElementById(
-"listaPedidosLojista"
-);
+        <br>
 
-if(div){
+        ${m.nome || ""}
 
-div.innerHTML=
-'<div class="item">Erro ao carregar entregas.</div>';
+        <br>
 
-}
+        Veículo:
+        ${m.veiculo || ""}
 
-}
+        <br>
 
+        Status:
+        ${
+          m.online
+            ? "ONLINE"
+            : "OFFLINE"
+        }
+
+        <button
+          onclick="escolherMotoboy('${m.codigo || ""}')"
+        >
+          ESCOLHER ${m.codigo || ""}
+        </button>
+
+      </div>
+
+    `).join("");
 }
 
 
-/* =====================================================
-   MOTOBOY ONLINE
-===================================================== */
+function escolherMotoboy(codigo){
 
-async function alternarOnline(){
+  $("pedidoMotoboyCodigo").value =
+    codigo;
 
-if(!usuarioAtual)return;
-
-try{
-
-const motoboy=
-await db.collection("motoboys")
-.doc(usuarioAtual.uid)
-.get();
-
-if(
-!motoboy.exists||
-motoboy.data().aprovado!==true
-){
-
-alert(
-"Seu cadastro ainda não foi aprovado pelo administrador."
-);
-
-return;
-
+  $("pedidoMotoboyCodigo")
+    .scrollIntoView({
+      behavior:"smooth"
+    });
 }
 
 
-const ref=
-db.collection("profiles")
-.doc(usuarioAtual.uid);
+/* =========================================================
+   PEDIDOS DO LOJISTA
+========================================================= */
 
-const snap=
-await ref.get();
+async function carregarPedidosLojista(){
 
-const atual=
-snap.exists &&
-snap.data().online===true;
+  const box =
+    $("listaPedidosLojista");
+
+  const snap =
+    await db
+      .collection("pedidos")
+      .where(
+        "lojistaId",
+        "==",
+        usuarioAtual.uid
+      )
+      .get();
 
 
-await ref.update({
+  if(snap.empty){
 
-online:!atual
+    box.innerText =
+      "Nenhuma entrega.";
 
-});
+    return;
+  }
 
 
-mostrarStatus(!atual);
+  const pedidos =
+    snap.docs.map(doc => ({
+      id:doc.id,
+      ...doc.data()
+    }));
 
-await carregarMotoboy();
 
-}catch(e){
+  pedidos.sort(
+    (a,b) => {
 
-alert(
-"Erro:\n"+
-erroHumano(e)
-);
+      const aa =
+        a.criadoEm
+          ? a.criadoEm.toMillis()
+          : 0;
 
+      const bb =
+        b.criadoEm
+          ? b.criadoEm.toMillis()
+          : 0;
+
+      return bb-aa;
+    }
+  );
+
+
+  box.innerHTML =
+    pedidos.map(p => {
+
+      let status =
+        traduzirStatus(p.status);
+
+
+      return `
+
+        <div class="item">
+
+          <strong>
+            Pedido #${
+              p.pedidoNumero || ""
+            }
+          </strong>
+
+          <br>
+
+          <span class="tag">
+            ${
+              p.tipoPedido ||
+              p.marca ||
+              "Normal"
+            }
+          </span>
+
+          -
+
+          <span>
+            ${status}
+          </span>
+
+          <br>
+
+          Cliente:
+          ${p.clienteNome || ""}
+
+          <br>
+
+          Telefone:
+          ${p.telefoneCliente || ""}
+
+          <br>
+
+          Endereço:
+          ${p.enderecoEntrega || ""}
+
+          <br>
+
+          Veículo:
+          ${p.veiculo || ""}
+
+          <br>
+
+          Rastreio:
+          <strong>
+            ${p.rastreio || ""}
+          </strong>
+
+        </div>
+
+      `;
+
+    }).join("");
 }
 
+
+function traduzirStatus(status){
+
+  const mapa = {
+
+    pendente:
+      "Aguardando motoboy",
+
+    em_rota:
+      "Motoboy a caminho",
+
+    chegou_loja:
+      "Chegou na loja",
+
+    saiu_loja:
+      "Saiu da loja",
+
+    chegou_cliente:
+      "Chegou no cliente",
+
+    finalizado:
+      "Finalizado",
+
+    cancelado:
+      "Cancelado"
+
+  };
+
+  return mapa[status] ||
+    status ||
+    "Aguardando";
 }
 
 
-function mostrarStatus(online){
-
-const status=
-document.getElementById(
-"statusMotoboy"
-);
-
-const botao=
-document.getElementById(
-"btnOnline"
-);
-
-if(online){
-
-status.textContent="ONLINE";
-status.className=
-"status online";
-
-botao.textContent=
-"FICAR OFFLINE";
-
-botao.className=
-"vermelho";
-
-}else{
-
-status.textContent="OFFLINE";
-status.className=
-"status offline";
-
-botao.textContent=
-"FICAR ONLINE";
-
-botao.className=
-"verde";
-
-}
-
-}
-
-
-/* =====================================================
+/* =========================================================
    MOTOBOY
-===================================================== */
+========================================================= */
 
 async function carregarMotoboy(){
 
-if(!usuarioAtual)return;
+  if(!usuarioAtual) return;
 
-try{
+  await carregarConfigTaxas();
 
-const perfil=
-await db.collection("profiles")
-.doc(usuarioAtual.uid)
-.get();
+  await atualizarSaldo();
 
-const motoboy=
-await db.collection("motoboys")
-.doc(usuarioAtual.uid)
-.get();
+  const motoSnap =
+    await db
+      .collection("motoboys")
+      .doc(usuarioAtual.uid)
+      .get();
 
 
-if(!motoboy.exists){
+  if(!motoSnap.exists){
 
-document.getElementById(
-"listaPedidosMotoboy"
-).innerHTML=
-'<div class="item">Cadastro de motoboy não encontrado.</div>';
+    $("dadosMotoboy").innerText =
+      "Cadastro de motoboy não encontrado.";
 
-return;
+    return;
+  }
 
+
+  const moto =
+    motoSnap.data();
+
+
+  $("dadosMotoboy").innerText =
+    moto.nome || perfilAtual.nome || "";
+
+
+  $("codigoMotoboy").innerHTML =
+    "<div class='aviso'>" +
+    "SEU CÓDIGO: <strong>" +
+    (moto.codigo || "") +
+    "</strong>" +
+    "</div>";
+
+
+  if(!moto.aprovado){
+
+    $("statusMotoboy").className =
+      "status offline";
+
+    $("statusMotoboy").innerText =
+      "AGUARDANDO APROVAÇÃO";
+
+    $("btnOnline").disabled =
+      true;
+
+    $("listaPedidosMotoboy").innerHTML =
+      "<div class='aviso'>" +
+      "Seu cadastro ainda precisa ser aprovado pelo administrador." +
+      "</div>";
+
+    await carregarAceitasMotoboy();
+
+    return;
+  }
+
+
+  $("btnOnline").disabled =
+    false;
+
+
+  atualizarStatusVisual(
+    Boolean(moto.online)
+  );
+
+
+  $("pixMotoboy").value =
+    perfilAtual.pix || "";
+
+
+  await carregarPedidosMotoboy(
+    moto.codigo
+  );
+
+  await carregarAceitasMotoboy();
+
+  await carregarExtrato(
+    "extratoMotoboy",
+    usuarioAtual.uid
+  );
 }
 
 
-const dadosMotoboy=
-motoboy.data();
+/* =========================================================
+   STATUS ONLINE
+========================================================= */
 
-const aprovado=
-dadosMotoboy.aprovado===true;
+function atualizarStatusVisual(online){
 
-const statusAprovacao=
-document.getElementById(
-"statusAprovacaoMotoboy"
-);
+  const status =
+    $("statusMotoboy");
+
+  const botao =
+    $("btnOnline");
 
 
-if(aprovado){
+  if(online){
 
-statusAprovacao.textContent=
-"✅ CADASTRO APROVADO";
+    status.className =
+      "status online";
 
-statusAprovacao.className=
-"aviso aprovado";
+    status.innerText =
+      "ONLINE";
 
-}else{
+    botao.innerText =
+      "FICAR OFFLINE";
 
-statusAprovacao.textContent=
-"⏳ AGUARDANDO APROVAÇÃO DO ADMINISTRADOR";
+  }else{
 
-statusAprovacao.className=
-"aviso pendente";
+    status.className =
+      "status offline";
 
+    status.innerText =
+      "OFFLINE";
+
+    botao.innerText =
+      "FICAR ONLINE";
+  }
 }
 
 
-if(perfil.exists){
+async function alternarOnline(){
 
-mostrarStatus(
-perfil.data().online===true
-);
+  if(
+    !usuarioAtual ||
+    !perfilAtual ||
+    perfilAtual.tipo !== "motoboy"
+  ){
+    return;
+  }
 
+
+  const motoRef =
+    db.collection("motoboys")
+      .doc(usuarioAtual.uid);
+
+
+  const snap =
+    await motoRef.get();
+
+
+  if(
+    !snap.exists ||
+    !snap.data().aprovado
+  ){
+
+    alert(
+      "Aguarde a aprovação do administrador."
+    );
+
+    return;
+  }
+
+
+  const novoStatus =
+    !Boolean(
+      snap.data().online
+    );
+
+
+  await motoRef.update({
+
+    online:
+      novoStatus,
+
+    atualizadoEm:
+      firebase.firestore.FieldValue.serverTimestamp()
+
+  });
+
+
+  await db
+    .collection("profiles")
+    .doc(usuarioAtual.uid)
+    .update({
+
+      online:
+        novoStatus
+
+    });
+
+
+  atualizarStatusVisual(
+    novoStatus
+  );
+
+
+  await carregarPedidosMotoboy(
+    snap.data().codigo
+  );
 }
 
 
-const codigoMeu=
-normalizarCodigoMotoboy(
-dadosMotoboy.codigo||
-(perfil.exists
-?perfil.data().motoboyCodigo
-:"")
-);
+/* =========================================================
+   PEDIDOS DISPONÍVEIS PARA MOTOBOY
+========================================================= */
 
-
-const codigoBox=
-document.getElementById(
-"codigoMotoboyPainel"
-);
-
-if(codigoBox){
-
-codigoBox.textContent=
-"CÓDIGO: "+(codigoMeu||"----");
-
-}
-
-
-/*
-  Motoboy não aprovado não recebe
-  entregas.
-*/
-
-const div=
-document.getElementById(
-"listaPedidosMotoboy"
-);
-
-
-if(!aprovado){
-
-div.innerHTML=
-'<div class="item">Aguardando aprovação do administrador.</div>';
-
-}else{
-
-const snap=
-await db.collection("orders")
-.where(
-"status",
-"==",
-"pendente"
-)
-.get();
-
-
-let disponiveis=[];
-
-snap.forEach(function(doc){
-
-const p=doc.data();
-
-const destino=
-normalizarCodigoMotoboy(
-p.motoboyCodigo||""
-);
-
-
-/*
-  Vazio = todos.
-  Código = somente aquele motoboy.
-*/
-
-if(
-destino===""||
-destino===codigoMeu
+async function carregarPedidosMotoboy(
+  meuCodigo
 ){
 
-disponiveis.push({
+  const box =
+    $("listaPedidosMotoboy");
 
-id:doc.id,
 
-...p
+  const motoSnap =
+    await db
+      .collection("motoboys")
+      .doc(usuarioAtual.uid)
+      .get();
 
-});
 
-}
+  if(
+    !motoSnap.exists ||
+    !motoSnap.data().aprovado
+  ){
 
-});
+    box.innerText =
+      "Aguardando aprovação.";
 
+    return;
+  }
 
-if(!disponiveis.length){
 
-div.innerHTML=
-'<div class="item">Nenhuma entrega disponível para você.</div>';
+  if(
+    !motoSnap.data().online
+  ){
 
-}else{
+    box.innerText =
+      "Fique online para receber entregas.";
 
-let html="";
+    return;
+  }
 
-disponiveis.forEach(function(p){
 
-html+=`
+  const snap =
+    await db
+      .collection("pedidos")
+      .where(
+        "status",
+        "==",
+        "pendente"
+      )
+      .get();
 
-<div class="item">
 
-<strong>
-Loja:
-</strong>
-${p.lojaNome||p.lojistaNome||"-"}
+  const pedidos =
+    snap.docs
+      .map(doc => ({
+        id:doc.id,
+        ...doc.data()
+      }))
+      .filter(p => {
 
-<br>
+        const destino =
+          normalizarCodigo(
+            p.motoboyCodigo
+          );
 
-<strong>
-Cliente:
-</strong>
-${p.clienteNome||"-"}
+        return (
+          destino === "" ||
+          destino ===
+          normalizarCodigo(meuCodigo)
+        );
+      });
 
-<br>
 
-<strong>
-Endereço:
-</strong>
-${p.enderecoEntrega||"-"}
+  if(!pedidos.length){
 
-<br>
+    box.innerText =
+      "Nenhuma entrega disponível.";
 
-<strong>
-Tipo:
-</strong>
-${String(
-p.tipoEntrega||"normal"
-).toUpperCase()}
+    return;
+  }
 
-<br>
 
-<strong>
-Distância:
-</strong>
-${Number(
-p.distanciaKm||0
-).toFixed(2)} km
+  box.innerHTML =
+    pedidos.map(p => `
 
-<br>
+      <div class="item">
 
-<strong>
-Tempo:
-</strong>
-${p.tempoEstimadoMin||"-"} min
+        <strong>
+          Pedido #${p.pedidoNumero || ""}
+        </strong>
 
-<br>
+        <br>
 
-<strong>
-Rastreio:
-</strong>
-${p.rastreio||"-"}
+        Tipo:
+        ${p.tipoPedido || "Normal"}
 
-<br>
+        <br>
 
-<strong>
-Valor da entrega:
-</strong>
-R$
-${Number(
-p.valorTaxa||0
-).toFixed(2)
-.replace(".",",")}
+        Veículo:
+        ${p.veiculo || ""}
 
-<button
-class="verde"
-onclick="aceitarPedido('${p.id}')"
->
-ACEITAR
-</button>
+        <br>
 
-</div>
+        Distância:
+        ${Number(p.distanciaKm || 0).toFixed(2)}
+        km
 
-`;
+        <br>
 
-});
+        Tempo estimado:
+        ${p.tempoMin || 0} min
 
-div.innerHTML=html;
+        <br>
 
-}
+        Valor da entrega:
+        <strong>
+          R$ ${dinheiro(
+            p.valorEntrega ||
+            p.valorTaxa
+          )}
+        </strong>
 
-}
+        <br>
 
+        Origem:
+        ${p.origemEndereco || ""}
 
-/* MINHAS */
+        <br>
 
-const minhas=
-await db.collection("orders")
-.where(
-"motoboyId",
-"==",
-usuarioAtual.uid
-)
-.get();
+        Destino:
+        ${p.enderecoEntrega || ""}
 
+        <button
+          onclick="aceitarPedido('${p.id}')"
+        >
+          ACEITAR ENTREGA
+        </button>
 
-const lista=
-document.getElementById(
-"listaAceitasMotoboy"
-);
+      </div>
 
-
-if(minhas.empty){
-
-lista.innerHTML=
-'<div class="item">Nenhuma entrega aceita.</div>';
-
-}else{
-
-let html="";
-
-minhas.forEach(function(doc){
-
-const p=doc.data();
-
-html+=`
-
-<div class="item">
-
-<strong>
-Loja:
-</strong>
-${p.lojaNome||p.lojistaNome||"-"}
-
-<br>
-
-<strong>
-Cliente:
-</strong>
-${p.clienteNome||"-"}
-
-<br>
-
-<strong>
-Endereço:
-</strong>
-${p.enderecoEntrega||"-"}
-
-<br>
-
-<strong>
-Tipo:
-</strong>
-${String(
-p.tipoEntrega||"normal"
-).toUpperCase()}
-
-<br>
-
-<strong>
-Distância:
-</strong>
-${Number(
-p.distanciaKm||0
-).toFixed(2)} km
-
-<br>
-
-<strong>
-Tempo:
-</strong>
-${p.tempoEstimadoMin||"-"} min
-
-<br>
-
-<strong>
-Rastreio:
-</strong>
-${p.rastreio||"-"}
-
-<br>
-
-<strong>
-Valor:
-</strong>
-R$
-${Number(
-p.valorTaxa||0
-).toFixed(2)
-.replace(".",",")}
-
-<br>
-
-<strong>
-Status:
-</strong>
-${p.status||"-"}
-
-${p.status!=="finalizado"
-?`
-<input
-id="codigo_${doc.id}"
-maxlength="4"
-inputmode="numeric"
-placeholder="Código de finalização"
-/>
-
-<button
-class="azul"
-onclick="finalizarPedido('${doc.id}')"
->
-FINALIZAR
-</button>
-`
-:""}
-
-</div>
-
-`;
-
-});
-
-lista.innerHTML=html;
-
-}
-
-}catch(e){
-
-console.error(e);
-
-const div=
-document.getElementById(
-"listaPedidosMotoboy"
-);
-
-if(div){
-
-div.innerHTML=
-'<div class="item">Erro ao carregar.</div>';
-
-}
-
-}
-
+    `).join("");
 }
 
 
-/* =====================================================
-   ACEITAR
-===================================================== */
+/* =========================================================
+   ACEITAR PEDIDO
+========================================================= */
 
 async function aceitarPedido(id){
 
-if(!usuarioAtual)return;
+  try{
 
-try{
+    const motoSnap =
+      await db
+        .collection("motoboys")
+        .doc(usuarioAtual.uid)
+        .get();
 
-const ref=
-db.collection("orders")
-.doc(id);
+
+    if(
+      !motoSnap.exists ||
+      !motoSnap.data().aprovado
+    ){
+
+      alert(
+        "Motoboy ainda não aprovado."
+      );
+
+      return;
+    }
 
 
-await db.runTransaction(
-async function(transaction){
+    const meuCodigo =
+      normalizarCodigo(
+        motoSnap.data().codigo
+      );
 
-const snap=
-await transaction.get(ref);
 
-if(!snap.exists){
+    const pedidoRef =
+      db.collection("pedidos")
+        .doc(id);
 
-throw new Error(
-"Entrega não encontrada."
-);
 
+    await db.runTransaction(
+      async transaction => {
+
+        const pedidoSnap =
+          await transaction.get(
+            pedidoRef
+          );
+
+
+        if(!pedidoSnap.exists){
+
+          throw new Error(
+            "Entrega não encontrada."
+          );
+        }
+
+
+        const p =
+          pedidoSnap.data();
+
+
+        if(p.status !== "pendente"){
+
+          throw new Error(
+            "Essa entrega já foi aceita por outro motorista."
+          );
+        }
+
+
+        const destino =
+          normalizarCodigo(
+            p.motoboyCodigo
+          );
+
+
+        if(
+          destino &&
+          destino !== meuCodigo
+        ){
+
+          throw new Error(
+            "Essa entrega foi direcionada para outro motorista."
+          );
+        }
+
+
+        transaction.update(
+          pedidoRef,
+          {
+
+            motoboyId:
+              usuarioAtual.uid,
+
+            motoboyCodigo:
+              meuCodigo,
+
+            status:
+              "em_rota",
+
+            aceitoEm:
+              firebase.firestore.FieldValue.serverTimestamp()
+
+          }
+        );
+      }
+    );
+
+
+    alert(
+      "Entrega aceita!"
+    );
+
+
+    await carregarMotoboy();
+
+  }catch(error){
+
+    alert(
+      error.message || error
+    );
+  }
 }
 
-const p=snap.data();
+
+/* =========================================================
+   ENTREGAS ACEITAS
+========================================================= */
+
+async function carregarAceitasMotoboy(){
+
+  const box =
+    $("listaAceitasMotoboy");
 
 
-if(p.status!=="pendente"){
+  const snap =
+    await db
+      .collection("pedidos")
+      .where(
+        "motoboyId",
+        "==",
+        usuarioAtual.uid
+      )
+      .get();
 
-throw new Error(
-"Esta entrega já foi aceita."
-);
 
+  if(snap.empty){
+
+    box.innerText =
+      "Nenhuma entrega.";
+
+    return;
+  }
+
+
+  const lista =
+    snap.docs.map(doc => ({
+      id:doc.id,
+      ...doc.data()
+    }));
+
+
+  lista.sort(
+    (a,b) => {
+
+      const aa =
+        a.criadoEm
+          ? a.criadoEm.toMillis()
+          : 0;
+
+      const bb =
+        b.criadoEm
+          ? b.criadoEm.toMillis()
+          : 0;
+
+      return bb-aa;
+    }
+  );
+
+
+  box.innerHTML =
+    lista.map(p => `
+
+      <div class="item">
+
+        <strong>
+          Pedido #${p.pedidoNumero || ""}
+        </strong>
+
+        <br>
+
+        ${p.tipoPedido || "Normal"}
+
+        <br>
+
+        Cliente:
+        ${p.clienteNome || ""}
+
+        <br>
+
+        Endereço:
+        ${p.enderecoEntrega || ""}
+
+        <br>
+
+        Status:
+        ${traduzirStatus(p.status)}
+
+        <br>
+
+        Valor:
+        <strong>
+          R$ ${dinheiro(
+            p.valorEntrega ||
+            p.valorTaxa
+          )}
+        </strong>
+
+        ${
+          p.status !== "finalizado" &&
+          p.status !== "cancelado"
+          ? `
+            <button
+              onclick="finalizarPedido('${p.id}')"
+            >
+              FINALIZAR ENTREGA
+            </button>
+          `
+          : ""
+        }
+
+      </div>
+
+    `).join("");
 }
 
 
-transaction.update(
-ref,
-{
-
-motoboyId:
-usuarioAtual.uid,
-
-status:
-"em_rota",
-
-aceitoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
-
-}
-
-);
-
-});
-
-
-alert(
-"Entrega aceita!"
-);
-
-await carregarMotoboy();
-
-}catch(e){
-
-alert(
-e.message||
-erroHumano(e)
-);
-
-}
-
-
-/* =====================================================
-   FINALIZAÇÃO
-===================================================== */
+/* =========================================================
+   FINALIZAR ENTREGA
+========================================================= */
 
 async function finalizarPedido(id){
 
-if(!usuarioAtual)return;
+  const codigo =
+    prompt(
+      "Digite o código de finalização de 4 dígitos:"
+    );
 
-const campo=
-document.getElementById(
-"codigo_"+id
-);
 
-if(!campo){
+  if(!codigo){
+    return;
+  }
 
-alert(
-"Campo de código não encontrado."
-);
 
-return;
+  try{
 
-}
+    const pedidoRef =
+      db.collection("pedidos")
+        .doc(id);
 
-const codigo=
-campo.value.trim();
 
+    const adminSnap =
+      await db
+        .collection("profiles")
+        .where(
+          "tipo",
+          "==",
+          "admin"
+        )
+        .limit(1)
+        .get();
 
-if(!/^\d{4}$/.test(codigo)){
 
-alert(
-"Digite o código de 4 dígitos."
-);
+    if(adminSnap.empty){
 
-return;
+      throw new Error(
+        "Nenhum administrador encontrado."
+      );
+    }
 
-}
 
+    const adminUid =
+      adminSnap.docs[0].id;
 
-try{
 
-const ref=
-db.collection("orders")
-.doc(id);
+    const configSnap =
+      await db
+        .collection("config_taxas")
+        .doc("valores")
+        .get();
 
-const snap=
-await ref.get();
 
-if(!snap.exists){
+    const cfg =
+      configSnap.exists
+        ? {
+            ...configTaxas,
+            ...configSnap.data()
+          }
+        : configTaxas;
 
-alert(
-"Entrega não encontrada."
-);
 
-return;
+    const motoWalletRef =
+      db.collection("wallets")
+        .doc(usuarioAtual.uid);
 
-}
 
-const p=snap.data();
+    const adminWalletRef =
+      db.collection("wallets")
+        .doc(adminUid);
 
 
-if(
-p.motoboyId!==usuarioAtual.uid
-){
+    const retornoPct =
+      Number(
+        cfg.retornoPct || 0
+      );
 
-alert(
-"Esta entrega não pertence a você."
-);
 
-return;
+    const superPct =
+      Number(
+        cfg.superPct || 0
+      );
 
-}
 
+    await db.runTransaction(
+      async transaction => {
 
-if(
-String(p.codigo4Digitos)!==
-codigo
-){
+        const pedidoSnap =
+          await transaction.get(
+            pedidoRef
+          );
 
-alert(
-"Código incorreto."
-);
 
-return;
+        if(!pedidoSnap.exists){
 
-}
+          throw new Error(
+            "Pedido não encontrado."
+          );
+        }
 
 
-await processarFinalizacaoFinanceira(
-id,
-p
-);
+        const p =
+          pedidoSnap.data();
 
 
-alert(
-"Entrega finalizada!"
-);
+        if(
+          p.motoboyId !==
+          usuarioAtual.uid
+        ){
 
-await carregarMotoboy();
-await atualizarSaldo();
+          throw new Error(
+            "Essa entrega não pertence a você."
+          );
+        }
 
-}catch(e){
 
-console.error(e);
+        if(p.status === "finalizado"){
 
-alert(
-"Erro:\n"+
-erroHumano(e)
-);
+          throw new Error(
+            "Essa entrega já foi finalizada."
+          );
+        }
 
-}
 
-}
+        if(
+          String(
+            p.codigo4Digitos
+          ) !==
+          String(codigo).trim()
+        ){
 
+          throw new Error(
+            "Código de finalização incorreto."
+          );
+        }
 
-/* =====================================================
-   FINALIZAÇÃO FINANCEIRA
-===================================================== */
 
-async function processarFinalizacaoFinanceira(
-id,
-p
-){
+        const valorEntrega =
+          Number(
+            p.valorEntrega ||
+            p.valorTaxa ||
+            0
+          );
 
-const configSnap=
-await db.collection("config_taxas")
-.doc("valores")
-.get();
 
-const config=
-configSnap.exists
-?configSnap.data()
-:{};
+        const retornoValor =
+          Number(
+            (
+              valorEntrega *
+              retornoPct /
+              100
+            ).toFixed(2)
+          );
 
 
-const retornoPct=
-Number(
-config.retornoPct||0
-);
+        const superValor =
+          Number(
+            (
+              valorEntrega *
+              superPct /
+              100
+            ).toFixed(2)
+          );
 
-const superPct=
-Number(
-config.superPct||0
-);
 
+        const motoWalletSnap =
+          await transaction.get(
+            motoWalletRef
+          );
 
-const valorEntrega=
-Number(
-p.valorTaxa||
-p.valorCalculado||
-0
-);
 
+        const adminWalletSnap =
+          await transaction.get(
+            adminWalletRef
+          );
 
-const valorRetorno=
-Number(
-(
-valorEntrega*
-retornoPct/
-100
-).toFixed(2)
-);
 
+        const saldoMoto =
+          motoWalletSnap.exists
+            ? Number(
+                motoWalletSnap.data().saldo || 0
+              )
+            : 0;
 
-const valorSuperAdmin=
-Number(
-(
-valorEntrega*
-superPct/
-100
-).toFixed(2)
-);
 
+        const saldoAdmin =
+          adminWalletSnap.exists
+            ? Number(
+                adminWalletSnap.data().saldo || 0
+              )
+            : 0;
 
-/*
-  Localiza carteira do admin.
-*/
 
-let adminUid=null;
+        transaction.set(
+          motoWalletRef,
+          {
 
-const admins=
-await db.collection("profiles")
-.where(
-"tipo",
-"==",
-"admin"
-)
-.limit(1)
-.get();
+            uid:
+              usuarioAtual.uid,
 
-if(!admins.empty){
+            saldo:
+              saldoMoto + retornoValor,
 
-adminUid=
-admins.docs[0].id;
+            atualizadoEm:
+              firebase.firestore.FieldValue.serverTimestamp()
 
-}
+          },
+          {merge:true}
+        );
 
 
-const orderRef=
-db.collection("orders")
-.doc(id);
+        transaction.set(
+          adminWalletRef,
+          {
 
-const motoboyWalletRef=
-db.collection("wallets")
-.doc(usuarioAtual.uid);
+            uid:
+              adminUid,
 
+            saldo:
+              saldoAdmin + superValor,
 
-const adminWalletRef=
-adminUid
-?db.collection("wallets")
-.doc(adminUid)
-:null;
+            atualizadoEm:
+              firebase.firestore.FieldValue.serverTimestamp()
 
+          },
+          {merge:true}
+        );
 
-await db.runTransaction(
-async function(transaction){
 
-const orderSnap=
-await transaction.get(
-orderRef
-);
+        transaction.update(
+          pedidoRef,
+          {
 
-if(!orderSnap.exists){
+            status:
+              "finalizado",
 
-throw new Error(
-"Entrega não encontrada."
-);
+            finalizadoEm:
+              firebase.firestore.FieldValue.serverTimestamp(),
 
-}
+            retornoPct:
+              retornoPct,
 
-const atual=
-orderSnap.data();
+            retornoValor:
+              retornoValor,
 
+            superPct:
+              superPct,
 
-if(
-atual.status==="finalizado"
-){
+            superValor:
+              superValor
 
-throw new Error(
-"Esta entrega já foi finalizada."
-);
+          }
+        );
 
-}
 
+        if(retornoValor > 0){
 
-/*
-  Retorno vai para carteira do motoboy.
-*/
+          const transacaoMoto =
+            db.collection("transactions")
+              .doc();
 
-if(valorRetorno>0){
+          transaction.set(
+            transacaoMoto,
+            {
 
-const wallet=
-await transaction.get(
-motoboyWalletRef
-);
+              uid:
+                usuarioAtual.uid,
 
-if(wallet.exists){
+              tipo:
+                "retorno_motoboy",
 
-transaction.update(
-motoboyWalletRef,
-{
+              valor:
+                retornoValor,
 
-saldo:
-firebase.firestore.FieldValue
-.increment(valorRetorno),
+              orderId:
+                id,
 
-atualizadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
+              status:
+                "aprovado",
 
-}
+              criadoEm:
+                firebase.firestore.FieldValue.serverTimestamp()
 
-);
+            }
+          );
+        }
 
-}else{
 
-transaction.set(
-motoboyWalletRef,
-{
+        if(superValor > 0){
 
-saldo:valorRetorno,
+          const transacaoAdmin =
+            db.collection("transactions")
+              .doc();
 
-atualizadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
+          transaction.set(
+            transacaoAdmin,
+            {
 
-}
+              uid:
+                adminUid,
 
-);
+              tipo:
+                "super_admin",
 
-}
+              valor:
+                superValor,
 
-}
+              orderId:
+                id,
 
+              status:
+                "aprovado",
 
-/*
-  Super % vai para admin.
-*/
+              criadoEm:
+                firebase.firestore.FieldValue.serverTimestamp()
 
-if(
-valorSuperAdmin>0&&
-adminWalletRef
-){
+            }
+          );
+        }
 
-const adminWallet=
-await transaction.get(
-adminWalletRef
-);
+      }
+    );
 
-if(adminWallet.exists){
 
-transaction.update(
-adminWalletRef,
-{
+    alert(
+      "ENTREGA FINALIZADA!\n\n" +
+      "Retorno para motoboy: R$ " +
+      dinheiro(
+        Number(
+          configTaxas.retornoPct || 0
+        ) *
+        Number(0)
+      )
+    );
 
-saldo:
-firebase.firestore.FieldValue
-.increment(valorSuperAdmin),
 
-atualizadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
+    await carregarMotoboy();
 
-}
+  }catch(error){
 
-);
-
-}else{
-
-transaction.set(
-adminWalletRef,
-{
-
-saldo:
-valorSuperAdmin,
-
-atualizadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
-
-}
-
-);
-
-}
-
-}
-
-
-transaction.update(
-orderRef,
-{
-
-status:
-"finalizado",
-
-finalizadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp(),
-
-retornoPct:
-retornoPct,
-
-superPct:
-superPct,
-
-valorRetornoMotoboy:
-valorRetorno,
-
-valorSuperAdmin:
-valorSuperAdmin
-
-}
-
-);
-
-
-});
-
-
-/*
-  Extratos.
-*/
-
-if(valorRetorno>0){
-
-await db.collection("transactions")
-.add({
-
-uid:
-usuarioAtual.uid,
-
-tipo:
-"retorno_motoboy",
-
-valor:
-valorRetorno,
-
-orderId:id,
-
-status:
-"aprovado",
-
-criadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
-
-});
-
+    alert(
+      "ERRO AO FINALIZAR:\n\n" +
+      (error.message || error)
+    );
+  }
 }
 
 
-if(
-valorSuperAdmin>0&&
-adminUid
-){
-
-await db.collection("transactions")
-.add({
-
-uid:
-adminUid,
-
-tipo:
-"super_admin",
-
-valor:
-valorSuperAdmin,
-
-orderId:id,
-
-status:
-"aprovado",
-
-criadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
-
-});
-
-}
-
-}
-
-
-/* =====================================================
+/* =========================================================
    PIX MOTOBOY
-===================================================== */
+========================================================= */
 
 async function salvarPixMotoboy(){
 
-if(!usuarioAtual)return;
+  const pix =
+    $("pixMotoboy")
+      .value.trim();
 
-const pix=
-document.getElementById(
-"pixMotoboy"
-).value.trim();
+  if(!pix){
 
-if(!pix){
+    alert(
+      "Digite sua chave PIX."
+    );
 
-alert(
-"Digite sua chave PIX."
-);
+    return;
+  }
 
-return;
 
-}
+  await db
+    .collection("profiles")
+    .doc(usuarioAtual.uid)
+    .update({
 
-try{
+      pix:pix
 
-await db.collection("profiles")
-.doc(usuarioAtual.uid)
-.update({
+    });
 
-pix:pix
 
-});
+  perfilAtual.pix =
+    pix;
 
-alert(
-"Chave PIX salva."
-);
 
-}catch(e){
-
-alert(
-"Erro:\n"+
-erroHumano(e)
-);
-
-}
-
+  alert(
+    "PIX salvo."
+  );
 }
 
 
-async function carregarPixMotoboy(){
+async function sacarMotoboy(){
 
-if(!usuarioAtual)return;
-
-try{
-
-const snap=
-await db.collection("profiles")
-.doc(usuarioAtual.uid)
-.get();
-
-if(snap.exists){
-
-document.getElementById(
-"pixMotoboy"
-).value=
-snap.data().pix||"";
-
-}
-
-}catch(e){
-
-console.error(e);
-
-}
-
-}
+  const saldo =
+    await obterSaldo(
+      usuarioAtual.uid
+    );
 
 
-/* =====================================================
-   SAQUE
-===================================================== */
+  if(saldo <= 0){
 
-async function solicitarSaque(){
+    alert(
+      "Sua carteira não possui saldo para saque."
+    );
 
-if(!usuarioAtual)return;
-
-try{
-
-const wallet=
-await db.collection("wallets")
-.doc(usuarioAtual.uid)
-.get();
-
-const saldo=
-wallet.exists
-?Number(
-wallet.data().saldo||0
-)
-:0;
+    return;
+  }
 
 
-if(saldo<=0){
-
-alert(
-"Você não possui saldo."
-);
-
-return;
-
-}
+  const valorTexto =
+    prompt(
+      "Valor do saque:",
+      saldo.toFixed(2)
+    );
 
 
-const pix=
-document.getElementById(
-"pixMotoboy"
-).value.trim();
-
-if(!pix){
-
-alert(
-"Cadastre sua chave PIX."
-);
-
-return;
-
-}
+  const valor =
+    Number(valorTexto);
 
 
-await db.collection("transactions")
-.add({
+  if(
+    !valor ||
+    valor <= 0 ||
+    valor > saldo
+  ){
 
-uid:
-usuarioAtual.uid,
+    alert(
+      "Valor de saque inválido."
+    );
 
-tipo:
-"saque_motoboy",
-
-valor:
--saldo,
-
-pix:
-pix,
-
-status:
-"pendente",
-
-criadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
-
-});
+    return;
+  }
 
 
-alert(
-"Solicitação enviada ao administrador."
-);
+  const pix =
+    $("pixMotoboy")
+      .value.trim();
 
-}catch(e){
 
-alert(
-"Erro:\n"+
-erroHumano(e)
-);
+  if(!pix){
 
-}
+    alert(
+      "Cadastre sua chave PIX primeiro."
+    );
 
+    return;
+  }
+
+
+  await db
+    .collection("saques")
+    .add({
+
+      uid:
+        usuarioAtual.uid,
+
+      nome:
+        perfilAtual.nome || "",
+
+      valor:
+        valor,
+
+      pix:
+        pix,
+
+      status:
+        "pendente",
+
+      criadoEm:
+        firebase.firestore.FieldValue.serverTimestamp()
+
+    });
+
+
+  alert(
+    "Solicitação de saque enviada ao administrador."
+  );
 }
 
 
-/* =====================================================
-   EXTRATO 90 DIAS
-===================================================== */
-
-async function carregarExtrato(tipo){
-
-if(!usuarioAtual)return;
-
-const id=
-tipo==="lojista"
-?"extratoLojista"
-:"extratoMotoboy";
-
-const div=
-document.getElementById(id);
-
-if(!div)return;
-
-div.textContent="Carregando...";
-
-try{
-
-const snap=
-await db.collection("transactions")
-.where(
-"uid",
-"==",
-usuarioAtual.uid
-)
-.get();
-
-
-const limite=
-new Date();
-
-limite.setDate(
-limite.getDate()-90
-);
-
-
-let lista=[];
-
-
-snap.forEach(function(doc){
-
-const t=doc.data();
-
-let data=null;
-
-if(
-t.criadoEm&&
-typeof t.criadoEm.toDate==="function"
-){
-
-data=t.criadoEm.toDate();
-
-}
-
-
-if(
-!data||
-data>=limite
-){
-
-lista.push({
-
-...t,
-
-data:data
-
-});
-
-}
-
-});
-
-
-lista.sort(function(a,b){
-
-return(
-(b.data
-?b.data.getTime():0)-
-(a.data
-?a.data.getTime():0)
-);
-
-});
-
-
-if(!lista.length){
-
-div.innerHTML=
-'<div class="item">Nenhum movimento nos últimos 90 dias.</div>';
-
-return;
-
-}
-
-
-let html=
-"<table>"+
-"<tr>"+
-"<th>Data</th>"+
-"<th>Tipo</th>"+
-"<th>Valor</th>"+
-"<th>Status</th>"+
-"</tr>";
-
-
-lista.forEach(function(t){
-
-html+=`
-
-<tr>
-
-<td>
-${t.data
-?t.data.toLocaleDateString("pt-BR")
-:"-"}
-</td>
-
-<td>
-${t.tipo||"-"}
-</td>
-
-<td>
-R$
-${Number(t.valor||0)
-.toFixed(2)
-.replace(".",",")}
-</td>
-
-<td>
-${t.status||"-"}
-</td>
-
-</tr>
-
-`;
-
-});
-
-
-html+="</table>";
-
-div.innerHTML=html;
-
-}catch(e){
-
-div.innerHTML=
-'<div class="item">Erro ao carregar extrato.</div>';
-
-}
-
-}
-
-
-/* =====================================================
-   PARTE 3 CONTINUA
-===================================================== *//* =====================================================
+/* =========================================================
    ADMIN
-===================================================== */
+========================================================= */
 
 async function carregarAdmin(){
 
-if(!usuarioAtual)return;
+  if(
+    !perfilAtual ||
+    perfilAtual.tipo !== "admin"
+  ){
 
-try{
+    alert(
+      "Acesso administrativo negado."
+    );
 
-const perfil=
-await db.collection("profiles")
-.doc(usuarioAtual.uid)
-.get();
+    await sair();
+
+    return;
+  }
 
 
-if(
-!perfil.exists||
-String(
-perfil.data().tipo||""
-).toLowerCase()!=="admin"
-){
+  await carregarConfigTaxas();
 
-alert(
-"Acesso administrativo não autorizado."
-);
+  await carregarResumoAdmin();
 
-await auth.signOut();
+  await carregarAdminMotoboys();
 
-return;
+  await carregarAdminRecargas();
 
+  await carregarAdminUsuarios();
+
+  await carregarAdminPedidos();
+
+  await carregarAdminCalculos();
 }
 
 
-/* CONFIGURAÇÕES */
+/* =========================================================
+   ABAS ADMIN
+========================================================= */
 
-await carregarConfigTaxas();
+function mostrarAdminAba(aba){
+
+  $("adminAbaTaxas")
+    .classList.add("oculto");
+
+  $("adminAbaSuper")
+    .classList.add("oculto");
+
+  $("adminAbaRetorno")
+    .classList.add("oculto");
 
 
-/* TRANSAÇÕES */
+  if(aba === "taxas")
+    $("adminAbaTaxas")
+      .classList.remove("oculto");
 
-const trans=
-await db.collection("transactions")
-.get();
+  if(aba === "super")
+    $("adminAbaSuper")
+      .classList.remove("oculto");
 
-let receitas=0;
-let pagamentos=0;
-let pendentes=[];
-
-
-trans.forEach(function(doc){
-
-const t=doc.data();
-
-if(t.status==="aprovado"){
-
-if(
-t.tipo==="recarga_50"||
-t.tipo==="recarga"
-){
-
-receitas+=
-Number(t.valor||0);
-
-}
-
-if(
-t.tipo==="pagamento_motoboy"
-){
-
-pagamentos+=
-Number(t.valor||0);
-
-}
-
+  if(aba === "retorno")
+    $("adminAbaRetorno")
+      .classList.remove("oculto");
 }
 
 
-if(
-t.tipo==="recarga_50"&&
-t.status==="pendente"
-){
+/* =========================================================
+   RESUMO ADMIN
+========================================================= */
 
-pendentes.push({
+async function carregarResumoAdmin(){
 
-id:doc.id,
-
-...t
-
-});
-
-}
-
-});
+  const snap =
+    await db
+      .collection("transactions")
+      .get();
 
 
-document.getElementById(
-"adminReceitas"
-).textContent=
-receitas
-.toFixed(2)
-.replace(".",",");
+  let receitas = 0;
+  let pagamentos = 0;
 
 
-document.getElementById(
-"adminPagamentos"
-).textContent=
-pagamentos
-.toFixed(2)
-.replace(".",",");
+  snap.forEach(doc => {
+
+    const t =
+      doc.data();
+
+    const valor =
+      Number(t.valor || 0);
 
 
-document.getElementById(
-"adminLucro"
-).textContent=
-(receitas-pagamentos)
-.toFixed(2)
-.replace(".",",");
+    if(
+      t.tipo ===
+      "taxa_pedido"
+    ){
+
+      receitas +=
+        Math.abs(valor);
+    }
 
 
-/* RECARGAS */
+    if(
+      t.tipo ===
+      "pagamento_motoboy"
+    ){
 
-const rec=
-document.getElementById(
-"adminRecargas"
-);
+      pagamentos +=
+        Math.abs(valor);
+    }
+
+  });
 
 
-if(!pendentes.length){
+  $("adminReceitas").innerText =
+    dinheiro(receitas);
 
-rec.innerHTML=
-'<div class="item">Nenhuma recarga pendente.</div>';
+  $("adminPagamentos").innerText =
+    dinheiro(pagamentos);
 
-}else{
-
-let html="";
-
-pendentes.forEach(function(t){
-
-html+=`
-
-<div class="item">
-
-<strong>
-UID:
-</strong>
-${t.uid}
-
-<br>
-
-<strong>
-Valor:
-</strong>
-R$
-${Number(t.valor||0)
-.toFixed(2)
-.replace(".",",")}
-
-<button
-class="verde"
-onclick="aprovarRecarga(
-'${t.id}',
-'${t.uid}',
-${Number(t.valor||0)}
-)"
->
-APROVAR
-</button>
-
-</div>
-
-`;
-
-});
-
-rec.innerHTML=html;
-
+  $("adminLucro").innerText =
+    dinheiro(
+      receitas - pagamentos
+    );
 }
 
 
-/* =====================================================
-   MOTOBOYS PENDENTES
-===================================================== */
+/* =========================================================
+   APROVAÇÃO MOTOBOY
+========================================================= */
 
-const motos=
-await db.collection("motoboys")
-.where(
-"aprovado",
-"==",
-false
-)
-.get();
+async function carregarAdminMotoboys(){
+
+  const box =
+    $("adminMotoboys");
 
 
-const motosDiv=
-document.getElementById(
-"adminMotoboys"
-);
+  const snap =
+    await db
+      .collection("motoboys")
+      .get();
 
 
-if(motos.empty){
+  if(snap.empty){
 
-motosDiv.innerHTML=
-'<div class="item">Nenhum motoboy aguardando aprovação.</div>';
+    box.innerText =
+      "Nenhum motoboy cadastrado.";
 
-}else{
+    return;
+  }
 
-let html="";
 
-motos.forEach(function(doc){
+  const lista =
+    snap.docs.map(doc => ({
+      id:doc.id,
+      ...doc.data()
+    }));
 
-const m=doc.data();
 
-html+=`
+  lista.sort(
+    (a,b) =>
+      Number(a.numero || 0) -
+      Number(b.numero || 0)
+  );
 
-<div class="item">
 
-<strong>
-${m.codigo||"-"}
-</strong>
+  box.innerHTML =
+    lista.map(m => `
 
-<br>
+      <div class="item">
 
-<strong>
-Nome:
-</strong>
-${m.nome||"-"}
+        <strong>
+          ${m.codigo || ""}
+        </strong>
 
-<br>
+        <br>
 
-<strong>
-Telefone:
-</strong>
-${m.telefone||"-"}
+        ${m.nome || ""}
 
-<br>
+        <br>
 
-<strong>
-E-mail:
-</strong>
-${m.email||"-"}
+        Telefone:
+        ${m.telefone || ""}
 
-<br>
+        <br>
 
-<strong>
-CNH:
-</strong>
+        Veículo:
+        ${m.veiculo || ""}
 
-${
-m.cnhUrl
-?`<a
-href="${m.cnhUrl}"
-target="_blank"
-style="color:#ffc400">
-VER CNH
-</a>`
-:"Não enviada"
+        <br>
+
+        Status:
+        ${
+          m.aprovado
+            ? "APROVADO"
+            : "PENDENTE"
+        }
+
+        ${
+          m.documentos
+            ? `
+              <br>
+              <a
+                href="${m.documentos.cnh || "#"}"
+                target="_blank"
+                style="color:#ffd400"
+              >
+                VER CNH
+              </a>
+
+              <br>
+
+              <a
+                href="${m.documentos.crlv || "#"}"
+                target="_blank"
+                style="color:#ffd400"
+              >
+                VER CRLV
+              </a>
+
+              <br>
+
+              <a
+                href="${m.documentos.selfie || "#"}"
+                target="_blank"
+                style="color:#ffd400"
+              >
+                VER SELFIE
+              </a>
+            `
+            : ""
+        }
+
+        ${
+          !m.aprovado
+            ? `
+              <button
+                onclick="aprovarMotoboy('${m.id}')"
+              >
+                APROVAR ${m.codigo || ""}
+              </button>
+            `
+            : ""
+        }
+
+      </div>
+
+    `).join("");
 }
 
-<br>
-
-<strong>
-CRLV:
-</strong>
-
-${
-m.crlvUrl
-?`<a
-href="${m.crlvUrl}"
-target="_blank"
-style="color:#ffc400">
-VER CRLV
-</a>`
-:"Não enviado"
-}
-
-<br>
-
-<strong>
-Selfie:
-</strong>
-
-${
-m.selfieUrl
-?`<a
-href="${m.selfieUrl}"
-target="_blank"
-style="color:#ffc400">
-VER SELFIE
-</a>`
-:"Não enviada"
-}
-
-<button
-class="verde"
-onclick="aprovarMotoboy('${doc.id}')"
->
-APROVAR ${m.codigo||""}
-</button>
-
-</div>
-
-`;
-
-});
-
-motosDiv.innerHTML=html;
-
-}
-
-
-/* =====================================================
-   USUÁRIOS
-===================================================== */
-
-const users=
-await db.collection("profiles")
-.get();
-
-
-const usersDiv=
-document.getElementById(
-"adminUsuarios"
-);
-
-
-let usersHtml="";
-
-
-users.forEach(function(doc){
-
-const u=doc.data();
-
-usersHtml+=`
-
-<div class="item">
-
-<strong>
-Nome:
-</strong>
-${u.nome||"-"}
-
-<br>
-
-<strong>
-E-mail:
-</strong>
-${u.email||"-"}
-
-<br>
-
-<strong>
-Telefone:
-</strong>
-${u.telefone||"-"}
-
-<br>
-
-<strong>
-TIPO:
-</strong>
-${u.tipo||"-"}
-
-<br>
-
-<strong>
-Conta:
-</strong>
-${u.tipoConta||"-"}
-
-<br>
-
-<strong>
-UID:
-</strong>
-${doc.id}
-
-</div>
-
-`;
-
-});
-
-
-usersDiv.innerHTML=
-usersHtml||
-'<div class="item">Nenhum usuário.</div>';
-
-
-/* =====================================================
-   PEDIDOS
-===================================================== */
-
-const pedidos=
-await db.collection("orders")
-.get();
-
-
-const pedidosDiv=
-document.getElementById(
-"adminPedidos"
-);
-
-
-let pedidosHtml="";
-
-
-pedidos.forEach(function(doc){
-
-const p=doc.data();
-
-pedidosHtml+=`
-
-<div class="item">
-
-<strong>
-ID:
-</strong>
-${doc.id}
-
-<br>
-
-<strong>
-Loja:
-</strong>
-${p.lojaNome||p.lojistaNome||"-"}
-
-<br>
-
-<strong>
-Cliente:
-</strong>
-${p.clienteNome||"-"}
-
-<br>
-
-<strong>
-Tipo:
-</strong>
-${p.tipoEntrega||"-"}
-
-<br>
-
-<strong>
-Veículo:
-</strong>
-${p.veiculo||"-"}
-
-<br>
-
-<strong>
-Status:
-</strong>
-${p.status||"-"}
-
-<br>
-
-<strong>
-Motorista:
-</strong>
-${p.motoboyId||"Aguardando"}
-
-<br>
-
-<strong>
-Rastreio:
-</strong>
-${p.rastreio||"-"}
-
-<br>
-
-<strong>
-Distância:
-</strong>
-${Number(
-p.distanciaKm||0
-).toFixed(2)}
-km
-
-<br>
-
-<strong>
-Valor calculado:
-</strong>
-
-<span class="valor-admin">
-R$
-${Number(
-p.valorTaxa||0
-).toFixed(2)
-.replace(".",",")}
-</span>
-
-</div>
-
-`;
-
-});
-
-
-pedidosDiv.innerHTML=
-pedidosHtml||
-'<div class="item">Nenhuma entrega.</div>';
-
-
-/* =====================================================
-   CÁLCULOS SUPER / RETORNO
-===================================================== */
-
-const calculosDiv=
-document.getElementById(
-"adminCalculos"
-);
-
-
-let calculosHtml="";
-
-
-pedidos.forEach(function(doc){
-
-const p=doc.data();
-
-if(
-p.valorRetornoMotoboy||
-p.valorSuperAdmin||
-p.retornoPct||
-p.superPct
-){
-
-calculosHtml+=`
-
-<div class="item">
-
-<strong>
-Pedido:
-</strong>
-${doc.id}
-
-<br>
-
-<strong>
-Valor entrega:
-</strong>
-R$
-${Number(
-p.valorTaxa||0
-).toFixed(2)
-.replace(".",",")}
-
-<br>
-
-<strong>
-Retorno:
-</strong>
-${Number(
-p.retornoPct||0
-)}%
-
-<br>
-
-<strong>
-Motoboy recebe retorno:
-</strong>
-
-<span class="valor-admin">
-R$
-${Number(
-p.valorRetornoMotoboy||0
-).toFixed(2)
-.replace(".",",")}
-</span>
-
-<br>
-
-<strong>
-Super:
-</strong>
-${Number(
-p.superPct||0
-)}%
-
-<br>
-
-<strong>
-Admin:
-</strong>
-
-<span class="valor-admin">
-R$
-${Number(
-p.valorSuperAdmin||0
-).toFixed(2)
-.replace(".",",")}
-</span>
-
-</div>
-
-`;
-
-}
-
-});
-
-
-calculosDiv.innerHTML=
-calculosHtml||
-'<div class="item">Nenhum cálculo registrado.</div>';
-
-}catch(e){
-
-console.error(e);
-
-alert(
-"Erro no painel admin:\n"+
-erroHumano(e)
-);
-
-}
-
-}
-
-
-/* =====================================================
-   APROVAR MOTOBOY
-===================================================== */
 
 async function aprovarMotoboy(uid){
 
-if(!usuarioAtual)return;
+  if(
+    !perfilAtual ||
+    perfilAtual.tipo !== "admin"
+  ){
 
-try{
+    alert(
+      "Somente admin."
+    );
 
-const ref=
-db.collection("motoboys")
-.doc(uid);
+    return;
+  }
 
-const snap=
-await ref.get();
 
-if(!snap.exists){
+  const motoRef =
+    db.collection("motoboys")
+      .doc(uid);
 
-alert(
-"Motoboy não encontrado."
-);
 
-return;
+  const snap =
+    await motoRef.get();
 
+
+  if(!snap.exists){
+
+    alert(
+      "Motoboy não encontrado."
+    );
+
+    return;
+  }
+
+
+  const moto =
+    snap.data();
+
+
+  await motoRef.update({
+
+    aprovado:true,
+
+    aprovadoEm:
+      firebase.firestore.FieldValue.serverTimestamp(),
+
+    aprovadoPor:
+      usuarioAtual.uid
+
+  });
+
+
+  await db
+    .collection("profiles")
+    .doc(uid)
+    .update({
+
+      aprovado:true,
+
+      motoboyCodigo:
+        moto.codigo || ""
+
+    });
+
+
+  alert(
+    "Motoboy " +
+    (moto.codigo || "") +
+    " aprovado."
+  );
+
+
+  await carregarAdminMotoboys();
 }
 
 
-const dados=snap.data();
+/* =========================================================
+   RECARGAS
+========================================================= */
+
+async function solicitarRecarga(){
+
+  const valorTexto =
+    prompt(
+      "Digite o valor da recarga:"
+    );
 
 
-await ref.update({
-
-aprovado:true,
-
-aprovadoPor:
-usuarioAtual.uid,
-
-aprovadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
-
-});
+  const valor =
+    Number(valorTexto);
 
 
-await db.collection("profiles")
-.doc(uid)
-.set({
+  if(
+    !valor ||
+    valor <= 0
+  ){
 
-aprovado:true,
-
-motoboyCodigo:
-dados.codigo||"",
-
-numeroMotoboy:
-dados.numero||null
-
-},{
-merge:true
-});
+    return;
+  }
 
 
-alert(
-"Motoboy "+(dados.codigo||"")+" aprovado."
-);
+  await db
+    .collection("recargas")
+    .add({
 
-await carregarAdmin();
+      uid:
+        usuarioAtual.uid,
 
-}catch(e){
+      nome:
+        perfilAtual.nome || "",
 
-alert(
-"Erro ao aprovar:\n"+
-erroHumano(e)
-);
+      valor:
+        valor,
 
-}
+      status:
+        "pendente",
 
-}
+      criadoEm:
+        firebase.firestore.FieldValue.serverTimestamp()
 
-
-/* =====================================================
-   APROVAR RECARGA
-===================================================== */
-
-async function aprovarRecarga(
-transactionId,
-uid,
-valor
-){
-
-try{
-
-const walletRef=
-db.collection("wallets")
-.doc(uid);
-
-const transRef=
-db.collection("transactions")
-.doc(transactionId);
+    });
 
 
-await db.runTransaction(
-async function(transaction){
-
-const wallet=
-await transaction.get(
-walletRef
-);
-
-const trans=
-await transaction.get(
-transRef
-);
-
-
-if(!trans.exists){
-
-throw new Error(
-"Recarga não encontrada."
-);
-
+  alert(
+    "Solicitação enviada ao administrador."
+  );
 }
 
 
-if(
-trans.data().status!=="pendente"
-){
+async function carregarAdminRecargas(){
 
-throw new Error(
-"Esta recarga já foi processada."
-);
+  const box =
+    $("adminRecargas");
 
+
+  const snap =
+    await db
+      .collection("recargas")
+      .where(
+        "status",
+        "==",
+        "pendente"
+      )
+      .get();
+
+
+  if(snap.empty){
+
+    box.innerText =
+      "Nenhuma recarga pendente.";
+
+    return;
+  }
+
+
+  box.innerHTML =
+    snap.docs.map(doc => {
+
+      const r =
+        doc.data();
+
+      return `
+
+        <div class="item">
+
+          <strong>
+            ${r.nome || ""}
+          </strong>
+
+          <br>
+
+          Valor:
+          R$ ${dinheiro(r.valor)}
+
+          <button
+            onclick="aprovarRecarga('${doc.id}')"
+          >
+            APROVAR RECARGA
+          </button>
+
+        </div>
+
+      `;
+
+    }).join("");
 }
 
 
-if(wallet.exists){
+async function aprovarRecarga(id){
 
-transaction.update(
-walletRef,
-{
-
-saldo:
-firebase.firestore.FieldValue
-.increment(Number(valor)),
-
-atualizadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
-
-}
-
-);
-
-}else{
-
-transaction.set(
-walletRef,
-{
-
-saldo:Number(valor),
-
-atualizadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
-
-}
-
-);
-
-}
+  const ref =
+    db.collection("recargas")
+      .doc(id);
 
 
-transaction.update(
-transRef,
-{
-
-status:"aprovado",
-
-aprovadoPor:
-usuarioAtual.uid,
-
-aprovadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
-
-}
-
-);
-
-});
+  const snap =
+    await ref.get();
 
 
-alert(
-"Recarga aprovada."
-);
-
-await carregarAdmin();
-
-}catch(e){
-
-alert(
-"Erro:\n"+
-erroHumano(e)
-);
-
-}
-
-}
+  if(!snap.exists) return;
 
 
-/* =====================================================
-   EDITAR SALDO
-===================================================== */
-
-async function editarSaldo(uid){
-
-const valor=
-prompt(
-"Digite o novo saldo:"
-);
-
-if(valor===null)return;
-
-const saldo=
-Number(
-valor.replace(",",".")
-);
+  const r =
+    snap.data();
 
 
-if(isNaN(saldo)){
-
-alert(
-"Valor inválido."
-);
-
-return;
-
-}
+  const walletRef =
+    db.collection("wallets")
+      .doc(r.uid);
 
 
-try{
+  await db.runTransaction(
+    async transaction => {
 
-await db.collection("wallets")
-.doc(uid)
-.set({
-
-saldo:saldo,
-
-atualizadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
-
-},{
-merge:true
-});
+      const walletSnap =
+        await transaction.get(
+          walletRef
+        );
 
 
-alert(
-"Saldo atualizado."
-);
+      const saldo =
+        walletSnap.exists
+          ? Number(
+              walletSnap.data().saldo || 0
+            )
+          : 0;
 
-await carregarAdmin();
 
-}catch(e){
+      transaction.set(
+        walletRef,
+        {
 
-alert(
-"Erro:\n"+
-erroHumano(e)
-);
+          uid:r.uid,
 
-}
+          saldo:
+            saldo + Number(r.valor || 0),
 
+          atualizadoEm:
+            firebase.firestore.FieldValue.serverTimestamp()
+
+        },
+        {merge:true}
+      );
+
+
+      transaction.update(
+        ref,
+        {
+
+          status:
+            "aprovado",
+
+          aprovadoEm:
+            firebase.firestore.FieldValue.serverTimestamp(),
+
+          aprovadoPor:
+            usuarioAtual.uid
+
+        }
+      );
+
+
+      const tr =
+        db.collection("transactions")
+          .doc();
+
+
+      transaction.set(
+        tr,
+        {
+
+          uid:r.uid,
+
+          tipo:
+            "recarga",
+
+          valor:
+            Number(r.valor || 0),
+
+          status:
+            "aprovado",
+
+          criadoEm:
+            firebase.firestore.FieldValue.serverTimestamp()
+
+        }
+      );
+
+    }
+  );
+
+
+  alert(
+    "Recarga aprovada."
+  );
+
+
+  await carregarAdminRecargas();
 }
 
 
-/* =====================================================
-   EDITAR SALDO PELO PAINEL
-===================================================== */
+/* =========================================================
+   USUÁRIOS ADMIN
+========================================================= */
 
-async function editarSaldoAdmin(){
+async function carregarAdminUsuarios(){
 
-const uid=
-document.getElementById(
-"editarSaldoUid"
-).value.trim();
-
-const valor=
-Number(
-document.getElementById(
-"editarSaldoValor"
-).value||0
-);
+  const box =
+    $("adminUsuarios");
 
 
-if(!uid){
+  const snap =
+    await db
+      .collection("profiles")
+      .get();
 
-alert(
-"Digite o UID."
-);
 
-return;
+  box.innerHTML =
+    snap.docs.map(doc => {
 
+      const p =
+        doc.data();
+
+      return `
+
+        <div class="item">
+
+          <strong>
+            ${p.nome || ""}
+          </strong>
+
+          <br>
+
+          ${p.email || ""}
+
+          <br>
+
+          Tipo:
+          ${p.tipo || ""}
+
+          <br>
+
+          Telefone:
+          ${p.telefone || ""}
+
+          <br>
+
+          Aprovado:
+          ${
+            p.aprovado
+              ? "SIM"
+              : "NÃO"
+          }
+
+        </div>
+
+      `;
+
+    }).join("");
 }
 
 
-if(valor<0){
+/* =========================================================
+   PEDIDOS ADMIN
+========================================================= */
 
-alert(
-"Saldo inválido."
-);
+async function carregarAdminPedidos(){
 
-return;
+  const box =
+    $("adminPedidos");
 
+
+  const snap =
+    await db
+      .collection("pedidos")
+      .get();
+
+
+  const lista =
+    snap.docs.map(doc => ({
+      id:doc.id,
+      ...doc.data()
+    }));
+
+
+  lista.sort(
+    (a,b) => {
+
+      const aa =
+        a.criadoEm
+          ? a.criadoEm.toMillis()
+          : 0;
+
+      const bb =
+        b.criadoEm
+          ? b.criadoEm.toMillis()
+          : 0;
+
+      return bb-aa;
+    }
+  );
+
+
+  if(!lista.length){
+
+    box.innerText =
+      "Nenhum pedido.";
+
+    return;
+  }
+
+
+  box.innerHTML =
+    lista.map(p => `
+
+      <div class="item">
+
+        <strong>
+          Pedido #${p.pedidoNumero || ""}
+        </strong>
+
+        <br>
+
+        ${p.tipoPedido || "Normal"}
+
+        <br>
+
+        Loja:
+        ${p.lojaNome || ""}
+
+        <br>
+
+        Status:
+        ${traduzirStatus(p.status)}
+
+        <br>
+
+        Valor entrega:
+        R$ ${dinheiro(
+          p.valorEntrega ||
+          p.valorTaxa
+        )}
+
+        <br>
+
+        Distância:
+        ${Number(
+          p.distanciaKm || 0
+        ).toFixed(2)} km
+
+        <br>
+
+        Tempo:
+        ${p.tempoMin || 0} min
+
+      </div>
+
+    `).join("");
 }
 
 
-await editarSaldoDireto(
-uid,
-valor
-);
+/* =========================================================
+   CÁLCULOS ADMIN
+========================================================= */
+
+async function carregarAdminCalculos(){
+
+  const box =
+    $("adminCalculos");
 
 
+  const snap =
+    await db
+      .collection("pedidos")
+      .get();
+
+
+  if(snap.empty){
+
+    box.innerText =
+      "Nenhum cálculo.";
+
+    return;
+  }
+
+
+  box.innerHTML =
+    snap.docs.map(doc => {
+
+      const p =
+        doc.data();
+
+
+      const valor =
+        Number(
+          p.valorEntrega ||
+          p.valorTaxa ||
+          0
+        );
+
+
+      const retornoPct =
+        Number(
+          p.retornoPct ||
+          configTaxas.retornoPct ||
+          0
+        );
+
+
+      const superPct =
+        Number(
+          p.superPct ||
+          configTaxas.superPct ||
+          0
+        );
+
+
+      const retornoValor =
+        Number(
+          p.retornoValor != null
+            ? p.retornoValor
+            : valor *
+              retornoPct /
+              100
+        );
+
+
+      const superValor =
+        Number(
+          p.superValor != null
+            ? p.superValor
+            : valor *
+              superPct /
+              100
+        );
+
+
+      return `
+
+        <div class="item">
+
+          <strong>
+            Pedido #${p.pedidoNumero || ""}
+          </strong>
+
+          <br>
+
+          Valor entrega:
+          R$ ${dinheiro(valor)}
+
+          <br>
+
+          Distância:
+          ${Number(
+            p.distanciaKm || 0
+          ).toFixed(2)} km
+
+          <br>
+
+          Retorno:
+          ${retornoPct}%
+          =
+          R$ ${dinheiro(retornoValor)}
+
+          <br>
+
+          Super/Admin:
+          ${superPct}%
+          =
+          R$ ${dinheiro(superValor)}
+
+          <br>
+
+          Status:
+          ${traduzirStatus(p.status)}
+
+        </div>
+
+      `;
+
+    }).join("");
 }
 
 
-async function editarSaldoDireto(
-uid,
-saldo
-){
-
-try{
-
-await db.collection("wallets")
-.doc(uid)
-.set({
-
-saldo:Number(saldo),
-
-atualizadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp(),
-
-editadoPor:
-usuarioAtual.uid
-
-},{
-merge:true
-});
-
-
-alert(
-"Saldo atualizado."
-);
-
-document.getElementById(
-"editarSaldoUid"
-).value="";
-
-document.getElementById(
-"editarSaldoValor"
-).value="";
-
-await carregarAdmin();
-
-}catch(e){
-
-alert(
-"Erro:\n"+
-erroHumano(e)
-);
-
-}
-
-}
-
-
-/* =====================================================
-   PAGAR MOTOBOY
-===================================================== */
+/* =========================================================
+   PAGAMENTO MOTOBOY
+========================================================= */
 
 async function pagarMotoboy(){
 
-const uid=
-document.getElementById(
-"pagamentoMotoboyUid"
-).value.trim();
+  const uid =
+    $("pagamentoMotoboyUid")
+      .value.trim();
 
-const valor=
-Number(
-document.getElementById(
-"pagamentoMotoboyValor"
-).value||0
-);
+  const valor =
+    Number(
+      $("pagamentoMotoboyValor")
+        .value
+    );
 
-const pix=
-document.getElementById(
-"pagamentoMotoboyPix"
-).value.trim();
+  const pix =
+    $("pagamentoMotoboyPix")
+      .value.trim();
 
 
-if(
-!uid||
-valor<=0||
-!pix
+  if(
+    !uid ||
+    !valor ||
+    valor <= 0
+  ){
+
+    alert(
+      "Informe UID e valor."
+    );
+
+    return;
+  }
+
+
+  await db
+    .collection("transactions")
+    .add({
+
+      uid:
+        uid,
+
+      tipo:
+        "pagamento_motoboy",
+
+      valor:
+        valor,
+
+      pix:
+        pix,
+
+      status:
+        "aprovado",
+
+      criadoEm:
+        firebase.firestore.FieldValue.serverTimestamp(),
+
+      pagoPor:
+        usuarioAtual.uid
+
+    });
+
+
+  alert(
+    "Pagamento registrado."
+  );
+
+
+  $("pagamentoMotoboyUid").value = "";
+  $("pagamentoMotoboyValor").value = "";
+  $("pagamentoMotoboyPix").value = "";
+
+
+  await carregarResumoAdmin();
+}
+
+
+/* =========================================================
+   EXTRATO 90 DIAS
+========================================================= */
+
+async function carregarExtrato(
+  elementoId,
+  uid
 ){
 
-alert(
-"Preencha UID, valor e PIX."
-);
+  const box =
+    $(elementoId);
 
-return;
+  if(!box) return;
 
+
+  const limite =
+    new Date(
+      Date.now() -
+      90 * 24 * 60 * 60 * 1000
+    );
+
+
+  const snap =
+    await db
+      .collection("transactions")
+      .where(
+        "uid",
+        "==",
+        uid
+      )
+      .get();
+
+
+  const lista =
+    snap.docs
+      .map(doc => ({
+        id:doc.id,
+        ...doc.data()
+      }))
+      .filter(t => {
+
+        if(!t.criadoEm)
+          return true;
+
+        return (
+          t.criadoEm.toDate() >=
+          limite
+        );
+      });
+
+
+  lista.sort(
+    (a,b) => {
+
+      const aa =
+        a.criadoEm
+          ? a.criadoEm.toMillis()
+          : 0;
+
+      const bb =
+        b.criadoEm
+          ? b.criadoEm.toMillis()
+          : 0;
+
+      return bb-aa;
+    }
+  );
+
+
+  if(!lista.length){
+
+    box.innerText =
+      "Nenhuma movimentação nos últimos 90 dias.";
+
+    return;
+  }
+
+
+  box.innerHTML = `
+
+    <div class="tabela">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Data</th>
+
+            <th>Tipo</th>
+
+            <th>Valor</th>
+
+            <th>Status</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${
+            lista.map(t => `
+
+              <tr>
+
+                <td>
+                  ${
+                    t.criadoEm
+                      ? t.criadoEm
+                          .toDate()
+                          .toLocaleString("pt-BR")
+                      : "-"
+                  }
+                </td>
+
+                <td>
+                  ${t.tipo || ""}
+                </td>
+
+                <td>
+                  R$ ${dinheiro(t.valor)}
+                </td>
+
+                <td>
+                  ${t.status || ""}
+                </td>
+
+              </tr>
+
+            `).join("")
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
 }
 
 
-try{
-
-await db.collection("transactions")
-.add({
-
-uid:uid,
-
-tipo:
-"pagamento_motoboy",
-
-valor:valor,
-
-pix:pix,
-
-status:"aprovado",
-
-aprovadoPor:
-usuarioAtual.uid,
-
-criadoEm:
-firebase.firestore.FieldValue
-.serverTimestamp()
-
-});
-
-
-alert(
-"Pagamento registrado."
-);
-
-
-document.getElementById(
-"pagamentoMotoboyUid"
-).value="";
-
-document.getElementById(
-"pagamentoMotoboyValor"
-).value="";
-
-document.getElementById(
-"pagamentoMotoboyPix"
-).value="";
-
-
-await carregarAdmin();
-
-}catch(e){
-
-alert(
-"Erro:\n"+
-erroHumano(e)
-);
-
-}
-
-}
-
-
-/* =====================================================
-   FRANQUEADO
-===================================================== */
-
-async function carregarFranqueado(){
-
-await atualizarSaldo();
-
-}
-
-
-/* =====================================================
-   MODAL FINALIZAÇÃO
-===================================================== */
-
-function abrirModalFinalizar(id){
-
-pedidoFinalizarId=id;
-
-const modal=
-document.getElementById(
-"modalFinalizar"
-);
-
-if(modal){
-
-modal.classList.remove("oculto");
-
-}
-
-}
-
-
-function fecharModalFinalizar(){
-
-pedidoFinalizarId=null;
-
-const modal=
-document.getElementById(
-"modalFinalizar"
-);
-
-if(modal){
-
-modal.classList.add("oculto");
-
-}
-
-}
-
-
-async function confirmarFinalizacao(){
-
-if(!pedidoFinalizarId){
-
-alert(
-"Entrega não selecionada."
-);
-
-return;
-
-}
-
-const id=
-pedidoFinalizarId;
-
-const campo=
-document.getElementById(
-"codigoFinalizacao"
-);
-
-const codigo=
-campo.value.trim();
-
-
-if(!/^\d{4}$/.test(codigo)){
-
-alert(
-"Digite 4 dígitos."
-);
-
-return;
-
-}
-
-
-try{
-
-const ref=
-db.collection("orders")
-.doc(id);
-
-const snap=
-await ref.get();
-
-if(!snap.exists){
-
-alert(
-"Entrega não encontrada."
-);
-
-return;
-
-}
-
-const p=snap.data();
-
-
-if(
-p.motoboyId!==usuarioAtual.uid
-){
-
-alert(
-"Esta entrega não pertence a você."
-);
-
-return;
-
-}
-
-
-if(
-String(p.codigo4Digitos)!==
-codigo
-){
-
-alert(
-"Código incorreto."
-);
-
-return;
-
-}
-
-
-await processarFinalizacaoFinanceira(
-id,
-p
-);
-
-
-fecharModalFinalizar();
-
-campo.value="";
-
-alert(
-"Entrega finalizada com sucesso."
-);
-
-await carregarMotoboy();
-
-await atualizarSaldo();
-
-}catch(e){
-
-alert(
-"Erro:\n"+
-erroHumano(e)
-);
-
-}
-
-}
-
-
-/* =====================================================
-   INICIALIZAÇÃO
-===================================================== */
+/* =========================================================
+   INÍCIO
+========================================================= */
 
 document.addEventListener(
-"DOMContentLoaded",
-function(){
+  "DOMContentLoaded",
+  function(){
 
-mostrarLogin();
+    atualizarCamposCadastro();
 
-alterarTipoCadastro();
-
-}
+  }
 );
 
 </script>
