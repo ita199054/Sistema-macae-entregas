@@ -2,409 +2,139 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Anjos em Duas Rodas</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
+
 body{
- margin:0;
- font-family:Arial,sans-serif;
- background:#111;
- color:#fff;
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#111;
+  color:#fff;
 }
+
 header{
- background:#f57c00;
- color:#111;
- padding:16px;
- text-align:center;
- font-weight:bold;
- font-size:22px;
+  background:#000;
+  padding:18px;
+  text-align:center;
+  border-bottom:2px solid #ffcc00;
 }
+
+header h1{
+  margin:0;
+  color:#ffcc00;
+  font-size:25px;
+}
+
+header p{
+  margin:6px 0 0;
+  color:#ddd;
+}
+
 .container{
- width:100%;
- max-width:900px;
- margin:auto;
- padding:15px;
+  width:100%;
+  max-width:700px;
+  margin:auto;
+  padding:15px;
 }
+
 .card{
- background:#1d1d1d;
- border-radius:12px;
- padding:18px;
- margin-bottom:15px;
- box-shadow:0 2px 10px #0008;
+  background:#1c1c1c;
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:15px;
+  box-shadow:0 2px 10px rgba(0,0,0,.4);
 }
-h2,h3{margin-top:0}
-input,select,button,textarea{
- width:100%;
- padding:13px;
- margin:6px 0;
- border-radius:8px;
- border:1px solid #555;
- font-size:16px;
+
+h2,h3{
+  margin-top:0;
+  color:#ffcc00;
 }
+
 input,select,textarea{
- background:#292929;
- color:#fff;
+  width:100%;
+  padding:13px;
+  margin:7px 0;
+  border:1px solid #555;
+  border-radius:8px;
+  background:#292929;
+  color:#fff;
+  font-size:16px;
 }
+
+textarea{
+  min-height:80px;
+}
+
 button{
- background:#f57c00;
- color:#111;
- border:0;
- font-weight:bold;
- cursor:pointer;
+  width:100%;
+  padding:14px;
+  margin:7px 0;
+  border:0;
+  border-radius:8px;
+  background:#ffcc00;
+  color:#000;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
 }
-button:disabled{
- opacity:.45;
- cursor:not-allowed;
+
+button:hover{
+  opacity:.9;
 }
-.btn2{background:#333;color:#fff}
-.hidden{display:none!important}
+
+.btn-verde{
+  background:#20c76a;
+  color:#fff;
+}
+
+.btn-vermelho{
+  background:#d93636;
+  color:#fff;
+}
+
+.btn-azul{
+  background:#1976d2;
+  color:#fff;
+}
+
+.btn-cinza{
+  background:#444;
+  color:#fff;
+}
+
 .logo{
- text-align:center;
- font-size:28px;
- font-weight:bold;
- margin:20px 0;
- color:#f57c00;
+  font-size:32px;
+  font-weight:bold;
+  color:#ffcc00;
 }
-.status{
- padding:12px;
- border-radius:8px;
- background:#252525;
- margin:10px 0;
- white-space:pre-wrap;
+
+.oculto{
+  display:none !important;
 }
-.ok{
- background:#164d25;
- color:#b9ffc5;
+
+.mensagem{
+  padding:12px;
+  margin:10px 0;
+  border-radius:8px;
+  background:#252525;
+  border:1px solid #555;
+  text-align:center;
 }
-.erro{
- background:#5b1717;
- color:#fff;
+
+.sucesso{
+  border-color:#20c76a;
+  color:#20c76a;
 }
-.aviso{
- background:#594500;
- color:#ffe99a;
-}
-.grid{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
- gap:10px;
-}
-.item{
- background:#282828;
- padding:13px;
- border-radius:9px;
- margin:8px 0;
-}
-.valor{
- font-size:25px;
- color:#ff9800;
- font-weight:bold;
-}
-.small{
- font-size:13px;
- color:#bbb;
-}
-</style>
-</head>
 
-<body>
-
-<header>
-ANJOS EM DUAS RODAS
-</header>
-
-<div class="container">
-
-<div id="mensagem" class="status hidden"></div>
-
-<section id="loginArea">
-
-<div class="logo">
-🛵 ANJOS EM DUAS RODAS
-</div>
-
-<div class="card">
-<h2>Entrar</h2>
-
-<input id="loginEmail"
-type="email"
-placeholder="E-mail">
-
-<input id="loginSenha"
-type="password"
-placeholder="Senha">
-
-<button id="btnLogin"
-onclick="loginUser()">
-ENTRAR
-</button>
-
-<button class="btn2"
-onclick="mostrarCadastro()">
-CRIAR CONTA
-</button>
-
-<div id="firebaseStatus"
-class="status aviso">
-Iniciando conexão...
-</div>
-</div>
-
-</section>
-
-<section id="cadastroArea" class="hidden">
-
-<div class="card">
-<h2>Criar conta</h2>
-
-<input id="cadNome"
-placeholder="Nome completo">
-
-<input id="cadEmail"
-type="email"
-placeholder="E-mail">
-
-<input id="cadTelefone"
-placeholder="Telefone">
-
-<input id="cadSenha"
-type="password"
-placeholder="Senha">
-
-<select id="cadTipo">
-<option value="lojista">LOJISTA</option>
-<option value="motoboy">MOTOBOY</option>
-<option value="franqueado">FRANQUEADO</option>
-</select>
-
-<input id="cadEndereco"
-placeholder="Endereço">
-
-<button onclick="registrarUser()">
-CRIAR CONTA
-</button>
-
-<button class="btn2"
-onclick="mostrarLogin()">
-VOLTAR
-</button>
-</div>
-
-</section>
-
-<section id="appArea" class="hidden">
-
-<div class="card">
-<h2 id="tituloPainel">
-Painel
-</h2>
-
-<div class="grid">
-
-<div class="item">
-<div class="small">Saldo atual</div>
-<div id="saldoAtual" class="valor">
-R$ 0,00
-</div>
-</div>
-
-<div class="item">
-<div class="small">Usuário</div>
-<div id="nomeAtual">-</div>
-</div>
-
-<div class="item">
-<div class="small">Função</div>
-<div id="tipoAtual">-</div>
-</div>
-
-</div>
-
-<button class="btn2"
-onclick="sair()">
-SAIR
-</button>
-</div>
-
-<div id="painelLojista" class="hidden">
-
-<div class="card">
-<h3>💰 Recarregar saldo</h3>
-
-<p>
-Faça um PIX de <b>R$ 50,00</b> para:
-</p>
-
-<div class="valor">
-22997450131
-</div>
-
-<button onclick="copiarPix()">
-COPIAR PIX
-</button>
-
-<button onclick="pedirRecarga()">
-JÁ FIZ O PIX — SOLICITAR RECARGA
-</button>
-
-<div class="small">
-A recarga fica pendente até aprovação do administrador.
-</div>
-</div>
-
-<div class="card">
-<h3>📦 Novo pedido</h3>
-
-<input id="clienteNome"
-placeholder="Nome do cliente">
-
-<input id="clienteEndereco"
-placeholder="Endereço de entrega">
-
-<input id="valorProduto"
-type="number"
-step="0.01"
-placeholder="Valor do produto">
-
-<button id="btnPedido"
-onclick="criarPedido()">
-CRIAR PEDIDO — R$ 8,00
-</button>
-
-<div id="avisoSaldo" class="status aviso">
-Saldo mínimo para novo pedido: R$ 8,00
-</div>
-</div>
-
-<div class="card">
-<h3>📋 Meus pedidos</h3>
-<div id="listaLojista"></div>
-</div>
-
-<div class="card">
-<h3>📊 Extrato — últimos 90 dias</h3>
-<div id="extratoLojista"></div>
-</div>
-
-</div>
-
-<div id="painelMotoboy" class="hidden">
-
-<div class="card">
-<h3>🏍️ Status</h3>
-
-<button id="btnOnline"
-onclick="alternarOnline()">
-FICAR ONLINE
-</button>
-
-<div id="statusMoto" class="status">
-OFFLINE
-</div>
-</div>
-
-<div class="card">
-<h3>📦 Pedidos disponíveis</h3>
-<div id="listaPedidosMoto"></div>
-</div>
-
-<div class="card">
-<h3>📋 Minhas entregas</h3>
-<div id="listaEntregasMoto"></div>
-</div>
-
-<div class="card">
-<h3>💰 Extrato — últimos 90 dias</h3>
-<div id="extratoMoto"></div>
-</div>
-
-</div>
-
-<div id="painelFranqueado" class="hidden">
-
-<div class="card">
-<h3>🏢 Painel Franqueado</h3>
-<p>
-Consulte seu saldo e acompanhe as operações.
-</p>
-</div>
-
-</div>
-
-<div id="painelAdmin" class="hidden">
-
-<div class="card">
-<h3>👑 ADMINISTRADOR</h3>
-
-<div class="grid">
-
-<div class="item">
-<div class="small">Receitas aprovadas</div>
-<div id="adminReceitas" class="valor">
-R$ 0,00
-</div>
-</div>
-
-<div class="item">
-<div class="small">Pagamentos motoboys</div>
-<div id="adminPagamentos" class="valor">
-R$ 0,00
-</div>
-</div>
-
-<div class="item">
-<div class="small">Lucro</div>
-<div id="adminLucro" class="valor">
-R$ 0,00
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="card">
-<h3>💳 Recargas pendentes</h3>
-<div id="adminRecargas"></div>
-</div>
-
-<div class="card">
-<h3>👥 Usuários</h3>
-<div id="adminUsuarios"></div>
-</div>
-
-<div class="card">
-<h3>📦 Todos os pedidos</h3>
-<div id="adminPedidos"></div>
-</div>
-
-<div class="card">
-<h3>💰 Pagar motoboy</h3>
-
-<input id="pagMotoUid"
-placeholder="UID do motoboy">
-
-<input id="pagMotoValor"
-type="number"
-step="0.01"
-placeholder="Valor">
-
-<button onclick="pagarMotoboy()">
-REGISTRAR PAGAMENTO
-</button>
-
-</div>
-
-</div>
-
-</section>
-
- </div><!-- =========================================================
+.er<!-- =========================================================
      PARTE 2 — FIREBASE / LOGIN / PERFIS
      ANJOS EM DUAS RODAS
-     ========================================================= -->
+========================================================= -->
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
@@ -422,56 +152,50 @@ const firebaseConfig = {
   measurementId: "G-9CSJXXNR0C"
 };
 
-let auth = null;
-let db = null;
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
 
 let usuarioAtual = null;
 let perfilAtual = null;
-let saldoAtual = 0;
-
 let carregandoPainel = false;
 
 
 /* =========================================================
    MENSAGENS
-   ========================================================= */
+========================================================= */
 
-function mostrarMensagem(texto, tipo = "aviso") {
+function mostrarMensagem(id, texto, tipo="info"){
 
-  const el = document.getElementById("mensagem");
+  const el = document.getElementById(id);
 
-  if (!el) {
-    alert(texto);
-    return;
-  }
+  if(!el) return;
 
-  el.className = "status " + tipo;
+  el.className = "mensagem " + tipo;
   el.textContent = texto;
-  el.classList.remove("hidden");
+  el.classList.remove("oculto");
 }
 
 
-function limparMensagem() {
+function limparMensagem(id){
 
-  const el = document.getElementById("mensagem");
+  const el = document.getElementById(id);
 
-  if (el) {
-    el.classList.add("hidden");
-    el.textContent = "";
-  }
+  if(!el) return;
 
+  el.textContent = "";
+  el.className = "mensagem oculto";
 }
 
 
-/* =========================================================
-   ERROS FIREBASE
-   ========================================================= */
+function erroHumano(error){
 
-function erroHumano(e) {
+  if(!error) return "Ocorreu um erro.";
 
-  const code = e && e.code ? e.code : "";
+  const codigo = error.code || "";
 
-  const erros = {
+  const mensagens = {
 
     "auth/invalid-credential":
       "E-mail ou senha incorretos.",
@@ -492,182 +216,168 @@ function erroHumano(e) {
       "Este e-mail já está cadastrado.",
 
     "auth/weak-password":
-      "A senha precisa ter pelo menos 6 caracteres.",
-
-    "auth/operation-not-allowed":
-      "Login por E-mail/Senha não está ativado.",
+      "A senha deve ter pelo menos 6 caracteres.",
 
     "auth/network-request-failed":
-      "Falha de internet.",
-
-    "auth/too-many-requests":
-      "Muitas tentativas. Aguarde alguns minutos.",
-
-    "auth/unauthorized-domain":
-      "Este domínio não está autorizado no Firebase.",
+      "Erro de conexão com a internet.",
 
     "permission-denied":
-      "Firestore recusou a operação por falta de permissão.",
-
-    "failed-precondition":
-      "Configuração do Firebase incompleta."
-
+      "Permissão negada no banco de dados."
   };
 
-  return erros[code] ||
-    (e && e.message
-      ? e.message
-      : "Erro desconhecido.");
-
+  return mensagens[codigo] ||
+    error.message ||
+    "Não foi possível realizar a operação.";
 }
 
 
 /* =========================================================
-   INICIAR FIREBASE
-   ========================================================= */
+   TELAS
+========================================================= */
 
-try {
+function mostrarLogin(){
 
-  firebase.initializeApp(firebaseConfig);
+  document.getElementById("telaLogin")
+    .classList.remove("oculto");
 
-  auth = firebase.auth();
+  document.getElementById("telaCadastro")
+    .classList.add("oculto");
 
-  db = firebase.firestore();
+  document.getElementById("telaApp")
+    .classList.add("oculto");
+}
 
-  const status =
-    document.getElementById("firebaseStatus");
 
-  if (status) {
+function mostrarCadastro(){
 
-    status.className = "status ok";
+  document.getElementById("telaLogin")
+    .classList.add("oculto");
 
-    status.textContent =
-      "✓ Firebase conectado.\n" +
-      "Projeto: anjos-flash";
+  document.getElementById("telaCadastro")
+    .classList.remove("oculto");
 
+  document.getElementById("telaApp")
+    .classList.add("oculto");
+}
+
+
+function esconderTodosPaineis(){
+
+  const paineis = [
+    "painelLojista",
+    "painelMotoboy",
+    "painelFranqueado",
+    "painelAdmin"
+  ];
+
+  paineis.forEach(id => {
+
+    const el = document.getElementById(id);
+
+    if(el){
+      el.classList.add("oculto");
+    }
+
+  });
+}
+
+
+/* =========================================================
+   ABRIR PAINEL PELO TIPO
+   IMPORTANTE:
+   O TIPO VEM DO FIRESTORE.
+   NÃO EXISTE MAIS PADRÃO LOJISTA.
+========================================================= */
+
+function abrirPainelPorTipo(tipo){
+
+  esconderTodosPaineis();
+
+  tipo = String(tipo || "")
+    .trim()
+    .toLowerCase();
+
+  console.log("TIPO RECEBIDO DO FIRESTORE:", tipo);
+
+  if(tipo === "admin"){
+
+    document.getElementById("painelAdmin")
+      .classList.remove("oculto");
+
+    if(typeof carregarAdmin === "function"){
+      carregarAdmin();
+    }
+
+    return true;
   }
 
-  console.log(
-    "Firebase iniciado:",
-    firebaseConfig.projectId
-  );
+  if(tipo === "motoboy"){
 
-} catch (e) {
+    document.getElementById("painelMotoboy")
+      .classList.remove("oculto");
 
-  console.error(e);
-
-  mostrarMensagem(
-    "Erro ao iniciar Firebase:\n\n" +
-    erroHumano(e),
-    "erro"
-  );
-
-}
-
-
-/* =========================================================
-   OBSERVAR AUTENTICAÇÃO
-   ========================================================= */
-
-if (auth) {
-
-  auth.onAuthStateChanged(
-    async function(user) {
-
-      console.log(
-        "Usuário autenticado:",
-        user ? user.uid : "nenhum"
-      );
-
-      if (!user) {
-
-        usuarioAtual = null;
-        perfilAtual = null;
-
-        return;
-      }
-
-      usuarioAtual = user;
-
-      await carregarUsuario();
-
+    if(typeof carregarMotoboy === "function"){
+      carregarMotoboy();
     }
+
+    return true;
+  }
+
+  if(tipo === "lojista"){
+
+    document.getElementById("painelLojista")
+      .classList.remove("oculto");
+
+    if(typeof carregarLojista === "function"){
+      carregarLojista();
+    }
+
+    return true;
+  }
+
+  if(tipo === "franqueado"){
+
+    document.getElementById("painelFranqueado")
+      .classList.remove("oculto");
+
+    if(typeof carregarFranqueado === "function"){
+      carregarFranqueado();
+    }
+
+    return true;
+  }
+
+  alert(
+    "Tipo de usuário inválido no Firestore: " +
+    tipo
   );
 
-}
-
-
-/* =========================================================
-   MOSTRAR CADASTRO
-   ========================================================= */
-
-function mostrarCadastro() {
-
-  limparMensagem();
-
-  document
-    .getElementById("loginArea")
-    .classList.add("hidden");
-
-  document
-    .getElementById("cadastroArea")
-    .classList.remove("hidden");
-
-}
-
-
-/* =========================================================
-   MOSTRAR LOGIN
-   ========================================================= */
-
-function mostrarLogin() {
-
-  limparMensagem();
-
-  document
-    .getElementById("cadastroArea")
-    .classList.add("hidden");
-
-  document
-    .getElementById("loginArea")
-    .classList.remove("hidden");
-
+  return false;
 }
 
 
 /* =========================================================
    LOGIN
-   ========================================================= */
+========================================================= */
 
-async function loginUser() {
+async function loginUser(){
 
-  limparMensagem();
+  const email = document
+    .getElementById("loginEmail")
+    .value
+    .trim()
+    .toLowerCase();
 
-  if (!auth) {
+  const senha = document
+    .getElementById("loginSenha")
+    .value;
 
-    mostrarMensagem(
-      "Firebase não está iniciado.",
-      "erro"
-    );
+  limparMensagem("mensagemLogin");
 
-    return;
-  }
-
-  const email =
-    document
-      .getElementById("loginEmail")
-      .value
-      .trim()
-      .toLowerCase();
-
-  const senha =
-    document
-      .getElementById("loginSenha")
-      .value;
-
-  if (!email || !senha) {
+  if(!email || !senha){
 
     mostrarMensagem(
+      "mensagemLogin",
       "Digite e-mail e senha.",
       "erro"
     );
@@ -675,107 +385,86 @@ async function loginUser() {
     return;
   }
 
-  const btn =
-    document.getElementById("btnLogin");
+  const botao = document.getElementById("btnLogin");
 
-  if (btn) {
+  try{
 
-    btn.disabled = true;
-    btn.textContent = "ENTRANDO...";
+    botao.disabled = true;
+    botao.textContent = "ENTRANDO...";
 
-  }
-
-  try {
+    mostrarMensagem(
+      "mensagemLogin",
+      "Autenticando...",
+      "info"
+    );
 
     await auth.signInWithEmailAndPassword(
       email,
       senha
     );
 
-    mostrarMensagem(
-      "Login realizado!\n" +
-      "Identificando tipo de conta...",
-      "ok"
-    );
+  }catch(error){
 
-  } catch (e) {
-
-    console.error(
-      "Erro login:",
-      e
-    );
+    console.error(error);
 
     mostrarMensagem(
-      erroHumano(e) +
-      "\n\nCódigo: " +
-      (e.code || "sem código"),
+      "mensagemLogin",
+      erroHumano(error),
       "erro"
     );
 
-  } finally {
+  }finally{
 
-    if (btn) {
-
-      btn.disabled = false;
-      btn.textContent = "ENTRAR";
-
-    }
-
+    botao.disabled = false;
+    botao.textContent = "ENTRAR";
   }
-
 }
 
 
 /* =========================================================
    CADASTRO
-   ========================================================= */
+   ADMIN NÃO PODE SER CRIADO PELO CADASTRO PÚBLICO
+========================================================= */
 
-async function registrarUser() {
+async function registrarUser(){
 
-  limparMensagem();
+  const nome = document
+    .getElementById("cadNome")
+    .value.trim();
 
-  const nome =
-    document
-      .getElementById("cadNome")
-      .value
-      .trim();
+  const email = document
+    .getElementById("cadEmail")
+    .value.trim()
+    .toLowerCase();
 
-  const email =
-    document
-      .getElementById("cadEmail")
-      .value
-      .trim()
-      .toLowerCase();
+  const telefone = document
+    .getElementById("cadTelefone")
+    .value.trim();
 
-  const telefone =
-    document
-      .getElementById("cadTelefone")
-      .value
-      .trim();
+  const senha = document
+    .getElementById("cadSenha")
+    .value;
 
-  const senha =
-    document
-      .getElementById("cadSenha")
-      .value;
+  const tipoSelecionado = document
+    .getElementById("cadTipo")
+    .value
+    .trim()
+    .toLowerCase();
 
-  const tipoEscolhido =
-    document
-      .getElementById("cadTipo")
-      .value;
+  const endereco = document
+    .getElementById("cadEndereco")
+    .value.trim();
 
-  const endereco =
-    document
-      .getElementById("cadEndereco")
-      .value
-      .trim();
+  limparMensagem("mensagemCadastro");
 
-
-  if (!nome ||
-      !email ||
-      !telefone ||
-      !senha) {
+  if(!nome ||
+     !email ||
+     !telefone ||
+     !senha ||
+     !tipoSelecionado){
 
     mostrarMensagem(
+      "mensagemCadastro",
       "Preencha todos os campos obrigatórios.",
       "erro"
     );
@@ -783,1446 +472,1643 @@ async function registrarUser() {
     return;
   }
 
-
-  if (senha.length < 6) {
-
-    mostrarMensagem(
-      "A senha precisa ter pelo menos 6 caracteres.",
-      "erro"
-    );
-
-    return;
-  }
-
-
-  try {
-
-    const cred =
-      await auth.createUserWithEmailAndPassword(
-        email,
-        senha
-      );
-
-    const uid =
-      cred.user.uid;
-
-
-    await cred.user.updateProfile({
-      displayName: nome
-    });
-
-
-    /*
-      ADMIN NUNCA PODE SER CRIADO
-      PELO CADASTRO PÚBLICO.
-    */
-
-    let tipo = tipoEscolhido;
-
-    if (
-      tipo !== "lojista" &&
-      tipo !== "motoboy" &&
-      tipo !== "franqueado"
-    ) {
-
-      tipo = "lojista";
-
-    }
-
-
-    await db
-      .collection("profiles")
-      .doc(uid)
-      .set({
-
-        nome: nome,
-
-        email: email,
-
-        telefone: telefone,
-
-        tipo: tipo,
-
-        endereco: endereco,
-
-        ativo: true,
-
-        online: false,
-
-        criadoEm:
-          firebase.firestore.FieldValue
-          .serverTimestamp()
-
-      });
-
-
-    await db
-      .collection("wallets")
-      .doc(uid)
-      .set({
-
-        saldo: 0,
-
-        atualizadoEm:
-          firebase.firestore.FieldValue
-          .serverTimestamp()
-
-      });
-
-
-    mostrarMensagem(
-      "Conta criada com sucesso!",
-      "ok"
-    );
-
-
-  } catch (e) {
-
-    console.error(e);
-
-    mostrarMensagem(
-      erroHumano(e) +
-      "\n\nCódigo: " +
-      (e.code || ""),
-      "erro"
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   CARREGAR USUÁRIO
-   ========================================================= */
-
-async function carregarUsuario() {
-
-  if (carregandoPainel) {
-    return;
-  }
-
-  carregandoPainel = true;
-
-  try {
-
-    mostrarMensagem(
-      "Login confirmado.\n" +
-      "Buscando seu tipo de conta...",
-      "aviso"
-    );
-
-
-    const uid =
-      usuarioAtual.uid;
-
-
-    /* =====================================================
-       BUSCAR PERFIL
-       ===================================================== */
-
-    const perfilDoc =
-      await db
-        .collection("profiles")
-        .doc(uid)
-        .get();
-
-
-    /*
-      NÃO TRANSFORMAR USUÁRIO EXISTENTE
-      EM LOJISTA AUTOMATICAMENTE.
-    */
-
-    if (!perfilDoc.exists) {
-
-      mostrarMensagem(
-
-        "Sua conta existe no Login, " +
-        "mas não existe um perfil no Firestore.\n\n" +
-
-        "UID:\n" +
-        uid +
-
-        "\n\nCrie o perfil deste usuário no Firestore.",
-
-        "erro"
-
-      );
-
-      return;
-    }
-
-
-    perfilAtual =
-      perfilDoc.data();
-
-
-    console.log(
-      "PERFIL ENCONTRADO:",
-      perfilAtual
-    );
-
-
-    /* =====================================================
-       IDENTIFICAR TIPO
-       ===================================================== */
-
-    const tipo =
-      String(
-        perfilAtual.tipo || ""
-      )
-      .trim()
-      .toLowerCase();
-
-
-    console.log(
-      "TIPO DA CONTA:",
-      tipo
-    );
-
-
-    /*
-      NÃO EXISTE MAIS FALLBACK PARA LOJISTA.
-    */
-
-    if (
-      tipo !== "admin" &&
-      tipo !== "motoboy" &&
-      tipo !== "lojista" &&
-      tipo !== "franqueado"
-    ) {
-
-      mostrarMensagem(
-
-        "Tipo de conta inválido no Firestore:\n\n" +
-        (
-          perfilAtual.tipo ||
-          "VAZIO"
-        ),
-
-        "erro"
-
-      );
-
-      return;
-    }
-
-
-    /* =====================================================
-       CARTEIRA
-       ===================================================== */
-
-    const walletDoc =
-      await db
-        .collection("wallets")
-        .doc(uid)
-        .get();
-
-
-    if (walletDoc.exists) {
-
-      saldoAtual =
-        Number(
-          walletDoc.data().saldo || 0
-        );
-
-    } else {
-
-      /*
-       CRIA CARTEIRA SOMENTE SE NÃO EXISTIR.
-      */
-
-      await db
-        .collection("wallets")
-        .doc(uid)
-        .set({
-
-          saldo: 0,
-
-          atualizadoEm:
-            firebase.firestore.FieldValue
-            .serverTimestamp()
-
-        });
-
-      saldoAtual = 0;
-
-    }
-
-
-    /* =====================================================
-       ESCONDER LOGIN
-       ===================================================== */
-
-    document
-      .getElementById("loginArea")
-      .classList.add("hidden");
-
-    document
-      .getElementById("cadastroArea")
-      .classList.add("hidden");
-
-    document
-      .getElementById("appArea")
-      .classList.remove("hidden");
-
-
-    /* =====================================================
-       DADOS DO USUÁRIO
-       ===================================================== */
-
-    document
-      .getElementById("nomeAtual")
-      .textContent =
-      perfilAtual.nome ||
-      usuarioAtual.displayName ||
-      "Usuário";
-
-
-    document
-      .getElementById("tipoAtual")
-      .textContent =
-      tipo.toUpperCase();
-
-
-    atualizarSaldo();
-
-    esconderPaineis();
-
-
-    /* =====================================================
-       PAINEL LOJISTA
-       ===================================================== */
-
-    if (tipo === "lojista") {
-
-      console.log(
-        "Abrindo PAINEL LOJISTA"
-      );
-
-      document
-        .getElementById("painelLojista")
-        .classList.remove("hidden");
-
-
-      if (
-        typeof carregarLojista ===
-        "function"
-      ) {
-
-        await carregarLojista();
-
-      }
-
-    }
-
-
-    /* =====================================================
-       PAINEL MOTOBOY
-       ===================================================== */
-
-    else if (tipo === "motoboy") {
-
-      console.log(
-        "Abrindo PAINEL MOTOBOY"
-      );
-
-      document
-        .getElementById("painelMotoboy")
-        .classList.remove("hidden");
-
-
-      if (
-        typeof carregarMotoboy ===
-        "function"
-      ) {
-
-        await carregarMotoboy();
-
-      }
-
-    }
-
-
-    /* =====================================================
-       PAINEL FRANQUEADO
-       ===================================================== */
-
-    else if (tipo === "franqueado") {
-
-      console.log(
-        "Abrindo PAINEL FRANQUEADO"
-      );
-
-      document
-        .getElementById("painelFranqueado")
-        .classList.remove("hidden");
-
-    }
-
-
-    /* =====================================================
-       PAINEL ADMIN
-       ===================================================== */
-
-    else if (tipo === "admin") {
-
-      console.log(
-        "Abrindo PAINEL ADMIN"
-      );
-
-      document
-        .getElementById("painelAdmin")
-        .classList.remove("hidden");
-
-
-      if (
-        typeof carregarAdmin ===
-        "function"
-      ) {
-
-        await carregarAdmin();
-
-      }
-
-    }
-
-
-    mostrarMensagem(
-      "Painel " +
-      tipo.toUpperCase() +
-      " carregado com sucesso!",
-      "ok"
-    );
-
-
-  } catch (e) {
-
-    console.error(
-      "ERRO AO ABRIR PAINEL:",
-      e
-    );
-
-    mostrarMensagem(
-
-      "O login funcionou, " +
-      "mas ocorreu um erro ao abrir o painel.\n\n" +
-
-      "Código: " +
-      (e.code || "sem código") +
-
-      "\n\n" +
-
-      "Mensagem:\n" +
-      (
-        e.message ||
-        String(e)
-      ),
-
-      "erro"
-
-    );
-
-  } finally {
-
-    carregandoPainel = false;
-
-  }
-
-}
-
-
-/* =========================================================
-   ESCONDER PAINÉIS
-   ========================================================= */
-
-function esconderPaineis() {
-
-  const ids = [
-
-    "painelLojista",
-    "painelMotoboy",
-    "painelFranqueado",
-    "painelAdmin"
-
+  const tiposPermitidos = [
+    "lojista",
+    "motoboy",
+    "franqueado"
   ];
 
-
-  ids.forEach(function(id) {
-
-    const el =
-      document.getElementById(id);
-
-    if (el) {
-
-      el.classList.add("hidden");
-
-    }
-
-  });
-
-}
-
-
-/* =========================================================
-   ATUALIZAR SALDO
-   ========================================================= */
-
-function atualizarSaldo() {
-
-  const el =
-    document.getElementById("saldoAtual");
-
-
-  if (el) {
-
-    el.textContent =
-      "R$ " +
-      Number(saldoAtual || 0)
-      .toFixed(2)
-      .replace(".", ",");
-
-  }
-
-
-  if (
-    perfilAtual &&
-    perfilAtual.tipo === "lojista"
-  ) {
-
-    const btn =
-      document.getElementById("btnPedido");
-
-    const aviso =
-      document.getElementById("avisoSaldo");
-
-
-    if (saldoAtual >= 8) {
-
-      if (btn) {
-
-        btn.disabled = false;
-
-        btn.textContent =
-          "CRIAR PEDIDO — R$ 8,00";
-
-      }
-
-
-      if (aviso) {
-
-        aviso.className =
-          "status ok";
-
-        aviso.textContent =
-          "Saldo suficiente para criar pedido.";
-
-      }
-
-    } else {
-
-      if (btn) {
-
-        btn.disabled = true;
-
-        btn.textContent =
-          "RECARREGUE SEU SALDO";
-
-      }
-
-
-      if (aviso) {
-
-        aviso.className =
-          "status erro";
-
-        aviso.textContent =
-          "Saldo insuficiente. Recarregue seu saldo.";
-
-      }
-
-    }
-
-  }
-
-}
-
-
-/* =========================================================
-   PIX
-   ========================================================= */
-
-function copiarPix() {
-
-  const pix =
-    "22997450131";
-
-
-  if (
-    navigator.clipboard &&
-    navigator.clipboard.writeText
-  ) {
-
-    navigator.clipboard
-      .writeText(pix)
-      .then(function() {
-
-        mostrarMensagem(
-          "PIX copiado:\n22997450131",
-          "ok"
-        );
-
-      })
-      .catch(function() {
-
-        mostrarMensagem(
-          "Chave PIX:\n22997450131",
-          "aviso"
-        );
-
-      });
-
-  } else {
+  if(!tiposPermitidos.includes(tipoSelecionado)){
 
     mostrarMensagem(
-      "Chave PIX:\n22997450131",
-      "aviso"
-    );
+      "mensagemCadastro",
+      "Tipo de cadastro invál<!-- =========================================================
+     PARTE 3 — ENTREGAS / FINANCEIRO / ADMIN
+========================================================= -->
 
-  }
-
-}
-
+<script>
 
 /* =========================================================
-   SAIR
-   ========================================================= */
-
-async function sair() {
-
-  try {
-
-    await auth.signOut();
-
-    location.reload();
-
-  } catch (e) {
-
-    mostrarMensagem(
-      erroHumano(e),
-      "erro"
-    );
-
-  }
-
-}
-
-</script><script>
+   RECARREGAR
+========================================================= */
 
 async function pedirRecarga(){
 
- try{
+  if(!usuarioAtual) return;
 
-  await db.collection("transactions")
-   .add({
-    uid:usuarioAtual.uid,
-    tipo:"recarga_50",
-    valor:50,
-    status:"pendente",
-    criadoEm:
-    firebase.firestore.FieldValue.serverTimestamp()
-   });
+  try{
 
-  mostrarMensagem(
-   "Recarga de R$ 50,00 enviada para aprovação do ADMIN.",
-   "ok"
-  );
+    await db.collection("transactions")
+      .add({
 
- }catch(e){
+        uid: usuarioAtual.uid,
 
-  mostrarMensagem(
-   "Erro ao solicitar recarga:\n"+
-   erroHumano(e),
-   "erro"
-  );
+        tipo: "recarga_50",
 
- }
+        valor: 50,
 
+        status: "pendente",
+
+        criadoEm:
+          firebase.firestore.FieldValue.serverTimestamp()
+
+      });
+
+    alert(
+      "Solicitação de recarga enviada.\n\n" +
+      "Faça o PIX para 22997450131.\n" +
+      "A recarga ficará pendente até aprovação do administrador."
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Erro ao solicitar recarga:\n" +
+      erroHumano(error)
+    );
+  }
 }
+
+
+/* =========================================================
+   CRIAR PEDIDO
+========================================================= */
 
 async function criarPedido(){
 
- if(saldoAtual<8){
+  if(!usuarioAtual) return;
 
-  mostrarMensagem(
-   "Saldo insuficiente. Recarregue seu saldo.",
-   "erro"
-  );
+  const cliente =
+    document.getElementById("pedidoCliente")
+      .value.trim();
 
-  return;
- }
+  const telefone =
+    document.getElementById("pedidoTelefone")
+      .value.trim();
 
- const nome=document
- .getElementById("clienteNome")
- .value.trim();
+  const endereco =
+    document.getElementById("pedidoEndereco")
+      .value.trim();
 
- const endereco=document
- .getElementById("clienteEndereco")
- .value.trim();
-
- const valor=Number(
-  document.getElementById("valorProduto").value
- );
-
- if(!nome || !endereco){
-
-  mostrarMensagem(
-   "Informe nome e endereço do cliente.",
-   "erro"
-  );
-
-  return;
- }
-
- if(!valor || valor<0){
-
-  mostrarMensagem(
-   "Informe o valor do produto.",
-   "erro"
-  );
-
-  return;
- }
-
- const codigo=
-  Math.floor(1000+Math.random()*9000)
-  .toString();
-
- const walletRef=db
-  .collection("wallets")
-  .doc(usuarioAtual.uid);
-
- const orderRef=db
-  .collection("orders")
-  .doc();
-
- const txRef=db
-  .collection("transactions")
-  .doc();
-
- try{
-
-  await db.runTransaction(async t=>{
-
-   const wallet=await t.get(walletRef);
-
-   if(!wallet.exists)
-    throw new Error("Carteira não encontrada.");
-
-   const saldo=Number(
-    wallet.data().saldo||0
-   );
-
-   if(saldo<8)
-    throw new Error(
-     "Saldo insuficiente para criar o pedido."
+  const valorProduto =
+    Number(
+      document.getElementById("pedidoValor")
+        .value || 0
     );
 
-   t.update(walletRef,{
-    saldo:firebase.firestore.FieldValue.increment(-8),
-    atualizadoEm:
-    firebase.firestore.FieldValue.serverTimestamp()
-   });
+  const veiculo =
+    document.getElementById("pedidoVeiculo")
+      .value;
 
-   t.set(orderRef,{
-    lojistaId:usuarioAtual.uid,
-    lojistaNome:perfilAtual.nome,
-    clienteNome:nome,
-    enderecoEntrega:endereco,
-    valorProduto:valor,
-    valorPedido:8,
-    codigo4Digitos:codigo,
-    status:"pendente",
-    motoboyId:null,
-    criadoEm:
-    firebase.firestore.FieldValue.serverTimestamp()
-   });
+  if(!cliente || !telefone || !endereco){
 
-   t.set(txRef,{
-    uid:usuarioAtual.uid,
-    tipo:"taxa_pedido",
-    valor:-8,
-    orderId:orderRef.id,
-    status:"aprovado",
-    criadoEm:
-    firebase.firestore.FieldValue.serverTimestamp()
-   });
+    alert(
+      "Preencha cliente, telefone e endereço."
+    );
 
-  });
+    return;
+  }
 
-  saldoAtual-=8;
-  atualizarSaldo();
+  const taxaBase = 8;
 
-  document.getElementById("clienteNome").value="";
-  document.getElementById("clienteEndereco").value="";
-  document.getElementById("valorProduto").value="";
+  try{
 
-  mostrarMensagem(
-   "Pedido criado!\nCódigo de entrega: "+codigo,
-   "ok"
-  );
+    const walletRef =
+      db.collection("wallets")
+        .doc(usuarioAtual.uid);
 
-  carregarLojista();
+    const orderRef =
+      db.collection("orders")
+        .doc();
 
- }catch(e){
+    const transactionRef =
+      db.collection("transactions")
+        .doc();
 
-  mostrarMensagem(
-   "Não foi possível criar o pedido.\n"+
-   erroHumano(e),
-   "erro"
-  );
+    await db.runTransaction(async transaction => {
 
- }
+      const walletSnap =
+        await transaction.get(walletRef);
 
+      let saldo = 0;
+
+      if(walletSnap.exists){
+
+        saldo =
+          Number(walletSnap.data().saldo || 0);
+      }
+
+      if(saldo < taxaBase){
+
+        throw new Error(
+          "SALDO_INSUFICIENTE"
+        );
+      }
+
+      const codigo =
+        Math.floor(
+          1000 + Math.random() * 9000
+        ).toString();
+
+      transaction.update(
+        walletRef,
+        {
+
+          saldo:
+            firebase.firestore.FieldValue
+              .increment(-taxaBase),
+
+          atualizadoEm:
+            firebase.firestore.FieldValue
+              .serverTimestamp()
+
+        }
+      );
+
+      transaction.set(
+        orderRef,
+        {
+
+          lojistaId:
+            usuarioAtual.uid,
+
+          lojistaNome:
+            perfilAtual.nome || "",
+
+          clienteNome:
+            cliente,
+
+          telefoneCliente:
+            telefone,
+
+          enderecoEntrega:
+            endereco,
+
+          valorProduto:
+            valorProduto,
+
+          valorPedido:
+            valorProduto,
+
+          valorTaxa:
+            taxaBase,
+
+          veiculo:
+            veiculo,
+
+          codigo4Digitos:
+            codigo,
+
+          status:
+            "pendente",
+
+          motoboyId:
+            null,
+
+          criadoEm:
+            firebase.firestore.FieldValue
+              .serverTimestamp()
+
+        }
+      );
+
+      transaction.set(
+        transactionRef,
+        {
+
+          uid:
+            usuarioAtual.uid,
+
+          tipo:
+            "taxa_pedido",
+
+          valor:
+            -taxaBase,
+
+          orderId:
+            orderRef.id,
+
+          status:
+            "aprovado",
+
+          criadoEm:
+            firebase.firestore.FieldValue
+              .serverTimestamp()
+
+        }
+      );
+
+    });
+
+    alert(
+      "Pedido criado com sucesso!\n\n" +
+      "Código: " +
+      "Consulte o pedido para ver o código."
+    );
+
+    document.getElementById("pedidoCliente").value = "";
+    document.getElementById("pedidoTelefone").value = "";
+    document.getElementById("pedidoEndereco").value = "";
+    document.getElementById("pedidoValor").value = "";
+
+    await atualizarSaldo();
+    await carregarLojista();
+
+  }catch(error){
+
+    console.error(error);
+
+    if(error.message === "SALDO_INSUFICIENTE"){
+
+      alert(
+        "Saldo insuficiente.\n\n" +
+        "É necessário ter pelo menos R$ 8,00 para solicitar uma entrega."
+      );
+
+      return;
+    }
+
+    alert(
+      "Não foi possível criar o pedido:\n" +
+      erroHumano(error)
+    );
+  }
 }
+
+
+/* =========================================================
+   PAINEL LOJISTA
+========================================================= */
 
 async function carregarLojista(){
 
- try{
+  if(!usuarioAtual) return;
 
-  const snap=await db.collection("orders")
-   .where("lojistaId","==",usuarioAtual.uid)
-   .get();
+  const div =
+    document.getElementById(
+      "listaPedidosLojista"
+    );
 
-  let html="";
+  if(!div) return;
 
-  snap.forEach(doc=>{
+  div.textContent = "Carregando...";
 
-   const o=doc.data();
+  try{
 
-   html+=`
-   <div class="item">
-    <b>Pedido ${doc.id.substring(0,6)}</b><br>
-    Cliente: ${o.clienteNome||"-"}<br>
-    Endereço: ${o.enderecoEntrega||"-"}<br>
-    Produto: R$ ${Number(o.valorProduto||0)
-      .toFixed(2).replace(".",",")}<br>
-    Status: <b>${o.status||"-"}</b>
-   </div>`;
+    const snap =
+      await db.collection("orders")
+        .where(
+          "lojistaId",
+          "==",
+          usuarioAtual.uid
+        )
+        .get();
 
-  });
+    if(snap.empty){
 
-  document.getElementById("listaLojista")
-   .innerHTML=
-   html||"<div class='small'>Nenhum pedido.</div>";
+      div.innerHTML =
+        '<div class="item">Nenhuma entrega encontrada.</div>';
 
-  carregarExtrato(
-   "extratoLojista",
-   usuarioAtual.uid
-  );
+      return;
+    }
 
- }catch(e){
+    let html = "";
 
-  mostrarMensagem(
-   "Erro ao carregar pedidos:\n"+
-   erroHumano(e),
-   "erro"
-  );
+    snap.forEach(doc => {
 
- }
+      const p = doc.data();
 
+      html += `
+        <div class="item">
+
+          <strong>Cliente:</strong>
+          ${p.clienteNome || "-"}<br>
+
+          <strong>Telefone:</strong>
+          ${p.telefoneCliente || "-"}<br>
+
+          <strong>Endereço:</strong>
+          ${p.enderecoEntrega || "-"}<br>
+
+          <strong>Veículo:</strong>
+          ${p.veiculo || "-"}<br>
+
+          <strong>Status:</strong>
+          ${p.status || "-"}<br>
+
+          <strong>Taxa:</strong>
+          R$ ${Number(p.valorTaxa || 0)
+            .toFixed(2)
+            .replace(".", ",")}<br>
+
+          <strong>Código:</strong>
+          ${p.codigo4Digitos || "-"}
+
+        </div>
+      `;
+    });
+
+    div.innerHTML = html;
+
+  }catch(error){
+
+    console.error(error);
+
+    div.innerHTML =
+      '<div class="item">Erro ao carregar entregas.</div>';
+  }
 }
 
-async function carregarExtrato(elemento,uid){
 
- try{
-
-  const snap=await db.collection("transactions")
-   .where("uid","==",uid)
-   .get();
-
-  const limite=
-   Date.now()-90*24*60*60*1000;
-
-  let html="";
-
-  snap.forEach(doc=>{
-
-   const t=doc.data();
-
-   let data=null;
-
-   if(t.criadoEm && t.criadoEm.toDate)
-    data=t.criadoEm.toDate();
-
-   if(data && data.getTime()<limite)
-    return;
-
-   html+=`
-   <div class="item">
-    <b>${t.tipo||"-"}</b><br>
-    Valor: R$ ${Number(t.valor||0)
-     .toFixed(2).replace(".",",")}<br>
-    Status: ${t.status||"-"}
-   </div>`;
-
-  });
-
-  document.getElementById(elemento)
-   .innerHTML=
-   html||"<div class='small'>Nenhuma movimentação nos últimos 90 dias.</div>";
-
- }catch(e){
-
-  document.getElementById(elemento)
-   .innerHTML=
-   "Erro: "+erroHumano(e);
-
- }
-
-}
+/* =========================================================
+   MOTOBOY ONLINE / OFFLINE
+========================================================= */
 
 async function alternarOnline(){
 
- const ref=db.collection("profiles")
-  .doc(usuarioAtual.uid);
+  if(!usuarioAtual) return;
 
- const novo=
-  perfilAtual.online!==true;
+  try{
 
- try{
+    const ref =
+      db.collection("profiles")
+        .doc(usuarioAtual.uid);
 
-  await ref.update({
-   online:novo
-  });
+    const snap = await ref.get();
 
-  perfilAtual.online=novo;
+    const atual =
+      snap.exists &&
+      snap.data().online === true;
 
-  atualizarStatusMoto();
+    await ref.update({
 
- }catch(e){
+      online: !atual
 
-  mostrarMensagem(
-   "Erro ao alterar status:\n"+
-   erroHumano(e),
-   "erro"
-  );
+    });
 
- }
+    atualizarStatusMotoboy(!atual);
 
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Erro ao alterar status:\n" +
+      erroHumano(error)
+    );
+  }
 }
 
-function atualizarStatusMoto(){
 
- const online=perfilAtual.online===true;
+function atualizarStatusMotoboy(online){
 
- document.getElementById("statusMoto")
- .textContent=
- online?"ONLINE":"OFFLINE";
+  const status =
+    document.getElementById("statusMotoboy");
 
- const btn=document.getElementById("btnOnline");
+  const botao =
+    document.getElementById("btnOnline");
 
- btn.textContent=
- online?"FICAR OFFLINE":"FICAR ONLINE";
+  if(!status || !botao) return;
 
+  if(online){
+
+    status.textContent = "ONLINE";
+    status.className =
+      "status-online";
+
+    botao.textContent =
+      "FICAR OFFLINE";
+
+    botao.className =
+      "btn-vermelho";
+
+  }else{
+
+    status.textContent = "OFFLINE";
+    status.className =
+      "status-offline";
+
+    botao.textContent =
+      "FICAR ONLINE";
+
+    botao.className =
+      "btn-verde";
+  }
 }
+
+
+/* =========================================================
+   CARREGAR MOTOBOY
+========================================================= */
 
 async function carregarMotoboy(){
 
- atualizarStatusMoto();
+  if(!usuarioAtual) return;
 
- try{
+  try{
 
-  const snap=await db.collection("orders")
-   .where("status","==","pendente")
-   .get();
+    const perfilSnap =
+      await db.collection("profiles")
+        .doc(usuarioAtual.uid)
+        .get();
 
-  let html="";
+    if(perfilSnap.exists){
 
-  snap.forEach(doc=>{
+      const online =
+        perfilSnap.data().online === true;
 
-   const o=doc.data();
-
-   html+=`
-   <div class="item">
-    <b>Pedido ${doc.id.substring(0,6)}</b><br>
-    Loja: ${o.lojistaNome||"-"}<br>
-    Cliente: ${o.clienteNome||"-"}<br>
-    Endereço: ${o.enderecoEntrega||"-"}<br>
-
-    <button onclick="aceitarPedido('${doc.id}')">
-    ACEITAR
-    </button>
-   </div>`;
-
-  });
-
-  document.getElementById("listaPedidosMoto")
-   .innerHTML=
-   html||"<div class='small'>Nenhum pedido disponível.</div>";
-
-  const minhas=await db.collection("orders")
-   .where("motoboyId","==",usuarioAtual.uid)
-   .get();
-
-  let html2="";
-
-  minhas.forEach(doc=>{
-
-   const o=doc.data();
-
-   html2+=`
-   <div class="item">
-    <b>${o.clienteNome||"-"}</b><br>
-    ${o.enderecoEntrega||"-"}<br>
-    Status: <b>${o.status||"-"}</b>
-    ${
-     o.status==="em_rota"
-     ?
-     `<input id="codigo_${doc.id}"
-       maxlength="4"
-       inputmode="numeric"
-       placeholder="Código 4 dígitos">
-
-      <button onclick="finalizarPedido('${doc.id}')">
-       FINALIZAR
-      </button>`
-     :""
+      atualizarStatusMotoboy(online);
     }
-   </div>`;
 
-  });
 
-  document.getElementById("listaEntregasMoto")
-   .innerHTML=
-   html2||"<div class='small'>Nenhuma entrega.</div>";
+    const div =
+      document.getElementById(
+        "listaPedidosMotoboy"
+      );
 
-  carregarExtrato(
-   "extratoMoto",
-   usuarioAtual.uid
-  );
+    if(!div) return;
 
- }catch(e){
+    const snap =
+      await db.collection("orders")
+        .where(
+          "status",
+          "==",
+          "pendente"
+        )
+        .get();
 
-  mostrarMensagem(
-   "Erro no painel do motoboy:\n"+
-   erroHumano(e),
-   "erro"
-  );
+    if(snap.empty){
 
- }
+      div.innerHTML =
+        '<div class="item">Nenhuma entrega disponível.</div>';
 
+    }else{
+
+      let html = "";
+
+      snap.forEach(doc => {
+
+        const p = doc.data();
+
+        html += `
+          <div class="item">
+
+            <strong>Loja:</strong>
+            ${p.lojistaNome || "-"}<br>
+
+            <strong>Cliente:</strong>
+            ${p.clienteNome || "-"}<br>
+
+            <strong>Endereço:</strong>
+            ${p.enderecoEntrega || "-"}<br>
+
+            <strong>Veículo:</strong>
+            ${p.veiculo || "-"}
+
+            <button
+              class="btn-verde"
+              onclick="aceitarPedido('${doc.id}')"
+            >
+              ACEITAR ENTREGA
+            </button>
+
+          </div>
+        `;
+      });
+
+      div.innerHTML = html;
+    }
+
+
+    const minhas =
+      await db.collection("orders")
+        .where(
+          "motoboyId",
+          "==",
+          usuarioAtual.uid
+        )
+        .get();
+
+    const lista =
+      document.getElementById(
+        "listaAceitasMotoboy"
+      );
+
+    if(lista){
+
+      if(minhas.empty){
+
+        lista.innerHTML =
+          '<div class="item">Nenhuma entrega aceita.</div>';
+
+      }else{
+
+        let html = "";
+
+        minhas.forEach(doc => {
+
+          const p = doc.data();
+
+          html += `
+            <div class="item">
+
+              <strong>Cliente:</strong>
+              ${p.clienteNome || "-"}<br>
+
+              <strong>Endereço:</strong>
+              ${p.enderecoEntrega || "-"}<br>
+
+              <strong>Status:</strong>
+              ${p.status || "-"}
+
+              <br>
+
+              <input
+                id="codigo_${doc.id}"
+                maxlength="4"
+                inputmode="numeric"
+                placeholder="Código de 4 dígitos"
+              >
+
+              <button
+                class="btn-azul"
+                onclick="finalizarPedido('${doc.id}')"
+              >
+                FINALIZAR
+              </button>
+
+            </div>
+          `;
+        });
+
+        lista.innerHTML = html;
+      }
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+    const div =
+      document.getElementById(
+        "listaPedidosMotoboy"
+      );
+
+    if(div){
+
+      div.innerHTML =
+        '<div class="item">Erro ao carregar entregas.</div>';
+    }
+  }
 }
 
-async function aceitarPedido(id){
 
- try{
+/* =========================================================
+   ACEITAR PEDIDO
+========================================================= */
 
-  const ref=db.collection("orders").doc(id);
+async function aceitarPedido(orderId){
 
-  await db.runTransaction(async t=>{
+  if(!usuarioAtual) return;
 
-   const snap=await t.get(ref);
+  try{
 
-   if(!snap.exists)
-    throw new Error("Pedido não encontrado.");
+    const ref =
+      db.collection("orders")
+        .doc(orderId);
 
-   const o=snap.data();
+    await db.runTransaction(async transaction => {
 
-   if(o.status!=="pendente")
-    throw new Error("Esse pedido já foi aceito.");
+      const snap =
+        await transaction.get(ref);
 
-   t.update(ref,{
-    status:"em_rota",
-    motoboyId:usuarioAtual.uid,
-    motoboyNome:perfilAtual.nome,
-    aceitoEm:
-    firebase.firestore.FieldValue.serverTimestamp()
-   });
+      if(!snap.exists){
 
-  });
+        throw new Error(
+          "Pedido não encontrado."
+        );
+      }
 
-  mostrarMensagem(
-   "Pedido aceito!",
-   "ok"
-  );
+      const pedido = snap.data();
 
-  carregarMotoboy();
+      if(pedido.status !== "pendente"){
 
- }catch(e){
+        throw new Error(
+          "Esta entrega já foi aceita por outro motorista."
+        );
+      }
 
-  mostrarMensagem(
-   erroHumano(e),
-   "erro"
-  );
+      transaction.update(ref, {
 
- }
+        motoboyId:
+          usuarioAtual.uid,
 
+        status:
+          "em_rota",
+
+        aceitoEm:
+          firebase.firestore.FieldValue
+            .serverTimestamp()
+
+      });
+
+    });
+
+    alert(
+      "Entrega aceita com sucesso!"
+    );
+
+    await carregarMotoboy();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      error.message ||
+      erroHumano(error)
+    );
+  }
 }
 
-async function finalizarPedido(id){
 
- const campo=document
- .getElementById("codigo_"+id);
+/* =========================================================
+   FINALIZAR PEDIDO
+========================================================= */
 
- const codigo=campo
- ? campo.value.trim()
- : "";
+async function finalizarPedido(orderId){
 
- if(!/^\d{4}$/.test(codigo)){
+  if(!usuarioAtual) return;
 
-  mostrarMensagem(
-   "Digite o código de 4 dígitos.",
-   "erro"
-  );
+  const campo =
+    document.getElementById(
+      "codigo_" + orderId
+    );
 
-  return;
- }
+  if(!campo) return;
 
- try{
+  const codigo =
+    campo.value.trim();
 
-  const ref=db.collection("orders").doc(id);
+  if(!/^\d{4}$/.test(codigo)){
 
-  const snap=await ref.get();
+    alert(
+      "Digite o código de 4 dígitos."
+    );
 
-  if(!snap.exists)
-   throw new Error("Pedido não encontrado.");
+    return;
+  }
 
-  const o=snap.data();
+  try{
 
-  if(o.motoboyId!==usuarioAtual.uid)
-   throw new Error("Esse pedido não pertence a você.");
+    const ref =
+      db.collection("orders")
+        .doc(orderId);
 
-  if(o.codigo4Digitos!==codigo)
-   throw new Error("Código incorreto.");
+    const snap =
+      await ref.get();
 
-  await ref.update({
-   status:"finalizado",
-   finalizadoEm:
-   firebase.firestore.FieldValue.serverTimestamp()
-  });
+    if(!snap.exists){
 
-  mostrarMensagem(
-   "Entrega finalizada com sucesso!",
-   "ok"
-  );
+      alert(
+        "Entrega não encontrada."
+      );
 
-  carregarMotoboy();
+      return;
+    }
 
- }catch(e){
+    const pedido =
+      snap.data();
 
-  mostrarMensagem(
-   erroHumano(e),
-   "erro"
-  );
+    if(pedido.motoboyId !== usuarioAtual.uid){
 
- }
+      alert(
+        "Esta entrega não pertence a você."
+      );
 
+      return;
+    }
+
+    if(String(pedido.codigo4Digitos) !== codigo){
+
+      alert(
+        "Código incorreto."
+      );
+
+      return;
+    }
+
+    await ref.update({
+
+      status:
+        "finalizado",
+
+      finalizadoEm:
+        firebase.firestore.FieldValue
+          .serverTimestamp()
+
+    });
+
+    alert(
+      "Entrega finalizada!"
+    );
+
+    await carregarMotoboy();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Erro ao finalizar:\n" +
+      erroHumano(error)
+    );
+  }
 }
 
-</script><script>
+
+/* =========================================================
+   EXTRATO 90 DIAS
+========================================================= */
+
+async function carregarExtrato(tipo){
+
+  if(!usuarioAtual) return;
+
+  const id =
+    tipo === "lojista"
+      ? "extratoLojista"
+      : "extratoMotoboy";
+
+  const div =
+    document.getElementById(id);
+
+  if(!div) return;
+
+  div.textContent =
+    "Carregando extrato...";
+
+  try{
+
+    const limite =
+      new Date();
+
+    limite.setDate(
+      limite.getDate() - 90
+    );
+
+    const snap =
+      await db.collection("transactions")
+        .where(
+          "uid",
+          "==",
+          usuarioAtual.uid
+        )
+        .get();
+
+    let lista = [];
+
+    snap.forEach(doc => {
+
+      const t = doc.data();
+
+      let data = null;
+
+      if(t.criadoEm && t.criadoEm.toDate){
+
+        data =
+          t.criadoEm.toDate();
+      }
+
+      if(!data || data >= limite){
+
+        lista.push({
+          id: doc.id,
+          ...t,
+          data: data
+        });
+      }
+
+    });
+
+    lista.sort((a,b) => {
+
+      const da =
+        a.data ? a.data.getTime() : 0;
+
+      const dbb =
+        b.data ? b.data.getTime() : 0;
+
+      return dbb - da;
+    });
+
+    if(lista.length === 0){
+
+      div.innerHTML =
+        '<div class="item">Nenhum movimento nos últimos 90 dias.</div>';
+
+      return;
+    }
+
+    let html =
+      "<table>" +
+      "<tr>" +
+      "<th>Data</th>" +
+      "<th>Tipo</th>" +
+      "<th>Valor</th>" +
+      "<th>Status</th>" +
+      "</tr>";
+
+    lista.forEach(t => {
+
+      const data =
+        t.data
+          ? t.data.toLocaleDateString("pt-BR")
+          : "-";
+
+      html += `
+        <tr>
+          <td>${data}</td>
+          <td>${t.tipo || "-"}</td>
+          <td>
+            R$ ${Number(t.valor || 0)
+              .toFixed(2)
+              .replace(".", ",")}
+          </td>
+          <td>${t.status || "-"}</td>
+        </tr>
+      `;
+    });
+
+    html += "</table>";
+
+    div.innerHTML = html;
+
+  }catch(error){
+
+    console.error(error);
+
+    div.innerHTML =
+      '<div class="item">Erro ao carregar extrato.</div>';
+  }
+}
+
+
+/* =========================================================
+   SALVAR PIX MOTOBOY
+========================================================= */
+
+async function salvarPixMotoboy(){
+
+  if(!usuarioAtual) return;
+
+  const pix =
+    document.getElementById(
+      "pixMotoboy"
+    ).value.trim();
+
+  if(!pix){
+
+    alert(
+      "Digite sua chave PIX."
+    );
+
+    return;
+  }
+
+  try{
+
+    await db.collection("profiles")
+      .doc(usuarioAtual.uid)
+      .update({
+
+        pix: pix
+
+      });
+
+    alert(
+      "Chave PIX salva."
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Erro ao salvar PIX:\n" +
+      erroHumano(error)
+    );
+  }
+}
+
+
+/* =========================================================
+   SOLICITAR SAQUE
+========================================================= */
+
+async function solicitarSaque(){
+
+  if(!usuarioAtual) return;
+
+  try{
+
+    const walletSnap =
+      await db.collection("wallets")
+        .doc(usuarioAtual.uid)
+        .get();
+
+    const saldo =
+      walletSnap.exists
+        ? Number(walletSnap.data().saldo || 0)
+        : 0;
+
+    if(saldo <= 0){
+
+      alert(
+        "Você não possui saldo disponível para saque."
+      );
+
+      return;
+    }
+
+    const pix =
+      document.getElementById(
+        "pixMotoboy"
+      ).value.trim();
+
+    if(!pix){
+
+      alert(
+        "Cadastre sua chave PIX primeiro."
+      );
+
+      return;
+    }
+
+    await db.collection("transactions")
+      .add({
+
+        uid:
+          usuarioAtual.uid,
+
+        tipo:
+          "saque_motoboy",
+
+        valor:
+          -saldo,
+
+        pix:
+          pix,
+
+        status:
+          "pendente",
+
+        criadoEm:
+          firebase.firestore.FieldValue
+            .serverTimestamp()
+
+      });
+
+    alert(
+      "Solicitação de saque enviada ao administrador."
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Erro ao solicitar saque:\n" +
+      erroHumano(error)
+    );
+  }
+}
+
+
+/* =========================================================
+   ADMIN
+========================================================= */
 
 async function carregarAdmin(){
 
- try{
+  if(!usuarioAtual) return;
 
-  const usuarios=await db
-   .collection("profiles")
-   .get();
+  try{
 
-  let html="";
+    const perfil =
+      await db.collection("profiles")
+        .doc(usuarioAtual.uid)
+        .get();
 
-  usuarios.forEach(doc=>{
+    if(
+      !perfil.exists ||
+      String(perfil.data().tipo || "")
+        .toLowerCase() !== "admin"
+    ){
 
-   const u=doc.data();
+      alert(
+        "Acesso administrativo não autorizado."
+      );
 
-   html+=`
-   <div class="item">
-    <b>${u.nome||"-"}</b><br>
-    E-mail: ${u.email||"-"}<br>
-    Telefone: ${u.telefone||"-"}<br>
-    Tipo: ${u.tipo||"-"}<br>
-    UID: ${doc.id}
+      await auth.signOut();
 
-    <button onclick="editarSaldo('${doc.id}')">
-     AJUSTAR SALDO
-    </button>
-   </div>`;
+      return;
+    }
 
-  });
 
-  document.getElementById("adminUsuarios")
-   .innerHTML=html;
+    /* =========================
+       TRANSAÇÕES
+    ========================== */
 
-  const pedidos=await db
-   .collection("orders")
-   .get();
+    const transSnap =
+      await db.collection("transactions")
+        .get();
 
-  let hp="";
+    let receitas = 0;
+    let pagamentos = 0;
 
-  pedidos.forEach(doc=>{
+    let pendentes = [];
 
-   const o=doc.data();
+    transSnap.forEach(doc => {
 
-   hp+=`
-   <div class="item">
-    <b>${o.clienteNome||"-"}</b><br>
-    Loja: ${o.lojistaNome||"-"}<br>
-    Endereço: ${o.enderecoEntrega||"-"}<br>
-    Status: ${o.status||"-"}<br>
-    Motoboy: ${o.motoboyNome||"Não aceito"}
-   </div>`;
+      const t = doc.data();
 
-  });
+      if(t.status === "aprovado"){
 
-  document.getElementById("adminPedidos")
-   .innerHTML=
-   hp||"<div class='small'>Nenhum pedido.</div>";
+        if(
+          t.tipo === "recarga_50" ||
+          t.tipo === "recarga"
+        ){
 
-  const tx=await db
-   .collection("transactions")
-   .get();
+          receitas +=
+            Number(t.valor || 0);
+        }
 
-  let receitas=0;
-  let pagamentos=0;
-  let recargasHtml="";
+        if(
+          t.tipo === "pagamento_motoboy"
+        ){
 
-  tx.forEach(doc=>{
+          pagamentos +=
+            Number(t.valor || 0);
+        }
+      }
 
-   const t=doc.data();
-   const valor=Number(t.valor||0);
+      if(
+        t.tipo === "recarga_50" &&
+        t.status === "pendente"
+      ){
 
-   if(t.tipo==="recarga_50" &&
-      t.status==="aprovado"){
+        pendentes.push({
+          id: doc.id,
+          ...t
+        });
+      }
 
-    receitas+=valor;
-   }
+    });
 
-   if(t.tipo==="pagamento_motoboy" &&
-      t.status==="aprovado"){
+    const lucro =
+      receitas - pagamentos;
 
-    pagamentos+=Math.abs(valor);
-   }
+    document.getElementById(
+      "adminReceitas"
+    ).textContent =
+      receitas.toFixed(2)
+        .replace(".", ",");
 
-   if(t.tipo==="recarga_50" &&
-      t.status==="pendente"){
+    document.getElementById(
+      "adminPagamentos"
+    ).textContent =
+      pagamentos.toFixed(2)
+        .replace(".", ",");
 
-    recargasHtml+=`
-    <div class="item">
-     Valor: R$ 50,00<br>
-     UID: ${t.uid}
+    document.getElementById(
+      "adminLucro"
+    ).textContent =
+      lucro.toFixed(2)
+        .replace(".", ",");
 
-     <button
-      onclick="aprovarRecarga('${doc.id}')">
-      APROVAR
-     </button>
-    </div>`;
-   }
 
-  });
+    /* =========================
+       RECARGAS
+    ========================== */
 
-  document.getElementById("adminRecargas")
-   .innerHTML=
-   recargasHtml||
-   "<div class='small'>Nenhuma recarga pendente.</div>";
+    const recDiv =
+      document.getElementById(
+        "adminRecargas"
+      );
 
-  document.getElementById("adminReceitas")
-   .textContent=
-   "R$ "+receitas.toFixed(2).replace(".",",");
+    if(pendentes.length === 0){
 
-  document.getElementById("adminPagamentos")
-   .textContent=
-   "R$ "+pagamentos.toFixed(2).replace(".",",");
+      recDiv.innerHTML =
+        '<div class="item">Nenhuma recarga pendente.</div>';
 
-  document.getElementById("adminLucro")
-   .textContent=
-   "R$ "+(receitas-pagamentos)
-   .toFixed(2).replace(".",",");
+    }else{
 
- }catch(e){
+      let html = "";
 
-  mostrarMensagem(
-   "Erro no painel ADMIN:\n"+
-   erroHumano(e),
-   "erro"
-  );
+      pendentes.forEach(t => {
 
- }
+        html += `
+          <div class="item">
 
+            <strong>Usuário:</strong>
+            ${t.uid}<br>
+
+            <strong>Valor:</strong>
+            R$ ${Number(t.valor || 0)
+              .toFixed(2)
+              .replace(".", ",")}
+
+            <button
+              class="btn-verde"
+              onclick="aprovarRecarga('${t.id}','${t.uid}',${Number(t.valor || 0)})"
+            >
+              APROVAR RECARGA
+            </button>
+
+          </div>
+        `;
+      });
+
+      recDiv.innerHTML = html;
+    }
+
+
+    /* =========================
+       USUÁRIOS
+    ========================== */
+
+    const usersSnap =
+      await db.collection("profiles")
+        .get();
+
+    const usersDiv =
+      document.getElementById(
+        "adminUsuarios"
+      );
+
+    if(usersSnap.empty){
+
+      usersDiv.innerHTML =
+        '<div class="item">Nenhum usuário.</div>';
+
+    }else{
+
+      let html = "";
+
+      usersSnap.forEach(doc => {
+
+        const u = doc.data();
+
+        html += `
+          <div class="item">
+
+            <strong>Nome:</strong>
+            ${u.nome || "-"}<br>
+
+            <strong>E-mail:</strong>
+            ${u.email || "-"}<br>
+
+            <strong>Telefone:</strong>
+            ${u.telefone || "-"}<br>
+
+            <strong>Tipo:</strong>
+            ${u.tipo || "-"}<br>
+
+            <strong>UID:</strong>
+            ${doc.id}
+
+            <button
+              class="btn-azul"
+              onclick="editarSaldo('${doc.id}')"
+            >
+              EDITAR SALDO
+            </button>
+
+          </div>
+        `;
+      });
+
+      usersDiv.innerHTML = html;
+    }
+
+
+    /* =========================
+       PEDIDOS
+    ========================== */
+
+    const ordersSnap =
+      await db.collection("orders")
+        .get();
+
+    const ordersDiv =
+      document.getElementById(
+        "adminPedidos"
+      );
+
+    if(ordersSnap.empty){
+
+      ordersDiv.innerHTML =
+        '<div class="item">Nenhuma entrega.</div>';
+
+    }else{
+
+      let html = "";
+
+      ordersSnap.forEach(doc => {
+
+        const p = doc.data();
+
+        html += `
+          <div class="item">
+
+            <strong>ID:</strong>
+            ${doc.id}<br>
+
+            <strong>Loja:</strong>
+            ${p.lojistaNome || "-"}<br>
+
+            <strong>Cliente:</strong>
+            ${p.clienteNome || "-"}<br>
+
+            <strong>Veículo:</strong>
+            ${p.veiculo || "-"}<br>
+
+            <strong>Status:</strong>
+            ${p.status || "-"}<br>
+
+            <strong>Motoboy:</strong>
+            ${p.motoboyId || "Aguardando"}
+
+          </div>
+        `;
+      });
+
+      ordersDiv.innerHTML = html;
+    }
+
+  }catch(error){
+
+    console.error(
+      "Erro ADMIN:",
+      error
+    );
+
+    alert(
+      "Erro ao carregar painel admin:\n" +
+      erroHumano(error)
+    );
+  }
 }
 
-async function aprovarRecarga(txId){
 
- try{
+/* =========================================================
+   APROVAR RECARGA
+========================================================= */
 
-  await db.runTransaction(async t=>{
+async function aprovarRecarga(
+  transactionId,
+  uid,
+  valor
+){
 
-   const txRef=db
-    .collection("transactions")
-    .doc(txId);
+  if(!usuarioAtual) return;
 
-   const tx=await t.get(txRef);
+  try{
 
-   if(!tx.exists)
-    throw new Error("Recarga não encontrada.");
+    const walletRef =
+      db.collection("wallets")
+        .doc(uid);
 
-   const d=tx.data();
+    const transRef =
+      db.collection("transactions")
+        .doc(transactionId);
 
-   if(d.status!=="pendente")
-    throw new Error("Essa recarga já foi processada.");
+    await db.runTransaction(async transaction => {
 
-   const walletRef=db
-    .collection("wallets")
-    .doc(d.uid);
+      const walletSnap =
+        await transaction.get(walletRef);
 
-   const wallet=await t.get(walletRef);
+      const transSnap =
+        await transaction.get(transRef);
 
-   const saldo=wallet.exists
-    ? Number(wallet.data().saldo||0)
-    : 0;
+      if(!transSnap.exists){
 
-   t.set(walletRef,{
-    saldo:saldo+50,
-    atualizadoEm:
-    firebase.firestore.FieldValue.serverTimestamp()
-   },{
-    merge:true
-   });
+        throw new Error(
+          "Recarga não encontrada."
+        );
+      }
 
-   t.update(txRef,{
-    status:"aprovado",
-    aprovadoPor:usuarioAtual.uid,
-    aprovadoEm:
-    firebase.firestore.FieldValue.serverTimestamp()
-   });
+      if(
+        transSnap.data().status !==
+        "pendente"
+      ){
 
-  });
+        throw new Error(
+          "Esta recarga já foi processada."
+        );
+      }
 
-  mostrarMensagem(
-   "Recarga aprovada.",
-   "ok"
-  );
+      if(walletSnap.exists){
 
-  carregarAdmin();
+        transaction.update(
+          walletRef,
+          {
 
- }catch(e){
+            saldo:
+              firebase.firestore.FieldValue
+                .increment(Number(valor)),
 
-  mostrarMensagem(
-   "Erro ao aprovar:\n"+erroHumano(e),
-   "erro"
-  );
+            atualizadoEm:
+              firebase.firestore.FieldValue
+                .serverTimestamp()
 
- }
+          }
+        );
 
+      }else{
+
+        transaction.set(
+          walletRef,
+          {
+
+            saldo:
+              Number(valor),
+
+            atualizadoEm:
+              firebase.firestore.FieldValue
+                .serverTimestamp()
+
+          }
+        );
+      }
+
+      transaction.update(
+        transRef,
+        {
+
+          status:
+            "aprovado",
+
+          aprovadoEm:
+            firebase.firestore.FieldValue
+              .serverTimestamp(),
+
+          aprovadoPor:
+            usuarioAtual.uid
+
+        }
+      );
+
+    });
+
+    alert(
+      "Recarga aprovada."
+    );
+
+    await carregarAdmin();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Erro ao aprovar recarga:\n" +
+      erroHumano(error)
+    );
+  }
 }
+
+
+/* =========================================================
+   EDITAR SALDO
+========================================================= */
 
 async function editarSaldo(uid){
 
- const valor=prompt(
-  "Digite o novo saldo do usuário:"
- );
+  if(!usuarioAtual) return;
 
- if(valor===null)
-  return;
+  const novo =
+    prompt(
+      "Digite o novo saldo para este usuário:"
+    );
 
- const numero=Number(valor);
+  if(novo === null) return;
 
- if(isNaN(numero)){
+  const valor =
+    Number(
+      novo.replace(",", ".")
+    );
 
-  mostrarMensagem(
-   "Valor inválido.",
-   "erro"
-  );
+  if(isNaN(valor)){
 
-  return;
- }
+    alert(
+      "Valor inválido."
+    );
 
- try{
+    return;
+  }
 
-  await db.collection("wallets")
-   .doc(uid)
-   .set({
-    saldo:numero,
-    atualizadoEm:
-    firebase.firestore.FieldValue.serverTimestamp()
-   },{
-    merge:true
-   });
+  try{
 
-  mostrarMensagem(
-   "Saldo alterado com sucesso.",
-   "ok"
-  );
+    await db.collection("wallets")
+      .doc(uid)
+      .set({
 
-  carregarAdmin();
+        saldo:
+          valor,
 
- }catch(e){
+        atualizadoEm:
+          firebase.firestore.FieldValue
+            .serverTimestamp()
 
-  mostrarMensagem(
-   "Erro ao alterar saldo:\n"+
-   erroHumano(e),
-   "erro"
-  );
+      }, {
+        merge:true
+      });
 
- }
+    alert(
+      "Saldo atualizado."
+    );
 
+    await carregarAdmin();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Erro ao editar saldo:\n" +
+      erroHumano(error)
+    );
+  }
 }
+
+
+/* =========================================================
+   PAGAR MOTOBOY
+========================================================= */
 
 async function pagarMotoboy(){
 
- const uid=document
- .getElementById("pagMotoUid")
- .value.trim();
+  if(!usuarioAtual) return;
 
- const valor=Number(
-  document.getElementById("pagMotoValor")
-  .value
- );
+  const uid =
+    document.getElementById(
+      "pagamentoMotoboyUid"
+    ).value.trim();
 
- if(!uid || !valor || valor<=0){
+  const valor =
+    Number(
+      document.getElementById(
+        "pagamentoMotoboyValor"
+      ).value || 0
+    );
 
-  mostrarMensagem(
-   "Informe UID e valor do pagamento.",
-   "erro"
-  );
+  const pix =
+    document.getElementById(
+      "pagamentoMotoboyPix"
+    ).value.trim();
 
-  return;
- }
+  if(!uid || valor <= 0 || !pix){
 
- try{
+    alert(
+      "Preencha UID, valor e PIX."
+    );
 
-  await db.collection("transactions")
-   .add({
-    uid:uid,
-    tipo:"pagamento_motoboy",
-    valor:-Math.abs(valor),
-    status:"aprovado",
-    aprovadoPor:usuarioAtual.uid,
-    criadoEm:
-    firebase.firestore.FieldValue.serverTimestamp()
-   });
+    return;
+  }
 
-  document.getElementById("pagMotoUid").value="";
-  document.getElementById("pagMotoValor").value="";
+  try{
 
-  mostrarMensagem(
-   "Pagamento registrado.",
-   "ok"
-  );
+    await db.collection("transactions")
+      .add({
 
-  carregarAdmin();
+        uid:
+          uid,
 
- }catch(e){
+        tipo:
+          "pagamento_motoboy",
 
-  mostrarMensagem(
-   "Erro no pagamento:\n"+
-   erroHumano(e),
-   "erro"
-  );
+        valor:
+          valor,
 
- }
+        pix:
+          pix,
 
+        status:
+          "aprovado",
+
+        criadoEm:
+          firebase.firestore.FieldValue
+            .serverTimestamp(),
+
+        aprovadoPor:
+          usuarioAtual.uid
+
+      });
+
+    alert(
+      "Pagamento registrado."
+    );
+
+    document.getElementById(
+      "pagamentoMotoboyUid"
+    ).value = "";
+
+    document.getElementById(
+      "pagamentoMotoboyValor"
+    ).value = "";
+
+    document.getElementById(
+      "pagamentoMotoboyPix"
+    ).value = "";
+
+    await carregarAdmin();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Erro ao registrar pagamento:\n" +
+      erroHumano(error)
+    );
+  }
 }
+
+
+/* =========================================================
+   FRANQUEADO
+========================================================= */
+
+async function carregarFranqueado(){
+
+  if(!usuarioAtual) return;
+
+  await atualizarSaldo();
+}
+
+
+/* =========================================================
+   CARREGAR PIX DO MOTOBOY
+========================================================= */
+
+async function carregarPixMotoboy(){
+
+  if(!usuarioAtual) return;
+
+  try{
+
+    const snap =
+      await db.collection("profiles")
+        .doc(usuarioAtual.uid)
+        .get();
+
+    if(snap.exists){
+
+      const pix =
+        snap.data().pix || "";
+
+      const campo =
+        document.getElementById(
+          "pixMotoboy"
+        );
+
+      if(campo){
+
+        campo.value = pix;
+      }
+    }
+
+  }catch(error){
+
+    console.error(error);
+  }
+}
+
+
+/* =========================================================
+   ATALHO PARA MOTOBOY
+========================================================= */
+
+const carregarMotoboyOriginal =
+  carregarMotoboy;
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function(){
+
+    mostrarLogin();
+
+  }
+);
 
 </script>
 
