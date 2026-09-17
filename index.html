@@ -2,100 +2,125 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ANJOS EM DUAS RODAS</title>
+<title>ANJOS - DINAMICA DUAL</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-<style>*{box-sizing:border-box;font-family:Inter,Arial}body{margin:0;background:#0f0f0f;color:white}.top{height:68px;background:#111;display:flex;align-items:center;justify-content:center;gap:10px;border-bottom:1px solid #222;position:sticky;top:0;z-index:10}.container{max-width:430px;margin:0 auto;padding:16px}.card{background:#1a1a1a;border-radius:20px;padding:20px;margin-bottom:14px;border:1px solid #2a2a2a}.cardLight{background:#fff;color:#111;border-radius:20px;padding:20px;margin-bottom:14px}input,select{width:100%;background:#262626;border:1px solid #333;color:white;padding:14px;border-radius:14px;margin:6px 0}button{width:100%;padding:14px;border-radius:14px;border:none;font-weight:800;cursor:pointer}.btnPrimary{background:linear-gradient(90deg,#ff7a00,#ff9d00);color:#111}.btnGhost{background:#2a2a2a;color:white}.badge{background:#ff7a001a;color:#ff7a00;border:1px solid #ff7a0033;padding:6px 10px;border-radius:20px;font-size:11px;font-weight:800}#mapLojista,#mapMoto,#mapAdmin,#mapLojistaSuper{height:280px;border-radius:16px}.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid #333;padding:12px 18px;border-radius:12px;display:none;z-index:99}</style>
+<style>*{box-sizing:border-box;font-family:Inter,Arial}body{margin:0;background:#0f0f0f;color:white}.top{height:60px;background:#111;display:flex;align-items:center;justify-content:center;gap:8px;border-bottom:1px solid #222;position:sticky;top:0;z-index:10}.container{max-width:500px;margin:0 auto;padding:12px}.card{background:#1a1a1a;border-radius:18px;padding:16px;margin-bottom:12px;border:1px solid #2a2a2a}.cardLight{background:#fff;color:#111;border-radius:18px;padding:16px;margin-bottom:12px}input,select{width:100%;background:#262626;border:1px solid #333;color:white;padding:12px;border-radius:12px;margin:5px 0}button{width:100%;padding:12px;border-radius:12px;border:none;font-weight:800;cursor:pointer}.btnPrimary{background:linear-gradient(90deg,#ff7a00,#ff9d00);color:#111}.btnGhost{background:#2a2a2a;color:white}.tabBtn{padding:8px 10px;border-radius:20px;background:#262626;color:#aaa;border:1px solid #333;margin:3px;font-size:11px;display:inline-block;width:auto}.tabBtn.active{background:#ff7a00;color:#111}.col2{display:grid;grid-template-columns:1fr 1fr;gap:10px}#mapAdmin{height:280px;border-radius:16px}.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid #333;padding:12px 18px;border-radius:12px;display:none;z-index:99}.dualBox{border:2px solid #ff7a00;border-radius:14px;padding:12px;background:#ff7a000d}</style>
 </head>
 <body>
-<div class="top"><div style="font-size:24px">🏍️</div><b><span style="color:white">ANJOS</span> <span style="color:#ff7a00">EM DUAS RODAS</span></b></div>
+<div class="top">🏍️ <b>ANJOS <span style="color:#ff7a00">EM DUAS RODAS</span></b></div>
 <div class="container">
-<div id="authDiv"><div style="text-align:center;padding:20px 0"><div style="font-size:44px">🏍️</div><div style="font-weight:900;font-size:28px"><span style="color:white">ANJOS</span><br><span style="color:#ff7a00">EM DUAS RODAS</span></div></div><div class="card"><h3 style="margin:0">Entrar</h3><input id="email" placeholder="E-mail"><input id="senha" type="password" placeholder="Senha"><button class="btnPrimary" onclick="login()" style="margin-top:8px">ENTRAR</button><div id="msgAuth" style="color:#ff5555;font-size:12px;text-align:center;margin-top:6px"></div></div></div>
+<div id="authDiv"><div class="card"><h3>Entrar</h3><input id="email" placeholder="E-mail"><input id="senha" type="password" placeholder="Senha"><button class="btnPrimary" onclick="login()">ENTRAR</button><div id="msgAuth" style="color:#ff5555;font-size:12px"></div></div></div>
 <div id="appDiv" style="display:none">
-<div class="card" style="display:flex;justify-content:space-between;align-items:center"><div><div id="infoUser" style="font-weight:700"></div><div style="font-size:12px;color:#777">Saldo <b id="saldoTxt" style="color:#ff7a00"></b> | <span id="tipoTxt" style="color:#ff7a00;font-weight:900"></span></div></div><button class="btnGhost" style="width:auto" onclick="logout()">Sair</button></div>
-
-<div id="painelLojista" style="display:none"><div class="cardLight"><b>LOJISTA</b> - Saldo <span id="saldoLojista"></span><button class="btnPrimary" onclick="criarPedido()">CRIAR PEDIDO TESTE R$10</button></div><div id="mapLojista"></div><div id="listaLojista"></div></div>
-
-<div id="painelSuperLojista" style="display:none"><div class="cardLight"><b>SUPER LOJISTA - TUDO JUNTO</b></div></div>
-
-<div id="painelMotoboy" style="display:none"><div class="card"><b>MOTOBOY</b> <span id="meuCodigoMoto"></span><div id="statusMoto"></div><button id="btnOnline" class="btnPrimary" onclick="alternarOnline()">FICAR ONLINE</button></div><div id="mapMoto"></div><div id="listaPedidosMoto"></div></div>
-
+<div class="card" style="display:flex;justify-content:space-between"><div><div id="infoUser"></div><div style="font-size:11px"><span id="tipoTxt" style="color:#ff7a00;font-weight:900"></span> | <b id="saldoTxt" style="color:#ff7a00"></b></div></div><button class="btnGhost" style="width:auto" onclick="logout()">Sair</button></div>
 <div id="painelAdmin" style="display:none">
-<div class="cardLight"><b>ADMIN - Super@macae.com</b><div>Rec <b id="adminReceitas"></b> | Lucro <b id="adminLucro"></b></div><div style="font-size:10px">Você é: <b id="adminTipo"></b></div></div>
-<div class="card"><button class="btnPrimary" onclick="carregarAdmin()">🔄 ATUALIZAR LISTA DE APROVAÇÃO</button><div id="adminUsuarios" style="margin-top:10px"></div></div>
-<div class="card"><b>Recargas pendentes</b><div id="adminRecargas"></div></div>
-<div class="card"><div id="mapAdmin" style="height:300px"></div><div id="adminPedidos"></div></div>
+<div class="cardLight"><b id="adminNome">ADMIN</b><div style="font-size:11px">Você é: <b id="adminTipo"></b> | Só você edita Dinâmica/Super/Retorno</div></div>
+<div class="card" style="display:flex;flex-wrap:wrap">
+<button class="tabBtn active" onclick="openTab('tabAprov')">Aprovar</button>
+<button class="tabBtn" onclick="openTab('tabLojas')">Lojas</button>
+<button class="tabBtn" onclick="openTab('tabMotos')">Motoboys</button>
+<button class="tabBtn" onclick="openTab('tabDinamica')">⚡ DINÂMICA DUAL</button>
+<button class="tabBtn" onclick="openTab('tabTaxas')">Taxas</button>
+<button class="tabBtn" onclick="openTab('tabSuper')">SUPER</button>
+<button class="tabBtn" onclick="openTab('tabRetorno')">RETORNO</button>
+</div>
+
+<div id="tabAprov" class="card tab"><b>Aprovação</b><button class="btnPrimary" onclick="carregarAdmin()" style="margin-top:6px">🔄 ATUALIZAR</button><div id="adminUsuarios"></div><div style="margin-top:10px"><b>Recargas</b><div id="adminRecargas"></div></div></div>
+
+<div id="tabLojas" class="card tab" style="display:none"><b>📦 LOJAS</b><div id="listaTodasLojas"></div></div>
+<div id="tabMotos" class="card tab" style="display:none"><div class="col2"><div><b style="color:#ff7a00;font-size:11px">LOJISTAS</b><div id="colLojistas"></div></div><div><b style="color:#00ff88;font-size:11px">MOTOBOYS</b><div id="colMotoboys"></div></div></div><div id="listaTodosMotoboys" style="margin-top:10px"></div></div>
+
+<!-- NOVA ABA DINAMICA DUAL -->
+<div id="tabDinamica" class="card tab" style="display:none">
+<div class="dualBox">
+<b style="font-size:16px">⚡ DINÂMICA - 2 VALORES</b>
+<div style="font-size:11px;color:#aaa;margin:4px 0">Só ADMIN e FRANQUEADO edita. Quando LIGADA, cobra um valor do lojista e paga outro pro motoboy.</div>
+
+<label style="font-size:12px;font-weight:800;margin-top:10px;display:block">STATUS DINÂMICA</label>
+<select id="cfgDinamica"><option value="true">🟢 LIGADA - COBRANDO EXTRA</option><option value="false">🔴 DESLIGADA - PREÇO NORMAL</option></select>
+
+<div class="col2" style="margin-top:12px">
+<div style="background:#111;padding:10px;border-radius:12px;border:1px solid #ff7a00">
+<label style="font-size:11px;color:#ff7a00;font-weight:800">💰 COBRADO DO LOJISTA</label>
+<input id="cfgDinamicaLojista" type="number" placeholder="Ex: 5">
+<div style="font-size:9px;color:#777">Extra que o lojista PAGA na taxa</div>
+</div>
+<div style="background:#111;padding:10px;border-radius:12px;border:1px solid #00ff88">
+<label style="font-size:11px;color:#00ff88;font-weight:800">🏍️ PAGO AO MOTOBOY</label>
+<input id="cfgDinamicaMoto" type="number" placeholder="Ex: 3">
+<div style="font-size:9px;color:#777">Extra que o motoboy RECEBE</div>
+</div>
+</div>
+
+<div style="background:#111;padding:10px;border-radius:12px;margin-top:10px;text-align:center">
+<div style="font-size:10px;color:#777">SEU LUCRO NA DINÂMICA</div>
+<div style="font-size:18px;font-weight:900;color:#ff7a00" id="lucroDinamica">R$0,00</div>
+<div style="font-size:9px;color:#777">Lojista - Motoboy = Seu Lucro</div>
+</div>
+
+<label style="font-size:11px;margin-top:10px;display:block">Multiplicador extra (opcional) x</label>
+<input id="cfgMulti" type="number" step="0.1" placeholder="1.0 = desliga multi">
+
+<button class="btnPrimary" style="margin-top:12px" onclick="salvarDinamica()">💾 SALVAR DINÂMICA DUAL</button>
+</div>
+<div style="font-size:11px;color:#777;margin-top:8px">
+Exemplo: Dinâmica ligada = Lojista paga +R$5, Motoboy recebe +R$3, você lucra R$2 por entrega.
+</div>
+</div>
+
+<div id="tabTaxas" class="card tab" style="display:none"><b>Taxas Base (Normal)</b><input id="cfgTaxaBase" type="number" placeholder="Taxa base"><input id="cfgKmBase" type="number" placeholder="KM base"><input id="cfgKmExtra" type="number" placeholder="Extra KM"><input id="cfgMotoBase" type="number" placeholder="Moto base"><input id="cfgMotoExtra" type="number" placeholder="Moto extra"><input id="cfgUtil" type="number" step="0.1" placeholder="Util x"><input id="cfgCam" type="number" step="0.1" placeholder="Caminhao x"><input id="cfgCar" type="number" step="0.1" placeholder="Carreta x"><button class="btnPrimary" onclick="salvarTaxas()">SALVAR TAXAS</button></div>
+<div id="tabSuper" class="card tab" style="display:none"><b>SUPER</b><input id="cfgSuperValor" type="number" placeholder="Valor SUPER"><input id="cfgSuperNome" placeholder="Nome"><button class="btnPrimary" onclick="salvarSuper()">SALVAR SUPER</button></div>
+<div id="tabRetorno" class="card tab" style="display:none"><b>RETORNO</b><input id="cfgRetornoValor" type="number" placeholder="Valor"><input id="cfgRetornoPerc" type="number" placeholder="%"><input id="cfgRetornoNome" placeholder="Nome"><button class="btnPrimary" onclick="salvarRetorno()">SALVAR RETORNO</button></div>
+
 </div>
 </div></div>
 <div id="toast" class="toast"></div>
 <script>
-const firebaseConfig={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.firebasestorage.app",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945",measurementId:"G-9CSJXXNR0C"};
+const firebaseConfig={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.firebasestorage.app",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945"};
 firebase.initializeApp(firebaseConfig); const db=firebase.firestore(); const auth=firebase.auth();
-let usuarioAtual=null,perfilAtual=null,saldoAtual=0,mapaLojista=null,mapaMoto=null,mapAdmin=null;
-function toastM(m){ const t=document.getElementById("toast"); t.textContent=m; t.style.display="block"; setTimeout(()=>t.style.display="none",3000); }
+let usuarioAtual=null,perfilAtual=null,cfg=null;
+function toastM(m){ const t=document.getElementById("toast"); t.textContent=m; t.style.display="block"; setTimeout(()=>t.style.display="none",2500); }
+function openTab(id){ document.querySelectorAll(".tab").forEach(t=>t.style.display="none"); document.querySelectorAll(".tabBtn").forEach(b=>b.classList.remove("active")); document.getElementById(id).style.display="block"; event.target.classList.add("active"); }
 async function login(){ try{ await auth.signInWithEmailAndPassword(email.value,senha.value);}catch(e){msgAuth.textContent=e.message;}} function logout(){ auth.signOut(); }
 auth.onAuthStateChanged(async u=>{
  if(!u){ authDiv.style.display="block"; appDiv.style.display="none"; return; }
- usuarioAtual=u;
- authDiv.style.display="none"; appDiv.style.display="block";
- try{
-   let pSnap=await db.collection("profiles").doc(u.uid).get();
-   if(!pSnap.exists){
-     // cria perfil admin automatico para super@macae.com
-     if(u.email.toLowerCase()==="super@macae.com"){
-       await db.collection("profiles").doc(u.uid).set({nome:"SUPER ADMIN",email:u.email,tipo:"admin",online:false,criadoEm:firebase.firestore.FieldValue.serverTimestamp()});
-       pSnap=await db.collection("profiles").doc(u.uid).get();
-     } else {
-       infoUser.textContent="Sem perfil no Firestore! Crie no Firebase";
-       return;
-     }
-   }
-   perfilAtual=pSnap.data();
-   // FORÇA ADMIN SE EMAIL FOR SUPER
-   if(u.email.toLowerCase()==="super@macae.com" && perfilAtual.tipo!=="admin"){
-     await db.collection("profiles").doc(u.uid).update({tipo:"admin"});
-     perfilAtual.tipo="admin";
-   }
-   infoUser.textContent=perfilAtual.nome+" ("+u.email+")";
-   tipoTxt.textContent=perfilAtual.tipo.toUpperCase();
-   const w=await db.collection("wallets").doc(u.uid).get();
-   saldoAtual=w.exists?Number(w.data().saldo):0;
-   saldoTxt.textContent="R$"+saldoAtual.toFixed(2);
-   if(document.getElementById("saldoLojista")) saldoLojista.textContent="R$"+saldoAtual.toFixed(2);
-
-   // ESCONDE TUDO E MOSTRA SO O CORRETO
-   painelLojista.style.display="none"; painelSuperLojista.style.display="none"; painelMotoboy.style.display="none"; painelAdmin.style.display="none";
-   if(perfilAtual.tipo==="lojista") painelLojista.style.display="block";
-   if(perfilAtual.tipo==="super_lojista") painelSuperLojista.style.display="block";
-   if(perfilAtual.tipo==="motoboy") { painelMotoboy.style.display="block"; carregarMotoboy(); }
-   if(perfilAtual.tipo==="admin" || perfilAtual.tipo==="franqueado" || u.email.toLowerCase()==="super@macae.com"){
-     painelAdmin.style.display="block"; 
-     document.getElementById("adminTipo").textContent=perfilAtual.tipo;
-     carregarAdmin();
-   }
- }catch(e){ alert("Erro ao carregar perfil: "+e.message); console.log(e); }
+ usuarioAtual=u; authDiv.style.display="none"; appDiv.style.display="block";
+ const p=await db.collection("profiles").doc(u.uid).get(); perfilAtual=p.data();
+ if(u.email.toLowerCase()==="super@macae.com" && perfilAtual.tipo!=="admin"){ await db.collection("profiles").doc(u.uid).update({tipo:"admin"}); perfilAtual.tipo="admin"; }
+ infoUser.textContent=perfilAtual.nome||u.email; tipoTxt.textContent=perfilAtual.tipo.toUpperCase(); adminTipo.textContent=perfilAtual.tipo; adminNome.textContent=perfilAtual.tipo.toUpperCase()+" - "+u.email;
+ const w=await db.collection("wallets").doc(u.uid).get(); saldoTxt.textContent="R$"+(w.exists?Number(w.data().saldo):0).toFixed(2);
+ const c=await db.collection("config").doc("taxas").get(); cfg=c.exists?c.data():{taxaBase:10,kmBase:5,kmExtra:2,motoBase:7.5,motoExtra:1.5,retornoValor:15,retornoPerc:50,superValor:23,superNome:"SUPER",retornoNome:"RETORNO",dinamica:false,dinamicaLojista:5,dinamicaMoto:3,multi:1,precoUtilitario:1.5,precoCaminhao:2.5,precoCarreta:4};
+ document.getElementById("painelAdmin").style.display="block"; carregarAdmin(); carregarListas();
 });
-
-async function criarPedido(){ toastM("Teste - pedido criado"); }
-async function carregarMotoboy(){ meuCodigoMoto.textContent=perfilAtual.codigoMoto||""; statusMoto.textContent=perfilAtual.docStatus||"aprovado"; if(!mapaMoto){ mapaMoto=L.map('mapMoto').setView([-22.37,-41.78],12); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapaMoto);} db.collection("orders").where("status","==","pendente").onSnapshot(s=>{ let h=""; s.forEach(doc=>{ h+=`<div class="card">${doc.data().clienteNome||"Pedido"}</div>`}); listaPedidosMoto.innerHTML=h; });}
-async function alternarOnline(){ await db.collection("profiles").doc(usuarioAtual.uid).update({online:!perfilAtual.online}); perfilAtual.online=!perfilAtual.online; toastM(perfilAtual.online?"Online":"Offline");}
 async function carregarAdmin(){
- if(!mapAdmin){ mapAdmin=L.map('mapAdmin').setView([-22.37,-41.78],12); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapAdmin); }
- const us=await db.collection("profiles").where("docStatus","==","pendente").get();
- let uh=""; us.forEach(doc=>{ const u=doc.data(); uh+=`<div class="card" style="border:1px solid #ff7a00"><b>${u.nome} ${u.codigoMoto||""}</b> ${u.tipoVeiculo||""}<br>${u.telefone||""}<br><button class="btnPrimary" onclick="aprovarDoc('${doc.id}')">✅ APROVAR</button> <button class="btnGhost" style="background:red" onclick="reprovarDoc('${doc.id}')">❌ REPROVAR</button></div>`; });
- adminUsuarios.innerHTML=uh||"<div style='color:#777'>Nenhum motoboy pendente</div>";
- const tx=await db.collection("transactions").where("status","==","pendente").get();
- let rh=""; tx.forEach(d=>{ rh+=`<div class="card">${d.data().uid} R$${d.data().valor} <button class="btnPrimary" onclick="aprovarRecarga('${d.id}')">APROVAR R$50</button></div>`; });
- adminRecargas.innerHTML=rh||"Nenhuma";
- adminReceitas.textContent=tx.size;
+ const us=await db.collection("profiles").where("docStatus","==","pendente").get(); let uh=""; us.forEach(doc=>{ const u=doc.data(); uh+=`<div class="card" style="border:1px solid #ff7a00"><b>${u.nome} ${u.codigoMoto||""}</b><br><button class="btnPrimary" onclick="aprovarDoc('${doc.id}')">APROVAR</button></div>`; }); adminUsuarios.innerHTML=uh||"Nenhum pendente";
+ const tx=await db.collection("transactions").where("status","==","pendente").get(); let rh=""; tx.forEach(d=>{ rh+=`<div class="card">${d.data().uid.substring(0,6)} R$${d.data().valor} <button class="btnPrimary" onclick="aprovarRecarga('${d.id}')">APROVAR</button></div>`; }); adminRecargas.innerHTML=rh||"Nenhuma";
+ cfgTaxaBase.value=cfg.taxaBase; cfgKmBase.value=cfg.kmBase; cfgKmExtra.value=cfg.kmExtra; cfgMotoBase.value=cfg.motoBase; cfgMotoExtra.value=cfg.motoExtra; cfgUtil.value=cfg.precoUtilitario; cfgCam.value=cfg.precoCaminhao; cfgCar.value=cfg.precoCarreta;
+ cfgSuperValor.value=cfg.superValor; cfgSuperNome.value=cfg.superNome;
+ cfgRetornoValor.value=cfg.retornoValor; cfgRetornoPerc.value=cfg.retornoPerc; cfgRetornoNome.value=cfg.retornoNome;
+ cfgDinamica.value=String(cfg.dinamica); cfgDinamicaLojista.value=cfg.dinamicaLojista||5; cfgDinamicaMoto.value=cfg.dinamicaMoto||3; cfgMulti.value=cfg.multi||1;
+ calcLucro(); document.getElementById("cfgDinamicaLojista").addEventListener("input",calcLucro); document.getElementById("cfgDinamicaMoto").addEventListener("input",calcLucro);
 }
-async function aprovarDoc(uid){ await db.collection("profiles").doc(uid).update({docStatus:"aprovado"}); toastM("Aprovado!"); carregarAdmin(); }
-async function reprovarDoc(uid){ await db.collection("profiles").doc(uid).update({docStatus:"reprovado"}); carregarAdmin(); }
-async function aprovarRecarga(id){ const r=await db.collection("transactions").doc(id).get(); const wRef=db.collection("wallets").doc(r.data().uid); const w=await wRef.get(); await wRef.set({saldo:Number(w.data()?.saldo||0)+Number(r.data().valor||50)},{merge:true}); await db.collection("transactions").doc(id).update({status:"aprovado"}); toastM("Recarga aprovada"); carregarAdmin(); }
+function calcLucro(){ const l=Number(cfgDinamicaLojista.value||0); const m=Number(cfgDinamicaMoto.value||0); const lucro=l-m; document.getElementById("lucroDinamica").textContent="R$"+lucro.toFixed(2)+" por entrega"; }
+async function carregarListas(){
+ const all=await db.collection("profiles").get(); let lojas="", motos="", lojasD="", motosD="";
+ all.forEach(doc=>{ const u=doc.data(); if(u.tipo==="lojista"||u.tipo==="super_lojista"){ lojas+=`<div>• ${u.nome}</div>`; lojasD+=`<div class="card" style="padding:8px;font-size:11px">🏪 ${u.nome}<br>${u.email}</div>`; } if(u.tipo==="motoboy"){ motos+=`<div>• ${u.codigoMoto||"#"} ${u.nome}</div>`; motosD+=`<div class="card" style="padding:8px;font-size:11px">🏍️ ${u.codigoMoto||""} ${u.nome} - ${u.tipoVeiculo}<br>Online ${u.online?"🟢":"🔴"}</div>`; } });
+ document.getElementById("colLojistas").innerHTML=lojas||"Nenhum"; document.getElementById("colMotoboys").innerHTML=motos||"Nenhum"; document.getElementById("listaTodasLojas").innerHTML=lojasD; document.getElementById("listaTodosMotoboys").innerHTML=motosD;
+}
+async function aprovarDoc(uid){ await db.collection("profiles").doc(uid).update({docStatus:"aprovado"}); carregarAdmin(); carregarListas(); }
+async function aprovarRecarga(id){ const r=await db.collection("transactions").doc(id).get(); const wRef=db.collection("wallets").doc(r.data().uid); const w=await wRef.get(); await wRef.set({saldo:Number(w.data()?.saldo||0)+Number(r.data().valor||50)},{merge:true}); await db.collection("transactions").doc(id).update({status:"aprovado"}); carregarAdmin(); }
+async function salvarTaxas(){ await db.collection("config").doc("taxas").set({taxaBase:Number(cfgTaxaBase.value),kmBase:Number(cfgKmBase.value),kmExtra:Number(cfgKmExtra.value),motoBase:Number(cfgMotoBase.value),motoExtra:Number(cfgMotoExtra.value),precoUtilitario:Number(cfgUtil.value),precoCaminhao:Number(cfgCam.value),precoCarreta:Number(cfgCar.value)},{merge:true}); toastM("Taxas salvas");}
+async function salvarSuper(){ await db.collection("config").doc("taxas").set({superValor:Number(cfgSuperValor.value),superNome:cfgSuperNome.value},{merge:true}); toastM("SUPER salvo");}
+async function salvarRetorno(){ await db.collection("config").doc("taxas").set({retornoValor:Number(cfgRetornoValor.value),retornoPerc:Number(cfgRetornoPerc.value),retornoNome:cfgRetornoNome.value},{merge:true}); toastM("RETORNO salvo");}
+async function salvarDinamica(){ 
+ const dados={dinamica:cfgDinamica.value==="true",dinamicaLojista:Number(cfgDinamicaLojista.value),dinamicaMoto:Number(cfgDinamicaMoto.value),multi:Number(cfgMulti.value)};
+ await db.collection("config").doc("taxas").set(dados,{merge:true}); 
+ toastM(dados.dinamica?`DINÂMICA LIGADA! Lojista +R$${dados.dinamicaLojista} / Moto +R$${dados.dinamicaMoto}`:"DINÂMICA DESLIGADA");
+ cfg={...cfg,...dados};
+}
 </script>
 </body>
 </html>
