@@ -1,30 +1,106 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ANJOS FLASH</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:#fff}
-.topo{background:#000;color:#FFD700;text-align:center;padding:25px;font-size:32px;font-weight:900}
-.btn{width:100%;padding:28px;font-size:24px;font-weight:900;border:none;border-bottom:5px solid #fff;cursor:pointer}
-.btn:active{opacity:0.7}
-.preto{background:#000;color:#FFD700}
-.cinza{background:#2a2a2a;color:#fff}
-.amarelo{background:#FFD700;color:#000}
-</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anjos Flash - Completo</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<style>body{font-family:Arial;max-width:430px;margin:auto;padding:12px;background:#f0f0f0}input,select{width:100%;padding:12px;margin-top:6px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box}button{padding:13px;width:100%;border:0;border-radius:10px;margin-top:8px;font-weight:bold} .card{background:#fff;border-radius:12px;padding:12px;margin-bottom:10px}</style>
 </head>
 <body>
-<div class="topo">⚡ ANJOS FLASH</div>
-<button class="btn preto" onclick="location.href='?tela=lojista'">🏪 LOJISTA</button>
-<button class="btn cinza" onclick="location.href='?tela=motoboy'">🏍️ MOTOBOY</button>
-<button class="btn amarelo" onclick="location.href='?tela=admin'">👑 ADMIN ADD/ZERA</button>
-
+<div id="app"></div>
 <script>
-// Se tiver ?tela=, mostra que clicou
-const p = new URLSearchParams(location.search).get('tela');
-if(p){ document.body.innerHTML += `<div style="padding:20px;text-align:center"><h1>${p.toUpperCase()}</h1><p>Carregando painel ${p}...</p><br><a href="/" style="background:#000;color:#FFD700;padding:10px 20px;text-decoration:none;border-radius:8px">VOLTAR</a></div>`; }
+const firebaseConfig={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.firebasestorage.app",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945"};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore(), auth=firebase.auth(), storage=firebase.storage();
+let tela="inicio", user=null, perfil=null, lojistas=[], motoboys=[], entregas=[], add=10, cnhFile=null;
+
+auth.onAuthStateChanged(async u=>{user=u; if(u){let d=await db.collection("usuarios").doc(u.uid).get(); perfil=d.exists?d.data():null; tela=perfil?.tipo||"inicio";} render();});
+
+function calcular(km){let k=Number(km)||0, paga=10; if(k>5) paga+=(k-5)*2; let moto=7.5+(k>5?(k-5)*1.5:0); let tempo=Math.round(k*3+5); return{paga:+(paga).toFixed(2), moto:+(moto).toFixed(2), tempo, km:k};}
+function etaTexto(km){let c=calcular(km); return `${c.km}km - ${c.tempo} min até loja`;}
+
+function render(){
+ let h="";
+ if(tela==="inicio"){
+  h=`<div style="background:#000;color:#FFD700;padding:18px;border-radius:12px;text-align:center;font-weight:bold;font-size:22px">⚡ ANJOS FLASH<br><small style="color:#fff;font-size:11px">Macaé - Entregas rápidas</small></div>
+  <button onclick="tela='cad_lojista';render()" style="background:#000;color:#FFD700;margin-top:15px">🏪 CADASTRO LOJA + LOCAL</button>
+  <button onclick="tela='cad_moto';render()" style="background:#333;color:#fff">🏍️ CADASTRO MOTOBOY + CNH</button>
+  <button onclick="tela='login';render()" style="background:#fff;border:2px solid #000">🔑 LOGIN</button>
+  <button onclick="tela='admin';render()" style="background:#FFD700;color:#000">👑 ADMIN</button>`;
+ }
+ else if(tela==="cad_lojista"){
+  h=`<button onclick="tela='inicio';render()" style="width:auto">← Voltar</button><div class="card"><h3>🏪 Cadastro Loja - Completo</h3>
+  <input id="nome" placeholder="Nome da Loja *"><input id="cnpj" placeholder="CNPJ"><input id="tel_loja" placeholder="Número da Loja (WhatsApp) *"><input id="tel_cliente" placeholder="Número para cliente ligar"><input id="endereco" placeholder="Endereço completo + bairro *"><input id="ref" placeholder="Ponto de referência"><input id="email" placeholder="Email *"><input id="senha" type="password" placeholder="Senha *">
+  <button onclick="cadLojista()" style="background:#000;color:#FFD700">CADASTRAR LOJA COM LOCAL</button></div>`;
+ }
+ else if(tela==="cad_moto"){
+  h=`<button onclick="tela='inicio';render()" style="width:auto">← Voltar</button><div class="card"><h3>🏍️ Cadastro Motoboy + CNH</h3>
+  <input id="nome" placeholder="Nome completo *"><input id="tel_moto" placeholder="Seu número WhatsApp *"><input id="cpf" placeholder="CPF *"><input id="placa" placeholder="Placa da moto *"><input id="modelo" placeholder="Modelo moto"><label style="font-size:12px;margin-top:8px;display:block">📸 CNH - Foto ou PDF *</label><input id="cnh" type="file" accept="image/*,.pdf" onchange="cnhFile=this.files[0]">
+  <input id="email" placeholder="Email *"><input id="senha" type="password" placeholder="Senha *">
+  <button onclick="cadMoto()" style="background:#333;color:#fff">CADASTRAR MOTOBOY COM CNH</button></div>`;
+ }
+ else if(tela==="login"){
+  h=`<button onclick="tela='inicio';render()" style="width:auto">← Voltar</button><div class="card"><h3>Login</h3><input id="email" placeholder="Email"><input id="senha" type="password" placeholder="Senha"><button onclick="login()" style="background:#000;color:#FFD700">ENTRAR</button></div>`;
+ }
+ else if(tela==="lojista"){
+  h=`<div style="display:flex;justify-content:space-between;align-items:center"><button onclick="sair()" style="width:auto">Sair</button><b>${perfil?.nome}</b><b>R$ ${(perfil?.saldo||0).toFixed(2)}</b></div>
+  <div class="card"><h3>📦 Nova Entrega - Cliente</h3><input id="end_cliente" placeholder="Endereço cliente *"><input id="nome_cliente" placeholder="Nome cliente"><input id="tel_cliente_ent" placeholder="WhatsApp cliente"><input id="km" type="number" value="3" oninput="render()"><div style="background:#000;color:#FFD700;padding:8px;border-radius:8px;text-align:center">${etaTexto(document.getElementById("km")?.value||3)}<br>Valor travado R$ ${calcular(document.getElementById("km")?.value||3).paga}</div><button onclick="criarEntrega()" style="background:#000;color:#FFD700">CRIAR E AVISAR MOTOBOY</button></div>
+  <div class="card"><h4>Entregas - Motoboy chegando em:</h4>${entregas.filter(e=>e.lojistaId===user.uid).map(e=>`<div style="padding:6px 0;border-bottom:1px solid #eee"><b>${e.end_cliente||e.endereco}</b><br>${e.km}km - ${e.tempo||calcular(e.km).tempo} min - ${e.status}<br>${e.motoboyNome?`🏍️ ${e.motoboyNome} - ${e.motoboyTel} está a ${e.tempo} min da loja`:''}</div>`).join('')||'Nenhuma'}</div>`;
+ }
+ else if(tela==="motoboy"){
+  h=`<div style="display:flex;justify-content:space-between"><button onclick="sair()" style="width:auto">Sair</button><b>${perfil?.nome}</b><b>R$ ${(perfil?.saldo||0).toFixed(2)}</b></div>
+  <div class="card"><h3>🏍️ Entregas - Quanto falta pra chegar na loja</h3>${entregas.filter(e=>e.status==='pendente').map(e=>{let c=calcular(e.km); return `<div style="border:1px solid #ddd;padding:8px;border-radius:8px;margin-bottom:6px"><b>Loja: ${e.lojaNome}</b><br>📍 ${e.lojaEndereco}<br>📞 Loja: ${e.lojaTel}<br>👤 Cliente: ${e.nome_cliente||''} - ${e.tel_cliente||''}<br><b>${c.km}km - ${c.tempo} MIN até loja</b><br>Recebe R$ ${e.moto}<br><button onclick="pegar('${e.id}')" style="background:green;color:#fff;padding:8px">PEGAR - AVISAR CLIENTE</button></div>`}).join('')||'Nenhuma'}</div>
+  <div class="card"><h4>Minhas corridas</h4>${entregas.filter(e=>e.motoboyId===user.uid).map(e=>`<div>${e.end_cliente} - ${e.status}<br><button onclick="avisarCliente('${e.id}')" style="background:#000;color:#FFD700;padding:6px;width:auto">📱 Avisar cliente que estou indo - ${e.tel_cliente}</button><br><button onclick="finalizar('${e.id}')" style="background:blue;color:#fff;padding:6px;width:auto">Finalizar</button></div>`).join('')}</div>`;
+ }
+ else if(tela==="admin"){
+  h=`<button onclick="tela='inicio';render()" style="width:auto">← Voltar</button><h2>👑 ADMIN COMPLETO</h2>Add: <input type="number" value="${add}" onchange="add=this.value" style="width:70px">
+  <div class="card"><h3>🏪 Lojas - Número + Local</h3>${lojistas.map(l=>`<div style="padding:6px 0;border-bottom:1px solid #eee"><b>${l.nome}</b> - ${l.tel_loja||l.tel}<br>📍 ${l.endereco}<br>📞 Loja: ${l.tel_loja} | Cliente: ${l.tel_cliente||''}<br>R$ ${(l.saldo||0).toFixed(2)} <button onclick="addSaldo('lojistas','${l.id}',${add})" style="width:50px;background:green;color:#fff;padding:4px">+${add}</button><button onclick="zerar('lojistas','${l.id}')" style="width:50px;background:red;color:#fff;padding:4px">ZERA</button></div>`).join('')}</div>
+  <div class="card"><h3>🏍️ Motoboys - CNH + Número</h3>${motoboys.map(m=>`<div style="padding:6px 0;border-bottom:1px solid #eee"><b>${m.nome}</b> - ${m.placa} - ${m.modelo||''}<br>📞 ${m.tel_moto||m.tel} - CPF ${m.cpf}<br>${m.cnhUrl?`<a href="${m.cnhUrl}" target="_blank">📄 Ver CNH ${m.cnhTipo||''}</a>`:''}<br>R$ ${(m.saldo||0).toFixed(2)} <button onclick="addSaldo('motoboys','${m.id}',${add})" style="width:50px;background:green;color:#fff;padding:4px">+${add}</button><button onclick="zerar('motoboys','${m.id}')" style="width:60px;background:#000;color:#FFD700;padding:4px">PAGO</button></div>`).join('')}</div>`;
+ }
+ document.getElementById("app").innerHTML=h;
+}
+
+async function cadLojista(){
+ let nome=document.getElementById("nome").value, tel_loja=document.getElementById("tel_loja").value, endereco=document.getElementById("endereco").value, email=document.getElementById("email").value, senha=document.getElementById("senha").value;
+ if(!nome||!tel_loja||!endereco||!email||!senha) return alert("Preencha *");
+ let cred=await auth.createUserWithEmailAndPassword(email,senha);
+ let dados={nome, tel_loja, tel:tel_loja, tel_cliente:document.getElementById("tel_cliente").value, endereco, ref:document.getElementById("ref").value, cnpj:document.getElementById("cnpj").value, email, tipo:"lojista", saldo:0, createdAt:new Date()};
+ await db.collection("usuarios").doc(cred.user.uid).set(dados); await db.collection("lojistas").doc(cred.user.uid).set({...dados, id:cred.user.uid}); alert("Loja cadastrada com local!");
+}
+async function cadMoto(){
+ let nome=document.getElementById("nome").value, tel_moto=document.getElementById("tel_moto").value, cpf=document.getElementById("cpf").value, email=document.getElementById("email").value, senha=document.getElementById("senha").value;
+ if(!nome||!tel_moto||!cpf||!email||!senha) return alert("Preencha *");
+ if(!cnhFile) return alert("Envie CNH foto ou PDF");
+ let cred=await auth.createUserWithEmailAndPassword(email,senha);
+ let cnhUrl="", cnhTipo=cnhFile.type;
+ try{let ref=storage.ref().child("cnh/"+cred.user.uid+"_"+cnhFile.name); await ref.put(cnhFile); cnhUrl=await ref.getDownloadURL();}catch(e){alert("Erro CNH "+e.message); cnhUrl="erro";}
+ let dados={nome, tel_moto, tel:tel_moto, cpf, placa:document.getElementById("placa").value, modelo:document.getElementById("modelo").value, cnhUrl, cnhTipo, email, tipo:"motoboy", saldo:0, createdAt:new Date()};
+ await db.collection("usuarios").doc(cred.user.uid).set(dados); await db.collection("motoboys").doc(cred.user.uid).set({...dados, id:cred.user.uid}); alert("Motoboy com CNH cadastrado!");
+}
+async function login(){await auth.signInWithEmailAndPassword(document.getElementById("email").value,document.getElementById("senha").value);}
+async function sair(){await auth.signOut(); tela="inicio"; render();}
+async function criarEntrega(){
+ let end_cliente=document.getElementById("end_cliente").value, km=document.getElementById("km").value;
+ if(!end_cliente) return alert("Endereço cliente");
+ let c=calcular(km);
+ await db.collection("entregas").add({end_cliente, endereco:end_cliente, nome_cliente:document.getElementById("nome_cliente").value, tel_cliente:document.getElementById("tel_cliente_ent").value, km:Number(km), tempo:c.tempo, paga:c.paga, moto:c.moto, status:"pendente", lojaNome:perfil.nome, lojaEndereco:perfil.endereco, lojaTel:perfil.tel_loja||perfil.tel, lojistaId:user.uid, createdAt:new Date()});
+ alert(`Entrega criada! Motoboy chega na loja em ${c.tempo} min - ${c.km}km`);
+}
+async function pegar(id){let m=perfil; await db.collection("entregas").doc(id).update({status:"em_coleta", motoboyId:user.uid, motoboyNome:m.nome, motoboyTel:m.tel_moto||m.tel, tempo:calcular((await db.collection("entregas").doc(id).get()).data().km).tempo}); alert("Você pegou! Avisando loja e cliente - chega em "+calcular((await db.collection("entregas").doc(id).get()).data().km).tempo+" min");}
+function avisarCliente(id){let e=entregas.find(x=>x.id===id); if(e?.tel_cliente) window.open(`https://wa.me/55${e.tel_cliente.replace(/\D/g,'')}?text=Olá ${e.nome_cliente||''}, sou ${perfil.nome} motoboy Anjos Flash, estou indo buscar seu pedido, chego em ${e.tempo} min`);}
+async function finalizar(id){await db.collection("entregas").doc(id).update({status:"entregue"}); alert("Entregue!");}
+async function addSaldo(col,id,v){await db.collection(col).doc(id).update({saldo:firebase.firestore.FieldValue.increment(Number(v))}); await db.collection("usuarios").doc(id).update({saldo:firebase.firestore.FieldValue.increment(Number(v))});}
+async function zerar(col,id){if(!confirm("Zerar?")) return; await db.collection(col).doc(id).update({saldo:0}); await db.collection("usuarios").doc(id).update({saldo:0});}
+
+db.collection("lojistas").onSnapshot(s=>{lojistas=s.docs.map(d=>({id:d.id,...d.data()})); render();});
+db.collection("motoboys").onSnapshot(s=>{motoboys=s.docs.map(d=>({id:d.id,...d.data()})); render();});
+db.collection("entregas").onSnapshot(s=>{entregas=s.docs.map(d=>({id:d.id,...d.data()})); render();});
+
+render();
 </script>
 </body>
 </html>
