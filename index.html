@@ -1,106 +1,1555 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Anjos Flash - Completo</title>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-<style>body{font-family:Arial;max-width:430px;margin:auto;padding:12px;background:#f0f0f0}input,select{width:100%;padding:12px;margin-top:6px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box}button{padding:13px;width:100%;border:0;border-radius:10px;margin-top:8px;font-weight:bold} .card{background:#fff;border-radius:12px;padding:12px;margin-bottom:10px}</style>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Anjos em Duas Rodas</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#111;
+ color:#fff;
+}
+header{
+ background:#f57c00;
+ color:#111;
+ padding:16px;
+ text-align:center;
+ font-weight:bold;
+ font-size:22px;
+}
+.container{
+ width:100%;
+ max-width:900px;
+ margin:auto;
+ padding:15px;
+}
+.card{
+ background:#1d1d1d;
+ border-radius:12px;
+ padding:18px;
+ margin-bottom:15px;
+ box-shadow:0 2px 10px #0008;
+}
+h2,h3{margin-top:0}
+input,select,button,textarea{
+ width:100%;
+ padding:13px;
+ margin:6px 0;
+ border-radius:8px;
+ border:1px solid #555;
+ font-size:16px;
+}
+input,select,textarea{
+ background:#292929;
+ color:#fff;
+}
+button{
+ background:#f57c00;
+ color:#111;
+ border:0;
+ font-weight:bold;
+ cursor:pointer;
+}
+button:disabled{
+ opacity:.45;
+ cursor:not-allowed;
+}
+.btn2{background:#333;color:#fff}
+.hidden{display:none!important}
+.logo{
+ text-align:center;
+ font-size:28px;
+ font-weight:bold;
+ margin:20px 0;
+ color:#f57c00;
+}
+.status{
+ padding:12px;
+ border-radius:8px;
+ background:#252525;
+ margin:10px 0;
+ white-space:pre-wrap;
+}
+.ok{
+ background:#164d25;
+ color:#b9ffc5;
+}
+.erro{
+ background:#5b1717;
+ color:#fff;
+}
+.aviso{
+ background:#594500;
+ color:#ffe99a;
+}
+.grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+ gap:10px;
+}
+.item{
+ background:#282828;
+ padding:13px;
+ border-radius:9px;
+ margin:8px 0;
+}
+.valor{
+ font-size:25px;
+ color:#ff9800;
+ font-weight:bold;
+}
+.small{
+ font-size:13px;
+ color:#bbb;
+}
+</style>
 </head>
+
 <body>
-<div id="app"></div>
+
+<header>
+ANJOS EM DUAS RODAS
+</header>
+
+<div class="container">
+
+<div id="mensagem" class="status hidden"></div>
+
+<section id="loginArea">
+
+<div class="logo">
+🛵 ANJOS EM DUAS RODAS
+</div>
+
+<div class="card">
+<h2>Entrar</h2>
+
+<input id="loginEmail"
+type="email"
+placeholder="E-mail">
+
+<input id="loginSenha"
+type="password"
+placeholder="Senha">
+
+<button id="btnLogin"
+onclick="loginUser()">
+ENTRAR
+</button>
+
+<button class="btn2"
+onclick="mostrarCadastro()">
+CRIAR CONTA
+</button>
+
+<div id="firebaseStatus"
+class="status aviso">
+Iniciando conexão...
+</div>
+</div>
+
+</section>
+
+<section id="cadastroArea" class="hidden">
+
+<div class="card">
+<h2>Criar conta</h2>
+
+<input id="cadNome"
+placeholder="Nome completo">
+
+<input id="cadEmail"
+type="email"
+placeholder="E-mail">
+
+<input id="cadTelefone"
+placeholder="Telefone">
+
+<input id="cadSenha"
+type="password"
+placeholder="Senha">
+
+<select id="cadTipo">
+<option value="lojista">LOJISTA</option>
+<option value="motoboy">MOTOBOY</option>
+<option value="franqueado">FRANQUEADO</option>
+</select>
+
+<input id="cadEndereco"
+placeholder="Endereço">
+
+<button onclick="registrarUser()">
+CRIAR CONTA
+</button>
+
+<button class="btn2"
+onclick="mostrarLogin()">
+VOLTAR
+</button>
+</div>
+
+</section>
+
+<section id="appArea" class="hidden">
+
+<div class="card">
+<h2 id="tituloPainel">
+Painel
+</h2>
+
+<div class="grid">
+
+<div class="item">
+<div class="small">Saldo atual</div>
+<div id="saldoAtual" class="valor">
+R$ 0,00
+</div>
+</div>
+
+<div class="item">
+<div class="small">Usuário</div>
+<div id="nomeAtual">-</div>
+</div>
+
+<div class="item">
+<div class="small">Função</div>
+<div id="tipoAtual">-</div>
+</div>
+
+</div>
+
+<button class="btn2"
+onclick="sair()">
+SAIR
+</button>
+</div>
+
+<div id="painelLojista" class="hidden">
+
+<div class="card">
+<h3>💰 Recarregar saldo</h3>
+
+<p>
+Faça um PIX de <b>R$ 50,00</b> para:
+</p>
+
+<div class="valor">
+22997450131
+</div>
+
+<button onclick="copiarPix()">
+COPIAR PIX
+</button>
+
+<button onclick="pedirRecarga()">
+JÁ FIZ O PIX — SOLICITAR RECARGA
+</button>
+
+<div class="small">
+A recarga fica pendente até aprovação do administrador.
+</div>
+</div>
+
+<div class="card">
+<h3>📦 Novo pedido</h3>
+
+<input id="clienteNome"
+placeholder="Nome do cliente">
+
+<input id="clienteEndereco"
+placeholder="Endereço de entrega">
+
+<input id="valorProduto"
+type="number"
+step="0.01"
+placeholder="Valor do produto">
+
+<button id="btnPedido"
+onclick="criarPedido()">
+CRIAR PEDIDO — R$ 8,00
+</button>
+
+<div id="avisoSaldo" class="status aviso">
+Saldo mínimo para novo pedido: R$ 8,00
+</div>
+</div>
+
+<div class="card">
+<h3>📋 Meus pedidos</h3>
+<div id="listaLojista"></div>
+</div>
+
+<div class="card">
+<h3>📊 Extrato — últimos 90 dias</h3>
+<div id="extratoLojista"></div>
+</div>
+
+</div>
+
+<div id="painelMotoboy" class="hidden">
+
+<div class="card">
+<h3>🏍️ Status</h3>
+
+<button id="btnOnline"
+onclick="alternarOnline()">
+FICAR ONLINE
+</button>
+
+<div id="statusMoto" class="status">
+OFFLINE
+</div>
+</div>
+
+<div class="card">
+<h3>📦 Pedidos disponíveis</h3>
+<div id="listaPedidosMoto"></div>
+</div>
+
+<div class="card">
+<h3>📋 Minhas entregas</h3>
+<div id="listaEntregasMoto"></div>
+</div>
+
+<div class="card">
+<h3>💰 Extrato — últimos 90 dias</h3>
+<div id="extratoMoto"></div>
+</div>
+
+</div>
+
+<div id="painelFranqueado" class="hidden">
+
+<div class="card">
+<h3>🏢 Painel Franqueado</h3>
+<p>
+Consulte seu saldo e acompanhe as operações.
+</p>
+</div>
+
+</div>
+
+<div id="painelAdmin" class="hidden">
+
+<div class="card">
+<h3>👑 ADMINISTRADOR</h3>
+
+<div class="grid">
+
+<div class="item">
+<div class="small">Receitas aprovadas</div>
+<div id="adminReceitas" class="valor">
+R$ 0,00
+</div>
+</div>
+
+<div class="item">
+<div class="small">Pagamentos motoboys</div>
+<div id="adminPagamentos" class="valor">
+R$ 0,00
+</div>
+</div>
+
+<div class="item">
+<div class="small">Lucro</div>
+<div id="adminLucro" class="valor">
+R$ 0,00
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="card">
+<h3>💳 Recargas pendentes</h3>
+<div id="adminRecargas"></div>
+</div>
+
+<div class="card">
+<h3>👥 Usuários</h3>
+<div id="adminUsuarios"></div>
+</div>
+
+<div class="card">
+<h3>📦 Todos os pedidos</h3>
+<div id="adminPedidos"></div>
+</div>
+
+<div class="card">
+<h3>💰 Pagar motoboy</h3>
+
+<input id="pagMotoUid"
+placeholder="UID do motoboy">
+
+<input id="pagMotoValor"
+type="number"
+step="0.01"
+placeholder="Valor">
+
+<button onclick="pagarMotoboy()">
+REGISTRAR PAGAMENTO
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+</div><!-- =========================================================
+     PARTE 2 — FIREBASE / LOGIN / PERFIS
+     ANJOS EM DUAS RODAS
+     ========================================================= -->
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
 <script>
-const firebaseConfig={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.firebasestorage.app",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945"};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore(), auth=firebase.auth(), storage=firebase.storage();
-let tela="inicio", user=null, perfil=null, lojistas=[], motoboys=[], entregas=[], add=10, cnhFile=null;
 
-auth.onAuthStateChanged(async u=>{user=u; if(u){let d=await db.collection("usuarios").doc(u.uid).get(); perfil=d.exists?d.data():null; tela=perfil?.tipo||"inicio";} render();});
+const firebaseConfig = {
+  apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
+  authDomain: "anjos-flash.firebaseapp.com",
+  projectId: "anjos-flash",
+  storageBucket: "anjos-flash.firebasestorage.app",
+  messagingSenderId: "725133182752",
+  appId: "1:725133182752:web:5f9a98fa97269dcdcab945",
+  measurementId: "G-9CSJXXNR0C"
+};
 
-function calcular(km){let k=Number(km)||0, paga=10; if(k>5) paga+=(k-5)*2; let moto=7.5+(k>5?(k-5)*1.5:0); let tempo=Math.round(k*3+5); return{paga:+(paga).toFixed(2), moto:+(moto).toFixed(2), tempo, km:k};}
-function etaTexto(km){let c=calcular(km); return `${c.km}km - ${c.tempo} min até loja`;}
+let auth = null;
+let db = null;
 
-function render(){
- let h="";
- if(tela==="inicio"){
-  h=`<div style="background:#000;color:#FFD700;padding:18px;border-radius:12px;text-align:center;font-weight:bold;font-size:22px">⚡ ANJOS FLASH<br><small style="color:#fff;font-size:11px">Macaé - Entregas rápidas</small></div>
-  <button onclick="tela='cad_lojista';render()" style="background:#000;color:#FFD700;margin-top:15px">🏪 CADASTRO LOJA + LOCAL</button>
-  <button onclick="tela='cad_moto';render()" style="background:#333;color:#fff">🏍️ CADASTRO MOTOBOY + CNH</button>
-  <button onclick="tela='login';render()" style="background:#fff;border:2px solid #000">🔑 LOGIN</button>
-  <button onclick="tela='admin';render()" style="background:#FFD700;color:#000">👑 ADMIN</button>`;
- }
- else if(tela==="cad_lojista"){
-  h=`<button onclick="tela='inicio';render()" style="width:auto">← Voltar</button><div class="card"><h3>🏪 Cadastro Loja - Completo</h3>
-  <input id="nome" placeholder="Nome da Loja *"><input id="cnpj" placeholder="CNPJ"><input id="tel_loja" placeholder="Número da Loja (WhatsApp) *"><input id="tel_cliente" placeholder="Número para cliente ligar"><input id="endereco" placeholder="Endereço completo + bairro *"><input id="ref" placeholder="Ponto de referência"><input id="email" placeholder="Email *"><input id="senha" type="password" placeholder="Senha *">
-  <button onclick="cadLojista()" style="background:#000;color:#FFD700">CADASTRAR LOJA COM LOCAL</button></div>`;
- }
- else if(tela==="cad_moto"){
-  h=`<button onclick="tela='inicio';render()" style="width:auto">← Voltar</button><div class="card"><h3>🏍️ Cadastro Motoboy + CNH</h3>
-  <input id="nome" placeholder="Nome completo *"><input id="tel_moto" placeholder="Seu número WhatsApp *"><input id="cpf" placeholder="CPF *"><input id="placa" placeholder="Placa da moto *"><input id="modelo" placeholder="Modelo moto"><label style="font-size:12px;margin-top:8px;display:block">📸 CNH - Foto ou PDF *</label><input id="cnh" type="file" accept="image/*,.pdf" onchange="cnhFile=this.files[0]">
-  <input id="email" placeholder="Email *"><input id="senha" type="password" placeholder="Senha *">
-  <button onclick="cadMoto()" style="background:#333;color:#fff">CADASTRAR MOTOBOY COM CNH</button></div>`;
- }
- else if(tela==="login"){
-  h=`<button onclick="tela='inicio';render()" style="width:auto">← Voltar</button><div class="card"><h3>Login</h3><input id="email" placeholder="Email"><input id="senha" type="password" placeholder="Senha"><button onclick="login()" style="background:#000;color:#FFD700">ENTRAR</button></div>`;
- }
- else if(tela==="lojista"){
-  h=`<div style="display:flex;justify-content:space-between;align-items:center"><button onclick="sair()" style="width:auto">Sair</button><b>${perfil?.nome}</b><b>R$ ${(perfil?.saldo||0).toFixed(2)}</b></div>
-  <div class="card"><h3>📦 Nova Entrega - Cliente</h3><input id="end_cliente" placeholder="Endereço cliente *"><input id="nome_cliente" placeholder="Nome cliente"><input id="tel_cliente_ent" placeholder="WhatsApp cliente"><input id="km" type="number" value="3" oninput="render()"><div style="background:#000;color:#FFD700;padding:8px;border-radius:8px;text-align:center">${etaTexto(document.getElementById("km")?.value||3)}<br>Valor travado R$ ${calcular(document.getElementById("km")?.value||3).paga}</div><button onclick="criarEntrega()" style="background:#000;color:#FFD700">CRIAR E AVISAR MOTOBOY</button></div>
-  <div class="card"><h4>Entregas - Motoboy chegando em:</h4>${entregas.filter(e=>e.lojistaId===user.uid).map(e=>`<div style="padding:6px 0;border-bottom:1px solid #eee"><b>${e.end_cliente||e.endereco}</b><br>${e.km}km - ${e.tempo||calcular(e.km).tempo} min - ${e.status}<br>${e.motoboyNome?`🏍️ ${e.motoboyNome} - ${e.motoboyTel} está a ${e.tempo} min da loja`:''}</div>`).join('')||'Nenhuma'}</div>`;
- }
- else if(tela==="motoboy"){
-  h=`<div style="display:flex;justify-content:space-between"><button onclick="sair()" style="width:auto">Sair</button><b>${perfil?.nome}</b><b>R$ ${(perfil?.saldo||0).toFixed(2)}</b></div>
-  <div class="card"><h3>🏍️ Entregas - Quanto falta pra chegar na loja</h3>${entregas.filter(e=>e.status==='pendente').map(e=>{let c=calcular(e.km); return `<div style="border:1px solid #ddd;padding:8px;border-radius:8px;margin-bottom:6px"><b>Loja: ${e.lojaNome}</b><br>📍 ${e.lojaEndereco}<br>📞 Loja: ${e.lojaTel}<br>👤 Cliente: ${e.nome_cliente||''} - ${e.tel_cliente||''}<br><b>${c.km}km - ${c.tempo} MIN até loja</b><br>Recebe R$ ${e.moto}<br><button onclick="pegar('${e.id}')" style="background:green;color:#fff;padding:8px">PEGAR - AVISAR CLIENTE</button></div>`}).join('')||'Nenhuma'}</div>
-  <div class="card"><h4>Minhas corridas</h4>${entregas.filter(e=>e.motoboyId===user.uid).map(e=>`<div>${e.end_cliente} - ${e.status}<br><button onclick="avisarCliente('${e.id}')" style="background:#000;color:#FFD700;padding:6px;width:auto">📱 Avisar cliente que estou indo - ${e.tel_cliente}</button><br><button onclick="finalizar('${e.id}')" style="background:blue;color:#fff;padding:6px;width:auto">Finalizar</button></div>`).join('')}</div>`;
- }
- else if(tela==="admin"){
-  h=`<button onclick="tela='inicio';render()" style="width:auto">← Voltar</button><h2>👑 ADMIN COMPLETO</h2>Add: <input type="number" value="${add}" onchange="add=this.value" style="width:70px">
-  <div class="card"><h3>🏪 Lojas - Número + Local</h3>${lojistas.map(l=>`<div style="padding:6px 0;border-bottom:1px solid #eee"><b>${l.nome}</b> - ${l.tel_loja||l.tel}<br>📍 ${l.endereco}<br>📞 Loja: ${l.tel_loja} | Cliente: ${l.tel_cliente||''}<br>R$ ${(l.saldo||0).toFixed(2)} <button onclick="addSaldo('lojistas','${l.id}',${add})" style="width:50px;background:green;color:#fff;padding:4px">+${add}</button><button onclick="zerar('lojistas','${l.id}')" style="width:50px;background:red;color:#fff;padding:4px">ZERA</button></div>`).join('')}</div>
-  <div class="card"><h3>🏍️ Motoboys - CNH + Número</h3>${motoboys.map(m=>`<div style="padding:6px 0;border-bottom:1px solid #eee"><b>${m.nome}</b> - ${m.placa} - ${m.modelo||''}<br>📞 ${m.tel_moto||m.tel} - CPF ${m.cpf}<br>${m.cnhUrl?`<a href="${m.cnhUrl}" target="_blank">📄 Ver CNH ${m.cnhTipo||''}</a>`:''}<br>R$ ${(m.saldo||0).toFixed(2)} <button onclick="addSaldo('motoboys','${m.id}',${add})" style="width:50px;background:green;color:#fff;padding:4px">+${add}</button><button onclick="zerar('motoboys','${m.id}')" style="width:60px;background:#000;color:#FFD700;padding:4px">PAGO</button></div>`).join('')}</div>`;
- }
- document.getElementById("app").innerHTML=h;
+let usuarioAtual = null;
+let perfilAtual = null;
+let saldoAtual = 0;
+
+let carregandoPainel = false;
+
+
+/* =========================================================
+   MENSAGENS
+   ========================================================= */
+
+function mostrarMensagem(texto, tipo = "aviso") {
+
+  const el = document.getElementById("mensagem");
+
+  if (!el) {
+    alert(texto);
+    return;
+  }
+
+  el.className = "status " + tipo;
+  el.textContent = texto;
+  el.classList.remove("hidden");
 }
 
-async function cadLojista(){
- let nome=document.getElementById("nome").value, tel_loja=document.getElementById("tel_loja").value, endereco=document.getElementById("endereco").value, email=document.getElementById("email").value, senha=document.getElementById("senha").value;
- if(!nome||!tel_loja||!endereco||!email||!senha) return alert("Preencha *");
- let cred=await auth.createUserWithEmailAndPassword(email,senha);
- let dados={nome, tel_loja, tel:tel_loja, tel_cliente:document.getElementById("tel_cliente").value, endereco, ref:document.getElementById("ref").value, cnpj:document.getElementById("cnpj").value, email, tipo:"lojista", saldo:0, createdAt:new Date()};
- await db.collection("usuarios").doc(cred.user.uid).set(dados); await db.collection("lojistas").doc(cred.user.uid).set({...dados, id:cred.user.uid}); alert("Loja cadastrada com local!");
-}
-async function cadMoto(){
- let nome=document.getElementById("nome").value, tel_moto=document.getElementById("tel_moto").value, cpf=document.getElementById("cpf").value, email=document.getElementById("email").value, senha=document.getElementById("senha").value;
- if(!nome||!tel_moto||!cpf||!email||!senha) return alert("Preencha *");
- if(!cnhFile) return alert("Envie CNH foto ou PDF");
- let cred=await auth.createUserWithEmailAndPassword(email,senha);
- let cnhUrl="", cnhTipo=cnhFile.type;
- try{let ref=storage.ref().child("cnh/"+cred.user.uid+"_"+cnhFile.name); await ref.put(cnhFile); cnhUrl=await ref.getDownloadURL();}catch(e){alert("Erro CNH "+e.message); cnhUrl="erro";}
- let dados={nome, tel_moto, tel:tel_moto, cpf, placa:document.getElementById("placa").value, modelo:document.getElementById("modelo").value, cnhUrl, cnhTipo, email, tipo:"motoboy", saldo:0, createdAt:new Date()};
- await db.collection("usuarios").doc(cred.user.uid).set(dados); await db.collection("motoboys").doc(cred.user.uid).set({...dados, id:cred.user.uid}); alert("Motoboy com CNH cadastrado!");
-}
-async function login(){await auth.signInWithEmailAndPassword(document.getElementById("email").value,document.getElementById("senha").value);}
-async function sair(){await auth.signOut(); tela="inicio"; render();}
-async function criarEntrega(){
- let end_cliente=document.getElementById("end_cliente").value, km=document.getElementById("km").value;
- if(!end_cliente) return alert("Endereço cliente");
- let c=calcular(km);
- await db.collection("entregas").add({end_cliente, endereco:end_cliente, nome_cliente:document.getElementById("nome_cliente").value, tel_cliente:document.getElementById("tel_cliente_ent").value, km:Number(km), tempo:c.tempo, paga:c.paga, moto:c.moto, status:"pendente", lojaNome:perfil.nome, lojaEndereco:perfil.endereco, lojaTel:perfil.tel_loja||perfil.tel, lojistaId:user.uid, createdAt:new Date()});
- alert(`Entrega criada! Motoboy chega na loja em ${c.tempo} min - ${c.km}km`);
-}
-async function pegar(id){let m=perfil; await db.collection("entregas").doc(id).update({status:"em_coleta", motoboyId:user.uid, motoboyNome:m.nome, motoboyTel:m.tel_moto||m.tel, tempo:calcular((await db.collection("entregas").doc(id).get()).data().km).tempo}); alert("Você pegou! Avisando loja e cliente - chega em "+calcular((await db.collection("entregas").doc(id).get()).data().km).tempo+" min");}
-function avisarCliente(id){let e=entregas.find(x=>x.id===id); if(e?.tel_cliente) window.open(`https://wa.me/55${e.tel_cliente.replace(/\D/g,'')}?text=Olá ${e.nome_cliente||''}, sou ${perfil.nome} motoboy Anjos Flash, estou indo buscar seu pedido, chego em ${e.tempo} min`);}
-async function finalizar(id){await db.collection("entregas").doc(id).update({status:"entregue"}); alert("Entregue!");}
-async function addSaldo(col,id,v){await db.collection(col).doc(id).update({saldo:firebase.firestore.FieldValue.increment(Number(v))}); await db.collection("usuarios").doc(id).update({saldo:firebase.firestore.FieldValue.increment(Number(v))});}
-async function zerar(col,id){if(!confirm("Zerar?")) return; await db.collection(col).doc(id).update({saldo:0}); await db.collection("usuarios").doc(id).update({saldo:0});}
 
-db.collection("lojistas").onSnapshot(s=>{lojistas=s.docs.map(d=>({id:d.id,...d.data()})); render();});
-db.collection("motoboys").onSnapshot(s=>{motoboys=s.docs.map(d=>({id:d.id,...d.data()})); render();});
-db.collection("entregas").onSnapshot(s=>{entregas=s.docs.map(d=>({id:d.id,...d.data()})); render();});
+function limparMensagem() {
 
-render();
-</script>
-</body>
-</html>
+  const el = document.getElementById("mensagem");
+
+  if (el) {
+    el.classList.add("hidden");
+    el.textContent = "";
+  }
+
+}
+
+
+/* =========================================================
+   ERROS FIREBASE
+   ========================================================= */
+
+function erroHumano(e) {
+
+  const code = e && e.code ? e.code : "";
+
+  const erros = {
+
+    "auth/invalid-credential":
+      "E-mail ou senha incorretos.",
+
+    "auth/invalid-login-credentials":
+      "E-mail ou senha incorretos.",
+
+    "auth/user-not-found":
+      "Usuário não encontrado.",
+
+    "auth/wrong-password":
+      "Senha incorreta.",
+
+    "auth/invalid-email":
+      "E-mail inválido.",
+
+    "auth/email-already-in-use":
+      "Este e-mail já está cadastrado.",
+
+    "auth/weak-password":
+      "A senha precisa ter pelo menos 6 caracteres.",
+
+    "auth/operation-not-allowed":
+      "Login por E-mail/Senha não está ativado.",
+
+    "auth/network-request-failed":
+      "Falha de internet.",
+
+    "auth/too-many-requests":
+      "Muitas tentativas. Aguarde alguns minutos.",
+
+    "auth/unauthorized-domain":
+      "Este domínio não está autorizado no Firebase.",
+
+    "permission-denied":
+      "Firestore recusou a operação por falta de permissão.",
+
+    "failed-precondition":
+      "Configuração do Firebase incompleta."
+
+  };
+
+  return erros[code] ||
+    (e && e.message
+      ? e.message
+      : "Erro desconhecido.");
+
+}
+
+
+/* =========================================================
+   INICIAR FIREBASE
+   ========================================================= */
+
+try {
+
+  firebase.initializeApp(firebaseConfig);
+
+  auth = firebase.auth();
+
+  db = firebase.firestore();
+
+  const status =
+    document.getElementById("firebaseStatus");
+
+  if (status) {
+
+    status.className = "status ok";
+
+    status.textContent =
+      "✓ Firebase conectado.\n" +
+      "Projeto: anjos-flash";
+
+  }
+
+  console.log(
+    "Firebase iniciado:",
+    firebaseConfig.projectId
+  );
+
+} catch (e) {
+
+  console.error(e);
+
+  mostrarMensagem(
+    "Erro ao iniciar Firebase:\n\n" +
+    erroHumano(e),
+    "erro"
+  );
+
+}
+
+
+/* =========================================================
+   OBSERVAR AUTENTICAÇÃO
+   ========================================================= */
+
+if (auth) {
+
+  auth.onAuthStateChanged(
+    async function(user) {
+
+      console.log(
+        "Usuário autenticado:",
+        user ? user.uid : "nenhum"
+      );
+
+      if (!user) {
+
+        usuarioAtual = null;
+        perfilAtual = null;
+
+        return;
+      }
+
+      usuarioAtual = user;
+
+      await carregarUsuario();
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   MOSTRAR CADASTRO
+   ========================================================= */
+
+function mostrarCadastro() {
+
+  limparMensagem();
+
+  document
+    .getElementById("loginArea")
+    .classList.add("hidden");
+
+  document
+    .getElementById("cadastroArea")
+    .classList.remove("hidden");
+
+}
+
+
+/* =========================================================
+   MOSTRAR LOGIN
+   ========================================================= */
+
+function mostrarLogin() {
+
+  limparMensagem();
+
+  document
+    .getElementById("cadastroArea")
+    .classList.add("hidden");
+
+  document
+    .getElementById("loginArea")
+    .classList.remove("hidden");
+
+}
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+async function loginUser() {
+
+  limparMensagem();
+
+  if (!auth) {
+
+    mostrarMensagem(
+      "Firebase não está iniciado.",
+      "erro"
+    );
+
+    return;
+  }
+
+  const email =
+    document
+      .getElementById("loginEmail")
+      .value
+      .trim()
+      .toLowerCase();
+
+  const senha =
+    document
+      .getElementById("loginSenha")
+      .value;
+
+  if (!email || !senha) {
+
+    mostrarMensagem(
+      "Digite e-mail e senha.",
+      "erro"
+    );
+
+    return;
+  }
+
+  const btn =
+    document.getElementById("btnLogin");
+
+  if (btn) {
+
+    btn.disabled = true;
+    btn.textContent = "ENTRANDO...";
+
+  }
+
+  try {
+
+    await auth.signInWithEmailAndPassword(
+      email,
+      senha
+    );
+
+    mostrarMensagem(
+      "Login realizado!\n" +
+      "Identificando tipo de conta...",
+      "ok"
+    );
+
+  } catch (e) {
+
+    console.error(
+      "Erro login:",
+      e
+    );
+
+    mostrarMensagem(
+      erroHumano(e) +
+      "\n\nCódigo: " +
+      (e.code || "sem código"),
+      "erro"
+    );
+
+  } finally {
+
+    if (btn) {
+
+      btn.disabled = false;
+      btn.textContent = "ENTRAR";
+
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   CADASTRO
+   ========================================================= */
+
+async function registrarUser() {
+
+  limparMensagem();
+
+  const nome =
+    document
+      .getElementById("cadNome")
+      .value
+      .trim();
+
+  const email =
+    document
+      .getElementById("cadEmail")
+      .value
+      .trim()
+      .toLowerCase();
+
+  const telefone =
+    document
+      .getElementById("cadTelefone")
+      .value
+      .trim();
+
+  const senha =
+    document
+      .getElementById("cadSenha")
+      .value;
+
+  const tipoEscolhido =
+    document
+      .getElementById("cadTipo")
+      .value;
+
+  const endereco =
+    document
+      .getElementById("cadEndereco")
+      .value
+      .trim();
+
+
+  if (!nome ||
+      !email ||
+      !telefone ||
+      !senha) {
+
+    mostrarMensagem(
+      "Preencha todos os campos obrigatórios.",
+      "erro"
+    );
+
+    return;
+  }
+
+
+  if (senha.length < 6) {
+
+    mostrarMensagem(
+      "A senha precisa ter pelo menos 6 caracteres.",
+      "erro"
+    );
+
+    return;
+  }
+
+
+  try {
+
+    const cred =
+      await auth.createUserWithEmailAndPassword(
+        email,
+        senha
+      );
+
+    const uid =
+      cred.user.uid;
+
+
+    await cred.user.updateProfile({
+      displayName: nome
+    });
+
+
+    /*
+      ADMIN NUNCA PODE SER CRIADO
+      PELO CADASTRO PÚBLICO.
+    */
+
+    let tipo = tipoEscolhido;
+
+    if (
+      tipo !== "lojista" &&
+      tipo !== "motoboy" &&
+      tipo !== "franqueado"
+    ) {
+
+      tipo = "lojista";
+
+    }
+
+
+    await db
+      .collection("profiles")
+      .doc(uid)
+      .set({
+
+        nome: nome,
+
+        email: email,
+
+        telefone: telefone,
+
+        tipo: tipo,
+
+        endereco: endereco,
+
+        ativo: true,
+
+        online: false,
+
+        criadoEm:
+          firebase.firestore.FieldValue
+          .serverTimestamp()
+
+      });
+
+
+    await db
+      .collection("wallets")
+      .doc(uid)
+      .set({
+
+        saldo: 0,
+
+        atualizadoEm:
+          firebase.firestore.FieldValue
+          .serverTimestamp()
+
+      });
+
+
+    mostrarMensagem(
+      "Conta criada com sucesso!",
+      "ok"
+    );
+
+
+  } catch (e) {
+
+    console.error(e);
+
+    mostrarMensagem(
+      erroHumano(e) +
+      "\n\nCódigo: " +
+      (e.code || ""),
+      "erro"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CARREGAR USUÁRIO
+   ========================================================= */
+
+async function carregarUsuario() {
+
+  if (carregandoPainel) {
+    return;
+  }
+
+  carregandoPainel = true;
+
+  try {
+
+    mostrarMensagem(
+      "Login confirmado.\n" +
+      "Buscando seu tipo de conta...",
+      "aviso"
+    );
+
+
+    const uid =
+      usuarioAtual.uid;
+
+
+    /* =====================================================
+       BUSCAR PERFIL
+       ===================================================== */
+
+    const perfilDoc =
+      await db
+        .collection("profiles")
+        .doc(uid)
+        .get();
+
+
+    /*
+      NÃO TRANSFORMAR USUÁRIO EXISTENTE
+      EM LOJISTA AUTOMATICAMENTE.
+    */
+
+    if (!perfilDoc.exists) {
+
+      mostrarMensagem(
+
+        "Sua conta existe no Login, " +
+        "mas não existe um perfil no Firestore.\n\n" +
+
+        "UID:\n" +
+        uid +
+
+        "\n\nCrie o perfil deste usuário no Firestore.",
+
+        "erro"
+
+      );
+
+      return;
+    }
+
+
+    perfilAtual =
+      perfilDoc.data();
+
+
+    console.log(
+      "PERFIL ENCONTRADO:",
+      perfilAtual
+    );
+
+
+    /* =====================================================
+       IDENTIFICAR TIPO
+       ===================================================== */
+
+    const tipo =
+      String(
+        perfilAtual.tipo || ""
+      )
+      .trim()
+      .toLowerCase();
+
+
+    console.log(
+      "TIPO DA CONTA:",
+      tipo
+    );
+
+
+    /*
+      NÃO EXISTE MAIS FALLBACK PARA LOJISTA.
+    */
+
+    if (
+      tipo !== "admin" &&
+      tipo !== "motoboy" &&
+      tipo !== "lojista" &&
+      tipo !== "franqueado"
+    ) {
+
+      mostrarMensagem(
+
+        "Tipo de conta inválido no Firestore:\n\n" +
+        (
+          perfilAtual.tipo ||
+          "VAZIO"
+        ),
+
+        "erro"
+
+      );
+
+      return;
+    }
+
+
+    /* =====================================================
+       CARTEIRA
+       ===================================================== */
+
+    const walletDoc =
+      await db
+        .collection("wallets")
+        .doc(uid)
+        .get();
+
+
+    if (walletDoc.exists) {
+
+      saldoAtual =
+        Number(
+          walletDoc.data().saldo || 0
+        );
+
+    } else {
+
+      /*
+       CRIA CARTEIRA SOMENTE SE NÃO EXISTIR.
+      */
+
+      await db
+        .collection("wallets")
+        .doc(uid)
+        .set({
+
+          saldo: 0,
+
+          atualizadoEm:
+            firebase.firestore.FieldValue
+            .serverTimestamp()
+
+        });
+
+      saldoAtual = 0;
+
+    }
+
+
+    /* =====================================================
+       ESCONDER LOGIN
+       ===================================================== */
+
+    document
+      .getElementById("loginArea")
+      .classList.add("hidden");
+
+    document
+      .getElementById("cadastroArea")
+      .classList.add("hidden");
+
+    document
+      .getElementById("appArea")
+      .classList.remove("hidden");
+
+
+    /* =====================================================
+       DADOS DO USUÁRIO
+       ===================================================== */
+
+    document
+      .getElementById("nomeAtual")
+      .textContent =
+      perfilAtual.nome ||
+      usuarioAtual.displayName ||
+      "Usuário";
+
+
+    document
+      .getElementById("tipoAtual")
+      .textContent =
+      tipo.toUpperCase();
+
+
+    atualizarSaldo();
+
+    esconderPaineis();
+
+
+    /* =====================================================
+       PAINEL LOJISTA
+       ===================================================== */
+
+    if (tipo === "lojista") {
+
+      console.log(
+        "Abrindo PAINEL LOJISTA"
+      );
+
+      document
+        .getElementById("painelLojista")
+        .classList.remove("hidden");
+
+
+      if (
+        typeof carregarLojista ===
+        "function"
+      ) {
+
+        await carregarLojista();
+
+      }
+
+    }
+
+
+    /* =====================================================
+       PAINEL MOTOBOY
+       ===================================================== */
+
+    else if (tipo === "motoboy") {
+
+      console.log(
+        "Abrindo PAINEL MOTOBOY"
+      );
+
+      document
+        .getElementById("painelMotoboy")
+        .classList.remove("hidden");
+
+
+      if (
+        typeof carregarMotoboy ===
+        "function"
+      ) {
+
+        await carregarMotoboy();
+
+      }
+
+    }
+
+
+    /* =====================================================
+       PAINEL FRANQUEADO
+       ===================================================== */
+
+    else if (tipo === "franqueado") {
+
+      console.log(
+        "Abrindo PAINEL FRANQUEADO"
+      );
+
+      document
+        .getElementById("painelFranqueado")
+        .classList.remove("hidden");
+
+    }
+
+
+    /* =====================================================
+       PAINEL ADMIN
+       ===================================================== */
+
+    else if (tipo === "admin") {
+
+      console.log(
+        "Abrindo PAINEL ADMIN"
+      );
+
+      document
+        .getElementById("painelAdmin")
+        .classList.remove("hidden");
+
+
+      if (
+        typeof carregarAdmin ===
+        "function"
+      ) {
+
+        await carregarAdmin();
+
+      }
+
+    }
+
+
+    mostrarMensagem(
+      "Painel " +
+      tipo.toUpperCase() +
+      " carregado com sucesso!",
+      "ok"
+    );
+
+
+  } catch (e) {
+
+    console.error(
+      "ERRO AO ABRIR PAINEL:",
+      e
+    );
+
+    mostrarMensagem(
+
+      "O login funcionou, " +
+      "mas ocorreu um erro ao abrir o painel.\n\n" +
+
+      "Código: " +
+      (e.code || "sem código") +
+
+      "\n\n" +
+
+      "Mensagem:\n" +
+      (
+        e.message ||
+        String(e)
+      ),
+
+      "erro"
+
+    );
+
+  } finally {
+
+    carregandoPainel = false;
+
+  }
+
+}
+
+
+/* =========================================================
+   ESCONDER PAINÉIS
+   ========================================================= */
+
+function esconderPaineis() {
+
+  const ids = [
+
+    "painelLojista",
+    "painelMotoboy",
+    "painelFranqueado",
+    "painelAdmin"
+
+  ];
+
+
+  ids.forEach(function(id) {
+
+    const el =
+      document.getElementById(id);
+
+    if (el) {
+
+      el.classList.add("hidden");
+
+    }
+
+  });
+
+}
+
+
+/* =========================================================
+   ATUALIZAR SALDO
+   ========================================================= */
+
+function atualizarSaldo() {
+
+  const el =
+    document.getElementById("saldoAtual");
+
+
+  if (el) {
+
+    el.textContent =
+      "R$ " +
+      Number(saldoAtual || 0)
+      .toFixed(2)
+      .replace(".", ",");
+
+  }
+
+
+  if (
+    perfilAtual &&
+    perfilAtual.tipo === "lojista"
+  ) {
+
+    const btn =
+      document.getElementById("btnPedido");
+
+    const aviso =
+      document.getElementById("avisoSaldo");
+
+
+    if (saldoAtual >= 8) {
+
+      if (btn) {
+
+        btn.disabled = false;
+
+        btn.textContent =
+          "CRIAR PEDIDO — R$ 8,00";
+
+      }
+
+
+      if (aviso) {
+
+        aviso.className =
+          "status ok";
+
+        aviso.textContent =
+          "Saldo suficiente para criar pedido.";
+
+      }
+
+    } else {
+
+      if (btn) {
+
+        btn.disabled = true;
+
+        btn.textContent =
+          "RECARREGUE SEU SALDO";
+
+      }
+
+
+      if (aviso) {
+
+        aviso.className =
+          "status erro";
+
+        aviso.textContent =
+          "Saldo insuficiente. Recarregue seu saldo.";
+
+      }
+
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   PIX
+   ========================================================= */
+
+function copiarPix() {
+
+  const pix =
+    "22997450131";
+
+
+  if (
+    navigator.clipboard &&
+    navigator.clipboard.writeText
+  ) {
+
+    navigator.clipboard
+      .writeText(pix)
+      .then(function() {
+
+        mostrarMensagem(
+          "PIX copiado:\n22997450131",
+          "ok"
+        );
+
+      })
+      .catch(function() {
+
+        mostrarMensagem(
+          "Chave PIX:\n22997450131",
+          "aviso"
+        );
+
+      });
+
+  } else {
+
+    mostrarMensagem(
+      "Chave PIX:\n22997450131",
+      "aviso"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   SAIR
+   ========================================================= */
+
+async function sair() {
+
+  try {
+
+    await auth.signOut();
+
+    location.reload();
+
+  } catch (e) {
+
+    mostrarMensagem(
+      erroHumano(e),
+      "erro"
+    );
+
+  }
+
+}
+
+</script>rules_version = '2';
+
+service cloud.firestore {
+
+  match /databases/{database}/documents {
+
+    function logado() {
+      return request.auth != null;
+    }
+
+    function admin() {
+      return logado()
+        && get(
+          /databases/$(database)/documents/profiles/$(request.auth.uid)
+        ).data.tipo == "admin";
+    }
+
+    match /profiles/{uid} {
+
+      allow read:
+        if logado()
+        && (
+          request.auth.uid == uid
+          || admin()
+        );
+
+      allow create:
+        if logado()
+        && request.auth.uid == uid
+        && request.resource.data.tipo != "admin";
+
+      allow update:
+        if admin()
+        || (
+          logado()
+          && request.auth.uid == uid
+        );
+
+      allow delete:
+        if admin();
+    }
+
+    match /wallets/{uid} {
+
+      allow read:
+        if logado()
+        && (
+          request.auth.uid == uid
+          || admin()
+        );
+
+      allow create:
+        if logado()
+        && request.auth.uid == uid
+        && request.resource.data.saldo == 0;
+
+      allow update:
+        if admin()
+        || (
+          logado()
+          && request.auth.uid == uid
+          && request.resource.data.saldo ==
+             resource.data.saldo - 8
+        );
+
+      allow delete:
+        if admin();
+    }
+
+    match /orders/{id} {
+
+      allow create:
+        if logado()
+        && request.resource.data.lojistaId ==
+           request.auth.uid;
+
+      allow read:
+        if logado()
+        && (
+          admin()
+          || resource.data.lojistaId == request.auth.uid
+          || resource.data.motoboyId == request.auth.uid
+        );
+
+      allow update:
+        if admin()
+        || (
+          logado()
+          && (
+            resource.data.lojistaId == request.auth.uid
+            || resource.data.motoboyId == request.auth.uid
+          )
+        );
+
+      allow delete:
+        if admin();
+    }
+
+    match /transactions/{id} {
+
+      allow create:
+        if admin()
+        || (
+          logado()
+          && request.resource.data.uid ==
+             request.auth.uid
+          && request.resource.data.tipo ==
+             "recarga_50"
+          && request.resource.data.valor == 50
+          && request.resource.data.status ==
+             "pendente"
+        )
+        || (
+          logado()
+          && request.resource.data.uid ==
+             request.auth.uid
+          && request.resource.data.tipo ==
+             "taxa_pedido"
+          && request.resource.data.valor == -8
+        );
+
+      allow read:
+        if logado()
+        && (
+          admin()
+          || resource.data.uid == request.auth.uid
+        );
+
+      allow update:
+        if admin();
+
+      allow delete:
+        if admin();
+    }
+  }
+}
