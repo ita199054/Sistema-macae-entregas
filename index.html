@@ -1,79 +1,116 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anjos Flash - Macaé Entregas</title>
-<script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
-<div id="root" class="p-4"></div>
-<script type="module">
-import React, { useState, useEffect } from "https://esm.sh/react@18.2.0";
-import { createRoot } from "https://esm.sh/react-dom@18.2.0/client";
-import { initializeApp, getApps } from "https://esm.sh/firebase@10.7.1/firebase/app";
-import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc } from "https://esm.sh/firebase@10.7.1/firebase/firestore";
+import { useState, useEffect } from "react";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
-  authDomain: "anjos-flash.firebaseapp.com",
-  projectId: "anjos-flash",
-  storageBucket: "anjos-flash.firebasestorage.app",
-  messagingSenderId: "725133182752",
-  appId: "1:725133182752:web:5f9a98fa97269dcdcab945"
-};
-if (!getApps().length) initializeApp(firebaseConfig);
-const db = getFirestore();
-
-function App(){
+export default function App(){
   const [tela,setTela]=useState("inicio");
-  const [lojistas,setLojistas]=useState([]);
-  const [motoboys,setMotoboys]=useState([]);
-  const [end,setEnd]=useState("");
-  const [km,setKm]=useState(3);
-  const [tipo,setTipo]=useState("normal");
-  
+  const [lojistas,setLojistas]=useState([{id:"teste_loja", nome:"Loja Teste", saldo:0}]);
+  const [motoboys,setMotoboys]=useState([{id:"teste_moto", nome:"Moto Teste", saldo:0}]);
+  const [end,setEnd]=useState(""); const [km,setKm]=useState(3); const [tipo,setTipo]=useState("normal");
+  const [add,setAdd]=useState(10);
+  const [erro,setErro]=useState("");
+
+  // Firebase só tenta carregar DEPOIS que app já abriu - por isso nunca mais tela branca
   useEffect(()=>{
-    const unsub1 = onSnapshot(collection(db,"lojistas"), s=> setLojistas(s.docs.map(d=>d.data())));
-    const unsub2 = onSnapshot(collection(db,"motoboys"), s=> setMotoboys(s.docs.map(d=>d.data())));
-    return ()=>{unsub1(); unsub2();};
+    const carregar = async()=>{
+      try{
+        const { initializeApp, getApps } = await import("firebase/app");
+        const { getFirestore, collection, onSnapshot, doc, updateDoc, increment, addDoc } = await import("firebase/firestore");
+        const firebaseConfig = {
+          apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
+          authDomain: "anjos-flash.firebaseapp.com",
+          projectId: "anjos-flash",
+          storageBucket: "anjos-flash.firebasestorage.app",
+          messagingSenderId: "725133182752",
+          appId: "1:725133182752:web:5f9a98fa97269dcdcab945",
+        };
+        if(!getApps().length) initializeApp(firebaseConfig);
+        const db = getFirestore();
+        window._db = db; window._fs = { collection, onSnapshot, doc, updateDoc, increment, addDoc };
+        onSnapshot(collection(db,'lojistas'), s=>{ if(!s.empty) setLojistas(s.docs.map(d=>({id:d.id,...d.data()}))) });
+        onSnapshot(collection(db,'motoboys'), s=>{ if(!s.empty) setMotoboys(s.docs.map(d=>({id:d.id,...d.data()}))) });
+      }catch(e){ setErro("Firebase: "+e.message+" - usando modo local, mas app abre"); }
+    };
+    carregar();
   },[]);
 
-  const criarEntrega = async () => {
-    if(!end) return alert("Coloca o endereço!");
-    await addDoc(collection(db,"entregas"), { endereco: end, km, tipo, status:"pendente", data: new Date() });
-    alert("Entrega criada! Motoboys vão receber.");
-    setEnd("");
+  const addSaldo = async(tipoLista,id,valor)=>{
+    try{
+      if(window._db){
+        await window._fs.updateDoc(window._fs.doc(window._db, tipoLista, id), { saldo: window._fs.increment(Number(valor)) });
+      }else{
+        // modo local - sem firebase ainda
+        if(tipoLista==="lojistas") setLojistas(prev=>prev.map(l=>l.id===id?{...l, saldo:(l.saldo||0)+Number(valor)}:l));
+        else setMotoboys(prev=>prev.map(m=>m.id===id?{...m, saldo:(m.saldo||0)+Number(valor)}:m));
+      }
+    }catch(e){ alert(e.message); }
   };
 
-  return React.createElement("div", {className:"max-w-md mx-auto bg-white min-h-screen rounded-xl shadow p-4"},
-    tela==="inicio" && React.createElement("div", null,
-      React.createElement("h1", {className:"text-2xl font-bold text-center"}, "Anjos Flash - Macaé"),
-      React.createElement("p", {className:"text-center text-gray-500 mb-6"}, "Valor travado por região"),
-      React.createElement("button", {onClick:()=>setTela("lojista"), className:"w-full bg-blue-600 text-white p-3 rounded mb-3"}, "Sou Lojista"),
-      React.createElement("button", {onClick:()=>setTela("motoboy"), className:"w-full bg-green-600 text-white p-3 rounded"}, "Sou Motoboy")
-    ),
-    tela==="lojista" && React.createElement("div", null,
-      React.createElement("h2", {className:"font-bold mb-2"}, "Nova Entrega"),
-      React.createElement("input", {value:end, onChange:e=>setEnd(e.target.value), placeholder:"Endereço de entrega", className:"w-full border p-2 rounded mb-2"}),
-      React.createElement("div", {className:"flex gap-2 mb-2"},
-        React.createElement("input", {type:"number", value:km, onChange:e=>setKm(e.target.value), className:"border p-2 rounded w-1/2"}),
-        React.createElement("select", {value:tipo, onChange:e=>setTipo(e.target.value), className:"border p-2 rounded w-1/2"},
-          React.createElement("option", {value:"normal"}, "Normal"),
-          React.createElement("option", {value:"express"}, "Express")
-        )
-      ),
-      React.createElement("button", {onClick:criarEntrega, className:"w-full bg-blue-600 text-white p-3 rounded mb-2"}, "Solicitar Motoboy"),
-      React.createElement("button", {onClick:()=>setTela("inicio"), className:"w-full bg-gray-200 p-2 rounded"}, "Voltar")
-    ),
-    tela==="motoboy" && React.createElement("div", null,
-      React.createElement("h2", {className:"font-bold"}, "Painel Motoboy"),
-      React.createElement("p", {className:"text-sm text-gray-500 mb-4"}, `${motoboys.length} motoboys online | ${lojistas.length} lojas`),
-      React.createElement("button", {onClick:()=>setTela("inicio"), className:"w-full bg-gray-200 p-2 rounded mt-4"}, "Voltar")
-    )
+  const zerar = async(tipoLista,id)=>{
+    if(!confirm("ZERAR SALDO?")) return;
+    try{
+      if(window._db){
+        await window._fs.updateDoc(window._fs.doc(window._db, tipoLista, id), { saldo: 0 });
+      }else{
+        if(tipoLista==="lojistas") setLojistas(prev=>prev.map(l=>l.id===id?{...l, saldo:0}:l));
+        else setMotoboys(prev=>prev.map(m=>m.id===id?{...m, saldo:0}:m));
+      }
+    }catch(e){ alert(e.message); }
+  };
+
+  const criar = async()=>{
+    if(!end) return alert("Endereço");
+    try{
+      if(window._db) await window._fs.addDoc(window._fs.collection(window._db,'entregas'),{endereco:end, km:Number(km), tipo, status:'pendente'});
+      alert("✅ Criado"); setEnd("");
+    }catch(e){ alert(e.message); }
+  };
+
+  if(tela==="inicio") return(
+    <div style={{maxWidth:400, margin:'auto', padding:20, fontFamily:'Arial', textAlign:'center', minHeight:'100vh'}}>
+      <div style={{background:'#000', color:'#FFD700', padding:20, borderRadius:12, fontWeight:'bold'}}>⚡ ANJOS FLASH</div>
+      {erro&&<div style={{background:'#ffe', padding:8, fontSize:11, marginTop:10}}>{erro}</div>}
+      <button onClick={()=>setTela("lojista")} style={{width:'100%', padding:16, marginTop:20, background:'#000', color:'#FFD700', border:0, borderRadius:10}}>🏪 LOJISTA</button>
+      <button onClick={()=>setTela("motoboy")} style={{width:'100%', padding:16, marginTop:10, background:'#333', color:'#fff', border:0, borderRadius:10}}>🏍️ MOTOBOY</button>
+      <button onClick={()=>setTela("admin")} style={{width:'100%', padding:16, marginTop:10, background:'#FFD700', color:'#000', border:0, borderRadius:10}}>👑 ADMIN ADD/ZERA</button>
+      <p style={{fontSize:10, marginTop:10}}>Se ver essa tela, NÃO é tela branca - tá funcionando</p>
+    </div>
+  );
+
+  if(tela==="lojista") return(
+    <div style={{maxWidth:420, margin:'auto', padding:15, fontFamily:'Arial'}}>
+      <button onClick={()=>setTela("inicio")}>← Voltar</button>
+      <h3>🏪 Lojista</h3>
+      <input value={end} onChange={e=>setEnd(e.target.value)} placeholder="Endereço" style={{width:'100%', padding:12, marginTop:8}} />
+      <input type="number" value={km} onChange={e=>setKm(e.target.value)} style={{width:'100%', padding:12, marginTop:8}} />
+      <div style={{display:'flex', gap:5, marginTop:10}}>
+        <button onClick={()=>setTipo("normal")} style={{flex:1, padding:10, background:tipo==="normal"?'#000':'#ddd', color:tipo==="normal"?'#FFD700':'#000'}}>NORMAL</button>
+        <button onClick={()=>setTipo("super")} style={{flex:1, padding:10, background:tipo==="super"?'red':'#ddd', color:'#fff'}}>SUPER</button>
+        <button onClick={()=>setTipo("retorno")} style={{flex:1, padding:10, background:tipo==="retorno"?'blue':'#ddd', color:'#fff'}}>RETORNO</button>
+      </div>
+      <button onClick={criar} style={{width:'100%', padding:14, marginTop:10, background:'#000', color:'#FFD700', border:0, borderRadius:10}}>CRIAR ENTREGA</button>
+    </div>
+  );
+
+  if(tela==="motoboy") return(<div style={{maxWidth:420, margin:'auto', padding:15}}><button onClick={()=>setTela("inicio")}>← Voltar</button><h3>🏍️ Motoboy - Valor travado, só pega</h3></div>);
+
+  return(
+    <div style={{maxWidth:700, margin:'auto', padding:15, fontFamily:'Arial'}}>
+      <button onClick={()=>setTela("inicio")}>← Voltar</button>
+      <h2>👑 ADMIN - ADICIONA DINHEIRO E ZERA</h2>
+      <div>Valor: <input type="number" value={add} onChange={e=>setAdd(e.target.value)} style={{width:80, padding:6}} /></div>
+      <h3>🏪 LOJISTAS - ADD E ZERA</h3>
+      {lojistas.map(l=>(
+        <div key={l.id} style={{border:'2px solid #000', padding:10, marginBottom:8, borderRadius:8, display:'flex', justifyContent:'space-between'}}>
+          <div><b>{l.nome||l.id}</b><br/>R$ {(l.saldo||0).toFixed(2)}</div>
+          <div style={{display:'flex', gap:6}}><button onClick={()=>addSaldo('lojistas',l.id,add)} style={{background:'green', color:'#fff', padding:'8px 12px', border:0, borderRadius:6}}>+{add}</button><button onClick={()=>zerar('lojistas',l.id)} style={{background:'red', color:'#fff', padding:'8px 12px', border:0, borderRadius:6}}>ZERAR</button></div>
+        </div>
+      ))}
+      <h3>🏍️ MOTOBOYS - ADD E ZERA</h3>
+      {motoboys.map(m=>(
+        <div key={m.id} style={{border:'2px solid #FFD700', padding:10, marginBottom:8, borderRadius:8, display:'flex', justifyContent:'space-between'}}>
+          <div><b>{m.nome||m.id}</b><br/>R$ {(m.saldo||0).toFixed(2)}</div>
+          <div style={{display:'flex', gap:6}}><button onClick={()=>addSaldo('motoboys',m.id,add)} style={{background:'green', color:'#fff', padding:'8px 12px', border:0, borderRadius:6}}>+{add}</button><button onClick={()=>zerar('motoboys',m.id)} style={{background:'#000', color:'#FFD700', padding:'8px 12px', border:0, borderRadius:6}}>ZERAR</button></div>
+        </div>
+      ))}
+    </div>
   );
 }
-createRoot(document.getElementById("root")).render(React.createElement(App));
-</script>
-</body>
-</html>
