@@ -23,7 +23,31 @@ button{border:0;border-radius:8px;padding:12px 16px;margin:4px;background:#ffd40
 .badge{padding:5px 8px;border-radius:15px;background:#333;font-size:11px;font-weight:bold}
 .online{background:#008f38}.offline{background:#555}.small{font-size:12px;color:#aaa}
 .tabs{display:flex;flex-wrap:wrap;gap:5px}
-#telaLogin{max-width:480px;margin:35px auto}#app{display:none<div id="adminAbaSuper" class="hidden"><input id="superPct" type="number" placeholder="SUPER % admin"><button onclick="salvarSuper()">SALVAR SUPER</button><div id="msgSuper" class="msg"></div></div>
+#telaLogin{max-width:480px;margin:35px auto}#app{display:none}
+</style>
+</head>
+<body>
+<header><div class="logo">ANJOS</div><h1>ANJOS EM DUAS RODAS</h1><p>Moto • Utilitário • Caminhão • Carreta</p></header>
+<div class="container">
+<section id="telaLogin" class="card">
+<h2>Entrar</h2><input id="loginEmail" placeholder="E-mail"><input id="loginSenha" type="password" placeholder="Senha"><button id="btnLogin" onclick="entrar()">ENTRAR</button><div id="mensagemLogin" class="msg"></div><hr>
+<h3>Primeiro acesso?</h3><input id="cadNome" placeholder="Nome"><input id="cadEmail" placeholder="E-mail"><input id="cadTelefone" placeholder="Telefone"><input id="cadSenha" type="password" placeholder="Senha"><select id="cadTipo"><option value="lojista">Lojista</option><option value="super_lojista">Super Lojista (multi-lojas)</option><option value="motoboy">Motoboy/Motorista</option></select><input id="cadEndereco" placeholder="Endereço completo = comprovante"><div id="documentosCadastro" class="hidden"><h3>Docs motorista - código #0001 automático</h3><label>Selfie</label><input id="cadSelfie" type="file" accept="image/*"><label>CNH foto ou PDF</label><input id="cadCNH" type="file" accept="image/*,.pdf"><label>CRLV foto ou PDF</label><input id="cadCRLV" type="file" accept="image/*,.pdf"><label>Veículo</label><select id="cadVeiculo"><option value="moto">Moto</option><option value="utilitario">Utilitário</option><option value="caminhao">Caminhão</option><option value="carreta">Carreta</option></select></div><button onclick="registrarUser()">CRIAR CADASTRO</button><div id="mensagemCadastro" class="msg"></div>
+</section>
+<section id="app">
+<div class="card"><span id="nomeUsuario"></span> - <span id="tipoUsuario"></span> - <span id="codigoUsuario"></span> <button class="btn-danger" onclick="sair()">SAIR</button></div>
+<section id="painelLojista" class="hidden">
+<div class="card"><h2>PAINEL LOJISTA - SUPER LOJISTA</h2><div id="seletorLojaBox" class="hidden"><h3>🏪 Minhas Lojas</h3><select id="pedidoLojaSelecionada"></select><div style="display:flex;gap:5px"><input id="novaLojaNome" placeholder="Nome nova loja"><input id="novaLojaEndereco" placeholder="Endereço"><button onclick="cadastrarNovaLoja()" class="btn-green">+ ADD LOJA</button></div><div id="listaLojasSuper" class="small"></div><div id="sugestaoMotoboys" class="small" style="background:#222;padding:10px;border-radius:8px;margin-top:8px"></div></div></div>
+<div class="card"><h2>NOVA ENTREGA</h2><select id="pedidoTipo"><option value="normal">Normal</option><option value="express">Express</option><option value="super">Super</option></select><input id="pedidoCliente" placeholder="Cliente"><input id="pedidoTelefone" placeholder="Tel cliente"><input id="pedidoEndereco" placeholder="Endereço destino"><select id="pedidoVeiculo"><option value="moto">Moto</option><option value="utilitario">Utilitário</option><option value="caminhao">Caminhão</option><option value="carreta">Carreta</option></select><input id="pedidoMotoboyCodigo" placeholder="#0001 ou vazio=todos"><textarea id="pedidoObs" placeholder="Obs"></textarea><button onclick="criarPedido()">SOLICITAR</button><div id="mensagemPedido" class="msg"></div></div>
+<div class="card"><h2>MEUS PEDIDOS - Veja motoboy que aceitou + KM/MIN + foto + docs</h2><div id="listaPedidosLojista"></div></div>
+</section>
+<section id="painelMotoboy" class="hidden">
+<div class="card"><h2>MOTOBOY <span id="codigoMotoboy">#----</span> <span id="statusMotoboy" class="badge offline">OFFLINE</span></h2><button id="btnOnline" onclick="alternarOnline()">FICAR ONLINE</button><input id="pixMotoboy" placeholder="PIX"><button onclick="salvarPix()">SALVAR PIX</button></div>
+<div class="card"><h2>DISPONÍVEIS - Só vê o que RECEBE + X km / X min</h2><div id="listaPedidosMotoboy"></div></div>
+<div class="card"><h2>MINHAS ENTREGAS</h2><div id="listaAceitasMotoboy"></div></div>
+</section>
+<section id="painelAdmin" class="hidden">
+<div class="card"><h2>ADMIN - KM base valor | SUPER % | RETORNO %</h2><div class="tabs"><button onclick="mostrarAdminAba('taxas')">TAXAS KM BASE</button><button onclick="mostrarAdminAba('super')">SUPER %</button><button onclick="mostrarAdminAba('retorno')">RETORNO %</button><button onclick="mostrarAdminAba('aprovacoes')">APROVAÇÕES #0001</button><button onclick="mostrarAdminAba('usuarios')">USUÁRIOS</button><button onclick="mostrarAdminAba('pedidos')">ENTREGAS</button></div>
+<div id="adminAbaTaxas"><input id="taxaKmBase" type="number" step="0.1" placeholder="KM base"><input id="taxaValorBase" type="number" placeholder="Valor base R$"><input id="taxaAdicionalKm" type="number" placeholder="Adicional KM R$"><input id="taxaApp" type="number" placeholder="Taxa App R$"><button onclick="salvarTaxas()">SALVAR TAXAS</button><div id="msgTaxas" class="msg"></div></div><div id="adminAbaSuper" class="hidden"><input id="superPct" type="number" placeholder="SUPER % admin"><button onclick="salvarSuper()">SALVAR SUPER</button><div id="msgSuper" class="msg"></div></div>
 <div id="adminAbaRetorno" class="hidden"><input id="retornoPct" type="number" placeholder="RETORNO % motoboy"><button onclick="salvarRetorno()">SALVAR RETORNO</button><div id="msgRetorno" class="msg"></div></div>
 <div id="adminAbaAprovacoes" class="hidden"><div id="adminAprovacoes"></div></div><div id="adminAbaUsuarios" class="hidden"><div id="adminUsuarios"></div></div><div id="adminAbaPedidos" class="hidden"><div id="adminPedidos"></div></div></div>
 </section>
