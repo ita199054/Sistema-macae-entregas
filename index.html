@@ -2,485 +2,110 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-<title>Anjos em Duas Rodas Delivery</title>
+<meta name="viewport"
+content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Anjos em Duas Rodas</title>
 
 <style>
-:root{
-  --laranja:#ff7200;
-  --laranja2:#ff8c1a;
-  --preto:#080808;
-  --preto2:#151515;
-  --cinza:#f3f3f3;
-  --cinza2:#e5e5e5;
-  --branco:#ffffff;
-  --verde:#16a34a;
-  --vermelho:#dc2626;
-  --azul:#2563eb;
-}
-
-*{
-  box-sizing:border-box;
-}
-
+*{box-sizing:border-box}
 body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:var(--cinza);
-  color:#111;
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#111;
+ color:#fff;
 }
-
-button,
-input,
-select{
-  font-family:inherit;
-}
-
-button{
-  border:0;
-  cursor:pointer;
-}
-
-.hidden{
-  display:none!important;
-}
-
 header{
-  width:100%;
-  background:var(--preto);
-  color:white;
-  padding:15px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:sticky;
-  top:0;
-  z-index:100;
-  box-shadow:0 2px 12px rgba(0,0,0,.25);
+ background:#f57c00;
+ color:#111;
+ padding:16px;
+ text-align:center;
+ font-weight:bold;
+ font-size:22px;
 }
-
-.logo{
-  font-weight:900;
-  font-size:20px;
-  letter-spacing:.3px;
-}
-
-.logo span{
-  color:var(--laranja);
-}
-
-.header-user{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.header-user small{
-  color:#bbb;
-}
-
-.btn{
-  padding:12px 16px;
-  border-radius:10px;
-  font-weight:800;
-  transition:.2s;
-}
-
-.btn:hover{
-  transform:translateY(-1px);
-}
-
-.btn-primary{
-  background:var(--laranja);
-  color:white;
-}
-
-.btn-dark{
-  background:var(--preto2);
-  color:white;
-}
-
-.btn-light{
-  background:#eee;
-  color:#111;
-}
-
-.btn-green{
-  background:var(--verde);
-  color:white;
-}
-
-.btn-red{
-  background:var(--vermelho);
-  color:white;
-}
-
-.btn-blue{
-  background:var(--azul);
-  color:white;
-}
-
-.btn-disabled,
-button:disabled{
-  background:#bdbdbd!important;
-  color:#eee!important;
-  cursor:not-allowed;
-  transform:none!important;
-}
-
 .container{
-  max-width:1150px;
-  margin:0 auto;
-  padding:22px 15px 60px;
+ width:100%;
+ max-width:900px;
+ margin:auto;
+ padding:15px;
 }
-
-.auth-box{
-  max-width:450px;
-  margin:50px auto;
-}
-
-.auth-card{
-  background:white;
-  border-radius:18px;
-  padding:28px;
-  box-shadow:0 5px 25px rgba(0,0,0,.08);
-}
-
-.auth-title{
-  text-align:center;
-  margin-bottom:25px;
-}
-
-.auth-title h1{
-  margin:0;
-  font-size:27px;
-}
-
-.auth-title p{
-  color:#777;
-}
-
-.tabs{
-  display:flex;
-  gap:8px;
-  margin-bottom:20px;
-}
-
-.tabs button{
-  flex:1;
-}
-
-.form-group{
-  margin-bottom:14px;
-}
-
-.form-group label{
-  display:block;
-  font-size:14px;
-  font-weight:800;
-  margin-bottom:6px;
-}
-
-.form-group input,
-.form-group select{
-  width:100%;
-  padding:13px;
-  border:1px solid #ddd;
-  border-radius:10px;
-  outline:none;
-  font-size:15px;
-  background:white;
-}
-
-.form-group input:focus,
-.form-group select:focus{
-  border-color:var(--laranja);
-}
-
-.full{
-  width:100%;
-}
-
-.hero{
-  background:linear-gradient(135deg,#080808,#202020);
-  color:white;
-  border-radius:18px;
-  padding:25px;
-  margin-bottom:18px;
-}
-
-.hero h1{
-  margin:0 0 8px;
-}
-
-.hero p{
-  margin:4px 0;
-  color:#ccc;
-}
-
-.balance-card{
-  background:var(--laranja);
-  color:white;
-  border-radius:16px;
-  padding:20px;
-}
-
-.balance-label{
-  font-size:14px;
-  opacity:.9;
-}
-
-.balance{
-  font-size:40px;
-  font-weight:900;
-  margin:4px 0;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:16px;
-  margin-bottom:18px;
-}
-
 .card{
-  background:white;
-  border-radius:16px;
-  padding:20px;
-  box-shadow:0 4px 18px rgba(0,0,0,.06);
+ background:#1d1d1d;
+ border-radius:12px;
+ padding:18px;
+ margin-bottom:15px;
+ box-shadow:0 2px 10px #0008;
 }
-
-.card h2,
-.card h3{
-  margin-top:0;
+h2,h3{margin-top:0}
+input,select,button,textarea{
+ width:100%;
+ padding:13px;
+ margin:6px 0;
+ border-radius:8px;
+ border:1px solid #555;
+ font-size:16px;
 }
-
-.card p{
-  line-height:1.5;
+input,select,textarea{
+ background:#292929;
+ color:#fff;
 }
-
+button{
+ background:#f57c00;
+ color:#111;
+ border:0;
+ font-weight:bold;
+ cursor:pointer;
+}
+button:disabled{
+ opacity:.45;
+ cursor:not-allowed;
+}
+.btn2{background:#333;color:#fff}
+.hidden{display:none!important}
+.logo{
+ text-align:center;
+ font-size:28px;
+ font-weight:bold;
+ margin:20px 0;
+ color:#f57c00;
+}
 .status{
-  display:inline-block;
-  padding:7px 12px;
-  border-radius:30px;
-  font-size:12px;
-  font-weight:900;
-  text-transform:uppercase;
+ padding:12px;
+ border-radius:8px;
+ background:#252525;
+ margin:10px 0;
+ white-space:pre-wrap;
 }
-
-.status-pendente{
-  background:#fff3cd;
-  color:#856404;
+.ok{
+ background:#164d25;
+ color:#b9ffc5;
 }
-
-.status-em_rota{
-  background:#dbeafe;
-  color:#1d4ed8;
+.erro{
+ background:#5b1717;
+ color:#fff;
 }
-
-.status-finalizado{
-  background:#dcfce7;
-  color:#166534;
+.aviso{
+ background:#594500;
+ color:#ffe99a;
 }
-
-.status-cancelado{
-  background:#fee2e2;
-  color:#991b1b;
+.grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+ gap:10px;
 }
-
-.order{
-  border:1px solid #e5e5e5;
-  border-radius:13px;
-  padding:15px;
-  margin-bottom:12px;
-  background:#fff;
+.item{
+ background:#282828;
+ padding:13px;
+ border-radius:9px;
+ margin:8px 0;
 }
-
-.order strong{
-  font-size:16px;
+.valor{
+ font-size:25px;
+ color:#ff9800;
+ font-weight:bold;
 }
-
-.order-line{
-  margin:5px 0;
-}
-
-.muted{
-  color:#777;
-}
-
 .small{
-  font-size:12px;
-}
-
-.pix{
-  background:#f7f7f7;
-  border:2px dashed var(--laranja);
-  border-radius:12px;
-  padding:15px;
-  text-align:center;
-}
-
-.pix-key{
-  font-size:20px;
-  font-weight:900;
-  letter-spacing:1px;
-}
-
-.admin-stat{
-  background:#111;
-  color:white;
-  border-radius:15px;
-  padding:20px;
-}
-
-.admin-stat .value{
-  font-size:30px;
-  font-weight:900;
-}
-
-.table-wrap{
-  overflow-x:auto;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-th,
-td{
-  padding:11px 8px;
-  border-bottom:1px solid #eee;
-  text-align:left;
-  font-size:13px;
-  white-space:nowrap;
-}
-
-th{
-  background:#fafafa;
-  font-weight:900;
-}
-
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.65);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:15px;
-  z-index:200;
-}
-
-.modal-card{
-  width:100%;
-  max-width:500px;
-  max-height:90vh;
-  overflow:auto;
-  background:white;
-  border-radius:18px;
-  padding:22px;
-}
-
-.modal-actions{
-  display:flex;
-  gap:10px;
-  margin-top:15px;
-}
-
-.modal-actions button{
-  flex:1;
-}
-
-.toast{
-  position:fixed;
-  right:18px;
-  bottom:18px;
-  background:#111;
-  color:white;
-  padding:14px 18px;
-  border-radius:10px;
-  z-index:999;
-  box-shadow:0 5px 20px rgba(0,0,0,.25);
-}
-
-.empty{
-  text-align:center;
-  padding:25px;
-  color:#777;
-}
-
-.section-title{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:12px;
-}
-
-.code-box{
-  background:#111;
-  color:#ff8c1a;
-  padding:15px;
-  text-align:center;
-  border-radius:10px;
-  font-size:25px;
-  font-weight:900;
-  letter-spacing:6px;
-}
-
-.warning{
-  background:#fff7ed;
-  border-left:5px solid var(--laranja);
-  padding:12px;
-  border-radius:8px;
-}
-
-.success-box{
-  background:#ecfdf5;
-  border-left:5px solid var(--verde);
-  padding:12px;
-  border-radius:8px;
-}
-
-@media(max-width:600px){
-
-  header{
-    padding:12px;
-  }
-
-  .logo{
-    font-size:16px;
-  }
-
-  .header-user small{
-    display:none;
-  }
-
-  .container{
-    padding:15px 10px 40px;
-  }
-
-  .hero{
-    padding:19px;
-  }
-
-  .balance{
-    font-size:32px;
-  }
-
-  .auth-box{
-    margin:20px auto;
-  }
-
-  .auth-card{
-    padding:20px;
-  }
-
-  .modal-actions{
-    flex-direction:column;
-  }
+ font-size:13px;
+ color:#bbb;
 }
 </style>
 </head>
@@ -488,879 +113,1587 @@ th{
 <body>
 
 <header>
-
-  <div class="logo">
-    ANJOS <span>EM DUAS RODAS</span>
-  </div>
-
-  <div class="header-user">
-
-    <small id="headerUser"></small>
-
-    <button
-      id="logoutButton"
-      class="btn btn-light hidden"
-      onclick="logoutUser()">
-      Sair
-    </button>
-
-  </div>
-
+ANJOS EM DUAS RODAS
 </header>
 
+<div class="container">
 
-<!-- LOGIN / CADASTRO -->
+<div id="mensagem" class="status hidden"></div>
 
-<div id="authScreen">
+<section id="loginArea">
 
-  <div class="auth-box">
+<div class="logo">
+🛵 ANJOS EM DUAS RODAS
+</div>
 
-    <div class="auth-card">
+<div class="card">
+<h2>Entrar</h2>
 
-      <div class="auth-title">
+<input id="loginEmail"
+type="email"
+placeholder="E-mail">
 
-        <h1>ANJOS EM DUAS RODAS</h1>
+<input id="loginSenha"
+type="password"
+placeholder="Senha">
 
-        <p>Delivery</p>
+<button id="btnLogin"
+onclick="loginUser()">
+ENTRAR
+</button>
 
-      </div>
+<button class="btn2"
+onclick="mostrarCadastro()">
+CRIAR CONTA
+</button>
 
+<div id="firebaseStatus"
+class="status aviso">
+Iniciando conexão...
+</div>
+</div>
 
-      <div class="tabs">
+</section>
 
-        <button
-          id="loginTab"
-          class="btn btn-dark"
-          onclick="showLogin()">
-          Entrar
-        </button>
+<section id="cadastroArea" class="hidden">
 
-        <button
-          id="registerTab"
-          class="btn btn-light"
-          onclick="showRegister()">
-          Criar conta
-        </button>
+<div class="card">
+<h2>Criar conta</h2>
 
-      </div>
+<input id="cadNome"
+placeholder="Nome completo">
 
+<input id="cadEmail"
+type="email"
+placeholder="E-mail">
 
-      <!-- LOGIN -->
+<input id="cadTelefone"
+placeholder="Telefone">
 
-      <div id="loginForm">
+<input id="cadSenha"
+type="password"
+placeholder="Senha">
 
-        <div class="form-group">
+<select id="cadTipo">
+<option value="lojista">LOJISTA</option>
+<option value="motoboy">MOTOBOY</option>
+<option value="franqueado">FRANQUEADO</option>
+</select>
 
-          <label>E-mail</label>
+<input id="cadEndereco"
+placeholder="Endereço">
 
-          <input
-            id="loginEmail"
-            type="email"
-            autocomplete="email"
-            placeholder="seu@email.com">
+<button onclick="registrarUser()">
+CRIAR CONTA
+</button>
 
-        </div>
+<button class="btn2"
+onclick="mostrarLogin()">
+VOLTAR
+</button>
+</div>
 
+</section>
 
-        <div class="form-group">
+<section id="appArea" class="hidden">
 
-          <label>Senha</label>
+<div class="card">
+<h2 id="tituloPainel">
+Painel
+</h2>
 
-          <input
-            id="loginPassword"
-            type="password"
-            autocomplete="current-password"
-            placeholder="Sua senha">
+<div class="grid">
 
-        </div>
+<div class="item">
+<div class="small">Saldo atual</div>
+<div id="saldoAtual" class="valor">
+R$ 0,00
+</div>
+</div>
 
+<div class="item">
+<div class="small">Usuário</div>
+<div id="nomeAtual">-</div>
+</div>
 
-        <button
-          class="btn btn-primary full"
-          onclick="loginUser()">
-
-          ENTRAR
-
-        </button>
-
-      </div>
-
-
-      <!-- CADASTRO -->
-
-      <div id="registerForm" class="hidden">
-
-        <div class="form-group">
-
-          <label>Nome</label>
-
-          <input
-            id="registerName"
-            type="text"
-            placeholder="Nome completo">
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>E-mail</label>
-
-          <input
-            id="registerEmail"
-            type="email"
-            placeholder="seu@email.com">
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>Senha</label>
-
-          <input
-            id="registerPassword"
-            type="password"
-            minlength="6"
-            placeholder="Mínimo 6 caracteres">
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>Tipo de conta</label>
-
-          <select id="registerType">
-
-            <option value="LOJISTA">
-              LOJISTA
-            </option>
-
-            <option value="MOTOBOY">
-              MOTOBOY
-            </option>
-
-            <option value="FRANQUEADO">
-              FRANQUEADO
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <div class="warning small">
-          A criação pública de ADMIN fica bloqueada por segurança.
-        </div>
-
-        <br>
-
-        <button
-          class="btn btn-primary full"
-          onclick="registerUser()">
-
-          CRIAR CONTA
-
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
+<div class="item">
+<div class="small">Função</div>
+<div id="tipoAtual">-</div>
+</div>
 
 </div>
 
+<button class="btn2"
+onclick="sair()">
+SAIR
+</button>
+</div>
 
-<!-- APLICATIVO -->
+<div id="painelLojista" class="hidden">
 
-<div id="appScreen" class="hidden">
+<div class="card">
+<h3>💰 Recarregar saldo</h3>
 
-  <main class="container">
+<p>
+Faça um PIX de <b>R$ 50,00</b> para:
+</p>
 
-    <div id="dashboard"></div>
+<div class="valor">
+22997450131
+</div>
 
-  </main>
+<button onclick="copiarPix()">
+COPIAR PIX
+</button>
+
+<button onclick="pedirRecarga()">
+JÁ FIZ O PIX — SOLICITAR RECARGA
+</button>
+
+<div class="small">
+A recarga fica pendente até aprovação do administrador.
+</div>
+</div>
+
+<div class="card">
+<h3>📦 Novo pedido</h3>
+
+<input id="clienteNome"
+placeholder="Nome do cliente">
+
+<input id="clienteEndereco"
+placeholder="Endereço de entrega">
+
+<input id="valorProduto"
+type="number"
+step="0.01"
+placeholder="Valor do produto">
+
+<button id="btnPedido"
+onclick="criarPedido()">
+CRIAR PEDIDO — R$ 8,00
+</button>
+
+<div id="avisoSaldo" class="status aviso">
+Saldo mínimo para novo pedido: R$ 8,00
+</div>
+</div>
+
+<div class="card">
+<h3>📋 Meus pedidos</h3>
+<div id="listaLojista"></div>
+</div>
+
+<div class="card">
+<h3>📊 Extrato — últimos 90 dias</h3>
+<div id="extratoLojista"></div>
+</div>
 
 </div>
 
+<div id="painelMotoboy" class="hidden">
 
-<!-- MODAL PEDIDO -->
+<div class="card">
+<h3>🏍️ Status</h3>
 
-<div id="orderModal" class="modal hidden">
+<button id="btnOnline"
+onclick="alternarOnline()">
+FICAR ONLINE
+</button>
 
-  <div class="modal-card">
+<div id="statusMoto" class="status">
+OFFLINE
+</div>
+</div>
 
-    <h2>Novo Pedido</h2>
+<div class="card">
+<h3>📦 Pedidos disponíveis</h3>
+<div id="listaPedidosMoto"></div>
+</div>
 
-    <div class="form-group">
+<div class="card">
+<h3>📋 Minhas entregas</h3>
+<div id="listaEntregasMoto"></div>
+</div>
 
-      <label>Nome do cliente</label>
-
-      <input id="clientName">
-
-    </div>
-
-    <div class="form-group">
-
-      <label>Endereço de entrega</label>
-
-      <input id="deliveryAddress">
-
-    </div>
-
-    <div class="form-group">
-
-      <label>Valor do produto</label>
-
-      <input
-        id="productValue"
-        type="number"
-        min="0"
-        step="0.01">
-
-    </div>
-
-    <div class="modal-actions">
-
-      <button
-        class="btn btn-light"
-        onclick="closeOrderModal()">
-        Cancelar
-      </button>
-
-      <button
-        class="btn btn-primary"
-        onclick="createOrder()">
-        Criar Pedido — R$8,00
-      </button>
-
-    </div>
-
-  </div>
+<div class="card">
+<h3>💰 Extrato — últimos 90 dias</h3>
+<div id="extratoMoto"></div>
+</div>
 
 </div>
 
+<div id="painelFranqueado" class="hidden">
 
-<!-- MODAL FINALIZAR -->
-
-<div id="finishModal" class="modal hidden">
-
-  <div class="modal-card">
-
-    <h2>Finalizar entrega</h2>
-
-    <p>
-      Digite o código de 4 dígitos informado pelo cliente.
-    </p>
-
-    <div class="form-group">
-
-      <label>Código</label>
-
-      <input
-        id="finishCode"
-        maxlength="4"
-        inputmode="numeric"
-        placeholder="0000">
-
-    </div>
-
-    <div class="modal-actions">
-
-      <button
-        class="btn btn-light"
-        onclick="closeFinishModal()">
-        Cancelar
-      </button>
-
-      <button
-        class="btn btn-green"
-        onclick="finishOrder()">
-        Finalizar
-      </button>
-
-    </div>
-
-  </div>
+<div class="card">
+<h3>🏢 Painel Franqueado</h3>
+<p>
+Consulte seu saldo e acompanhe as operações.
+</p>
+</div>
 
 </div>
 
+<div id="painelAdmin" class="hidden">
 
-<div id="toast" class="toast hidden"></div>
+<div class="card">
+<h3>👑 ADMINISTRADOR</h3>
 
+<div class="grid">
 
-<script type="module">
+<div class="item">
+<div class="small">Receitas aprovadas</div>
+<div id="adminReceitas" class="valor">
+R$ 0,00
+</div>
+</div>
 
-/* =========================================================
-   FIREBASE
-   ANJOS EM DUAS RODAS DELIVERY
-   ========================================================= */
+<div class="item">
+<div class="small">Pagamentos motoboys</div>
+<div id="adminPagamentos" class="valor">
+R$ 0,00
+</div>
+</div>
 
-import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+<div class="item">
+<div class="small">Lucro</div>
+<div id="adminLucro" class="valor">
+R$ 0,00
+</div>
+</div>
 
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut,
-  updateProfile
-} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+</div>
+</div>
 
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-  addDoc,
-  collection,
-  query,
-  where,
-  orderBy,
-  limit,
-  getDocs,
-  onSnapshot,
-  runTransaction,
-  serverTimestamp,
-  Timestamp
-} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+<div class="card">
+<h3>💳 Recargas pendentes</h3>
+<div id="adminRecargas"></div>
+</div>
 
+<div class="card">
+<h3>👥 Usuários</h3>
+<div id="adminUsuarios"></div>
+</div>
+
+<div class="card">
+<h3>📦 Todos os pedidos</h3>
+<div id="adminPedidos"></div>
+</div>
+
+<div class="card">
+<h3>💰 Pagar motoboy</h3>
+
+<input id="pagMotoUid"
+placeholder="UID do motoboy">
+
+<input id="pagMotoValor"
+type="number"
+step="0.01"
+placeholder="Valor">
+
+<button onclick="pagarMotoboy()">
+REGISTRAR PAGAMENTO
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+</div><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<script>
 
 const firebaseConfig = {
-
-  apiKey:
-  "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
-
-  authDomain:
-  "anjos-flash.firebaseapp.com",
-
-  projectId:
-  "anjos-flash",
-
-  storageBucket:
-  "anjos-flash.firebasestorage.app",
-
-  messagingSenderId:
-  "725133182752",
-
-  appId:
-  "1:725133182752:web:5f9a98fa97269dcdcab945",
-
-  measurementId:
-  "G-9CSJXXNR0C"
-
+ apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
+ authDomain:"anjos-flash.firebaseapp.com",
+ projectId:"anjos-flash",
+ storageBucket:"anjos-flash.firebasestorage.app",
+ messagingSenderId:"725133182752",
+ appId:"1:725133182752:web:5f9a98fa97269dcdcab945",
+ measurementId:"G-9CSJXXNR0C"
 };
 
+let auth=null;
+let db=null;
+let usuarioAtual=null;
+let perfilAtual=null;
+let saldoAtual=0;
 
-const app = initializeApp(firebaseConfig);
+function mostrarMensagem(texto,tipo="aviso"){
+ const el=document.getElementById("mensagem");
+ el.className="status "+tipo;
+ el.textContent=texto;
+ el.classList.remove("hidden");
+}
 
-const auth = getAuth(app);
+function limparMensagem(){
+ document.getElementById("mensagem").classList.add("hidden");
+}
 
-const db = getFirestore(app);
+function erroHumano(e){
 
+ const code=e && e.code ? e.code : "";
 
-/* =========================================================
-   ESTADO
-   ========================================================= */
+ const mapa={
+  "auth/invalid-credential":
+  "E-mail ou senha incorretos.",
 
-let currentUser = null;
-let currentProfile = null;
-let currentWallet = null;
+  "auth/invalid-login-credentials":
+  "E-mail ou senha incorretos.",
 
-let finishOrderId = null;
+  "auth/user-not-found":
+  "Usuário não encontrado.",
 
+  "auth/wrong-password":
+  "Senha incorreta.",
 
-/* =========================================================
-   FUNÇÕES BÁSICAS
-   ========================================================= */
+  "auth/invalid-email":
+  "E-mail inválido.",
 
-window.toast = function(message){
+  "auth/email-already-in-use":
+  "Este e-mail já está cadastrado.",
 
-  const el = document.getElementById("toast");
+  "auth/weak-password":
+  "A senha precisa ter pelo menos 6 caracteres.",
 
-  el.textContent = message;
+  "auth/operation-not-allowed":
+  "Login por e-mail/senha não está ativado no Firebase.",
 
-  el.classList.remove("hidden");
+  "auth/network-request-failed":
+  "Falha de internet. Verifique sua conexão.",
 
-  setTimeout(()=>{
-    el.classList.add("hidden");
-  },3500);
+  "permission-denied":
+  "Permissão negada pelo Firestore."
+ };
 
-};
+ return mapa[code] ||
+        (e && e.message ? e.message : "Erro desconhecido.");
+}
 
+try{
 
-function money(value){
+ firebase.initializeApp(firebaseConfig);
 
-  return new Intl.NumberFormat(
-    "pt-BR",
-    {
-      style:"currency",
-      currency:"BRL"
-    }
-  ).format(Number(value || 0));
+ auth=firebase.auth();
+ db=firebase.firestore();
+
+ document.getElementById("firebaseStatus").className=
+ "status ok";
+
+ document.getElementById("firebaseStatus").textContent=
+ "✓ Firebase conectado.";
+
+ auth.onAuthStateChanged(async user=>{
+
+   if(user){
+     usuarioAtual=user;
+     await carregarUsuario();
+   }
+
+ });
+
+}catch(e){
+
+ document.getElementById("firebaseStatus").className=
+ "status erro";
+
+ document.getElementById("firebaseStatus").textContent=
+ "ERRO FIREBASE:\n"+erroHumano(e);
+
+ mostrarMensagem(
+  "Firebase não iniciou.\n"+erroHumano(e),
+  "erro"
+ );
+}
+
+window.addEventListener("error",function(e){
+
+ mostrarMensagem(
+  "ERRO DO APLICATIVO:\n"+
+  (e.message || "Erro JavaScript"),
+  "erro"
+ );
+
+});
+
+window.addEventListener(
+"unhandledrejection",
+function(e){
+
+ mostrarMensagem(
+  "ERRO:\n"+
+  (e.reason?.message || e.reason || "Erro desconhecido"),
+  "erro"
+ );
+
+});
+
+function mostrarCadastro(){
+
+ limparMensagem();
+
+ document.getElementById("loginArea")
+ .classList.add("hidden");
+
+ document.getElementById("cadastroArea")
+ .classList.remove("hidden");
+}
+
+function mostrarLogin(){
+
+ limparMensagem();
+
+ document.getElementById("cadastroArea")
+ .classList.add("hidden");
+
+ document.getElementById("loginArea")
+ .classList.remove("hidden");
+}
+
+async function loginUser(){
+
+ limparMensagem();
+
+ const email=document
+ .getElementById("loginEmail")
+ .value.trim();
+
+ const senha=document
+ .getElementById("loginSenha")
+ .value;
+
+ if(!email || !senha){
+
+  mostrarMensagem(
+   "Digite o e-mail e a senha.",
+   "erro"
+  );
+
+  return;
+ }
+
+ const btn=document.getElementById("btnLogin");
+
+ btn.disabled=true;
+ btn.textContent="ENTRANDO...";
+
+ try{
+
+  await auth.signInWithEmailAndPassword(
+   email,
+   senha
+  );
+
+  mostrarMensagem(
+   "Login realizado. Carregando painel...",
+   "ok"
+  );
+
+ }catch(e){
+
+  mostrarMensagem(
+   erroHumano(e)+"\nCódigo: "+(e.code||"sem código"),
+   "erro"
+  );
+
+ }finally{
+
+  btn.disabled=false;
+  btn.textContent="ENTRAR";
+
+ }
 
 }
 
+async function registrarUser(){
 
-function escapeHtml(value){
+ limparMensagem();
 
-  return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+ const nome=document
+ .getElementById("cadNome").value.trim();
+
+ const email=document
+ .getElementById("cadEmail").value.trim();
+
+ const telefone=document
+ .getElementById("cadTelefone").value.trim();
+
+ const senha=document
+ .getElementById("cadSenha").value;
+
+ const tipo=document
+ .getElementById("cadTipo").value;
+
+ const endereco=document
+ .getElementById("cadEndereco").value.trim();
+
+ if(!nome || !email || !telefone || !senha){
+
+  mostrarMensagem(
+   "Preencha nome, e-mail, telefone e senha.",
+   "erro"
+  );
+
+  return;
+ }
+
+ if(senha.length<6){
+
+  mostrarMensagem(
+   "A senha precisa ter no mínimo 6 caracteres.",
+   "erro"
+  );
+
+  return;
+ }
+
+ try{
+
+  const cred=
+   await auth.createUserWithEmailAndPassword(
+    email,
+    senha
+   );
+
+  const uid=cred.user.uid;
+
+  await cred.user.updateProfile({
+   displayName:nome
+  });
+
+  await db.collection("profiles")
+   .doc(uid)
+   .set({
+    nome:nome,
+    email:email,
+    telefone:telefone,
+    tipo:tipo,
+    endereco:endereco,
+    ativo:true,
+    criadoEm:firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+  await db.collection("wallets")
+   .doc(uid)
+   .set({
+    saldo:0,
+    atualizadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+  mostrarMensagem(
+   "Conta criada com sucesso!",
+   "ok"
+  );
+
+ }catch(e){
+
+  mostrarMensagem(
+   erroHumano(e)+"\nCódigo: "+(e.code||""),
+   "erro"
+  );
+
+ }
 
 }
 
+async function carregarUsuario(){
 
-/* =========================================================
-   AUTH TELA
-   ========================================================= */
+ try{
 
-window.showLogin = function(){
+  const doc=await db
+   .collection("profiles")
+   .doc(usuarioAtual.uid)
+   .get();
 
-  document
-    .getElementById("loginForm")
-    .classList.remove("hidden");
+  if(!doc.exists){
 
-  document
-    .getElementById("registerForm")
-    .classList.add("hidden");
+   mostrarMensagem(
+    "Login realizado, mas o perfil não foi encontrado no Firestore.",
+    "erro"
+   );
 
-  document
-    .getElementById("loginTab")
-    .className="btn btn-dark";
+   return;
+  }
 
-  document
-    .getElementById("registerTab")
-    .className="btn btn-light";
+  perfilAtual=doc.data();
 
-};
+  const wallet=await db
+   .collection("wallets")
+   .doc(usuarioAtual.uid)
+   .get();
 
+  saldoAtual=wallet.exists
+   ? Number(wallet.data().saldo||0)
+   : 0;
 
-window.showRegister = function(){
+  document.getElementById("loginArea")
+   .classList.add("hidden");
 
-  document
-    .getElementById("loginForm")
-    .classList.add("hidden");
+  document.getElementById("cadastroArea")
+   .classList.add("hidden");
 
-  document
-    .getElementById("registerForm")
-    .classList.remove("hidden");
+  document.getElementById("appArea")
+   .classList.remove("hidden");
 
-  document
-    .getElementById("loginTab")
-    .className="btn btn-light";
+  document.getElementById("nomeAtual")
+   .textContent=perfilAtual.nome||"-";
 
-  document
-    .getElementById("registerTab")
-    .className="btn btn-dark";
+  document.getElementById("tipoAtual")
+   .textContent=(perfilAtual.tipo||"-").toUpperCase();
 
-};
+  atualizarSaldo();
 
+  esconderPaineis();
 
-/* =========================================================
-   CADASTRO
-   ========================================================= */
+  const tipo=perfilAtual.tipo;
 
-window.registerUser = async function(){
+  if(tipo==="lojista"){
+   document.getElementById("painelLojista")
+   .classList.remove("hidden");
 
-  try{
+   carregarLojista();
 
-    const nome =
-      document
-      .getElementById("registerName")
-      .value.trim();
+  }else if(tipo==="motoboy"){
 
-    const email =
-      document
-      .getElementById("registerEmail")
-      .value.trim()
-      .toLowerCase();
+   document.getElementById("painelMotoboy")
+   .classList.remove("hidden");
 
-    const senha =
-      document
-      .getElementById("registerPassword")
-      .value;
+   carregarMotoboy();
 
-    const tipo =
-      document
-      .getElementById("registerType")
-      .value;
+  }else if(tipo==="franqueado"){
 
+   document.getElementById("painelFranqueado")
+   .classList.remove("hidden");
 
-    if(!nome || !email || !senha){
+  }else if(tipo==="admin"){
 
-      toast("Preencha todos os campos.");
+   document.getElementById("painelAdmin")
+   .classList.remove("hidden");
 
-      return;
+   carregarAdmin();
 
-    }
+  }else{
 
-
-    if(senha.length < 6){
-
-      toast("A senha precisa ter pelo menos 6 caracteres.");
-
-      return;
-
-    }
-
-
-    const result =
-      await createUserWithEmailAndPassword(
-        auth,
-        email,
-        senha
-      );
-
-
-    const user = result.user;
-
-
-    await updateProfile(
-      user,
-      {
-        displayName:nome
-      }
-    );
-
-
-    await setDoc(
-      doc(db,"profiles",user.uid),
-      {
-        id:user.uid,
-        email:email,
-        nome:nome,
-        tipo:tipo,
-        createdAt:serverTimestamp()
-      }
-    );
-
-
-    await setDoc(
-      doc(db,"wallets",user.uid),
-      {
-        userId:user.uid,
-        saldo:0,
-        tipo:tipo,
-        updatedAt:serverTimestamp()
-      }
-    );
-
-
-    toast("Conta criada com sucesso.");
-
-  }catch(error){
-
-    console.error(error);
-
-    toast(firebaseError(error));
+   mostrarMensagem(
+    "Tipo de usuário não reconhecido.",
+    "erro"
+   );
 
   }
 
-};
+ }catch(e){
 
+  mostrarMensagem(
+   "Não foi possível carregar seu perfil.\n"+
+   erroHumano(e),
+   "erro"
+  );
 
-/* =========================================================
-   LOGIN
-   ========================================================= */
-
-window.loginUser = async function(){
-
-  try{
-
-    const email =
-      document
-      .getElementById("loginEmail")
-      .value.trim()
-      .toLowerCase();
-
-    const password =
-      document
-      .getElementById("loginPassword")
-      .value;
-
-
-    if(!email || !password){
-
-      toast("Informe e-mail e senha.");
-
-      return;
-
-    }
-
-
-    await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-
-  }catch(error){
-
-    console.error(error);
-
-    toast(firebaseError(error));
-
-  }
-
-};
-
-
-/* =========================================================
-   ERROS FIREBASE
-   ========================================================= */
-
-function firebaseError(error){
-
-  const code = error?.code || "";
-
-  const messages = {
-
-    "auth/invalid-email":
-    "E-mail inválido.",
-
-    "auth/user-not-found":
-    "Usuário não encontrado.",
-
-    "auth/wrong-password":
-    "Senha incorreta.",
-
-    "auth/invalid-credential":
-    "E-mail ou senha incorretos.",
-
-    "auth/email-already-in-use":
-    "Este e-mail já está cadastrado.",
-
-    "auth/weak-password":
-    "Senha muito fraca.",
-
-    "auth/too-many-requests":
-    "Muitas tentativas. Aguarde um pouco.",
-
-    "permission-denied":
-    "Permissão negada pelo banco.",
-
-  };
-
-  return messages[code] ||
-    error?.message ||
-    "Ocorreu um erro.";
+ }
 
 }
 
+function esconderPaineis(){
 
-/* =========================================================
-   LOGOUT
-   ========================================================= */
-
-window.logoutUser = async function(){
-
-  await signOut(auth);
-
-};
-
-
-/* =========================================================
-   OBSERVA LOGIN
-   ========================================================= */
-
-onAuthStateChanged(
-  auth,
-  async(user)=>{
-
-    if(!user){
-
-      currentUser=null;
-      currentProfile=null;
-      currentWallet=null;
-
-      document
-        .getElementById("authScreen")
-        .classList.remove("hidden");
-
-      document
-        .getElementById("appScreen")
-        .classList.add("hidden");
-
-      document
-        .getElementById("logoutButton")
-        .classList.add("hidden");
-
-      document
-        .getElementById("headerUser")
-        .textContent="";
-
-      return;
-
-    }
-
-
-    currentUser=user;
-
-    await loadUserData();
-
-  }
-);
-
-
-/* =========================================================
-   CARREGA PERFIL
-   ========================================================= */
-
-async function loadUserData(){
-
-  try{
-
-    const profileSnap =
-      await getDoc(
-        doc(db,"profiles",currentUser.uid)
-      );
-
-
-    if(!profileSnap.exists()){
-
-      toast(
-        "Perfil não encontrado. Verifique o Firestore."
-      );
-
-      return;
-
-    }
-
-
-    currentProfile =
-      profileSnap.data();
-
-
-    const walletSnap =
-      await getDoc(
-        doc(db,"wallets",currentUser.uid)
-      );
-
-
-    if(walletSnap.exists()){
-
-      currentWallet =
-        walletSnap.data();
-
-    }else{
-
-      currentWallet={
-        userId:currentUser.uid,
-        saldo:0,
-        tipo:currentProfile.tipo
-      };
-
-    }
-
-
-    document
-      .getElementById("authScreen")
-      .classList.add("hidden");
-
-    document
-      .getElementById("appScreen")
-      .classList.remove("hidden");
-
-    document
-      .getElementById("logoutButton")
-      .classList.remove("hidden");
-
-    document
-      .getElementById("headerUser")
-      .textContent =
-      `${currentProfile.nome} • ${currentProfile.tipo}`;
-
-
-    renderDashboard();
-
-
-  }catch(error){
-
-    console.error(error);
-
-    toast(firebaseError(error));
-
-  }
+ [
+  "painelLojista",
+  "painelMotoboy",
+  "painelFranqueado",
+  "painelAdmin"
+ ].forEach(id=>{
+  document.getElementById(id)
+  .classList.add("hidden");
+ });
 
 }
 
+function atualizarSaldo(){
 
-/* =========================================================
-   DASHBOARD
-   ========================================================= */
+ document.getElementById("saldoAtual")
+ .textContent=
+ "R$ "+saldoAtual.toFixed(2)
+ .replace(".",",");
 
-async function renderDashboard(){
+ if(perfilAtual?.tipo==="lojista"){
 
-  if(!currentProfile){
+  const btn=document.getElementById("btnPedido");
+  const aviso=document.getElementById("avisoSaldo");
 
+  if(saldoAtual>=8){
+
+   btn.disabled=false;
+   btn.textContent="CRIAR PEDIDO — R$ 8,00";
+
+   aviso.className="status ok";
+   aviso.textContent=
+   "Saldo suficiente para criar pedido.";
+
+  }else{
+
+   btn.disabled=true;
+   btn.textContent="RECARREGUE SEU SALDO";
+
+   aviso.className="status erro";
+   aviso.textContent=
+   "Saldo insuficiente. Recarregue seu saldo.";
+
+  }
+
+ }
+
+}
+
+function copiarPix(){
+
+ navigator.clipboard
+ .writeText("22997450131")
+ .then(()=>{
+
+  mostrarMensagem(
+   "PIX copiado: 22997450131",
+   "ok"
+  );
+
+ }).catch(()=>{
+
+  mostrarMensagem(
+   "PIX: 22997450131",
+   "aviso"
+  );
+
+ });
+
+}
+
+async function sair(){
+
+ try{
+  await auth.signOut();
+ }catch(e){
+
+  mostrarMensagem(
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+ location.reload();
+}
+
+</script><script>
+
+async function pedirRecarga(){
+
+ try{
+
+  await db.collection("transactions")
+   .add({
+    uid:usuarioAtual.uid,
+    tipo:"recarga_50",
+    valor:50,
+    status:"pendente",
+    criadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+  mostrarMensagem(
+   "Recarga de R$ 50,00 enviada para aprovação do ADMIN.",
+   "ok"
+  );
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro ao solicitar recarga:\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function criarPedido(){
+
+ if(saldoAtual<8){
+
+  mostrarMensagem(
+   "Saldo insuficiente. Recarregue seu saldo.",
+   "erro"
+  );
+
+  return;
+ }
+
+ const nome=document
+ .getElementById("clienteNome")
+ .value.trim();
+
+ const endereco=document
+ .getElementById("clienteEndereco")
+ .value.trim();
+
+ const valor=Number(
+  document.getElementById("valorProduto").value
+ );
+
+ if(!nome || !endereco){
+
+  mostrarMensagem(
+   "Informe nome e endereço do cliente.",
+   "erro"
+  );
+
+  return;
+ }
+
+ if(!valor || valor<0){
+
+  mostrarMensagem(
+   "Informe o valor do produto.",
+   "erro"
+  );
+
+  return;
+ }
+
+ const codigo=
+  Math.floor(1000+Math.random()*9000)
+  .toString();
+
+ const walletRef=db
+  .collection("wallets")
+  .doc(usuarioAtual.uid);
+
+ const orderRef=db
+  .collection("orders")
+  .doc();
+
+ const txRef=db
+  .collection("transactions")
+  .doc();
+
+ try{
+
+  await db.runTransaction(async t=>{
+
+   const wallet=await t.get(walletRef);
+
+   if(!wallet.exists)
+    throw new Error("Carteira não encontrada.");
+
+   const saldo=Number(
+    wallet.data().saldo||0
+   );
+
+   if(saldo<8)
+    throw new Error(
+     "Saldo insuficiente para criar o pedido."
+    );
+
+   t.update(walletRef,{
+    saldo:firebase.firestore.FieldValue.increment(-8),
+    atualizadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+   t.set(orderRef,{
+    lojistaId:usuarioAtual.uid,
+    lojistaNome:perfilAtual.nome,
+    clienteNome:nome,
+    enderecoEntrega:endereco,
+    valorProduto:valor,
+    valorPedido:8,
+    codigo4Digitos:codigo,
+    status:"pendente",
+    motoboyId:null,
+    criadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+   t.set(txRef,{
+    uid:usuarioAtual.uid,
+    tipo:"taxa_pedido",
+    valor:-8,
+    orderId:orderRef.id,
+    status:"aprovado",
+    criadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+  });
+
+  saldoAtual-=8;
+  atualizarSaldo();
+
+  document.getElementById("clienteNome").value="";
+  document.getElementById("clienteEndereco").value="";
+  document.getElementById("valorProduto").value="";
+
+  mostrarMensagem(
+   "Pedido criado!\nCódigo de entrega: "+codigo,
+   "ok"
+  );
+
+  carregarLojista();
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Não foi possível criar o pedido.\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function carregarLojista(){
+
+ try{
+
+  const snap=await db.collection("orders")
+   .where("lojistaId","==",usuarioAtual.uid)
+   .get();
+
+  let html="";
+
+  snap.forEach(doc=>{
+
+   const o=doc.data();
+
+   html+=`
+   <div class="item">
+    <b>Pedido ${doc.id.substring(0,6)}</b><br>
+    Cliente: ${o.clienteNome||"-"}<br>
+    Endereço: ${o.enderecoEntrega||"-"}<br>
+    Produto: R$ ${Number(o.valorProduto||0)
+      .toFixed(2).replace(".",",")}<br>
+    Status: <b>${o.status||"-"}</b>
+   </div>`;
+
+  });
+
+  document.getElementById("listaLojista")
+   .innerHTML=
+   html||"<div class='small'>Nenhum pedido.</div>";
+
+  carregarExtrato(
+   "extratoLojista",
+   usuarioAtual.uid
+  );
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro ao carregar pedidos:\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function carregarExtrato(elemento,uid){
+
+ try{
+
+  const snap=await db.collection("transactions")
+   .where("uid","==",uid)
+   .get();
+
+  const limite=
+   Date.now()-90*24*60*60*1000;
+
+  let html="";
+
+  snap.forEach(doc=>{
+
+   const t=doc.data();
+
+   let data=null;
+
+   if(t.criadoEm && t.criadoEm.toDate)
+    data=t.criadoEm.toDate();
+
+   if(data && data.getTime()<limite)
     return;
 
-  }
+   html+=`
+   <div class="item">
+    <b>${t.tipo||"-"}</b><br>
+    Valor: R$ ${Number(t.valor||0)
+     .toFixed(2).replace(".",",")}<br>
+    Status: ${t.status||"-"}
+   </div>`;
 
+  });
 
-  if(currentProfile.tipo==="LOJISTA"){
+  document.getElementById(elemento)
+   .innerHTML=
+   html||"<div class='small'>Nenhuma movimentação nos últimos 90 dias.</div>";
 
-    await renderLojista();
+ }catch(e){
 
-  }
+  document.getElementById(elemento)
+   .innerHTML=
+   "Erro: "+erroHumano(e);
 
-  else if(currentProfile.tipo==="MOTOBOY"){
-
-    await renderMotoboy();
-
-  }
-
-  else if(currentProfile.tipo==="FRANQUEADO"){
-
-    await renderFranqueado();
-
-  }
-
-  else if(currentProfile.tipo==="ADMIN"){
-
-    await renderAdmin();
-
-  }
+ }
 
 }
 
+async function alternarOnline(){
 
-/* =========================================================
-   LOJISTA
-   ========================================================= */
+ const ref=db.collection("profiles")
+  .doc(usuarioAtual.uid);
 
-async function renderLojista(){
+ const novo=
+  perfilAtual.online!==true;
 
-  const saldo =
-    Number(currentWallet?.saldo || 0);
+ try{
 
-  const permitido =
-    saldo >= 8;
+  await ref.update({
+   online:novo
+  });
 
+  perfilAtual.online=novo;
 
-  document
-    .getElementById("dashboard")
-    .innerHTML = `
+  atualizarStatusMoto();
 
-    <div class="hero">
+ }catch(e){
 
-      <h1>Olá, ${escapeHtml(currentProfile.nome)}</h1>
+  mostrarMensagem(
+   "Erro ao alterar status:\n"+
+   erroHumano(e),
+   "erro"
+  );
 
-      <p>Painel do lojista</p>
+ }
 
-    </div>
+}
 
+function atualizarStatusMoto(){
 
-    <div class="grid">
+ const online=perfilAtual.online===true;
 
- 
+ document.getElementById("statusMoto")
+ .textContent=
+ online?"ONLINE":"OFFLINE";
+
+ const btn=document.getElementById("btnOnline");
+
+ btn.textContent=
+ online?"FICAR OFFLINE":"FICAR ONLINE";
+
+}
+
+async function carregarMotoboy(){
+
+ atualizarStatusMoto();
+
+ try{
+
+  const snap=await db.collection("orders")
+   .where("status","==","pendente")
+   .get();
+
+  let html="";
+
+  snap.forEach(doc=>{
+
+   const o=doc.data();
+
+   html+=`
+   <div class="item">
+    <b>Pedido ${doc.id.substring(0,6)}</b><br>
+    Loja: ${o.lojistaNome||"-"}<br>
+    Cliente: ${o.clienteNome||"-"}<br>
+    Endereço: ${o.enderecoEntrega||"-"}<br>
+
+    <button onclick="aceitarPedido('${doc.id}')">
+    ACEITAR
+    </button>
+   </div>`;
+
+  });
+
+  document.getElementById("listaPedidosMoto")
+   .innerHTML=
+   html||"<div class='small'>Nenhum pedido disponível.</div>";
+
+  const minhas=await db.collection("orders")
+   .where("motoboyId","==",usuarioAtual.uid)
+   .get();
+
+  let html2="";
+
+  minhas.forEach(doc=>{
+
+   const o=doc.data();
+
+   html2+=`
+   <div class="item">
+    <b>${o.clienteNome||"-"}</b><br>
+    ${o.enderecoEntrega||"-"}<br>
+    Status: <b>${o.status||"-"}</b>
+    ${
+     o.status==="em_rota"
+     ?
+     `<input id="codigo_${doc.id}"
+       maxlength="4"
+       inputmode="numeric"
+       placeholder="Código 4 dígitos">
+
+      <button onclick="finalizarPedido('${doc.id}')">
+       FINALIZAR
+      </button>`
+     :""
+    }
+   </div>`;
+
+  });
+
+  document.getElementById("listaEntregasMoto")
+   .innerHTML=
+   html2||"<div class='small'>Nenhuma entrega.</div>";
+
+  carregarExtrato(
+   "extratoMoto",
+   usuarioAtual.uid
+  );
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro no painel do motoboy:\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function aceitarPedido(id){
+
+ try{
+
+  const ref=db.collection("orders").doc(id);
+
+  await db.runTransaction(async t=>{
+
+   const snap=await t.get(ref);
+
+   if(!snap.exists)
+    throw new Error("Pedido não encontrado.");
+
+   const o=snap.data();
+
+   if(o.status!=="pendente")
+    throw new Error("Esse pedido já foi aceito.");
+
+   t.update(ref,{
+    status:"em_rota",
+    motoboyId:usuarioAtual.uid,
+    motoboyNome:perfilAtual.nome,
+    aceitoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+  });
+
+  mostrarMensagem(
+   "Pedido aceito!",
+   "ok"
+  );
+
+  carregarMotoboy();
+
+ }catch(e){
+
+  mostrarMensagem(
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function finalizarPedido(id){
+
+ const campo=document
+ .getElementById("codigo_"+id);
+
+ const codigo=campo
+ ? campo.value.trim()
+ : "";
+
+ if(!/^\d{4}$/.test(codigo)){
+
+  mostrarMensagem(
+   "Digite o código de 4 dígitos.",
+   "erro"
+  );
+
+  return;
+ }
+
+ try{
+
+  const ref=db.collection("orders").doc(id);
+
+  const snap=await ref.get();
+
+  if(!snap.exists)
+   throw new Error("Pedido não encontrado.");
+
+  const o=snap.data();
+
+  if(o.motoboyId!==usuarioAtual.uid)
+   throw new Error("Esse pedido não pertence a você.");
+
+  if(o.codigo4Digitos!==codigo)
+   throw new Error("Código incorreto.");
+
+  await ref.update({
+   status:"finalizado",
+   finalizadoEm:
+   firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  mostrarMensagem(
+   "Entrega finalizada com sucesso!",
+   "ok"
+  );
+
+  carregarMotoboy();
+
+ }catch(e){
+
+  mostrarMensagem(
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+</script><script>
+
+async function carregarAdmin(){
+
+ try{
+
+  const usuarios=await db
+   .collection("profiles")
+   .get();
+
+  let html="";
+
+  usuarios.forEach(doc=>{
+
+   const u=doc.data();
+
+   html+=`
+   <div class="item">
+    <b>${u.nome||"-"}</b><br>
+    E-mail: ${u.email||"-"}<br>
+    Telefone: ${u.telefone||"-"}<br>
+    Tipo: ${u.tipo||"-"}<br>
+    UID: ${doc.id}
+
+    <button onclick="editarSaldo('${doc.id}')">
+     AJUSTAR SALDO
+    </button>
+   </div>`;
+
+  });
+
+  document.getElementById("adminUsuarios")
+   .innerHTML=html;
+
+  const pedidos=await db
+   .collection("orders")
+   .get();
+
+  let hp="";
+
+  pedidos.forEach(doc=>{
+
+   const o=doc.data();
+
+   hp+=`
+   <div class="item">
+    <b>${o.clienteNome||"-"}</b><br>
+    Loja: ${o.lojistaNome||"-"}<br>
+    Endereço: ${o.enderecoEntrega||"-"}<br>
+    Status: ${o.status||"-"}<br>
+    Motoboy: ${o.motoboyNome||"Não aceito"}
+   </div>`;
+
+  });
+
+  document.getElementById("adminPedidos")
+   .innerHTML=
+   hp||"<div class='small'>Nenhum pedido.</div>";
+
+  const tx=await db
+   .collection("transactions")
+   .get();
+
+  let receitas=0;
+  let pagamentos=0;
+  let recargasHtml="";
+
+  tx.forEach(doc=>{
+
+   const t=doc.data();
+   const valor=Number(t.valor||0);
+
+   if(t.tipo==="recarga_50" &&
+      t.status==="aprovado"){
+
+    receitas+=valor;
+   }
+
+   if(t.tipo==="pagamento_motoboy" &&
+      t.status==="aprovado"){
+
+    pagamentos+=Math.abs(valor);
+   }
+
+   if(t.tipo==="recarga_50" &&
+      t.status==="pendente"){
+
+    recargasHtml+=`
+    <div class="item">
+     Valor: R$ 50,00<br>
+     UID: ${t.uid}
+
+     <button
+      onclick="aprovarRecarga('${doc.id}')">
+      APROVAR
+     </button>
+    </div>`;
+   }
+
+  });
+
+  document.getElementById("adminRecargas")
+   .innerHTML=
+   recargasHtml||
+   "<div class='small'>Nenhuma recarga pendente.</div>";
+
+  document.getElementById("adminReceitas")
+   .textContent=
+   "R$ "+receitas.toFixed(2).replace(".",",");
+
+  document.getElementById("adminPagamentos")
+   .textContent=
+   "R$ "+pagamentos.toFixed(2).replace(".",",");
+
+  document.getElementById("adminLucro")
+   .textContent=
+   "R$ "+(receitas-pagamentos)
+   .toFixed(2).replace(".",",");
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro no painel ADMIN:\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function aprovarRecarga(txId){
+
+ try{
+
+  await db.runTransaction(async t=>{
+
+   const txRef=db
+    .collection("transactions")
+    .doc(txId);
+
+   const tx=await t.get(txRef);
+
+   if(!tx.exists)
+    throw new Error("Recarga não encontrada.");
+
+   const d=tx.data();
+
+   if(d.status!=="pendente")
+    throw new Error("Essa recarga já foi processada.");
+
+   const walletRef=db
+    .collection("wallets")
+    .doc(d.uid);
+
+   const wallet=await t.get(walletRef);
+
+   const saldo=wallet.exists
+    ? Number(wallet.data().saldo||0)
+    : 0;
+
+   t.set(walletRef,{
+    saldo:saldo+50,
+    atualizadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   },{
+    merge:true
+   });
+
+   t.update(txRef,{
+    status:"aprovado",
+    aprovadoPor:usuarioAtual.uid,
+    aprovadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+  });
+
+  mostrarMensagem(
+   "Recarga aprovada.",
+   "ok"
+  );
+
+  carregarAdmin();
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro ao aprovar:\n"+erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function editarSaldo(uid){
+
+ const valor=prompt(
+  "Digite o novo saldo do usuário:"
+ );
+
+ if(valor===null)
+  return;
+
+ const numero=Number(valor);
+
+ if(isNaN(numero)){
+
+  mostrarMensagem(
+   "Valor inválido.",
+   "erro"
+  );
+
+  return;
+ }
+
+ try{
+
+  await db.collection("wallets")
+   .doc(uid)
+   .set({
+    saldo:numero,
+    atualizadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   },{
+    merge:true
+   });
+
+  mostrarMensagem(
+   "Saldo alterado com sucesso.",
+   "ok"
+  );
+
+  carregarAdmin();
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro ao alterar saldo:\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function pagarMotoboy(){
+
+ const uid=document
+ .getElementById("pagMotoUid")
+ .value.trim();
+
+ const valor=Number(
+  document.getElementById("pagMotoValor")
+  .value
+ );
+
+ if(!uid || !valor || valor<=0){
+
+  mostrarMensagem(
+   "Informe UID e valor do pagamento.",
+   "erro"
+  );
+
+  return;
+ }
+
+ try{
+
+  await db.collection("transactions")
+   .add({
+    uid:uid,
+    tipo:"pagamento_motoboy",
+    valor:-Math.abs(valor),
+    status:"aprovado",
+    aprovadoPor:usuarioAtual.uid,
+    criadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+  document.getElementById("pagMotoUid").value="";
+  document.getElementById("pagMotoValor").value="";
+
+  mostrarMensagem(
+   "Pagamento registrado.",
+   "ok"
+  );
+
+  carregarAdmin();
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro no pagamento:\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+</script>
+
+</body>
+</html>
