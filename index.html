@@ -1376,1119 +1376,538 @@ CANCELAR
 
 </div>
 
-   </div><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+</div><!-- =========================================================
+     PARTE — FIREBASE + LOGIN COMPLETO CORRIGIDO
+     ANJOS EM DUAS RODAS / ANJOS FLASH
+     ========================================================= -->
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 
 <script>
 
-const firebaseConfig={
-apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
-authDomain:"anjos-flash.firebaseapp.com",
-projectId:"anjos-flash",
-storageBucket:"anjos-flash.firebasestorage.app",
-messagingSenderId:"725133182752",
-appId:"1:725133182752:web:5f9a98fa97269dcdcab945",
-measurementId:"G-9CSJXXNR0C"
+/* =========================================================
+   CONFIGURAÇÃO FIREBASE
+   ========================================================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
+  authDomain: "anjos-flash.firebaseapp.com",
+  projectId: "anjos-flash",
+  storageBucket: "anjos-flash.firebasestorage.app",
+  messagingSenderId: "725133182752",
+  appId: "1:725133182752:web:5f9a98fa97269dcdcab945",
+  measurementId: "G-9CSJXXNR0C"
 };
 
-firebase.initializeApp(firebaseConfig);
 
-const auth=firebase.auth();
-const db=firebase.firestore();
-const storage=firebase.storage();
+/* =========================================================
+   INICIALIZAÇÃO
+   ========================================================= */
 
-let usuarioAtual=null;
-let perfilAtual=null;
-let pedidoFinalizarId=null;
+let appFirebase;
 
+try {
 
-/* =====================================================
-   MENSAGENS
-===================================================== */
+  if (!firebase.apps.length) {
+    appFirebase = firebase.initializeApp(firebaseConfig);
+  } else {
+    appFirebase = firebase.app();
+  }
 
-function msg(id,text,tipo){
+} catch (erro) {
 
-const el=document.getElementById(id);
+  console.error("ERRO AO INICIAR FIREBASE:", erro);
 
-if(!el)return;
+  const mensagem = document.getElementById("mensagemLogin");
 
-el.textContent=text;
-el.className="mensagem "+(tipo||"info");
-el.classList.remove("oculto");
-
+  if (mensagem) {
+    mensagem.style.display = "block";
+    mensagem.style.color = "#ff4444";
+    mensagem.innerText =
+      "ERRO AO INICIAR FIREBASE:\n" +
+      (erro.message || erro);
+  }
 }
 
 
-function erroHumano(e){
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
 
-if(!e)return"Erro desconhecido.";
 
-const c=e.code||"";
+/* =========================================================
+   VARIÁVEIS DO SISTEMA
+   ========================================================= */
 
-const erros={
+let usuarioAtual = null;
+let perfilAtual = null;
 
-"auth/invalid-credential":
-"E-mail ou senha incorretos.",
-
-"auth/invalid-login-credentials":
-"E-mail ou senha incorretos.",
-
-"auth/user-not-found":
-"Usuário não encontrado.",
-
-"auth/wrong-password":
-"Senha incorreta.",
-
-"auth/invalid-email":
-"E-mail inválido.",
-
-"auth/email-already-in-use":
-"Este e-mail já está cadastrado.",
-
-"auth/weak-password":
-"A senha deve ter pelo menos 6 caracteres.",
-
-"auth/network-request-failed":
-"Sem conexão com a internet."
-
+let configTaxas = {
+  kmBase: 3,
+  valorBase: 8,
+  valorAdicionalKm: 2,
+  taxaApp: 10,
+  retornoPct: 5,
+  superPct: 10
 };
 
-return erros[c]||e.message||
-"Não foi possível realizar a operação.";
 
+/* =========================================================
+   FUNÇÃO AUXILIAR
+   ========================================================= */
+
+function $(id) {
+  return document.getElementById(id);
 }
 
 
-/* =====================================================
-   TELAS
-===================================================== */
+/* =========================================================
+   MOSTRAR ERRO DE LOGIN
+   ========================================================= */
 
-function mostrarLogin(){
+function mostrarErroLogin(texto) {
 
-document.getElementById("telaLogin")
-.classList.remove("oculto");
+  const msg = $("mensagemLogin");
 
-document.getElementById("telaCadastro")
-.classList.add("oculto");
+  if (!msg) {
+    alert(texto);
+    return;
+  }
 
-document.getElementById("telaApp")
-.classList.add("oculto");
+  msg.style.display = "block";
+  msg.style.color = "#ff4444";
+  msg.style.background = "#220000";
+  msg.style.border = "1px solid #ff4444";
+  msg.style.padding = "12px";
+  msg.style.borderRadius = "8px";
+  msg.style.whiteSpace = "pre-line";
 
+  msg.innerText = texto;
 }
 
 
-function mostrarCadastro(){
-
-document.getElementById("telaLogin")
-.classList.add("oculto");
-
-document.getElementById("telaCadastro")
-.classList.remove("oculto");
-
-document.getElementById("telaApp")
-.classList.add("oculto");
-
-}
-
-
-function alterarTipoCadastro(){
-
-const tipo=
-document.getElementById("cadTipo")
-.value;
-
-const veiculoBox=
-document.getElementById("cadVeiculoBox");
-
-const documentosBox=
-document.getElementById("cadDocumentosBox");
-
-if(tipo==="motoboy"){
-
-veiculoBox.classList.remove("oculto");
-documentosBox.classList.remove("oculto");
-
-}else{
-
-veiculoBox.classList.add("oculto");
-documentosBox.classList.add("oculto");
-
-}
-
-}
-
-
-/* =====================================================
-   PAINÉIS
-===================================================== */
-
-function esconderPaineis(){
-
-[
-"painelLojista",
-"painelMotoboy",
-"painelFranqueado",
-"painelAdmin"
-].forEach(function(id){
-
-const el=document.getElementById(id);
-
-if(el)el.classList.add("oculto");
-
-});
-
-}
-
-
-function abrirPainel(tipo){
-
-esconderPaineis();
-
-tipo=
-String(tipo||"")
-.trim()
-.toLowerCase();
-
-
-if(tipo==="admin"){
-
-document.getElementById("painelAdmin")
-.classList.remove("oculto");
-
-carregarAdmin();
-
-return;
-
-}
-
-
-if(tipo==="motoboy"){
-
-document.getElementById("painelMotoboy")
-.classList.remove("oculto");
-
-carregarMotoboy();
-
-return;
-
-}
-
-
-if(
-tipo==="lojista" ||
-tipo==="super_lojista"
-){
-
-document.getElementById("painelLojista")
-.classList.remove("oculto");
-
-carregarLojista();
-
-return;
-
-}
-
-
-if(tipo==="franqueado"){
-
-document.getElementById("painelFranqueado")
-.classList.remove("oculto");
-
-carregarFranqueado();
-
-return;
-
-}
-
-
-alert(
-"Perfil inválido no Firestore.\n\n"+
-"Tipo: "+tipo
-);
-
-}
-
-
-/* =====================================================
+/* =========================================================
    LOGIN
-===================================================== */
+   ========================================================= */
 
-async function loginUser(){
+async function entrar() {
 
-const email=
-document.getElementById("loginEmail")
-.value.trim()
-.toLowerCase();
+  const email = $("loginEmail")
+    ? $("loginEmail").value.trim().toLowerCase()
+    : "";
 
-const senha=
-document.getElementById("loginSenha")
-.value;
+  const senha = $("loginSenha")
+    ? $("loginSenha").value
+    : "";
 
-if(!email||!senha){
+  const msg = $("mensagemLogin");
 
-msg(
-"mensagemLogin",
-"Digite e-mail e senha.",
-"erro"
-);
+  if (msg) {
+    msg.style.display = "block";
+    msg.style.color = "#ffd400";
+    msg.style.background = "";
+    msg.style.border = "";
+    msg.innerText = "Entrando...";
+  }
 
-return;
+  if (!email) {
+    mostrarErroLogin("Digite seu e-mail.");
+    return;
+  }
 
+  if (!senha) {
+    mostrarErroLogin("Digite sua senha.");
+    return;
+  }
+
+  try {
+
+    console.log("Tentando fazer login:", email);
+
+    const credencial =
+      await auth.signInWithEmailAndPassword(
+        email,
+        senha
+      );
+
+    usuarioAtual = credencial.user;
+
+    console.log(
+      "LOGIN FIREBASE REALIZADO COM SUCESSO:",
+      usuarioAtual.uid
+    );
+
+    if (msg) {
+      msg.style.color = "#00ff66";
+      msg.innerText = "Login realizado. Carregando painel...";
+    }
+
+    await carregarUsuario();
+
+  } catch (error) {
+
+    console.error("ERRO COMPLETO DO LOGIN:", error);
+
+    let mensagem = "";
+
+    switch (error.code) {
+
+      case "auth/invalid-email":
+        mensagem =
+          "E-MAIL INVÁLIDO.\n\n" +
+          "Digite um e-mail válido.";
+        break;
+
+      case "auth/user-not-found":
+        mensagem =
+          "USUÁRIO NÃO ENCONTRADO.\n\n" +
+          "Verifique o e-mail cadastrado.";
+        break;
+
+      case "auth/wrong-password":
+        mensagem =
+          "SENHA INCORRETA.\n\n" +
+          "Confira a senha e tente novamente.";
+        break;
+
+      case "auth/invalid-credential":
+        mensagem =
+          "E-MAIL OU SENHA INCORRETOS.\n\n" +
+          "O Firebase recusou as credenciais.";
+        break;
+
+      case "auth/user-disabled":
+        mensagem =
+          "USUÁRIO DESATIVADO.\n\n" +
+          "Esse usuário foi bloqueado no Firebase.";
+        break;
+
+      case "auth/too-many-requests":
+        mensagem =
+          "MUITAS TENTATIVAS.\n\n" +
+          "Aguarde alguns minutos e tente novamente.";
+        break;
+
+      case "auth/network-request-failed":
+        mensagem =
+          "ERRO DE INTERNET.\n\n" +
+          "Verifique sua conexão.";
+        break;
+
+      case "auth/operation-not-allowed":
+        mensagem =
+          "LOGIN POR E-MAIL E SENHA DESATIVADO.\n\n" +
+          "Ative E-mail/Senha em Firebase Authentication.";
+        break;
+
+      case "auth/api-key-not-valid":
+        mensagem =
+          "CHAVE API DO FIREBASE INVÁLIDA.\n\n" +
+          "Confira a configuração do projeto anjos-flash.";
+        break;
+
+      case "auth/app-not-authorized":
+        mensagem =
+          "APLICATIVO NÃO AUTORIZADO PELO FIREBASE.\n\n" +
+          "Confira os domínios autorizados.";
+        break;
+
+      default:
+        mensagem =
+          "ERRO AO FAZER LOGIN.\n\n" +
+          "Código: " +
+          (error.code || "desconhecido") +
+          "\n\nMensagem:\n" +
+          (error.message || "Erro desconhecido.");
+    }
+
+    mostrarErroLogin(mensagem);
+  }
 }
 
-const botao=
-document.getElementById("btnLogin");
 
-try{
+/* =========================================================
+   CARREGAR USUÁRIO LOGADO
+   ========================================================= */
 
-botao.disabled=true;
-botao.textContent="ENTRANDO...";
+async function carregarUsuario() {
 
-msg(
-"mensagemLogin",
-"Login realizado. Carregando painel...",
-"info"
-);
+  try {
 
-await auth.signInWithEmailAndPassword(
-email,
-senha
-);
+    if (!auth.currentUser) {
 
-}catch(e){
+      mostrarErroLogin(
+        "Nenhum usuário está conectado."
+      );
 
-console.error(e);
+      return;
+    }
 
-msg(
-"mensagemLogin",
-erroHumano(e),
-"erro"
-);
+    usuarioAtual = auth.currentUser;
 
-}finally{
+    console.log(
+      "Carregando perfil:",
+      usuarioAtual.uid
+    );
 
-botao.disabled=false;
-botao.textContent="ENTRAR";
+    const perfilRef =
+      db.collection("profiles")
+        .doc(usuarioAtual.uid);
 
+    const perfilSnap =
+      await perfilRef.get();
+
+    if (!perfilSnap.exists) {
+
+      mostrarErroLogin(
+        "LOGIN REALIZADO, MAS O PERFIL NÃO FOI ENCONTRADO.\n\n" +
+        "UID:\n" +
+        usuarioAtual.uid +
+        "\n\n" +
+        "Verifique a coleção profiles no Firestore."
+      );
+
+      return;
+    }
+
+    perfilAtual = perfilSnap.data();
+
+    console.log(
+      "PERFIL CARREGADO:",
+      perfilAtual
+    );
+
+
+    /* =====================================================
+       VERIFICAÇÃO DO TIPO DE USUÁRIO
+       ===================================================== */
+
+    const tiposPermitidos = [
+      "admin",
+      "motoboy",
+      "lojista",
+      "franqueado"
+    ];
+
+    if (!tiposPermitidos.includes(perfilAtual.tipo)) {
+
+      await auth.signOut();
+
+      mostrarErroLogin(
+        "TIPO DE USUÁRIO INVÁLIDO.\n\n" +
+        "Tipo encontrado: " +
+        (perfilAtual.tipo || "não informado")
+      );
+
+      return;
+    }
+
+
+    /* =====================================================
+       ESCONDE LOGIN
+       ===================================================== */
+
+    if ($("telaLogin")) {
+      $("telaLogin").classList.add("oculto");
+    }
+
+    if ($("loginArea")) {
+      $("loginArea").classList.add("oculto");
+    }
+
+    if ($("cadastroArea")) {
+      $("cadastroArea").classList.add("oculto");
+    }
+
+
+    /* =====================================================
+       MOSTRA APP
+       ===================================================== */
+
+    if ($("app")) {
+      $("app").classList.remove("oculto");
+    }
+
+    if ($("painelApp")) {
+      $("painelApp").classList.remove("oculto");
+    }
+
+
+    /* =====================================================
+       ABRIR PAINEL CORRETO
+       ===================================================== */
+
+    if (typeof abrirPainel === "function") {
+
+      await abrirPainel(
+        perfilAtual.tipo
+      );
+
+    }
+
+
+    /* =====================================================
+       SALDO
+       ===================================================== */
+
+    if (typeof atualizarSaldo === "function") {
+
+      await atualizarSaldo();
+
+    }
+
+
+    /* =====================================================
+       PIX MOTOBOY
+       ===================================================== */
+
+    if (
+      perfilAtual.tipo === "motoboy" &&
+      typeof carregarPixMotoboy === "function"
+    ) {
+
+      await carregarPixMotoboy();
+
+    }
+
+
+    /* =====================================================
+       LOJISTA / SUPER LOJISTA
+       ===================================================== */
+
+    if (
+      perfilAtual.tipo === "lojista" &&
+      typeof carregarLojasLojista === "function"
+    ) {
+
+      await carregarLojasLojista();
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "ERRO AO CARREGAR USUÁRIO:",
+      error
+    );
+
+    mostrarErroLogin(
+      "LOGIN FOI FEITO, MAS DEU ERRO AO CARREGAR O PERFIL.\n\n" +
+      "Código: " +
+      (error.code || "desconhecido") +
+      "\n\n" +
+      (error.message || error)
+    );
+  }
 }
 
-}
 
+/* =========================================================
+   OBSERVADOR DO FIREBASE AUTH
+   ========================================================= */
 
-/* =====================================================
-   CÓDIGO MOTOBOY
-===================================================== */
+auth.onAuthStateChanged(async function(user) {
 
-function normalizarCodigoMotoboy(valor){
+  console.log(
+    "AUTH STATE:",
+    user ? user.email : "ninguém logado"
+  );
 
-let codigo=
-String(valor||"")
-.trim()
-.toUpperCase();
+  if (user) {
 
-if(!codigo)return"";
+    usuarioAtual = user;
 
-if(!codigo.startsWith("#")){
+    try {
 
-const numeros=
-codigo.replace(/\D/g,"");
+      await carregarUsuario();
 
-if(!numeros)return"";
+    } catch (erro) {
 
-codigo=
-"#"+
-numeros.padStart(4,"0");
+      console.error(
+        "Erro no carregamento automático:",
+        erro
+      );
 
-}
+    }
 
-return codigo;
+  } else {
 
-}
+    usuarioAtual = null;
+    perfilAtual = null;
 
-
-async function gerarCodigoMotoboy(uid,nome,email,telefone){
-
-const ultimoSnap=
-await db.collection("motoboys")
-.orderBy("numero","desc")
-.limit(1)
-.get();
-
-let numero=1;
-
-if(!ultimoSnap.empty){
-
-numero=
-Number(
-ultimoSnap.docs[0].data().numero||0
-)+1;
-
-}
-
-const codigo=
-"#"+
-String(numero).padStart(4,"0");
-
-
-await db.collection("motoboys")
-.doc(uid)
-.set({
-
-uid:uid,
-
-numero:numero,
-
-codigo:codigo,
-
-nome:nome,
-
-email:email,
-
-telefone:telefone,
-
-aprovado:false,
-
-criadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
+  }
 
 });
 
 
-return{
-numero:numero,
-codigo:codigo
-};
+/* =========================================================
+   BOTÃO ENTER NO LOGIN
+   ========================================================= */
 
-}
+document.addEventListener(
+  "keydown",
+  function(event) {
 
+    if (event.key !== "Enter") {
+      return;
+    }
 
-/* =====================================================
-   UPLOAD DOCUMENTOS
-===================================================== */
+    const campo =
+      document.activeElement;
 
-async function enviarArquivo(uid,arquivo,pasta){
+    if (
+      campo &&
+      (
+        campo.id === "loginEmail" ||
+        campo.id === "loginSenha"
+      )
+    ) {
 
-if(!arquivo)return"";
+      event.preventDefault();
 
-const nomeSeguro=
-arquivo.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+      entrar();
 
-const ref=
-storage
-.ref()
-.child(
-"documentos/"+uid+"/"+pasta+"/"+Date.now()+"_"+nomeSeguro
-);
+    }
 
-await ref.put(arquivo);
-
-return await ref.getDownloadURL();
-
-}
-
-
-/* =====================================================
-   CADASTRO
-===================================================== */
-
-async function registrarUser(){
-
-const nome=
-document.getElementById("cadNome")
-.value.trim();
-
-const email=
-document.getElementById("cadEmail")
-.value.trim()
-.toLowerCase();
-
-const telefone=
-document.getElementById("cadTelefone")
-.value.trim();
-
-const senha=
-document.getElementById("cadSenha")
-.value;
-
-const tipo=
-document.getElementById("cadTipo")
-.value.trim()
-.toLowerCase();
-
-const endereco=
-document.getElementById("cadEndereco")
-.value.trim();
-
-const veiculoEl=
-document.getElementById("cadVeiculo");
-
-const veiculo=
-veiculoEl
-?veiculoEl.value
-:"";
-
-
-if(!nome||!email||!telefone||!senha){
-
-msg(
-"mensagemCadastro",
-"Preencha todos os campos obrigatórios.",
-"erro"
-);
-
-return;
-
-}
-
-
-const tiposValidos=[
-"lojista",
-"super_lojista",
-"motoboy",
-"franqueado"
-];
-
-if(!tiposValidos.includes(tipo)){
-
-msg(
-"mensagemCadastro",
-"Tipo de cadastro inválido.",
-"erro"
-);
-
-return;
-
-}
-
-
-try{
-
-msg(
-"mensagemCadastro",
-"Criando conta...",
-"info"
-);
-
-const cred=
-await auth.createUserWithEmailAndPassword(
-email,
-senha
-);
-
-const uid=cred.user.uid;
-
-let codigoMotoboy="";
-let numeroMotoboy=null;
-
-if(tipo==="motoboy"){
-
-const codigo=
-await gerarCodigoMotoboy(
-uid,
-nome,
-email,
-telefone
-);
-
-codigoMotoboy=codigo.codigo;
-numeroMotoboy=codigo.numero;
-
-}
-
-
-/* DOCUMENTOS */
-
-let cnhUrl="";
-let crlvUrl="";
-let selfieUrl="";
-
-if(tipo==="motoboy"){
-
-const cnh=
-document.getElementById("cadCNH").files[0];
-
-const crlv=
-document.getElementById("cadCRLV").files[0];
-
-const selfie=
-document.getElementById("cadSelfie").files[0];
-
-
-if(cnh){
-
-cnhUrl=
-await enviarArquivo(
-uid,
-cnh,
-"cnh"
-);
-
-}
-
-if(crlv){
-
-crlvUrl=
-await enviarArquivo(
-uid,
-crlv,
-"crlv"
-);
-
-}
-
-if(selfie){
-
-selfieUrl=
-await enviarArquivo(
-uid,
-selfie,
-"selfie"
-);
-
-}
-
-}
-
-
-/* PERFIL */
-
-await db.collection("profiles")
-.doc(uid)
-.set({
-
-nome:nome,
-
-email:email,
-
-telefone:telefone,
-
-tipo:tipo,
-
-tipoConta:
-(tipo==="super_lojista"
-?"super_lojista"
-:"lojista"),
-
-endereco:endereco,
-
-veiculo:
-tipo==="motoboy"
-?veiculo
-:"",
-
-motoboyCodigo:
-codigoMotoboy,
-
-numeroMotoboy:
-numeroMotoboy,
-
-aprovado:
-tipo==="motoboy"
-?false
-:true,
-
-ativo:true,
-
-online:false,
-
-cnhUrl:cnhUrl,
-
-crlvUrl:crlvUrl,
-
-selfieUrl:selfieUrl,
-
-criadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
-
-});
-
-
-/* CARTEIRA */
-
-await db.collection("wallets")
-.doc(uid)
-.set({
-
-saldo:0,
-
-atualizadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
-
-});
-
-
-if(tipo==="lojista"||tipo==="super_lojista"){
-
-/*
-  A primeira loja fica vinculada
-  automaticamente ao perfil.
-*/
-
-await db.collection("lojas")
-.add({
-
-donoId:uid,
-
-nomeLoja:nome,
-
-nome:nome,
-
-endereco:endereco,
-
-lat:0,
-
-lng:0,
-
-principal:true,
-
-ativo:true,
-
-criadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
-
-});
-
-}
-
-
-/* MENSAGEM MOTOBOY */
-
-if(tipo==="motoboy"){
-
-msg(
-"mensagemCadastro",
-"Cadastro realizado!\n\n"+
-"Seu código é "+codigoMotoboy+
-"\n\nAguarde a aprovação do administrador.",
-"sucesso"
-);
-
-}else{
-
-msg(
-"mensagemCadastro",
-"Cadastro realizado. Carregando...",
-"sucesso"
-);
-
-}
-
-}catch(e){
-
-console.error(e);
-
-msg(
-"mensagemCadastro",
-erroHumano(e),
-"erro"
-);
-
-}
-
-}
-
-
-/* =====================================================
-   AUTENTICAÇÃO
-===================================================== */
-
-auth.onAuthStateChanged(
-async function(user){
-
-if(!user){
-
-usuarioAtual=null;
-perfilAtual=null;
-
-mostrarLogin();
-
-return;
-
-}
-
-usuarioAtual=user;
-
-await carregarUsuario();
-
-}
+  }
 );
 
 
-/* =====================================================
-   CARREGAR USUÁRIO
-===================================================== */
-
-async function carregarUsuario(){
-
-if(!usuarioAtual)return;
-
-try{
-
-const uid=usuarioAtual.uid;
-
-const snap=
-await db.collection("profiles")
-.doc(uid)
-.get();
-
-if(!snap.exists){
-
-alert(
-"Esta conta não possui perfil no Firestore."
-);
-
-await auth.signOut();
-
-return;
-
-}
-
-perfilAtual=snap.data();
-
-const tipo=
-String(perfilAtual.tipo||"")
-.trim()
-.toLowerCase();
-
-const tipos=[
-"admin",
-"motoboy",
-"lojista",
-"super_lojista",
-"franqueado"
-];
-
-if(!tipos.includes(tipo)){
-
-alert(
-"Tipo inválido no Firestore.\n\n"+
-"UID: "+uid+"\n"+
-"Tipo: "+tipo
-);
-
-await auth.signOut();
-
-return;
-
-}
-
-
-document.getElementById("nomeAtual")
-.textContent=
-perfilAtual.nome||
-usuarioAtual.email;
-
-
-document.getElementById("tipoAtual")
-.textContent=
-tipo.toUpperCase();
-
-
-document.getElementById("uidAtual")
-.textContent=uid;
-
-
-document.getElementById("telaLogin")
-.classList.add("oculto");
-
-document.getElementById("telaCadastro")
-.classList.add("oculto");
-
-document.getElementById("telaApp")
-.classList.remove("oculto");
-
-
-if(tipo==="motoboy"){
-
-const codigo=
-perfilAtual.motoboyCodigo||"";
-
-const box=
-document.getElementById(
-"codigoMotoboyAtual"
-);
-
-const painel=
-document.getElementById(
-"codigoMotoboyPainel"
-);
-
-if(codigo){
-
-box.textContent=
-"SEU CÓDIGO: "+codigo;
-
-box.classList.remove("oculto");
-
-painel.textContent=
-"CÓDIGO: "+codigo;
-
-}
-
-}
-
-
-abrirPainel(tipo);
-
-await atualizarSaldo();
-
-if(tipo==="motoboy"){
-
-await carregarPixMotoboy();
-
-}
-
-}catch(e){
-
-console.error(e);
-
-alert(
-"Erro ao carregar painel:\n"+
-erroHumano(e)
-);
-
-}
-
-}
-
-
-/* =====================================================
-   SALDO
-===================================================== */
-
-async function atualizarSaldo(){
-
-if(!usuarioAtual)return;
-
-try{
-
-const snap=
-await db.collection("wallets")
-.doc(usuarioAtual.uid)
-.get();
-
-let saldo=0;
-
-if(snap.exists){
-
-saldo=
-Number(snap.data().saldo||0);
-
-}
-
-const texto=
-saldo.toFixed(2)
-.replace(".",",");
-
-
-[
-"saldoLojista",
-"saldoMotoboy",
-"saldoFranqueado"
-].forEach(function(id){
-
-const el=
-document.getElementById(id);
-
-if(el){
-
-el.textContent=texto;
-
-}
-
-});
-
-}catch(e){
-
-console.error(e);
-
-}
-
-}
-
-
-/* =====================================================
-   PIX
-===================================================== */
-
-async function copiarPix(){
-
-const pix="22997450131";
-
-try{
-
-await navigator.clipboard.writeText(pix);
-
-alert("PIX copiado: "+pix);
-
-}catch(e){
-
-alert("Chave PIX: "+pix);
-
-}
-
-}
-
-
-/* =====================================================
+/* =========================================================
    SAIR
-===================================================== */
+   ========================================================= */
 
-async function sair(){
+async function sair() {
 
-await auth.signOut();
+  try {
 
-}
+    await auth.signOut();
 
+    usuarioAtual = null;
+    perfilAtual = null;
 
-/* =====================================================
-   RASTREIO
-===================================================== */
+    location.reload();
 
-function geraRastreio(){
+  } catch (error) {
 
-return String(
-Math.floor(
-1000+Math.random()*9000
-)
-);
+    console.error(
+      "Erro ao sair:",
+      error
+    );
 
-}
+    alert(
+      "Erro ao sair:\n" +
+      (error.message || error)
+    );
 
-
-/* =====================================================
-   DISTÂNCIA
-===================================================== */
-
-function calcularDistanciaKm(
-lat1,
-lng1,
-lat2,
-lng2
-){
-
-const R=6371;
-
-const dLat=
-(lat2-lat1)*
-Math.PI/180;
-
-const dLng=
-(lng2-lng1)*
-Math.PI/180;
-
-const a=
-Math.sin(dLat/2)*
-Math.sin(dLat/2)+
-Math.cos(lat1*Math.PI/180)*
-Math.cos(lat2*Math.PI/180)*
-Math.sin(dLng/2)*
-Math.sin(dLng/2);
-
-const c=
-2*Math.atan2(
-Math.sqrt(a),
-Math.sqrt(1-a)
-);
-
-return R*c;
+  }
 
 }
 
-
-function estimarMinutos(
-distanciaKm,
-veiculo
-){
-
-let velocidade=30;
-
-if(veiculo==="moto"){
-velocidade=30;
-}
-
-if(veiculo==="utilitario"){
-velocidade=25;
-}
-
-if(veiculo==="caminhao"){
-velocidade=20;
-}
-
-if(veiculo==="carreta"){
-velocidade=18;
-}
-
-return Math.max(
-1,
-Math.ceil(
-(distanciaKm/velocidade)*60
-)
-);
-
-}
-
-
-/* =====================================================
-   GEOCODIFICAÇÃO
-===================================================== */
-
-async function geocodificarEndereco(endereco){
-
-const url=
-"https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=br&q="+
-encodeURIComponent(
-endereco+", Brasil"
-);
-
-const resposta=
-await fetch(
-url,
-{
-headers:{
-"Accept":"application/json"
-}
-}
-);
-
-if(!resposta.ok){
-
-throw new Error(
-"Não foi possível consultar o endereço."
-);
-
-}
-
-const dados=
-await resposta.json();
-
-if(!dados.length){
-
-throw new Error(
-"Endereço não encontrado."
-);
-
-}
-
-return{
-
-lat:Number(dados[0].lat),
-
-lng:Number(dados[0].lon),
-
-display_name:
-dados[0].display_name
-
-};
-
-}
-
-
-/* =====================================================
-   PARTE 2 CONTINUA
-===================================================== *//* =====================================================
+</script>/* =====================================================
    LOJAS
 ===================================================== */
 
@@ -4444,7 +3863,926 @@ ${p.tempoEstimadoMin||"-"} min
 <strong>
 Rastreio:
 </strong>
-${p.rastreio|/* =====================================================
+${p.rastreio||"-"}
+
+<br>
+
+<strong>
+Valor:
+</strong>
+R$
+${Number(
+p.valorTaxa||0
+).toFixed(2)
+.replace(".",",")}
+
+<br>
+
+<strong>
+Status:
+</strong>
+${p.status||"-"}
+
+${p.status!=="finalizado"
+?`
+<input
+id="codigo_${doc.id}"
+maxlength="4"
+inputmode="numeric"
+placeholder="Código de finalização"
+/>
+
+<button
+class="azul"
+onclick="finalizarPedido('${doc.id}')"
+>
+FINALIZAR
+</button>
+`
+:""}
+
+</div>
+
+`;
+
+});
+
+lista.innerHTML=html;
+
+}
+
+}catch(e){
+
+console.error(e);
+
+const div=
+document.getElementById(
+"listaPedidosMotoboy"
+);
+
+if(div){
+
+div.innerHTML=
+'<div class="item">Erro ao carregar.</div>';
+
+}
+
+}
+
+}
+
+
+/* =====================================================
+   ACEITAR
+===================================================== */
+
+async function aceitarPedido(id){
+
+if(!usuarioAtual)return;
+
+try{
+
+const ref=
+db.collection("orders")
+.doc(id);
+
+
+await db.runTransaction(
+async function(transaction){
+
+const snap=
+await transaction.get(ref);
+
+if(!snap.exists){
+
+throw new Error(
+"Entrega não encontrada."
+);
+
+}
+
+const p=snap.data();
+
+
+if(p.status!=="pendente"){
+
+throw new Error(
+"Esta entrega já foi aceita."
+);
+
+}
+
+
+transaction.update(
+ref,
+{
+
+motoboyId:
+usuarioAtual.uid,
+
+status:
+"em_rota",
+
+aceitoEm:
+firebase.firestore.FieldValue
+.serverTimestamp()
+
+}
+
+);
+
+});
+
+
+alert(
+"Entrega aceita!"
+);
+
+await carregarMotoboy();
+
+}catch(e){
+
+alert(
+e.message||
+erroHumano(e)
+);
+
+}
+
+
+/* =====================================================
+   FINALIZAÇÃO
+===================================================== */
+
+async function finalizarPedido(id){
+
+if(!usuarioAtual)return;
+
+const campo=
+document.getElementById(
+"codigo_"+id
+);
+
+if(!campo){
+
+alert(
+"Campo de código não encontrado."
+);
+
+return;
+
+}
+
+const codigo=
+campo.value.trim();
+
+
+if(!/^\d{4}$/.test(codigo)){
+
+alert(
+"Digite o código de 4 dígitos."
+);
+
+return;
+
+}
+
+
+try{
+
+const ref=
+db.collection("orders")
+.doc(id);
+
+const snap=
+await ref.get();
+
+if(!snap.exists){
+
+alert(
+"Entrega não encontrada."
+);
+
+return;
+
+}
+
+const p=snap.data();
+
+
+if(
+p.motoboyId!==usuarioAtual.uid
+){
+
+alert(
+"Esta entrega não pertence a você."
+);
+
+return;
+
+}
+
+
+if(
+String(p.codigo4Digitos)!==
+codigo
+){
+
+alert(
+"Código incorreto."
+);
+
+return;
+
+}
+
+
+await processarFinalizacaoFinanceira(
+id,
+p
+);
+
+
+alert(
+"Entrega finalizada!"
+);
+
+await carregarMotoboy();
+await atualizarSaldo();
+
+}catch(e){
+
+console.error(e);
+
+alert(
+"Erro:\n"+
+erroHumano(e)
+);
+
+}
+
+}
+
+
+/* =====================================================
+   FINALIZAÇÃO FINANCEIRA
+===================================================== */
+
+async function processarFinalizacaoFinanceira(
+id,
+p
+){
+
+const configSnap=
+await db.collection("config_taxas")
+.doc("valores")
+.get();
+
+const config=
+configSnap.exists
+?configSnap.data()
+:{};
+
+
+const retornoPct=
+Number(
+config.retornoPct||0
+);
+
+const superPct=
+Number(
+config.superPct||0
+);
+
+
+const valorEntrega=
+Number(
+p.valorTaxa||
+p.valorCalculado||
+0
+);
+
+
+const valorRetorno=
+Number(
+(
+valorEntrega*
+retornoPct/
+100
+).toFixed(2)
+);
+
+
+const valorSuperAdmin=
+Number(
+(
+valorEntrega*
+superPct/
+100
+).toFixed(2)
+);
+
+
+/*
+  Localiza carteira do admin.
+*/
+
+let adminUid=null;
+
+const admins=
+await db.collection("profiles")
+.where(
+"tipo",
+"==",
+"admin"
+)
+.limit(1)
+.get();
+
+if(!admins.empty){
+
+adminUid=
+admins.docs[0].id;
+
+}
+
+
+const orderRef=
+db.collection("orders")
+.doc(id);
+
+const motoboyWalletRef=
+db.collection("wallets")
+.doc(usuarioAtual.uid);
+
+
+const adminWalletRef=
+adminUid
+?db.collection("wallets")
+.doc(adminUid)
+:null;
+
+
+await db.runTransaction(
+async function(transaction){
+
+const orderSnap=
+await transaction.get(
+orderRef
+);
+
+if(!orderSnap.exists){
+
+throw new Error(
+"Entrega não encontrada."
+);
+
+}
+
+const atual=
+orderSnap.data();
+
+
+if(
+atual.status==="finalizado"
+){
+
+throw new Error(
+"Esta entrega já foi finalizada."
+);
+
+}
+
+
+/*
+  Retorno vai para carteira do motoboy.
+*/
+
+if(valorRetorno>0){
+
+const wallet=
+await transaction.get(
+motoboyWalletRef
+);
+
+if(wallet.exists){
+
+transaction.update(
+motoboyWalletRef,
+{
+
+saldo:
+firebase.firestore.FieldValue
+.increment(valorRetorno),
+
+atualizadoEm:
+firebase.firestore.FieldValue
+.serverTimestamp()
+
+}
+
+);
+
+}else{
+
+transaction.set(
+motoboyWalletRef,
+{
+
+saldo:valorRetorno,
+
+atualizadoEm:
+firebase.firestore.FieldValue
+.serverTimestamp()
+
+}
+
+);
+
+}
+
+}
+
+
+/*
+  Super % vai para admin.
+*/
+
+if(
+valorSuperAdmin>0&&
+adminWalletRef
+){
+
+const adminWallet=
+await transaction.get(
+adminWalletRef
+);
+
+if(adminWallet.exists){
+
+transaction.update(
+adminWalletRef,
+{
+
+saldo:
+firebase.firestore.FieldValue
+.increment(valorSuperAdmin),
+
+atualizadoEm:
+firebase.firestore.FieldValue
+.serverTimestamp()
+
+}
+
+);
+
+}else{
+
+transaction.set(
+adminWalletRef,
+{
+
+saldo:
+valorSuperAdmin,
+
+atualizadoEm:
+firebase.firestore.FieldValue
+.serverTimestamp()
+
+}
+
+);
+
+}
+
+}
+
+
+transaction.update(
+orderRef,
+{
+
+status:
+"finalizado",
+
+finalizadoEm:
+firebase.firestore.FieldValue
+.serverTimestamp(),
+
+retornoPct:
+retornoPct,
+
+superPct:
+superPct,
+
+valorRetornoMotoboy:
+valorRetorno,
+
+valorSuperAdmin:
+valorSuperAdmin
+
+}
+
+);
+
+
+});
+
+
+/*
+  Extratos.
+*/
+
+if(valorRetorno>0){
+
+await db.collection("transactions")
+.add({
+
+uid:
+usuarioAtual.uid,
+
+tipo:
+"retorno_motoboy",
+
+valor:
+valorRetorno,
+
+orderId:id,
+
+status:
+"aprovado",
+
+criadoEm:
+firebase.firestore.FieldValue
+.serverTimestamp()
+
+});
+
+}
+
+
+if(
+valorSuperAdmin>0&&
+adminUid
+){
+
+await db.collection("transactions")
+.add({
+
+uid:
+adminUid,
+
+tipo:
+"super_admin",
+
+valor:
+valorSuperAdmin,
+
+orderId:id,
+
+status:
+"aprovado",
+
+criadoEm:
+firebase.firestore.FieldValue
+.serverTimestamp()
+
+});
+
+}
+
+}
+
+
+/* =====================================================
+   PIX MOTOBOY
+===================================================== */
+
+async function salvarPixMotoboy(){
+
+if(!usuarioAtual)return;
+
+const pix=
+document.getElementById(
+"pixMotoboy"
+).value.trim();
+
+if(!pix){
+
+alert(
+"Digite sua chave PIX."
+);
+
+return;
+
+}
+
+try{
+
+await db.collection("profiles")
+.doc(usuarioAtual.uid)
+.update({
+
+pix:pix
+
+});
+
+alert(
+"Chave PIX salva."
+);
+
+}catch(e){
+
+alert(
+"Erro:\n"+
+erroHumano(e)
+);
+
+}
+
+}
+
+
+async function carregarPixMotoboy(){
+
+if(!usuarioAtual)return;
+
+try{
+
+const snap=
+await db.collection("profiles")
+.doc(usuarioAtual.uid)
+.get();
+
+if(snap.exists){
+
+document.getElementById(
+"pixMotoboy"
+).value=
+snap.data().pix||"";
+
+}
+
+}catch(e){
+
+console.error(e);
+
+}
+
+}
+
+
+/* =====================================================
+   SAQUE
+===================================================== */
+
+async function solicitarSaque(){
+
+if(!usuarioAtual)return;
+
+try{
+
+const wallet=
+await db.collection("wallets")
+.doc(usuarioAtual.uid)
+.get();
+
+const saldo=
+wallet.exists
+?Number(
+wallet.data().saldo||0
+)
+:0;
+
+
+if(saldo<=0){
+
+alert(
+"Você não possui saldo."
+);
+
+return;
+
+}
+
+
+const pix=
+document.getElementById(
+"pixMotoboy"
+).value.trim();
+
+if(!pix){
+
+alert(
+"Cadastre sua chave PIX."
+);
+
+return;
+
+}
+
+
+await db.collection("transactions")
+.add({
+
+uid:
+usuarioAtual.uid,
+
+tipo:
+"saque_motoboy",
+
+valor:
+-saldo,
+
+pix:
+pix,
+
+status:
+"pendente",
+
+criadoEm:
+firebase.firestore.FieldValue
+.serverTimestamp()
+
+});
+
+
+alert(
+"Solicitação enviada ao administrador."
+);
+
+}catch(e){
+
+alert(
+"Erro:\n"+
+erroHumano(e)
+);
+
+}
+
+}
+
+
+/* =====================================================
+   EXTRATO 90 DIAS
+===================================================== */
+
+async function carregarExtrato(tipo){
+
+if(!usuarioAtual)return;
+
+const id=
+tipo==="lojista"
+?"extratoLojista"
+:"extratoMotoboy";
+
+const div=
+document.getElementById(id);
+
+if(!div)return;
+
+div.textContent="Carregando...";
+
+try{
+
+const snap=
+await db.collection("transactions")
+.where(
+"uid",
+"==",
+usuarioAtual.uid
+)
+.get();
+
+
+const limite=
+new Date();
+
+limite.setDate(
+limite.getDate()-90
+);
+
+
+let lista=[];
+
+
+snap.forEach(function(doc){
+
+const t=doc.data();
+
+let data=null;
+
+if(
+t.criadoEm&&
+typeof t.criadoEm.toDate==="function"
+){
+
+data=t.criadoEm.toDate();
+
+}
+
+
+if(
+!data||
+data>=limite
+){
+
+lista.push({
+
+...t,
+
+data:data
+
+});
+
+}
+
+});
+
+
+lista.sort(function(a,b){
+
+return(
+(b.data
+?b.data.getTime():0)-
+(a.data
+?a.data.getTime():0)
+);
+
+});
+
+
+if(!lista.length){
+
+div.innerHTML=
+'<div class="item">Nenhum movimento nos últimos 90 dias.</div>';
+
+return;
+
+}
+
+
+let html=
+"<table>"+
+"<tr>"+
+"<th>Data</th>"+
+"<th>Tipo</th>"+
+"<th>Valor</th>"+
+"<th>Status</th>"+
+"</tr>";
+
+
+lista.forEach(function(t){
+
+html+=`
+
+<tr>
+
+<td>
+${t.data
+?t.data.toLocaleDateString("pt-BR")
+:"-"}
+</td>
+
+<td>
+${t.tipo||"-"}
+</td>
+
+<td>
+R$
+${Number(t.valor||0)
+.toFixed(2)
+.replace(".",",")}
+</td>
+
+<td>
+${t.status||"-"}
+</td>
+
+</tr>
+
+`;
+
+});
+
+
+html+="</table>";
+
+div.innerHTML=html;
+
+}catch(e){
+
+div.innerHTML=
+'<div class="item">Erro ao carregar extrato.</div>';
+
+}
+
+}
+
+
+/* =====================================================
+   PARTE 3 CONTINUA
+===================================================== *//* =====================================================
    ADMIN
 ===================================================== */
 
