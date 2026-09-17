@@ -402,7 +402,7 @@ REGISTRAR PAGAMENTO
 </section>
 
 </div><!-- =========================================================
-     PARTE 2 — FIREBASE + LOGIN + CADASTRO + CARREGAMENTO
+     PARTE 2 — FIREBASE / LOGIN / PERFIS
      ANJOS EM DUAS RODAS
      ========================================================= -->
 
@@ -411,10 +411,6 @@ REGISTRAR PAGAMENTO
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
 <script>
-
-/* =========================================================
-   CONFIGURAÇÃO FIREBASE
-   ========================================================= */
 
 const firebaseConfig = {
   apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
@@ -425,11 +421,6 @@ const firebaseConfig = {
   appId: "1:725133182752:web:5f9a98fa97269dcdcab945",
   measurementId: "G-9CSJXXNR0C"
 };
-
-
-/* =========================================================
-   VARIÁVEIS GLOBAIS
-   ========================================================= */
 
 let auth = null;
 let db = null;
@@ -457,7 +448,6 @@ function mostrarMensagem(texto, tipo = "aviso") {
   el.className = "status " + tipo;
   el.textContent = texto;
   el.classList.remove("hidden");
-
 }
 
 
@@ -474,7 +464,7 @@ function limparMensagem() {
 
 
 /* =========================================================
-   TRADUTOR DE ERROS FIREBASE
+   ERROS FIREBASE
    ========================================================= */
 
 function erroHumano(e) {
@@ -496,7 +486,7 @@ function erroHumano(e) {
       "Senha incorreta.",
 
     "auth/invalid-email":
-      "O e-mail informado é inválido.",
+      "E-mail inválido.",
 
     "auth/email-already-in-use":
       "Este e-mail já está cadastrado.",
@@ -505,37 +495,29 @@ function erroHumano(e) {
       "A senha precisa ter pelo menos 6 caracteres.",
 
     "auth/operation-not-allowed":
-      "Login por E-mail/Senha não está ativado no Firebase.",
+      "Login por E-mail/Senha não está ativado.",
 
     "auth/network-request-failed":
-      "Falha de conexão com a internet.",
+      "Falha de internet.",
 
     "auth/too-many-requests":
       "Muitas tentativas. Aguarde alguns minutos.",
 
     "auth/unauthorized-domain":
-      "Este domínio não está autorizado no Firebase Authentication.",
+      "Este domínio não está autorizado no Firebase.",
 
     "permission-denied":
-      "O Firestore recusou a operação por falta de permissão.",
+      "Firestore recusou a operação por falta de permissão.",
 
     "failed-precondition":
-      "O Firebase precisa de uma configuração adicional.",
-
-    "unavailable":
-      "O Firebase está temporariamente indisponível."
+      "Configuração do Firebase incompleta."
 
   };
 
-  if (erros[code]) {
-    return erros[code];
-  }
-
-  if (e && e.message) {
-    return e.message;
-  }
-
-  return "Erro desconhecido.";
+  return erros[code] ||
+    (e && e.message
+      ? e.message
+      : "Erro desconhecido.");
 
 }
 
@@ -552,14 +534,14 @@ try {
 
   db = firebase.firestore();
 
-  const firebaseStatus =
+  const status =
     document.getElementById("firebaseStatus");
 
-  if (firebaseStatus) {
+  if (status) {
 
-    firebaseStatus.className = "status ok";
+    status.className = "status ok";
 
-    firebaseStatus.textContent =
+    status.textContent =
       "✓ Firebase conectado.\n" +
       "Projeto: anjos-flash";
 
@@ -570,30 +552,12 @@ try {
     firebaseConfig.projectId
   );
 
-
 } catch (e) {
 
-  console.error(
-    "Erro ao iniciar Firebase:",
-    e
-  );
-
-  const firebaseStatus =
-    document.getElementById("firebaseStatus");
-
-  if (firebaseStatus) {
-
-    firebaseStatus.className =
-      "status erro";
-
-    firebaseStatus.textContent =
-      "ERRO AO INICIAR FIREBASE:\n" +
-      erroHumano(e);
-
-  }
+  console.error(e);
 
   mostrarMensagem(
-    "Erro ao iniciar o Firebase.\n\n" +
+    "Erro ao iniciar Firebase:\n\n" +
     erroHumano(e),
     "erro"
   );
@@ -602,56 +566,7 @@ try {
 
 
 /* =========================================================
-   ERROS GERAIS DO JAVASCRIPT
-   ========================================================= */
-
-window.addEventListener(
-  "error",
-  function(event) {
-
-    console.error(
-      "ERRO JAVASCRIPT:",
-      event.error || event.message
-    );
-
-    mostrarMensagem(
-      "ERRO DO APLICATIVO:\n\n" +
-      (event.message || "Erro JavaScript"),
-      "erro"
-    );
-
-  }
-);
-
-
-window.addEventListener(
-  "unhandledrejection",
-  function(event) {
-
-    console.error(
-      "PROMISE ERROR:",
-      event.reason
-    );
-
-    mostrarMensagem(
-      "ERRO DO FIREBASE/APLICATIVO:\n\n" +
-      (
-        event.reason &&
-        event.reason.message
-        ?
-        event.reason.message
-        :
-        String(event.reason)
-      ),
-      "erro"
-    );
-
-  }
-);
-
-
-/* =========================================================
-   OBSERVAR LOGIN
+   OBSERVAR AUTENTICAÇÃO
    ========================================================= */
 
 if (auth) {
@@ -660,23 +575,19 @@ if (auth) {
     async function(user) {
 
       console.log(
-        "onAuthStateChanged:",
-        user ? user.uid : "ninguém logado"
+        "Usuário autenticado:",
+        user ? user.uid : "nenhum"
       );
 
       if (!user) {
 
         usuarioAtual = null;
+        perfilAtual = null;
 
         return;
       }
 
       usuarioAtual = user;
-
-      /*
-       NÃO CHAMA location.reload()
-       E NÃO FICA EM LOOP.
-      */
 
       await carregarUsuario();
 
@@ -694,19 +605,13 @@ function mostrarCadastro() {
 
   limparMensagem();
 
-  const login =
-    document.getElementById("loginArea");
+  document
+    .getElementById("loginArea")
+    .classList.add("hidden");
 
-  const cadastro =
-    document.getElementById("cadastroArea");
-
-  if (login) {
-    login.classList.add("hidden");
-  }
-
-  if (cadastro) {
-    cadastro.classList.remove("hidden");
-  }
+  document
+    .getElementById("cadastroArea")
+    .classList.remove("hidden");
 
 }
 
@@ -719,19 +624,13 @@ function mostrarLogin() {
 
   limparMensagem();
 
-  const login =
-    document.getElementById("loginArea");
+  document
+    .getElementById("cadastroArea")
+    .classList.add("hidden");
 
-  const cadastro =
-    document.getElementById("cadastroArea");
-
-  if (cadastro) {
-    cadastro.classList.add("hidden");
-  }
-
-  if (login) {
-    login.classList.remove("hidden");
-  }
+  document
+    .getElementById("loginArea")
+    .classList.remove("hidden");
 
 }
 
@@ -747,7 +646,7 @@ async function loginUser() {
   if (!auth) {
 
     mostrarMensagem(
-      "Firebase não foi iniciado.",
+      "Firebase não está iniciado.",
       "erro"
     );
 
@@ -769,7 +668,7 @@ async function loginUser() {
   if (!email || !senha) {
 
     mostrarMensagem(
-      "Digite o e-mail e a senha.",
+      "Digite e-mail e senha.",
       "erro"
     );
 
@@ -788,40 +687,28 @@ async function loginUser() {
 
   try {
 
-    console.log(
-      "Tentando login:",
-      email
-    );
-
     await auth.signInWithEmailAndPassword(
       email,
       senha
     );
 
-    /*
-     O onAuthStateChanged vai chamar
-     carregarUsuario().
-    */
-
     mostrarMensagem(
       "Login realizado!\n" +
-      "Abrindo seu painel...",
+      "Identificando tipo de conta...",
       "ok"
     );
 
   } catch (e) {
 
     console.error(
-      "ERRO LOGIN:",
+      "Erro login:",
       e
     );
 
     mostrarMensagem(
-
       erroHumano(e) +
-      "\n\nCódigo Firebase: " +
+      "\n\nCódigo: " +
       (e.code || "sem código"),
-
       "erro"
     );
 
@@ -847,16 +734,6 @@ async function registrarUser() {
 
   limparMensagem();
 
-  if (!auth || !db) {
-
-    mostrarMensagem(
-      "Firebase não está conectado.",
-      "erro"
-    );
-
-    return;
-  }
-
   const nome =
     document
       .getElementById("cadNome")
@@ -881,7 +758,7 @@ async function registrarUser() {
       .getElementById("cadSenha")
       .value;
 
-  const tipo =
+  const tipoEscolhido =
     document
       .getElementById("cadTipo")
       .value;
@@ -893,10 +770,13 @@ async function registrarUser() {
       .trim();
 
 
-  if (!nome) {
+  if (!nome ||
+      !email ||
+      !telefone ||
+      !senha) {
 
     mostrarMensagem(
-      "Digite seu nome.",
+      "Preencha todos os campos obrigatórios.",
       "erro"
     );
 
@@ -904,29 +784,7 @@ async function registrarUser() {
   }
 
 
-  if (!email) {
-
-    mostrarMensagem(
-      "Digite seu e-mail.",
-      "erro"
-    );
-
-    return;
-  }
-
-
-  if (!telefone) {
-
-    mostrarMensagem(
-      "Digite seu telefone.",
-      "erro"
-    );
-
-    return;
-  }
-
-
-  if (!senha || senha.length < 6) {
+  if (senha.length < 6) {
 
     mostrarMensagem(
       "A senha precisa ter pelo menos 6 caracteres.",
@@ -939,59 +797,38 @@ async function registrarUser() {
 
   try {
 
-    console.log(
-      "Criando usuário:",
-      email
-    );
-
-
-    /*
-     CRIA USUÁRIO NO AUTH
-    */
-
     const cred =
       await auth.createUserWithEmailAndPassword(
         email,
         senha
       );
 
-
     const uid =
       cred.user.uid;
 
 
-    /*
-     NOME DO USUÁRIO
-    */
-
     await cred.user.updateProfile({
-
       displayName: nome
-
     });
 
 
     /*
-     SEGURANÇA:
-     NUNCA PERMITIR ADMIN NO CADASTRO PÚBLICO.
+      ADMIN NUNCA PODE SER CRIADO
+      PELO CADASTRO PÚBLICO.
     */
 
-    let tipoSeguro = tipo;
+    let tipo = tipoEscolhido;
 
     if (
-      tipoSeguro !== "lojista" &&
-      tipoSeguro !== "motoboy" &&
-      tipoSeguro !== "franqueado"
+      tipo !== "lojista" &&
+      tipo !== "motoboy" &&
+      tipo !== "franqueado"
     ) {
 
-      tipoSeguro = "lojista";
+      tipo = "lojista";
 
     }
 
-
-    /*
-     SALVA PERFIL
-    */
 
     await db
       .collection("profiles")
@@ -1004,7 +841,7 @@ async function registrarUser() {
 
         telefone: telefone,
 
-        tipo: tipoSeguro,
+        tipo: tipo,
 
         endereco: endereco,
 
@@ -1018,10 +855,6 @@ async function registrarUser() {
 
       });
 
-
-    /*
-     CRIA CARTEIRA COM ZERO
-    */
 
     await db
       .collection("wallets")
@@ -1038,30 +871,20 @@ async function registrarUser() {
 
 
     mostrarMensagem(
-
-      "Conta criada com sucesso!\n" +
-      "Abrindo seu painel...",
-
+      "Conta criada com sucesso!",
       "ok"
-
     );
 
 
   } catch (e) {
 
-    console.error(
-      "ERRO CADASTRO:",
-      e
-    );
+    console.error(e);
 
     mostrarMensagem(
-
       erroHumano(e) +
-      "\n\nCódigo Firebase: " +
-      (e.code || "sem código"),
-
+      "\n\nCódigo: " +
+      (e.code || ""),
       "erro"
-
     );
 
   }
@@ -1075,10 +898,6 @@ async function registrarUser() {
 
 async function carregarUsuario() {
 
-  /*
-   EVITA DUAS EXECUÇÕES SIMULTÂNEAS
-  */
-
   if (carregandoPainel) {
     return;
   }
@@ -1089,138 +908,115 @@ async function carregarUsuario() {
 
     mostrarMensagem(
       "Login confirmado.\n" +
-      "Verificando seu cadastro...",
+      "Buscando seu tipo de conta...",
       "aviso"
     );
-
-
-    if (!usuarioAtual) {
-
-      throw new Error(
-        "Usuário autenticado não encontrado."
-      );
-
-    }
 
 
     const uid =
       usuarioAtual.uid;
 
 
-    console.log(
-      "UID:",
-      uid
-    );
-
-
     /* =====================================================
        BUSCAR PERFIL
        ===================================================== */
 
-    const perfilRef =
-      db
-        .collection("profiles")
-        .doc(uid);
-
-
     const perfilDoc =
-      await perfilRef.get();
-
-
-    console.log(
-      "Perfil existe:",
-      perfilDoc.exists
-    );
+      await db
+        .collection("profiles")
+        .doc(uid)
+        .get();
 
 
     /*
-     SE NÃO EXISTIR PERFIL,
-     CRIA AUTOMATICAMENTE.
+      NÃO TRANSFORMAR USUÁRIO EXISTENTE
+      EM LOJISTA AUTOMATICAMENTE.
     */
 
     if (!perfilDoc.exists) {
 
-      const nome =
-        usuarioAtual.displayName ||
-        "Usuário";
+      mostrarMensagem(
 
-      const email =
-        usuarioAtual.email ||
-        "";
+        "Sua conta existe no Login, " +
+        "mas não existe um perfil no Firestore.\n\n" +
 
+        "UID:\n" +
+        uid +
 
-      await perfilRef.set({
+        "\n\nCrie o perfil deste usuário no Firestore.",
 
-        nome: nome,
+        "erro"
 
-        email: email,
-
-        telefone: "",
-
-        tipo: "lojista",
-
-        endereco: "",
-
-        ativo: true,
-
-        online: false,
-
-        criadoEm:
-          firebase.firestore.FieldValue
-          .serverTimestamp()
-
-      });
-
-
-      perfilAtual = {
-
-        nome: nome,
-
-        email: email,
-
-        telefone: "",
-
-        tipo: "lojista",
-
-        endereco: "",
-
-        ativo: true,
-
-        online: false
-
-      };
-
-
-      console.log(
-        "Perfil criado automaticamente."
       );
 
-    } else {
+      return;
+    }
 
-      perfilAtual =
-        perfilDoc.data();
 
+    perfilAtual =
+      perfilDoc.data();
+
+
+    console.log(
+      "PERFIL ENCONTRADO:",
+      perfilAtual
+    );
+
+
+    /* =====================================================
+       IDENTIFICAR TIPO
+       ===================================================== */
+
+    const tipo =
+      String(
+        perfilAtual.tipo || ""
+      )
+      .trim()
+      .toLowerCase();
+
+
+    console.log(
+      "TIPO DA CONTA:",
+      tipo
+    );
+
+
+    /*
+      NÃO EXISTE MAIS FALLBACK PARA LOJISTA.
+    */
+
+    if (
+      tipo !== "admin" &&
+      tipo !== "motoboy" &&
+      tipo !== "lojista" &&
+      tipo !== "franqueado"
+    ) {
+
+      mostrarMensagem(
+
+        "Tipo de conta inválido no Firestore:\n\n" +
+        (
+          perfilAtual.tipo ||
+          "VAZIO"
+        ),
+
+        "erro"
+
+      );
+
+      return;
     }
 
 
     /* =====================================================
-       BUSCAR CARTEIRA
+       CARTEIRA
        ===================================================== */
 
-    const walletRef =
-      db
-        .collection("wallets")
-        .doc(uid);
-
-
     const walletDoc =
-      await walletRef.get();
-
-
-    console.log(
-      "Carteira existe:",
-      walletDoc.exists
-    );
+      await db
+        .collection("wallets")
+        .doc(uid)
+        .get();
 
 
     if (walletDoc.exists) {
@@ -1233,122 +1029,76 @@ async function carregarUsuario() {
     } else {
 
       /*
-       CRIA CARTEIRA CASO NÃO EXISTA.
+       CRIA CARTEIRA SOMENTE SE NÃO EXISTIR.
       */
 
-      await walletRef.set({
+      await db
+        .collection("wallets")
+        .doc(uid)
+        .set({
 
-        saldo: 0,
+          saldo: 0,
 
-        atualizadoEm:
-          firebase.firestore.FieldValue
-          .serverTimestamp()
+          atualizadoEm:
+            firebase.firestore.FieldValue
+            .serverTimestamp()
 
-      });
-
+        });
 
       saldoAtual = 0;
 
     }
 
 
-    console.log(
-      "Saldo:",
-      saldoAtual
-    );
-
-
     /* =====================================================
        ESCONDER LOGIN
        ===================================================== */
 
-    const loginArea =
-      document.getElementById("loginArea");
+    document
+      .getElementById("loginArea")
+      .classList.add("hidden");
 
-    const cadastroArea =
-      document.getElementById("cadastroArea");
+    document
+      .getElementById("cadastroArea")
+      .classList.add("hidden");
 
-    const appArea =
-      document.getElementById("appArea");
-
-
-    if (loginArea) {
-      loginArea.classList.add("hidden");
-    }
-
-
-    if (cadastroArea) {
-      cadastroArea.classList.add("hidden");
-    }
-
-
-    if (appArea) {
-      appArea.classList.remove("hidden");
-    }
+    document
+      .getElementById("appArea")
+      .classList.remove("hidden");
 
 
     /* =====================================================
-       PREENCHER CABEÇALHO
+       DADOS DO USUÁRIO
        ===================================================== */
 
-    const nomeAtual =
-      document.getElementById("nomeAtual");
-
-    const tipoAtual =
-      document.getElementById("tipoAtual");
-
-
-    if (nomeAtual) {
-
-      nomeAtual.textContent =
-        perfilAtual.nome ||
-        usuarioAtual.displayName ||
-        "Usuário";
-
-    }
+    document
+      .getElementById("nomeAtual")
+      .textContent =
+      perfilAtual.nome ||
+      usuarioAtual.displayName ||
+      "Usuário";
 
 
-    if (tipoAtual) {
+    document
+      .getElementById("tipoAtual")
+      .textContent =
+      tipo.toUpperCase();
 
-      tipoAtual.textContent =
-        (
-          perfilAtual.tipo ||
-          "lojista"
-        ).toUpperCase();
-
-    }
-
-
-    /* =====================================================
-       ATUALIZAR SALDO
-       ===================================================== */
 
     atualizarSaldo();
-
-
-    /* =====================================================
-       ESCONDER TODOS OS PAINÉIS
-       ===================================================== */
 
     esconderPaineis();
 
 
     /* =====================================================
-       ABRIR PAINEL DE ACORDO COM TIPO
+       PAINEL LOJISTA
        ===================================================== */
 
-    const tipo =
-      perfilAtual.tipo ||
-      "lojista";
-
-
-    console.log(
-      "Tipo de usuário:",
-      tipo
-    );
-
-
     if (tipo === "lojista") {
+
+      console.log(
+        "Abrindo PAINEL LOJISTA"
+      );
 
       document
         .getElementById("painelLojista")
@@ -1367,7 +1117,15 @@ async function carregarUsuario() {
     }
 
 
+    /* =====================================================
+       PAINEL MOTOBOY
+       ===================================================== */
+
     else if (tipo === "motoboy") {
+
+      console.log(
+        "Abrindo PAINEL MOTOBOY"
+      );
 
       document
         .getElementById("painelMotoboy")
@@ -1386,7 +1144,15 @@ async function carregarUsuario() {
     }
 
 
+    /* =====================================================
+       PAINEL FRANQUEADO
+       ===================================================== */
+
     else if (tipo === "franqueado") {
+
+      console.log(
+        "Abrindo PAINEL FRANQUEADO"
+      );
 
       document
         .getElementById("painelFranqueado")
@@ -1395,7 +1161,15 @@ async function carregarUsuario() {
     }
 
 
+    /* =====================================================
+       PAINEL ADMIN
+       ===================================================== */
+
     else if (tipo === "admin") {
+
+      console.log(
+        "Abrindo PAINEL ADMIN"
+      );
 
       document
         .getElementById("painelAdmin")
@@ -1414,32 +1188,10 @@ async function carregarUsuario() {
     }
 
 
-    else {
-
-      /*
-       TIPO INVÁLIDO
-      */
-
-      mostrarMensagem(
-
-        "Tipo de conta inválido:\n" +
-        tipo,
-
-        "erro"
-
-      );
-
-      return;
-
-    }
-
-
-    /*
-     SUCESSO
-    */
-
     mostrarMensagem(
-      "Painel carregado com sucesso!",
+      "Painel " +
+      tipo.toUpperCase() +
+      " carregado com sucesso!",
       "ok"
     );
 
@@ -1447,19 +1199,21 @@ async function carregarUsuario() {
   } catch (e) {
 
     console.error(
-      "ERRO AO CARREGAR PAINEL:",
+      "ERRO AO ABRIR PAINEL:",
       e
     );
 
-
     mostrarMensagem(
 
-      "O LOGIN FOI REALIZADO, MAS O PAINEL NÃO CONSEGUIU ABRIR.\n\n" +
+      "O login funcionou, " +
+      "mas ocorreu um erro ao abrir o painel.\n\n" +
 
       "Código: " +
       (e.code || "sem código") +
 
-      "\n\nMensagem:\n" +
+      "\n\n" +
+
+      "Mensagem:\n" +
       (
         e.message ||
         String(e)
@@ -1531,10 +1285,6 @@ function atualizarSaldo() {
   }
 
 
-  /*
-   REGRAS DO LOJISTA
-  */
-
   if (
     perfilAtual &&
     perfilAtual.tipo === "lojista"
@@ -1599,7 +1349,7 @@ function atualizarSaldo() {
 
 
 /* =========================================================
-   COPIAR PIX
+   PIX
    ========================================================= */
 
 function copiarPix() {
@@ -1618,7 +1368,7 @@ function copiarPix() {
       .then(function() {
 
         mostrarMensagem(
-          "PIX copiado:\n" + pix,
+          "PIX copiado:\n22997450131",
           "ok"
         );
 
@@ -1626,7 +1376,7 @@ function copiarPix() {
       .catch(function() {
 
         mostrarMensagem(
-          "Chave PIX:\n" + pix,
+          "Chave PIX:\n22997450131",
           "aviso"
         );
 
@@ -1635,7 +1385,7 @@ function copiarPix() {
   } else {
 
     mostrarMensagem(
-      "Chave PIX:\n" + pix,
+      "Chave PIX:\n22997450131",
       "aviso"
     );
 
@@ -1654,30 +1404,11 @@ async function sair() {
 
     await auth.signOut();
 
-    usuarioAtual = null;
-    perfilAtual = null;
-    saldoAtual = 0;
-
-    mostrarLogin();
-
-    const appArea =
-      document.getElementById("appArea");
-
-    if (appArea) {
-
-      appArea.classList.add("hidden");
-
-    }
-
-    mostrarMensagem(
-      "Você saiu da conta.",
-      "ok"
-    );
+    location.reload();
 
   } catch (e) {
 
     mostrarMensagem(
-      "Erro ao sair:\n" +
       erroHumano(e),
       "erro"
     );
@@ -2190,6 +1921,313 @@ async function finalizarPedido(id){
 }
 
 </script><script>
+
+async function carregarAdmin(){
+
+ try{
+
+  const usuarios=await db
+   .collection("profiles")
+   .get();
+
+  let html="";
+
+  usuarios.forEach(doc=>{
+
+   const u=doc.data();
+
+   html+=`
+   <div class="item">
+    <b>${u.nome||"-"}</b><br>
+    E-mail: ${u.email||"-"}<br>
+    Telefone: ${u.telefone||"-"}<br>
+    Tipo: ${u.tipo||"-"}<br>
+    UID: ${doc.id}
+
+    <button onclick="editarSaldo('${doc.id}')">
+     AJUSTAR SALDO
+    </button>
+   </div>`;
+
+  });
+
+  document.getElementById("adminUsuarios")
+   .innerHTML=html;
+
+  const pedidos=await db
+   .collection("orders")
+   .get();
+
+  let hp="";
+
+  pedidos.forEach(doc=>{
+
+   const o=doc.data();
+
+   hp+=`
+   <div class="item">
+    <b>${o.clienteNome||"-"}</b><br>
+    Loja: ${o.lojistaNome||"-"}<br>
+    Endereço: ${o.enderecoEntrega||"-"}<br>
+    Status: ${o.status||"-"}<br>
+    Motoboy: ${o.motoboyNome||"Não aceito"}
+   </div>`;
+
+  });
+
+  document.getElementById("adminPedidos")
+   .innerHTML=
+   hp||"<div class='small'>Nenhum pedido.</div>";
+
+  const tx=await db
+   .collection("transactions")
+   .get();
+
+  let receitas=0;
+  let pagamentos=0;
+  let recargasHtml="";
+
+  tx.forEach(doc=>{
+
+   const t=doc.data();
+   const valor=Number(t.valor||0);
+
+   if(t.tipo==="recarga_50" &&
+      t.status==="aprovado"){
+
+    receitas+=valor;
+   }
+
+   if(t.tipo==="pagamento_motoboy" &&
+      t.status==="aprovado"){
+
+    pagamentos+=Math.abs(valor);
+   }
+
+   if(t.tipo==="recarga_50" &&
+      t.status==="pendente"){
+
+    recargasHtml+=`
+    <div class="item">
+     Valor: R$ 50,00<br>
+     UID: ${t.uid}
+
+     <button
+      onclick="aprovarRecarga('${doc.id}')">
+      APROVAR
+     </button>
+    </div>`;
+   }
+
+  });
+
+  document.getElementById("adminRecargas")
+   .innerHTML=
+   recargasHtml||
+   "<div class='small'>Nenhuma recarga pendente.</div>";
+
+  document.getElementById("adminReceitas")
+   .textContent=
+   "R$ "+receitas.toFixed(2).replace(".",",");
+
+  document.getElementById("adminPagamentos")
+   .textContent=
+   "R$ "+pagamentos.toFixed(2).replace(".",",");
+
+  document.getElementById("adminLucro")
+   .textContent=
+   "R$ "+(receitas-pagamentos)
+   .toFixed(2).replace(".",",");
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro no painel ADMIN:\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function aprovarRecarga(txId){
+
+ try{
+
+  await db.runTransaction(async t=>{
+
+   const txRef=db
+    .collection("transactions")
+    .doc(txId);
+
+   const tx=await t.get(txRef);
+
+   if(!tx.exists)
+    throw new Error("Recarga não encontrada.");
+
+   const d=tx.data();
+
+   if(d.status!=="pendente")
+    throw new Error("Essa recarga já foi processada.");
+
+   const walletRef=db
+    .collection("wallets")
+    .doc(d.uid);
+
+   const wallet=await t.get(walletRef);
+
+   const saldo=wallet.exists
+    ? Number(wallet.data().saldo||0)
+    : 0;
+
+   t.set(walletRef,{
+    saldo:saldo+50,
+    atualizadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   },{
+    merge:true
+   });
+
+   t.update(txRef,{
+    status:"aprovado",
+    aprovadoPor:usuarioAtual.uid,
+    aprovadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+  });
+
+  mostrarMensagem(
+   "Recarga aprovada.",
+   "ok"
+  );
+
+  carregarAdmin();
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro ao aprovar:\n"+erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function editarSaldo(uid){
+
+ const valor=prompt(
+  "Digite o novo saldo do usuário:"
+ );
+
+ if(valor===null)
+  return;
+
+ const numero=Number(valor);
+
+ if(isNaN(numero)){
+
+  mostrarMensagem(
+   "Valor inválido.",
+   "erro"
+  );
+
+  return;
+ }
+
+ try{
+
+  await db.collection("wallets")
+   .doc(uid)
+   .set({
+    saldo:numero,
+    atualizadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   },{
+    merge:true
+   });
+
+  mostrarMensagem(
+   "Saldo alterado com sucesso.",
+   "ok"
+  );
+
+  carregarAdmin();
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro ao alterar saldo:\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+async function pagarMotoboy(){
+
+ const uid=document
+ .getElementById("pagMotoUid")
+ .value.trim();
+
+ const valor=Number(
+  document.getElementById("pagMotoValor")
+  .value
+ );
+
+ if(!uid || !valor || valor<=0){
+
+  mostrarMensagem(
+   "Informe UID e valor do pagamento.",
+   "erro"
+  );
+
+  return;
+ }
+
+ try{
+
+  await db.collection("transactions")
+   .add({
+    uid:uid,
+    tipo:"pagamento_motoboy",
+    valor:-Math.abs(valor),
+    status:"aprovado",
+    aprovadoPor:usuarioAtual.uid,
+    criadoEm:
+    firebase.firestore.FieldValue.serverTimestamp()
+   });
+
+  document.getElementById("pagMotoUid").value="";
+  document.getElementById("pagMotoValor").value="";
+
+  mostrarMensagem(
+   "Pagamento registrado.",
+   "ok"
+  );
+
+  carregarAdmin();
+
+ }catch(e){
+
+  mostrarMensagem(
+   "Erro no pagamento:\n"+
+   erroHumano(e),
+   "erro"
+  );
+
+ }
+
+}
+
+</script>
+
+</body>
+</html><script>
 
 async function carregarAdmin(){
 
