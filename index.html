@@ -3,10 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Anjos em Duas Rodas</title>
 
 <style>
-*{box-sizing:border-box}
+
+*{
+box-sizing:border-box;
+}
 
 body{
 margin:0;
@@ -52,7 +56,9 @@ color:#ffc400;
 margin-top:0;
 }
 
-input,select,textarea{
+input,
+select,
+textarea{
 width:100%;
 padding:13px;
 margin:6px 0;
@@ -68,6 +74,10 @@ min-height:80px;
 resize:vertical;
 }
 
+input[type="file"]{
+padding:10px;
+}
+
 button{
 width:100%;
 padding:13px;
@@ -78,10 +88,12 @@ background:#ffc400;
 color:#000;
 font-weight:bold;
 font-size:16px;
+cursor:pointer;
 }
 
 button:disabled{
 opacity:.5;
+cursor:not-allowed;
 }
 
 .verde{
@@ -115,6 +127,7 @@ margin-top:10px;
 background:#292929;
 border:1px solid #555;
 text-align:center;
+white-space:pre-line;
 }
 
 .sucesso{
@@ -189,13 +202,98 @@ color:#20d96d;
 color:#ff4d4d;
 }
 
+.aprovado{
+color:#20d96d;
+font-weight:bold;
+}
+
+.pendente{
+color:#ffc400;
+font-weight:bold;
+}
+
+.aviso{
+padding:12px;
+margin:10px 0;
+border:1px solid #ffc400;
+border-radius:10px;
+text-align:center;
+font-weight:bold;
+color:#ffc400;
+}
+
+.codigo-grande{
+font-size:30px;
+font-weight:bold;
+text-align:center;
+color:#ffc400;
+padding:15px;
+background:#000;
+border-radius:10px;
+margin:10px 0;
+}
+
+.rastreio{
+font-size:22px;
+font-weight:bold;
+color:#ffc400;
+}
+
+.tag{
+display:inline-block;
+padding:5px 9px;
+border-radius:6px;
+background:#000;
+color:#ffc400;
+font-size:12px;
+font-weight:bold;
+margin:3px;
+}
+
+.valor-admin{
+color:#20d96d;
+font-weight:bold;
+}
+
+.modal{
+position:fixed;
+z-index:9999;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.88);
+display:flex;
+align-items:center;
+justify-content:center;
+padding:15px;
+}
+
+.modal-caixa{
+width:100%;
+max-width:600px;
+max-height:90vh;
+overflow:auto;
+background:#1d1d1d;
+border:2px solid #ffc400;
+border-radius:15px;
+padding:18px;
+}
+
+.separador{
+height:1px;
+background:#444;
+margin:15px 0;
+}
+
 table{
 width:100%;
 border-collapse:collapse;
 font-size:13px;
 }
 
-th,td{
+th,
+td{
 border:1px solid #555;
 padding:7px;
 }
@@ -210,18 +308,54 @@ font-size:30px;
 font-weight:bold;
 color:#ffc400;
 }
+
+@media(max-width:480px){
+
+header h1{
+font-size:20px;
+}
+
+.logo{
+font-size:25px;
+}
+
+.container{
+padding:10px;
+}
+
+.card{
+padding:13px;
+}
+
+button{
+font-size:15px;
+}
+
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
-<div class="logo">ANJOS</div>
-<h1>ANJOS EM DUAS RODAS</h1>
-<p>Entregas • Motoboy • Utilitário • Caminhão • Carreta</p>
+
+<div class="logo">
+ANJOS
+</div>
+
+<h1>
+ANJOS EM DUAS RODAS
+</h1>
+
+<p>
+Entregas • Motoboy • Utilitário • Caminhão • Carreta
+</p>
+
 </header>
 
 <div class="container">
+
 
 <!-- LOGIN -->
 
@@ -245,15 +379,24 @@ placeholder="Senha"
 autocomplete="current-password"
 >
 
-<button id="btnLogin" onclick="loginUser()">
+<button
+id="btnLogin"
+onclick="loginUser()"
+>
 ENTRAR
 </button>
 
-<button class="cinza" onclick="mostrarCadastro()">
+<button
+class="cinza"
+onclick="mostrarCadastro()"
+>
 CRIAR CONTA
 </button>
 
-<div id="mensagemLogin" class="mensagem oculto"></div>
+<div
+id="mensagemLogin"
+class="mensagem oculto"
+></div>
 
 </div>
 
@@ -262,11 +405,16 @@ CRIAR CONTA
 
 <!-- CADASTRO -->
 
-<div id="telaCadastro" class="oculto">
+<div
+id="telaCadastro"
+class="oculto"
+>
 
 <div class="card">
 
-<h2>CRIAR CONTA</h2>
+<h2>
+CRIAR CONTA
+</h2>
 
 <input
 id="cadNome"
@@ -292,26 +440,127 @@ type="password"
 placeholder="Senha"
 >
 
-<select id="cadTipo">
-<option value="lojista">Lojista</option>
-<option value="motoboy">Motoboy</option>
-<option value="franqueado">Franqueado</option>
+<select
+id="cadTipo"
+onchange="alterarTipoCadastro()"
+>
+
+<option value="lojista">
+Lojista
+</option>
+
+<option value="super_lojista">
+Super Lojista
+</option>
+
+<option value="motoboy">
+Motoboy / Motorista
+</option>
+
+<option value="franqueado">
+Franqueado
+</option>
+
 </select>
+
+
+<div
+id="cadVeiculoBox"
+class="oculto"
+>
+
+<h3>
+🚚 VEÍCULO
+</h3>
+
+<select id="cadVeiculo">
+
+<option value="moto">
+Moto
+</option>
+
+<option value="utilitario">
+Utilitário
+</option>
+
+<option value="caminhao">
+Caminhão
+</option>
+
+<option value="carreta">
+Carreta
+</option>
+
+</select>
+
+</div>
+
 
 <textarea
 id="cadEndereco"
 placeholder="Endereço completo"
 ></textarea>
 
-<button onclick="registrarUser()">
+
+<div
+id="cadDocumentosBox"
+class="oculto"
+>
+
+<h3>
+📄 DOCUMENTOS
+</h3>
+
+<label>
+CNH - foto ou PDF
+</label>
+
+<input
+id="cadCNH"
+type="file"
+accept="image/*,.pdf"
+>
+
+<label>
+CRLV - documento do veículo
+</label>
+
+<input
+id="cadCRLV"
+type="file"
+accept="image/*,.pdf"
+>
+
+<label>
+Selfie
+</label>
+
+<input
+id="cadSelfie"
+type="file"
+accept="image/*"
+>
+
+</div>
+
+
+<button
+onclick="registrarUser()"
+>
 CADASTRAR
 </button>
 
-<button class="cinza" onclick="mostrarLogin()">
+<button
+class="cinza"
+onclick="mostrarLogin()"
+>
 VOLTAR
 </button>
 
-<div id="mensagemCadastro" class="mensagem oculto"></div>
+<div
+id="mensagemCadastro"
+class="mensagem oculto"
+></div>
 
 </div>
 
@@ -320,7 +569,10 @@ VOLTAR
 
 <!-- APLICATIVO -->
 
-<div id="telaApp" class="oculto">
+<div
+id="telaApp"
+class="oculto"
+>
 
 <div class="usuario">
 
@@ -335,10 +587,19 @@ VOLTAR
 </div>
 
 <div class="pequeno">
-UID: <span id="uidAtual">---</span>
+UID:
+<span id="uidAtual">---</span>
 </div>
 
-<button class="vermelho" onclick="sair()">
+<div
+id="codigoMotoboyAtual"
+class="codigo-grande oculto"
+></div>
+
+<button
+class="vermelho"
+onclick="sair()"
+>
 SAIR
 </button>
 
@@ -347,76 +608,188 @@ SAIR
 
 <!-- PAINEL LOJISTA -->
 
-<div id="painelLojista" class="oculto">
+<div
+id="painelLojista"
+class="oculto"
+>
 
 <div class="card">
 
-<h2>🏪 PAINEL LOJISTA</h2>
+<h2>
+🏪 PAINEL LOJISTA
+</h2>
 
 <div class="saldo">
-R$ <span id="saldoLojista">0,00</span>
+R$
+<span id="saldoLojista">
+0,00
+</span>
 </div>
 
-<h3>PIX PARA RECARGA</h3>
+<h3>
+PIX PARA RECARGA
+</h3>
 
 <div class="pix">
 22997450131
 </div>
 
-<button class="azul" onclick="copiarPix()">
+<button
+class="azul"
+onclick="copiarPix()"
+>
 COPIAR PIX
 </button>
 
-<button onclick="pedirRecarga()">
+<button
+onclick="pedirRecarga()"
+>
 SOLICITAR RECARGA R$ 50,00
 </button>
 
 </div>
 
 
+<!-- LOJAS -->
+
 <div class="card">
 
-<h3>📦 NOVA ENTREGA</h3>
+<h3>
+🏪 MINHAS LOJAS
+</h3>
+
+<div id="listaLojasLojista">
+Carregando lojas...
+</div>
+
+<button
+id="btnNovaLoja"
+class="oculto"
+onclick="abrirModalNovaLoja()"
+>
++ CADASTRAR NOVA LOJA
+</button>
+
+</div>
+
+
+<!-- NOVA ENTREGA -->
+
+<div class="card">
+
+<h3>
+📦 NOVA ENTREGA
+</h3>
+
+<div class="aviso">
+🔒 Valor travado por região - calculado automaticamente
+</div>
+
+
+<label>
+Loja de saída
+</label>
+
+<select id="pedidoLoja">
+<option value="">
+Carregando lojas...
+</option>
+</select>
+
 
 <input
 id="pedidoCliente"
 placeholder="Nome do cliente"
 >
 
+
 <input
 id="pedidoTelefone"
 placeholder="Telefone do cliente"
 >
+
 
 <textarea
 id="pedidoEndereco"
 placeholder="Endereço de entrega"
 ></textarea>
 
+
 <input
-id="pedidoValor"
+id="pedidoLat"
 type="number"
-step="0.01"
-placeholder="Valor do pedido"
+step="any"
+placeholder="Latitude destino (opcional)"
 >
 
-<select id="pedidoVeiculo">
-<option value="moto">Motoboy / Moto</option>
-<option value="utilitario">Utilitário</option>
-<option value="caminhao">Caminhão</option>
-<option value="carreta">Carreta</option>
+
+<input
+id="pedidoLng"
+type="number"
+step="any"
+placeholder="Longitude destino (opcional)"
+>
+
+
+<label>
+MARCA / TIPO DA ENTREGA
+</label>
+
+<select id="pedidoTipoEntrega">
+
+<option value="normal">
+Normal
+</option>
+
+<option value="express">
+Express
+</option>
+
+<option value="super">
+Super
+</option>
+
 </select>
 
-<button onclick="criarPedido()">
+
+<input
+id="pedidoMotoboyCodigo"
+placeholder="Código Motoboy: ex #0001 (vazio = todos)"
+maxlength="5"
+>
+
+
+<button
+onclick="criarPedido()"
+>
 PEDIR ENTREGA
 </button>
 
 </div>
 
 
+<!-- MOTOBOYS -->
+
 <div class="card">
 
-<h3>🚚 MINHAS ENTREGAS</h3>
+<h3>
+🏍️ MOTOBOYS APROVADOS
+</h3>
+
+<div id="listaMotoboysAprovados">
+Carregando...
+</div>
+
+</div>
+
+
+<!-- PEDIDOS -->
+
+<div class="card">
+
+<h3>
+🚚 MINHAS ENTREGAS
+</h3>
 
 <div id="listaPedidosLojista">
 Carregando...
@@ -425,11 +798,17 @@ Carregando...
 </div>
 
 
+<!-- EXTRATO -->
+
 <div class="card">
 
-<h3>🧾 EXTRATO — 90 DIAS</h3>
+<h3>
+🧾 EXTRATO — 90 DIAS
+</h3>
 
-<button onclick="carregarExtrato('lojista')">
+<button
+onclick="carregarExtrato('lojista')"
+>
 ATUALIZAR EXTRATO
 </button>
 
@@ -444,17 +823,42 @@ Nenhum movimento.
 
 <!-- PAINEL MOTOBOY -->
 
-<div id="painelMotoboy" class="oculto">
+<div
+id="painelMotoboy"
+class="oculto"
+>
 
 <div class="card">
 
-<h2>🏍️ PAINEL MOTOBOY</h2>
+<h2>
+🏍️ PAINEL MOTOBOY
+</h2>
 
-<div class="saldo">
-R$ <span id="saldoMotoboy">0,00</span>
+<div
+id="codigoMotoboyPainel"
+class="codigo-grande"
+>
+CÓDIGO: ----
 </div>
 
-<div id="statusMotoboy" class="status offline">
+<div class="saldo">
+R$
+<span id="saldoMotoboy">
+0,00
+</span>
+</div>
+
+<div
+id="statusAprovacaoMotoboy"
+class="aviso"
+>
+Verificando aprovação...
+</div>
+
+<div
+id="statusMotoboy"
+class="status offline"
+>
 OFFLINE
 </div>
 
@@ -471,7 +875,9 @@ FICAR ONLINE
 
 <div class="card">
 
-<h3>📦 ENTREGAS DISPONÍVEIS</h3>
+<h3>
+📦 ENTREGAS DISPONÍVEIS
+</h3>
 
 <div id="listaPedidosMotoboy">
 Fique online para receber entregas.
@@ -482,7 +888,9 @@ Fique online para receber entregas.
 
 <div class="card">
 
-<h3>🚚 MINHAS ENTREGAS</h3>
+<h3>
+🚚 MINHAS ENTREGAS
+</h3>
 
 <div id="listaAceitasMotoboy">
 Nenhuma entrega.
@@ -493,18 +901,24 @@ Nenhuma entrega.
 
 <div class="card">
 
-<h3>💳 MINHA CHAVE PIX</h3>
+<h3>
+💳 MINHA CHAVE PIX
+</h3>
 
 <input
 id="pixMotoboy"
 placeholder="Digite sua chave PIX"
 >
 
-<button onclick="salvarPixMotoboy()">
+<button
+onclick="salvarPixMotoboy()"
+>
 SALVAR PIX
 </button>
 
-<button onclick="solicitarSaque()">
+<button
+onclick="solicitarSaque()"
+>
 SOLICITAR SAQUE
 </button>
 
@@ -513,9 +927,13 @@ SOLICITAR SAQUE
 
 <div class="card">
 
-<h3>🧾 EXTRATO — 90 DIAS</h3>
+<h3>
+🧾 EXTRATO — 90 DIAS
+</h3>
 
-<button onclick="carregarExtrato('motoboy')">
+<button
+onclick="carregarExtrato('motoboy')"
+>
 ATUALIZAR EXTRATO
 </button>
 
@@ -528,16 +946,24 @@ Nenhum movimento.
 </div>
 
 
-<!-- PAINEL FRANQUEADO -->
+<!-- FRANQUEADO -->
 
-<div id="painelFranqueado" class="oculto">
+<div
+id="painelFranqueado"
+class="oculto"
+>
 
 <div class="card">
 
-<h2>🤝 PAINEL FRANQUEADO</h2>
+<h2>
+🤝 PAINEL FRANQUEADO
+</h2>
 
 <div class="saldo">
-R$ <span id="saldoFranqueado">0,00</span>
+R$
+<span id="saldoFranqueado">
+0,00
+</span>
 </div>
 
 <p>
@@ -549,35 +975,160 @@ Painel do franqueado.
 </div>
 
 
-<!-- PAINEL ADMIN -->
+<!-- ADMIN -->
 
-<div id="painelAdmin" class="oculto">
+<div
+id="painelAdmin"
+class="oculto"
+>
 
 <div class="card">
 
-<h2>👑 PAINEL ADMINISTRADOR</h2>
+<h2>
+👑 PAINEL ADMINISTRADOR
+</h2>
 
 <div class="item">
 <strong>Receitas:</strong>
-R$ <span id="adminReceitas">0,00</span>
+R$
+<span id="adminReceitas">
+0,00
+</span>
 </div>
 
 <div class="item">
 <strong>Pagamentos:</strong>
-R$ <span id="adminPagamentos">0,00</span>
+R$
+<span id="adminPagamentos">
+0,00
+</span>
 </div>
 
 <div class="item">
 <strong>Resultado:</strong>
-R$ <span id="adminLucro">0,00</span>
+R$
+<span id="adminLucro">
+0,00
+</span>
 </div>
 
 </div>
 
+
+<!-- TAXAS -->
 
 <div class="card">
 
-<h3>💰 RECARGAS PENDENTES</h3>
+<h3>
+💰 ABA TAXAS
+</h3>
+
+<label>
+KM Base
+</label>
+
+<input
+id="taxaKmBase"
+type="number"
+step="0.01"
+>
+
+<label>
+Valor Base R$
+</label>
+
+<input
+id="taxaValorBase"
+type="number"
+step="0.01"
+>
+
+<label>
+Valor por KM extra R$
+</label>
+
+<input
+id="taxaValorAdicionalKm"
+type="number"
+step="0.01"
+>
+
+<button
+class="verde"
+onclick="salvarConfigTaxas()"
+>
+SALVAR TAXAS
+</button>
+
+<div id="statusTaxas"></div>
+
+</div>
+
+
+<!-- SUPER / RETORNO -->
+
+<div class="card">
+
+<h3>
+⚡ SUPER / RETORNO %
+</h3>
+
+<label>
+Retorno %
+</label>
+
+<input
+id="taxaRetornoPct"
+type="number"
+step="0.01"
+placeholder="Ex: 5"
+>
+
+<label>
+Super %
+</label>
+
+<input
+id="taxaSuperPct"
+type="number"
+step="0.01"
+placeholder="Ex: 10"
+>
+
+<button
+class="verde"
+onclick="salvarPercentuaisTaxas()"
+>
+SALVAR SUPER / RETORNO
+</button>
+
+<div id="statusPercentuais"></div>
+
+</div>
+
+
+<!-- APROVAÇÃO MOTOBOYS -->
+
+<div class="card">
+
+<h3>
+🏍️ APROVAÇÃO DE MOTOBOYS
+</h3>
+
+<div id="adminMotoboys">
+Carregando...
+</div>
+
+</div>
+
+
+<!-- RECARGAS -->
+
+<div class="card">
+
+<h3>
+💰 RECARGAS PENDENTES
+</h3>
 
 <div id="adminRecargas">
 Carregando...
@@ -586,9 +1137,13 @@ Carregando...
 </div>
 
 
+<!-- USUÁRIOS -->
+
 <div class="card">
 
-<h3>👥 USUÁRIOS</h3>
+<h3>
+👥 USUÁRIOS
+</h3>
 
 <div id="adminUsuarios">
 Carregando...
@@ -597,9 +1152,13 @@ Carregando...
 </div>
 
 
+<!-- ENTREGAS -->
+
 <div class="card">
 
-<h3>📦 ENTREGAS</h3>
+<h3>
+📦 ENTREGAS
+</h3>
 
 <div id="adminPedidos">
 Carregando...
@@ -608,9 +1167,28 @@ Carregando...
 </div>
 
 
+<!-- CÁLCULOS -->
+
 <div class="card">
 
-<h3>💵 PAGAR MOTOBOY</h3>
+<h3>
+📊 CÁLCULOS SUPER / RETORNO
+</h3>
+
+<div id="adminCalculos">
+Carregando...
+</div>
+
+</div>
+
+
+<!-- PAGAR MOTOBOY -->
+
+<div class="card">
+
+<h3>
+💵 PAGAR MOTOBOY
+</h3>
 
 <input
 id="pagamentoMotoboyUid"
@@ -629,23 +1207,183 @@ id="pagamentoMotoboyPix"
 placeholder="Chave PIX"
 >
 
-<button onclick="pagarMotoboy()">
+<button
+onclick="pagarMotoboy()"
+>
 REGISTRAR PAGAMENTO
+</button>
+
+</div>
+
+
+<!-- EDITAR SALDO -->
+
+<div class="card">
+
+<h3>
+💳 EDITAR SALDO
+</h3>
+
+<input
+id="editarSaldoUid"
+placeholder="UID do usuário"
+>
+
+<input
+id="editarSaldoValor"
+type="number"
+step="0.01"
+placeholder="Novo saldo"
+>
+
+<select id="editarSaldoTipo">
+
+<option value="lojista">
+Lojista
+</option>
+
+<option value="super_lojista">
+Super Lojista
+</option>
+
+<option value="motoboy">
+Motoboy
+</option>
+
+<option value="franqueado">
+Franqueado
+</option>
+
+</select>
+
+<button
+class="verde"
+onclick="editarSaldoAdmin()"
+>
+SALVAR SALDO
 </button>
 
 </div>
 
 </div>
 
+
+<!-- MODAL NOVA LOJA -->
+
+<div
+id="modalNovaLoja"
+class="modal oculto"
+>
+
+<div class="modal-caixa">
+
+<h2>
+🏪 CADASTRAR NOVA LOJA
+</h2>
+
+<input
+id="novaLojaNome"
+placeholder="Nome da loja"
+>
+
+<textarea
+id="novaLojaEndereco"
+placeholder="Endereço completo"
+></textarea>
+
+<input
+id="novaLojaLat"
+type="number"
+step="any"
+placeholder="Latitude"
+>
+
+<input
+id="novaLojaLng"
+type="number"
+step="any"
+placeholder="Longitude"
+>
+
+<button
+class="azul"
+onclick="geocodificarNovaLoja()"
+>
+📍 BUSCAR COORDENADAS PELO ENDEREÇO
+</button>
+
+<button
+class="verde"
+onclick="salvarNovaLoja()"
+>
+SALVAR LOJA
+</button>
+
+<button
+class="cinza"
+onclick="fecharModalNovaLoja()"
+>
+CANCELAR
+</button>
+
+<div
+id="mensagemNovaLoja"
+class="mensagem oculto"
+></div>
+
 </div>
 
-</div><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+</div>
+
+
+<!-- MODAL FINALIZAÇÃO -->
+
+<div
+id="modalFinalizar"
+class="modal oculto"
+>
+
+<div class="modal-caixa">
+
+<h2>
+✅ FINALIZAR ENTREGA
+</h2>
+
+<div class="aviso">
+Digite o código de finalização informado pelo cliente.
+</div>
+
+<input
+id="codigoFinalizacao"
+maxlength="4"
+inputmode="numeric"
+placeholder="Código de 4 dígitos"
+>
+
+<button
+class="verde"
+onclick="confirmarFinalizacao()"
+>
+FINALIZAR
+</button>
+
+<button
+class="cinza"
+onclick="fecharModalFinalizar()"
+>
+CANCELAR
+</button>
+
+</div>
+
+   </div><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 
 <script>
 
-const firebaseConfig = {
+const firebaseConfig={
 apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
 authDomain:"anjos-flash.firebaseapp.com",
 projectId:"anjos-flash",
@@ -659,12 +1397,16 @@ firebase.initializeApp(firebaseConfig);
 
 const auth=firebase.auth();
 const db=firebase.firestore();
+const storage=firebase.storage();
 
 let usuarioAtual=null;
 let perfilAtual=null;
+let pedidoFinalizarId=null;
 
 
-/* MENSAGEM */
+/* =====================================================
+   MENSAGENS
+===================================================== */
 
 function msg(id,text,tipo){
 
@@ -673,7 +1415,7 @@ const el=document.getElementById(id);
 if(!el)return;
 
 el.textContent=text;
-el.className="mensagem "+tipo;
+el.className="mensagem "+(tipo||"info");
 el.classList.remove("oculto");
 
 }
@@ -686,42 +1428,101 @@ if(!e)return"Erro desconhecido.";
 const c=e.code||"";
 
 const erros={
-"auth/invalid-credential":"E-mail ou senha incorretos.",
-"auth/invalid-login-credentials":"E-mail ou senha incorretos.",
-"auth/user-not-found":"Usuário não encontrado.",
-"auth/wrong-password":"Senha incorreta.",
-"auth/invalid-email":"E-mail inválido.",
-"auth/email-already-in-use":"Este e-mail já está cadastrado.",
-"auth/weak-password":"A senha deve ter pelo menos 6 caracteres.",
-"auth/network-request-failed":"Sem conexão com a internet."
+
+"auth/invalid-credential":
+"E-mail ou senha incorretos.",
+
+"auth/invalid-login-credentials":
+"E-mail ou senha incorretos.",
+
+"auth/user-not-found":
+"Usuário não encontrado.",
+
+"auth/wrong-password":
+"Senha incorreta.",
+
+"auth/invalid-email":
+"E-mail inválido.",
+
+"auth/email-already-in-use":
+"Este e-mail já está cadastrado.",
+
+"auth/weak-password":
+"A senha deve ter pelo menos 6 caracteres.",
+
+"auth/network-request-failed":
+"Sem conexão com a internet."
+
 };
 
-return erros[c]||e.message||"Não foi possível realizar a operação.";
+return erros[c]||e.message||
+"Não foi possível realizar a operação.";
 
 }
 
 
-/* TELAS */
+/* =====================================================
+   TELAS
+===================================================== */
 
 function mostrarLogin(){
 
-document.getElementById("telaLogin").classList.remove("oculto");
-document.getElementById("telaCadastro").classList.add("oculto");
-document.getElementById("telaApp").classList.add("oculto");
+document.getElementById("telaLogin")
+.classList.remove("oculto");
+
+document.getElementById("telaCadastro")
+.classList.add("oculto");
+
+document.getElementById("telaApp")
+.classList.add("oculto");
 
 }
 
 
 function mostrarCadastro(){
 
-document.getElementById("telaLogin").classList.add("oculto");
-document.getElementById("telaCadastro").classList.remove("oculto");
-document.getElementById("telaApp").classList.add("oculto");
+document.getElementById("telaLogin")
+.classList.add("oculto");
+
+document.getElementById("telaCadastro")
+.classList.remove("oculto");
+
+document.getElementById("telaApp")
+.classList.add("oculto");
 
 }
 
 
-/* ESCONDER PAINÉIS */
+function alterarTipoCadastro(){
+
+const tipo=
+document.getElementById("cadTipo")
+.value;
+
+const veiculoBox=
+document.getElementById("cadVeiculoBox");
+
+const documentosBox=
+document.getElementById("cadDocumentosBox");
+
+if(tipo==="motoboy"){
+
+veiculoBox.classList.remove("oculto");
+documentosBox.classList.remove("oculto");
+
+}else{
+
+veiculoBox.classList.add("oculto");
+documentosBox.classList.add("oculto");
+
+}
+
+}
+
+
+/* =====================================================
+   PAINÉIS
+===================================================== */
 
 function esconderPaineis(){
 
@@ -741,78 +1542,89 @@ if(el)el.classList.add("oculto");
 }
 
 
-/* ABRIR PELO TIPO DO FIRESTORE */
-
 function abrirPainel(tipo){
 
 esconderPaineis();
 
-tipo=String(tipo||"").trim().toLowerCase();
+tipo=
+String(tipo||"")
+.trim()
+.toLowerCase();
 
-console.log("TIPO DO FIRESTORE:",tipo);
 
 if(tipo==="admin"){
 
-document.getElementById("painelAdmin").classList.remove("oculto");
+document.getElementById("painelAdmin")
+.classList.remove("oculto");
 
-if(typeof carregarAdmin==="function"){
 carregarAdmin();
-}
 
 return;
 
 }
+
 
 if(tipo==="motoboy"){
 
-document.getElementById("painelMotoboy").classList.remove("oculto");
+document.getElementById("painelMotoboy")
+.classList.remove("oculto");
 
-if(typeof carregarMotoboy==="function"){
 carregarMotoboy();
-}
 
 return;
 
 }
 
-if(tipo==="lojista"){
 
-document.getElementById("painelLojista").classList.remove("oculto");
+if(
+tipo==="lojista" ||
+tipo==="super_lojista"
+){
 
-if(typeof carregarLojista==="function"){
+document.getElementById("painelLojista")
+.classList.remove("oculto");
+
 carregarLojista();
-}
 
 return;
 
 }
+
 
 if(tipo==="franqueado"){
 
-document.getElementById("painelFranqueado").classList.remove("oculto");
+document.getElementById("painelFranqueado")
+.classList.remove("oculto");
 
-if(typeof carregarFranqueado==="function"){
 carregarFranqueado();
-}
 
 return;
 
 }
 
+
 alert(
 "Perfil inválido no Firestore.\n\n"+
-"Tipo encontrado: "+tipo
+"Tipo: "+tipo
 );
 
 }
 
 
-/* LOGIN */
+/* =====================================================
+   LOGIN
+===================================================== */
 
 async function loginUser(){
 
-const email=document.getElementById("loginEmail").value.trim().toLowerCase();
-const senha=document.getElementById("loginSenha").value;
+const email=
+document.getElementById("loginEmail")
+.value.trim()
+.toLowerCase();
+
+const senha=
+document.getElementById("loginSenha")
+.value;
 
 if(!email||!senha){
 
@@ -826,7 +1638,8 @@ return;
 
 }
 
-const botao=document.getElementById("btnLogin");
+const botao=
+document.getElementById("btnLogin");
 
 try{
 
@@ -864,22 +1677,164 @@ botao.textContent="ENTRAR";
 }
 
 
-/* CADASTRO */
+/* =====================================================
+   CÓDIGO MOTOBOY
+===================================================== */
+
+function normalizarCodigoMotoboy(valor){
+
+let codigo=
+String(valor||"")
+.trim()
+.toUpperCase();
+
+if(!codigo)return"";
+
+if(!codigo.startsWith("#")){
+
+const numeros=
+codigo.replace(/\D/g,"");
+
+if(!numeros)return"";
+
+codigo=
+"#"+
+numeros.padStart(4,"0");
+
+}
+
+return codigo;
+
+}
+
+
+async function gerarCodigoMotoboy(uid,nome,email,telefone){
+
+const ultimoSnap=
+await db.collection("motoboys")
+.orderBy("numero","desc")
+.limit(1)
+.get();
+
+let numero=1;
+
+if(!ultimoSnap.empty){
+
+numero=
+Number(
+ultimoSnap.docs[0].data().numero||0
+)+1;
+
+}
+
+const codigo=
+"#"+
+String(numero).padStart(4,"0");
+
+
+await db.collection("motoboys")
+.doc(uid)
+.set({
+
+uid:uid,
+
+numero:numero,
+
+codigo:codigo,
+
+nome:nome,
+
+email:email,
+
+telefone:telefone,
+
+aprovado:false,
+
+criadoEm:
+firebase.firestore.FieldValue.serverTimestamp()
+
+});
+
+
+return{
+numero:numero,
+codigo:codigo
+};
+
+}
+
+
+/* =====================================================
+   UPLOAD DOCUMENTOS
+===================================================== */
+
+async function enviarArquivo(uid,arquivo,pasta){
+
+if(!arquivo)return"";
+
+const nomeSeguro=
+arquivo.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+
+const ref=
+storage
+.ref()
+.child(
+"documentos/"+uid+"/"+pasta+"/"+Date.now()+"_"+nomeSeguro
+);
+
+await ref.put(arquivo);
+
+return await ref.getDownloadURL();
+
+}
+
+
+/* =====================================================
+   CADASTRO
+===================================================== */
 
 async function registrarUser(){
 
-const nome=document.getElementById("cadNome").value.trim();
-const email=document.getElementById("cadEmail").value.trim().toLowerCase();
-const telefone=document.getElementById("cadTelefone").value.trim();
-const senha=document.getElementById("cadSenha").value;
-const tipo=document.getElementById("cadTipo").value.trim().toLowerCase();
-const endereco=document.getElementById("cadEndereco").value.trim();
+const nome=
+document.getElementById("cadNome")
+.value.trim();
+
+const email=
+document.getElementById("cadEmail")
+.value.trim()
+.toLowerCase();
+
+const telefone=
+document.getElementById("cadTelefone")
+.value.trim();
+
+const senha=
+document.getElementById("cadSenha")
+.value;
+
+const tipo=
+document.getElementById("cadTipo")
+.value.trim()
+.toLowerCase();
+
+const endereco=
+document.getElementById("cadEndereco")
+.value.trim();
+
+const veiculoEl=
+document.getElementById("cadVeiculo");
+
+const veiculo=
+veiculoEl
+?veiculoEl.value
+:"";
+
 
 if(!nome||!email||!telefone||!senha){
 
 msg(
 "mensagemCadastro",
-"Preencha todos os campos.",
+"Preencha todos os campos obrigatórios.",
 "erro"
 );
 
@@ -887,11 +1842,15 @@ return;
 
 }
 
-if(
-tipo!=="lojista" &&
-tipo!=="motoboy" &&
-tipo!=="franqueado"
-){
+
+const tiposValidos=[
+"lojista",
+"super_lojista",
+"motoboy",
+"franqueado"
+];
+
+if(!tiposValidos.includes(tipo)){
 
 msg(
 "mensagemCadastro",
@@ -903,6 +1862,7 @@ return;
 
 }
 
+
 try{
 
 msg(
@@ -911,38 +1871,209 @@ msg(
 "info"
 );
 
-const cred=await auth.createUserWithEmailAndPassword(
+const cred=
+await auth.createUserWithEmailAndPassword(
 email,
 senha
 );
 
 const uid=cred.user.uid;
 
-await db.collection("profiles").doc(uid).set({
+let codigoMotoboy="";
+let numeroMotoboy=null;
+
+if(tipo==="motoboy"){
+
+const codigo=
+await gerarCodigoMotoboy(
+uid,
+nome,
+email,
+telefone
+);
+
+codigoMotoboy=codigo.codigo;
+numeroMotoboy=codigo.numero;
+
+}
+
+
+/* DOCUMENTOS */
+
+let cnhUrl="";
+let crlvUrl="";
+let selfieUrl="";
+
+if(tipo==="motoboy"){
+
+const cnh=
+document.getElementById("cadCNH").files[0];
+
+const crlv=
+document.getElementById("cadCRLV").files[0];
+
+const selfie=
+document.getElementById("cadSelfie").files[0];
+
+
+if(cnh){
+
+cnhUrl=
+await enviarArquivo(
+uid,
+cnh,
+"cnh"
+);
+
+}
+
+if(crlv){
+
+crlvUrl=
+await enviarArquivo(
+uid,
+crlv,
+"crlv"
+);
+
+}
+
+if(selfie){
+
+selfieUrl=
+await enviarArquivo(
+uid,
+selfie,
+"selfie"
+);
+
+}
+
+}
+
+
+/* PERFIL */
+
+await db.collection("profiles")
+.doc(uid)
+.set({
 
 nome:nome,
+
 email:email,
+
 telefone:telefone,
+
 tipo:tipo,
+
+tipoConta:
+(tipo==="super_lojista"
+?"super_lojista"
+:"lojista"),
+
 endereco:endereco,
+
+veiculo:
+tipo==="motoboy"
+?veiculo
+:"",
+
+motoboyCodigo:
+codigoMotoboy,
+
+numeroMotoboy:
+numeroMotoboy,
+
+aprovado:
+tipo==="motoboy"
+?false
+:true,
+
 ativo:true,
+
 online:false,
-criadoEm:firebase.firestore.FieldValue.serverTimestamp()
+
+cnhUrl:cnhUrl,
+
+crlvUrl:crlvUrl,
+
+selfieUrl:selfieUrl,
+
+criadoEm:
+firebase.firestore.FieldValue.serverTimestamp()
 
 });
 
-await db.collection("wallets").doc(uid).set({
+
+/* CARTEIRA */
+
+await db.collection("wallets")
+.doc(uid)
+.set({
 
 saldo:0,
-atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()
+
+atualizadoEm:
+firebase.firestore.FieldValue.serverTimestamp()
 
 });
+
+
+if(tipo==="lojista"||tipo==="super_lojista"){
+
+/*
+  A primeira loja fica vinculada
+  automaticamente ao perfil.
+*/
+
+await db.collection("lojas")
+.add({
+
+donoId:uid,
+
+nomeLoja:nome,
+
+nome:nome,
+
+endereco:endereco,
+
+lat:0,
+
+lng:0,
+
+principal:true,
+
+ativo:true,
+
+criadoEm:
+firebase.firestore.FieldValue.serverTimestamp()
+
+});
+
+}
+
+
+/* MENSAGEM MOTOBOY */
+
+if(tipo==="motoboy"){
+
+msg(
+"mensagemCadastro",
+"Cadastro realizado!\n\n"+
+"Seu código é "+codigoMotoboy+
+"\n\nAguarde a aprovação do administrador.",
+"sucesso"
+);
+
+}else{
 
 msg(
 "mensagemCadastro",
 "Cadastro realizado. Carregando...",
 "sucesso"
 );
+
+}
 
 }catch(e){
 
@@ -959,9 +2090,12 @@ erroHumano(e),
 }
 
 
-/* LOGIN AUTOMÁTICO */
+/* =====================================================
+   AUTENTICAÇÃO
+===================================================== */
 
-auth.onAuthStateChanged(async function(user){
+auth.onAuthStateChanged(
+async function(user){
 
 if(!user){
 
@@ -978,10 +2112,13 @@ usuarioAtual=user;
 
 await carregarUsuario();
 
-});
+}
+);
 
 
-/* CARREGAR USUÁRIO */
+/* =====================================================
+   CARREGAR USUÁRIO
+===================================================== */
 
 async function carregarUsuario(){
 
@@ -991,17 +2128,15 @@ try{
 
 const uid=usuarioAtual.uid;
 
-console.log("UID:",uid);
-
-const snap=await db.collection("profiles")
+const snap=
+await db.collection("profiles")
 .doc(uid)
 .get();
 
 if(!snap.exists){
 
 alert(
-"Esta conta não possui perfil no Firestore.\n\n"+
-"Crie o documento:\nprofiles/"+uid
+"Esta conta não possui perfil no Firestore."
 );
 
 await auth.signOut();
@@ -1012,24 +2147,16 @@ return;
 
 perfilAtual=snap.data();
 
-const tipo=String(
-perfilAtual.tipo||""
-).trim().toLowerCase();
-
-console.log("PERFIL:",perfilAtual);
-console.log("TIPO:",tipo);
-
-
-/*
-NÃO existe mais:
-tipo = lojista
-como padrão.
-*/
+const tipo=
+String(perfilAtual.tipo||"")
+.trim()
+.toLowerCase();
 
 const tipos=[
 "admin",
 "motoboy",
 "lojista",
+"super_lojista",
 "franqueado"
 ];
 
@@ -1050,14 +2177,18 @@ return;
 
 document.getElementById("nomeAtual")
 .textContent=
-perfilAtual.nome||usuarioAtual.email;
+perfilAtual.nome||
+usuarioAtual.email;
+
 
 document.getElementById("tipoAtual")
 .textContent=
 tipo.toUpperCase();
 
+
 document.getElementById("uidAtual")
 .textContent=uid;
+
 
 document.getElementById("telaLogin")
 .classList.add("oculto");
@@ -1069,17 +2200,49 @@ document.getElementById("telaApp")
 .classList.remove("oculto");
 
 
+if(tipo==="motoboy"){
+
+const codigo=
+perfilAtual.motoboyCodigo||"";
+
+const box=
+document.getElementById(
+"codigoMotoboyAtual"
+);
+
+const painel=
+document.getElementById(
+"codigoMotoboyPainel"
+);
+
+if(codigo){
+
+box.textContent=
+"SEU CÓDIGO: "+codigo;
+
+box.classList.remove("oculto");
+
+painel.textContent=
+"CÓDIGO: "+codigo;
+
+}
+
+}
+
+
 abrirPainel(tipo);
 
 await atualizarSaldo();
 
 if(tipo==="motoboy"){
+
 await carregarPixMotoboy();
+
 }
 
 }catch(e){
 
-console.error("ERRO PERFIL:",e);
+console.error(e);
 
 alert(
 "Erro ao carregar painel:\n"+
@@ -1091,7 +2254,9 @@ erroHumano(e)
 }
 
 
-/* SALDO */
+/* =====================================================
+   SALDO
+===================================================== */
 
 async function atualizarSaldo(){
 
@@ -1099,30 +2264,39 @@ if(!usuarioAtual)return;
 
 try{
 
-const snap=await db.collection("wallets")
+const snap=
+await db.collection("wallets")
 .doc(usuarioAtual.uid)
 .get();
 
 let saldo=0;
 
 if(snap.exists){
-saldo=Number(snap.data().saldo||0);
+
+saldo=
+Number(snap.data().saldo||0);
+
 }
 
 const texto=
-saldo.toFixed(2).replace(".",",");
+saldo.toFixed(2)
+.replace(".",",");
 
-const ids=[
+
+[
 "saldoLojista",
 "saldoMotoboy",
 "saldoFranqueado"
-];
+].forEach(function(id){
 
-ids.forEach(function(id){
+const el=
+document.getElementById(id);
 
-const el=document.getElementById(id);
+if(el){
 
-if(el)el.textContent=texto;
+el.textContent=texto;
+
+}
 
 });
 
@@ -1135,7 +2309,9 @@ console.error(e);
 }
 
 
-/* COPIAR PIX */
+/* =====================================================
+   PIX
+===================================================== */
 
 async function copiarPix(){
 
@@ -1156,7 +2332,9 @@ alert("Chave PIX: "+pix);
 }
 
 
-/* SAIR */
+/* =====================================================
+   SAIR
+===================================================== */
 
 async function sair(){
 
@@ -1164,7 +2342,949 @@ await auth.signOut();
 
 }
 
-</script><script>
+
+/* =====================================================
+   RASTREIO
+===================================================== */
+
+function geraRastreio(){
+
+return String(
+Math.floor(
+1000+Math.random()*9000
+)
+);
+
+}
+
+
+/* =====================================================
+   DISTÂNCIA
+===================================================== */
+
+function calcularDistanciaKm(
+lat1,
+lng1,
+lat2,
+lng2
+){
+
+const R=6371;
+
+const dLat=
+(lat2-lat1)*
+Math.PI/180;
+
+const dLng=
+(lng2-lng1)*
+Math.PI/180;
+
+const a=
+Math.sin(dLat/2)*
+Math.sin(dLat/2)+
+Math.cos(lat1*Math.PI/180)*
+Math.cos(lat2*Math.PI/180)*
+Math.sin(dLng/2)*
+Math.sin(dLng/2);
+
+const c=
+2*Math.atan2(
+Math.sqrt(a),
+Math.sqrt(1-a)
+);
+
+return R*c;
+
+}
+
+
+function estimarMinutos(
+distanciaKm,
+veiculo
+){
+
+let velocidade=30;
+
+if(veiculo==="moto"){
+velocidade=30;
+}
+
+if(veiculo==="utilitario"){
+velocidade=25;
+}
+
+if(veiculo==="caminhao"){
+velocidade=20;
+}
+
+if(veiculo==="carreta"){
+velocidade=18;
+}
+
+return Math.max(
+1,
+Math.ceil(
+(distanciaKm/velocidade)*60
+)
+);
+
+}
+
+
+/* =====================================================
+   GEOCODIFICAÇÃO
+===================================================== */
+
+async function geocodificarEndereco(endereco){
+
+const url=
+"https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=br&q="+
+encodeURIComponent(
+endereco+", Brasil"
+);
+
+const resposta=
+await fetch(
+url,
+{
+headers:{
+"Accept":"application/json"
+}
+}
+);
+
+if(!resposta.ok){
+
+throw new Error(
+"Não foi possível consultar o endereço."
+);
+
+}
+
+const dados=
+await resposta.json();
+
+if(!dados.length){
+
+throw new Error(
+"Endereço não encontrado."
+);
+
+}
+
+return{
+
+lat:Number(dados[0].lat),
+
+lng:Number(dados[0].lon),
+
+display_name:
+dados[0].display_name
+
+};
+
+}
+
+
+/* =====================================================
+   PARTE 2 CONTINUA
+===================================================== *//* =====================================================
+   LOJAS
+===================================================== */
+
+function abrirModalNovaLoja(){
+
+document.getElementById(
+"modalNovaLoja"
+).classList.remove("oculto");
+
+}
+
+
+function fecharModalNovaLoja(){
+
+document.getElementById(
+"modalNovaLoja"
+).classList.add("oculto");
+
+}
+
+
+async function geocodificarNovaLoja(){
+
+const endereco=
+document.getElementById(
+"novaLojaEndereco"
+).value.trim();
+
+if(!endereco){
+
+alert("Digite o endereço.");
+
+return;
+
+}
+
+try{
+
+msg(
+"mensagemNovaLoja",
+"Buscando coordenadas...",
+"info"
+);
+
+const geo=
+await geocodificarEndereco(
+endereco
+);
+
+document.getElementById(
+"novaLojaLat"
+).value=
+geo.lat;
+
+document.getElementById(
+"novaLojaLng"
+).value=
+geo.lng;
+
+msg(
+"mensagemNovaLoja",
+"Coordenadas encontradas.",
+"sucesso"
+);
+
+}catch(e){
+
+msg(
+"mensagemNovaLoja",
+erroHumano(e),
+"erro"
+);
+
+}
+
+}
+
+
+async function salvarNovaLoja(){
+
+if(!usuarioAtual)return;
+
+const nome=
+document.getElementById(
+"novaLojaNome"
+).value.trim();
+
+const endereco=
+document.getElementById(
+"novaLojaEndereco"
+).value.trim();
+
+const lat=
+Number(
+document.getElementById(
+"novaLojaLat"
+).value||0
+);
+
+const lng=
+Number(
+document.getElementById(
+"novaLojaLng"
+).value||0
+);
+
+if(!nome||!endereco){
+
+alert(
+"Informe nome e endereço."
+);
+
+return;
+
+}
+
+try{
+
+await db.collection("lojas")
+.add({
+
+donoId:
+usuarioAtual.uid,
+
+nomeLoja:nome,
+
+nome:nome,
+
+endereco:endereco,
+
+lat:lat,
+
+lng:lng,
+
+ativo:true,
+
+principal:false,
+
+criadoEm:
+firebase.firestore.FieldValue.serverTimestamp()
+
+});
+
+alert(
+"Loja cadastrada com sucesso."
+);
+
+document.getElementById(
+"novaLojaNome"
+).value="";
+
+document.getElementById(
+"novaLojaEndereco"
+).value="";
+
+document.getElementById(
+"novaLojaLat"
+).value="";
+
+document.getElementById(
+"novaLojaLng"
+).value="";
+
+fecharModalNovaLoja();
+
+await carregarLojasLojista();
+
+}catch(e){
+
+alert(
+"Erro:\n"+
+erroHumano(e)
+);
+
+}
+
+}
+
+
+async function carregarLojasLojista(){
+
+if(!usuarioAtual)return;
+
+const div=
+document.getElementById(
+"listaLojasLojista"
+);
+
+const select=
+document.getElementById(
+"pedidoLoja"
+);
+
+if(!div)return;
+
+try{
+
+const snap=
+await db.collection("lojas")
+.where(
+"donoId",
+"==",
+usuarioAtual.uid
+)
+.get();
+
+let lojas=[];
+
+snap.forEach(function(doc){
+
+lojas.push({
+
+id:doc.id,
+
+...doc.data()
+
+});
+
+});
+
+
+lojas.sort(function(a,b){
+
+return Number(a.numero||0)-
+Number(b.numero||0);
+
+});
+
+
+if(!lojas.length){
+
+const perfil=
+await db.collection("profiles")
+.doc(usuarioAtual.uid)
+.get();
+
+const p=
+perfil.exists
+?perfil.data()
+:{};
+
+
+div.innerHTML=`
+
+<div class="item">
+
+<strong>🏪 ${p.nome||"Minha loja"}</strong><br>
+
+${p.endereco||"Endereço não informado"}
+
+</div>
+
+`;
+
+if(select){
+
+select.innerHTML=`
+
+<option value="principal">
+${p.nome||"Minha loja"}
+</option>
+
+`;
+
+}
+
+}else{
+
+let html="";
+
+lojas.forEach(function(loja){
+
+html+=`
+
+<div class="item">
+
+<strong>🏪
+${loja.nomeLoja||loja.nome||"-"}
+</strong>
+
+<br>
+
+${loja.endereco||"-"}
+
+</div>
+
+`;
+
+});
+
+div.innerHTML=html;
+
+
+if(select){
+
+select.innerHTML="";
+
+lojas.forEach(function(loja){
+
+const opt=
+document.createElement("option");
+
+opt.value=loja.id;
+
+opt.textContent=
+loja.nomeLoja||
+loja.nome||
+"Loja";
+
+opt.dataset.endereco=
+loja.endereco||"";
+
+opt.dataset.lat=
+loja.lat||"";
+
+opt.dataset.lng=
+loja.lng||"";
+
+select.appendChild(opt);
+
+});
+
+}
+
+}
+
+
+const tipoConta=
+perfilAtual
+?perfilAtual.tipoConta||"lojista"
+:"lojista";
+
+
+const btn=
+document.getElementById(
+"btnNovaLoja"
+);
+
+if(btn){
+
+if(tipoConta==="super_lojista"){
+
+btn.classList.remove("oculto");
+
+}else{
+
+btn.classList.add("oculto");
+
+}
+
+}
+
+}catch(e){
+
+console.error(e);
+
+div.innerHTML=
+'<div class="item">Erro ao carregar lojas.</div>';
+
+}
+
+}
+
+
+/* =====================================================
+   MOTOBOYS APROVADOS
+===================================================== */
+
+async function carregarMotoboysAprovados(){
+
+const div=
+document.getElementById(
+"listaMotoboysAprovados"
+);
+
+if(!div||!usuarioAtual)return;
+
+try{
+
+const snap=
+await db.collection("motoboys")
+.where(
+"aprovado",
+"==",
+true
+)
+.get();
+
+if(snap.empty){
+
+div.innerHTML=
+'<div class="item">Nenhum motoboy aprovado.</div>';
+
+return;
+
+}
+
+let lista=[];
+
+snap.forEach(function(doc){
+
+lista.push({
+
+id:doc.id,
+
+...doc.data()
+
+});
+
+});
+
+lista.sort(function(a,b){
+
+return Number(a.numero||0)-
+Number(b.numero||0);
+
+});
+
+let html="";
+
+lista.forEach(function(m){
+
+const codigo=
+normalizarCodigoMotoboy(
+m.codigo||""
+);
+
+html+=`
+
+<div class="item">
+
+<strong>
+${codigo}
+</strong>
+
+<br>
+
+${m.nome||"-"}
+
+<br>
+
+<span class="aprovado">
+● APROVADO
+</span>
+
+<button
+class="azul"
+onclick="selecionarMotoboyCodigo('${codigo}')"
+>
+ESCOLHER ${codigo}
+</button>
+
+</div>
+
+`;
+
+});
+
+div.innerHTML=html;
+
+}catch(e){
+
+console.error(e);
+
+div.innerHTML=
+'<div class="item">Erro ao carregar motoboys.</div>';
+
+}
+
+}
+
+
+function selecionarMotoboyCodigo(codigo){
+
+const input=
+document.getElementById(
+"pedidoMotoboyCodigo"
+);
+
+if(!input)return;
+
+input.value=
+normalizarCodigoMotoboy(codigo);
+
+input.focus();
+
+}
+
+
+/* =====================================================
+   CONFIGURAÇÃO DE TAXAS
+===================================================== */
+
+async function carregarConfigTaxas(){
+
+try{
+
+const snap=
+await db.collection("config_taxas")
+.doc("valores")
+.get();
+
+const config={
+
+kmBase:3,
+
+valorBase:8,
+
+valorAdicionalKm:2,
+
+taxaApp:10,
+
+retornoPct:5,
+
+superPct:10
+
+};
+
+if(snap.exists){
+
+Object.assign(
+config,
+snap.data()
+);
+
+}
+
+
+const km=
+document.getElementById(
+"taxaKmBase"
+);
+
+const base=
+document.getElementById(
+"taxaValorBase"
+);
+
+const adicional=
+document.getElementById(
+"taxaValorAdicionalKm"
+);
+
+const retorno=
+document.getElementById(
+"taxaRetornoPct"
+);
+
+const superPct=
+document.getElementById(
+"taxaSuperPct"
+);
+
+
+if(km)km.value=config.kmBase;
+
+if(base)base.value=config.valorBase;
+
+if(adicional)
+adicional.value=config.valorAdicionalKm;
+
+if(retorno)
+retorno.value=config.retornoPct;
+
+if(superPct)
+superPct.value=config.superPct;
+
+}catch(e){
+
+console.error(e);
+
+}
+
+}
+
+
+async function salvarConfigTaxas(){
+
+if(!usuarioAtual)return;
+
+try{
+
+const kmBase=
+Number(
+document.getElementById(
+"taxaKmBase"
+).value
+);
+
+const valorBase=
+Number(
+document.getElementById(
+"taxaValorBase"
+).value
+);
+
+const valorAdicionalKm=
+Number(
+document.getElementById(
+"taxaValorAdicionalKm"
+).value
+);
+
+if(
+kmBase<0||
+valorBase<0||
+valorAdicionalKm<0
+){
+
+alert(
+"Os valores não podem ser negativos."
+);
+
+return;
+
+}
+
+
+await db.collection("config_taxas")
+.doc("valores")
+.set({
+
+kmBase:kmBase,
+
+valorBase:valorBase,
+
+valorAdicionalKm:
+valorAdicionalKm,
+
+atualizadoPor:
+usuarioAtual.uid,
+
+atualizadoEm:
+firebase.firestore.FieldValue.serverTimestamp()
+
+},{
+merge:true
+});
+
+
+document.getElementById(
+"statusTaxas"
+).textContent=
+"✅ Taxas salvas com sucesso.";
+
+}catch(e){
+
+alert(
+"Erro ao salvar taxas:\n"+
+erroHumano(e)
+);
+
+}
+
+}
+
+
+async function salvarPercentuaisTaxas(){
+
+if(!usuarioAtual)return;
+
+const retornoPct=
+Number(
+document.getElementById(
+"taxaRetornoPct"
+).value||0
+);
+
+const superPct=
+Number(
+document.getElementById(
+"taxaSuperPct"
+).value||0
+);
+
+if(
+retornoPct<0||
+superPct<0
+){
+
+alert(
+"Percentuais inválidos."
+);
+
+return;
+
+}
+
+try{
+
+await db.collection("config_taxas")
+.doc("valores")
+.set({
+
+retornoPct:
+retornoPct,
+
+superPct:
+superPct,
+
+atualizadoPor:
+usuarioAtual.uid,
+
+atualizadoEm:
+firebase.firestore.FieldValue.serverTimestamp()
+
+},{
+merge:true
+});
+
+
+document.getElementById(
+"statusPercentuais"
+).textContent=
+"✅ Percentuais salvos.";
+
+}catch(e){
+
+alert(
+"Erro:\n"+
+erroHumano(e)
+);
+
+}
+
+}
+
+
+/* =====================================================
+   CÁLCULO INTERNO
+===================================================== */
+
+async function calcularValorEntregaPorKm(
+distanciaKm
+){
+
+const snap=
+await db.collection("config_taxas")
+.doc("valores")
+.get();
+
+const config={
+
+kmBase:3,
+
+valorBase:8,
+
+valorAdicionalKm:2
+
+};
+
+if(snap.exists){
+
+Object.assign(
+config,
+snap.data()
+);
+
+}
+
+const kmBase=
+Number(config.kmBase||3);
+
+const valorBase=
+Number(config.valorBase||8);
+
+const adicional=
+Number(
+config.valorAdicionalKm||2
+);
+
+const km=
+Math.max(
+0,
+Number(distanciaKm||0)
+);
+
+let valor=valorBase;
+
+if(km>kmBase){
+
+valor=
+valorBase+
+(
+(km-kmBase)*
+adicional
+);
+
+}
+
+return Number(
+valor.toFixed(2)
+);
+
+}
+
 
 /* =====================================================
    RECARGA
@@ -1176,13 +3296,22 @@ if(!usuarioAtual)return;
 
 try{
 
-await db.collection("transactions").add({
+await db.collection("transactions")
+.add({
 
-uid:usuarioAtual.uid,
-tipo:"recarga_50",
+uid:
+usuarioAtual.uid,
+
+tipo:
+"recarga_50",
+
 valor:50,
-status:"pendente",
-criadoEm:firebase.firestore.FieldValue.serverTimestamp()
+
+status:
+"pendente",
+
+criadoEm:
+firebase.firestore.FieldValue.serverTimestamp()
 
 });
 
@@ -1195,7 +3324,8 @@ alert(
 }catch(e){
 
 alert(
-"Erro:\n"+erroHumano(e)
+"Erro:\n"+
+erroHumano(e)
 );
 
 }
@@ -1212,23 +3342,51 @@ async function criarPedido(){
 if(!usuarioAtual)return;
 
 const cliente=
-document.getElementById("pedidoCliente").value.trim();
+document.getElementById(
+"pedidoCliente"
+).value.trim();
 
 const telefone=
-document.getElementById("pedidoTelefone").value.trim();
+document.getElementById(
+"pedidoTelefone"
+).value.trim();
 
 const endereco=
-document.getElementById("pedidoEndereco").value.trim();
+document.getElementById(
+"pedidoEndereco"
+).value.trim();
 
-const valor=
-Number(
-document.getElementById("pedidoValor").value||0
+const tipoEntrega=
+document.getElementById(
+"pedidoTipoEntrega"
+).value;
+
+const codigoDigitado=
+document.getElementById(
+"pedidoMotoboyCodigo"
+).value.trim();
+
+const motoboyCodigo=
+normalizarCodigoMotoboy(
+codigoDigitado
 );
 
-const veiculo=
-document.getElementById("pedidoVeiculo").value;
+const selectLoja=
+document.getElementById(
+"pedidoLoja"
+);
 
-if(!cliente||!telefone||!endereco){
+const opcaoLoja=
+selectLoja &&
+selectLoja.options[
+selectLoja.selectedIndex
+];
+
+if(
+!cliente||
+!telefone||
+!endereco
+){
 
 alert(
 "Preencha cliente, telefone e endereço."
@@ -1238,9 +3396,184 @@ return;
 
 }
 
-const taxa=8;
+if(!opcaoLoja){
+
+alert(
+"Selecione a loja de saída."
+);
+
+return;
+
+}
+
 
 try{
+
+let lojaLat=
+Number(
+opcaoLoja.dataset.lat||0
+);
+
+let lojaLng=
+Number(
+opcaoLoja.dataset.lng||0
+);
+
+const lojaEndereco=
+opcaoLoja.dataset.endereco||"";
+
+const lojaNome=
+opcaoLoja.textContent;
+
+
+const destinoLat=
+Number(
+document.getElementById(
+"pedidoLat"
+).value||0
+);
+
+const destinoLng=
+Number(
+document.getElementById(
+"pedidoLng"
+).value||0
+);
+
+
+/*
+  Se a loja não possui coordenadas,
+  busca pelo endereço.
+*/
+
+if(
+(!lojaLat||!lojaLng)&&
+lojaEndereco
+){
+
+try{
+
+const geoLoja=
+await geocodificarEndereco(
+lojaEndereco
+);
+
+lojaLat=geoLoja.lat;
+lojaLng=geoLoja.lng;
+
+}catch(e){
+
+console.warn(
+"Não foi possível geocodificar loja.",
+e
+);
+
+}
+
+}
+
+
+let latDestino=destinoLat;
+let lngDestino=destinoLng;
+
+
+/*
+  Se o cliente não informou coordenadas,
+  tenta buscar pelo endereço.
+*/
+
+if(
+(!latDestino||!lngDestino)
+){
+
+try{
+
+const geoDestino=
+await geocodificarEndereco(
+endereco
+);
+
+latDestino=
+geoDestino.lat;
+
+lngDestino=
+geoDestino.lng;
+
+}catch(e){
+
+console.warn(
+"Destino não geocodificado.",
+e
+);
+
+}
+
+}
+
+
+let distanciaKm=0;
+
+if(
+lojaLat&&
+lojaLng&&
+latDestino&&
+lngDestino
+){
+
+distanciaKm=
+calcularDistanciaKm(
+lojaLat,
+lojaLng,
+latDestino,
+lngDestino
+);
+
+}
+
+
+distanciaKm=
+Number(
+distanciaKm.toFixed(2)
+);
+
+
+const veiculo=
+"moto";
+
+
+/*
+  Cálculo interno.
+*/
+
+const valorEntrega=
+await calcularValorEntregaPorKm(
+distanciaKm
+);
+
+
+const minutos=
+estimarMinutos(
+distanciaKm,
+veiculo
+);
+
+
+const rastreio=
+geraRastreio();
+
+
+/*
+  Código antigo continua existindo
+  como código de finalização.
+*/
+
+const codigoFinalizacao=
+String(
+Math.floor(
+1000+Math.random()*9000
+)
+);
+
 
 const walletRef=
 db.collection("wallets")
@@ -1254,119 +3587,214 @@ const transRef=
 db.collection("transactions")
 .doc();
 
-await db.runTransaction(async function(transaction){
 
-const wallet=await transaction.get(walletRef);
+await db.runTransaction(
+async function(transaction){
+
+const wallet=
+await transaction.get(
+walletRef
+);
 
 let saldo=0;
 
 if(wallet.exists){
 
-saldo=Number(
+saldo=
+Number(
 wallet.data().saldo||0
 );
 
 }
 
-if(saldo<taxa){
 
-throw new Error("SALDO_INSUFICIENTE");
+if(saldo<valorEntrega){
+
+throw new Error(
+"SALDO_INSUFICIENTE"
+);
 
 }
 
-const codigo=
-String(
-Math.floor(
-1000+Math.random()*9000
-)
-);
 
 transaction.update(
 walletRef,
 {
-saldo:firebase.firestore.FieldValue.increment(-taxa),
-atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()
+
+saldo:
+firebase.firestore.FieldValue
+.increment(-valorEntrega),
+
+atualizadoEm:
+firebase.firestore.FieldValue
+.serverTimestamp()
+
 }
 );
+
 
 transaction.set(
 pedidoRef,
 {
 
-lojistaId:usuarioAtual.uid,
+lojistaId:
+usuarioAtual.uid,
 
 lojistaNome:
 perfilAtual.nome||"",
 
-clienteNome:cliente,
+lojaId:
+opcaoLoja.value,
 
-telefoneCliente:telefone,
+lojaNome:
+lojaNome,
 
-enderecoEntrega:endereco,
+lojaEndereco:
+lojaEndereco,
 
-valorProduto:valor,
+lojaLat:
+lojaLat,
 
-valorPedido:valor,
+lojaLng:
+lojaLng,
 
-valorTaxa:taxa,
+clienteNome:
+cliente,
 
-veiculo:veiculo,
+telefoneCliente:
+telefone,
 
-codigo4Digitos:codigo,
+enderecoEntrega:
+endereco,
 
-status:"pendente",
+destinoLat:
+latDestino,
 
-motoboyId:null,
+destinoLng:
+lngDestino,
+
+tipoEntrega:
+tipoEntrega,
+
+marca:
+tipoEntrega,
+
+veiculo:
+veiculo,
+
+motoboyCodigo:
+motoboyCodigo,
+
+rastreio:
+rastreio,
+
+codigo4Digitos:
+codigoFinalizacao,
+
+distanciaKm:
+distanciaKm,
+
+tempoEstimadoMin:
+minutos,
+
+/*
+  Valores internos.
+  O painel lojista não os exibe.
+*/
+
+valorCalculado:
+valorEntrega,
+
+valorTaxa:
+valorEntrega,
+
+valorProduto:
+0,
+
+valorPedido:
+0,
+
+status:
+"pendente",
+
+motoboyId:
+null,
 
 criadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
+firebase.firestore.FieldValue
+.serverTimestamp()
 
 }
 );
+
 
 transaction.set(
 transRef,
 {
 
-uid:usuarioAtual.uid,
+uid:
+usuarioAtual.uid,
 
-tipo:"taxa_pedido",
+tipo:
+"taxa_pedido",
 
-valor:-taxa,
+valor:
+-valorEntrega,
 
-orderId:pedidoRef.id,
+orderId:
+pedidoRef.id,
 
-status:"aprovado",
+status:
+"aprovado",
 
 criadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
+firebase.firestore.FieldValue
+.serverTimestamp()
 
 }
 );
 
 });
 
+
 alert(
-"Entrega solicitada com sucesso!"
+"Entrega solicitada com sucesso!\n\n"+
+"Rastreio do cliente: "+
+rastreio
 );
 
-document.getElementById("pedidoCliente").value="";
-document.getElementById("pedidoTelefone").value="";
-document.getElementById("pedidoEndereco").value="";
-document.getElementById("pedidoValor").value="";
+
+[
+"pedidoCliente",
+"pedidoTelefone",
+"pedidoEndereco",
+"pedidoLat",
+"pedidoLng",
+"pedidoMotoboyCodigo"
+].forEach(function(id){
+
+const el=
+document.getElementById(id);
+
+if(el)el.value="";
+
+});
+
 
 await atualizarSaldo();
+
 await carregarLojista();
 
 }catch(e){
 
 console.error(e);
 
-if(e.message==="SALDO_INSUFICIENTE"){
+if(
+e.message==="SALDO_INSUFICIENTE"
+){
 
 alert(
-"Saldo insuficiente.\n\n"+
-"É necessário ter pelo menos R$ 8,00."
+"Saldo insuficiente para solicitar a entrega."
 );
 
 return;
@@ -1391,16 +3819,19 @@ async function carregarLojista(){
 
 if(!usuarioAtual)return;
 
+try{
+
+await carregarLojasLojista();
+
+await carregarMotoboysAprovados();
+
+
 const div=
 document.getElementById(
 "listaPedidosLojista"
 );
 
 if(!div)return;
-
-div.textContent="Carregando...";
-
-try{
 
 const snap=
 await db.collection("orders")
@@ -1411,6 +3842,7 @@ usuarioAtual.uid
 )
 .get();
 
+
 if(snap.empty){
 
 div.innerHTML=
@@ -1420,39 +3852,123 @@ return;
 
 }
 
-let html="";
+
+let pedidos=[];
 
 snap.forEach(function(doc){
 
-const p=doc.data();
+pedidos.push({
+
+id:doc.id,
+
+...doc.data()
+
+});
+
+});
+
+
+pedidos.sort(function(a,b){
+
+const ta=
+a.criadoEm &&
+a.criadoEm.toDate
+?a.criadoEm.toDate().getTime()
+:0;
+
+const tb=
+b.criadoEm &&
+b.criadoEm.toDate
+?b.criadoEm.toDate().getTime()
+:0;
+
+return tb-ta;
+
+});
+
+
+let html="";
+
+
+pedidos.forEach(function(p){
+
+let status=
+p.status||"-";
+
+if(status==="pendente")
+status="Aguardando motoboy";
+
+if(status==="em_rota")
+status="Motoboy em rota";
+
+if(status==="finalizado")
+status="Finalizado";
+
 
 html+=`
 
 <div class="item">
 
-<strong>Cliente:</strong>
-${p.clienteNome||"-"}<br>
+<strong>
+Pedido #${String(p.id).slice(-4).toUpperCase()}
+</strong>
 
-<strong>Telefone:</strong>
-${p.telefoneCliente||"-"}<br>
+<br>
 
-<strong>Endereço:</strong>
-${p.enderecoEntrega||"-"}<br>
+<strong>
+Tipo:
+</strong>
+${String(
+p.tipoEntrega||"normal"
+).toUpperCase()}
 
-<strong>Veículo:</strong>
-${p.veiculo||"-"}<br>
+<br>
 
-<strong>Status:</strong>
-${p.status||"-"}<br>
+<strong>
+Status:
+</strong>
+${status}
 
-<strong>Taxa:</strong>
-R$
-${Number(p.valorTaxa||0)
-.toFixed(2)
-.replace(".",",")}<br>
+<br>
 
-<strong>Código:</strong>
-${p.codigo4Digitos||"-"}
+<strong>
+Cliente:
+</strong>
+${p.clienteNome||"-"}
+
+<br>
+
+<strong>
+Endereço:
+</strong>
+${p.enderecoEntrega||"-"}
+
+<br>
+
+<strong>
+Rastreio:
+</strong>
+
+<span class="rastreio">
+${p.rastreio||"-"}
+</span>
+
+<br>
+
+<strong>
+Distância:
+</strong>
+${Number(
+p.distanciaKm||0
+).toFixed(2)
+} km
+
+<br>
+
+<strong>
+Tempo estimado:
+</strong>
+${p.tempoEstimadoMin||"-"} min
 
 </div>
 
@@ -1460,14 +3976,24 @@ ${p.codigo4Digitos||"-"}
 
 });
 
+
 div.innerHTML=html;
 
 }catch(e){
 
 console.error(e);
 
+const div=
+document.getElementById(
+"listaPedidosLojista"
+);
+
+if(div){
+
 div.innerHTML=
 '<div class="item">Erro ao carregar entregas.</div>';
+
+}
 
 }
 
@@ -1484,15 +4010,36 @@ if(!usuarioAtual)return;
 
 try{
 
+const motoboy=
+await db.collection("motoboys")
+.doc(usuarioAtual.uid)
+.get();
+
+if(
+!motoboy.exists||
+motoboy.data().aprovado!==true
+){
+
+alert(
+"Seu cadastro ainda não foi aprovado pelo administrador."
+);
+
+return;
+
+}
+
+
 const ref=
 db.collection("profiles")
 .doc(usuarioAtual.uid);
 
-const snap=await ref.get();
+const snap=
+await ref.get();
 
 const atual=
 snap.exists &&
 snap.data().online===true;
+
 
 await ref.update({
 
@@ -1500,12 +4047,16 @@ online:!atual
 
 });
 
+
 mostrarStatus(!atual);
+
+await carregarMotoboy();
 
 }catch(e){
 
 alert(
-"Erro:\n"+erroHumano(e)
+"Erro:\n"+
+erroHumano(e)
 );
 
 }
@@ -1528,18 +4079,26 @@ document.getElementById(
 if(online){
 
 status.textContent="ONLINE";
-status.className="status online";
+status.className=
+"status online";
 
-botao.textContent="FICAR OFFLINE";
-botao.className="vermelho";
+botao.textContent=
+"FICAR OFFLINE";
+
+botao.className=
+"vermelho";
 
 }else{
 
 status.textContent="OFFLINE";
-status.className="status offline";
+status.className=
+"status offline";
 
-botao.textContent="FICAR ONLINE";
-botao.className="verde";
+botao.textContent=
+"FICAR ONLINE";
+
+botao.className=
+"verde";
 
 }
 
@@ -1561,6 +4120,55 @@ await db.collection("profiles")
 .doc(usuarioAtual.uid)
 .get();
 
+const motoboy=
+await db.collection("motoboys")
+.doc(usuarioAtual.uid)
+.get();
+
+
+if(!motoboy.exists){
+
+document.getElementById(
+"listaPedidosMotoboy"
+).innerHTML=
+'<div class="item">Cadastro de motoboy não encontrado.</div>';
+
+return;
+
+}
+
+
+const dadosMotoboy=
+motoboy.data();
+
+const aprovado=
+dadosMotoboy.aprovado===true;
+
+const statusAprovacao=
+document.getElementById(
+"statusAprovacaoMotoboy"
+);
+
+
+if(aprovado){
+
+statusAprovacao.textContent=
+"✅ CADASTRO APROVADO";
+
+statusAprovacao.className=
+"aviso aprovado";
+
+}else{
+
+statusAprovacao.textContent=
+"⏳ AGUARDANDO APROVAÇÃO DO ADMINISTRADOR";
+
+statusAprovacao.className=
+"aviso pendente";
+
+}
+
+
 if(perfil.exists){
 
 mostrarStatus(
@@ -1570,10 +4178,45 @@ perfil.data().online===true
 }
 
 
+const codigoMeu=
+normalizarCodigoMotoboy(
+dadosMotoboy.codigo||
+(perfil.exists
+?perfil.data().motoboyCodigo
+:"")
+);
+
+
+const codigoBox=
+document.getElementById(
+"codigoMotoboyPainel"
+);
+
+if(codigoBox){
+
+codigoBox.textContent=
+"CÓDIGO: "+(codigoMeu||"----");
+
+}
+
+
+/*
+  Motoboy não aprovado não recebe
+  entregas.
+*/
+
 const div=
 document.getElementById(
 "listaPedidosMotoboy"
 );
+
+
+if(!aprovado){
+
+div.innerHTML=
+'<div class="item">Aguardando aprovação do administrador.</div>';
+
+}else{
 
 const snap=
 await db.collection("orders")
@@ -1584,38 +4227,122 @@ await db.collection("orders")
 )
 .get();
 
-if(snap.empty){
 
-div.innerHTML=
-'<div class="item">Nenhuma entrega disponível.</div>';
-
-}else{
-
-let html="";
+let disponiveis=[];
 
 snap.forEach(function(doc){
 
 const p=doc.data();
 
+const destino=
+normalizarCodigoMotoboy(
+p.motoboyCodigo||""
+);
+
+
+/*
+  Vazio = todos.
+  Código = somente aquele motoboy.
+*/
+
+if(
+destino===""||
+destino===codigoMeu
+){
+
+disponiveis.push({
+
+id:doc.id,
+
+...p
+
+});
+
+}
+
+});
+
+
+if(!disponiveis.length){
+
+div.innerHTML=
+'<div class="item">Nenhuma entrega disponível para você.</div>';
+
+}else{
+
+let html="";
+
+disponiveis.forEach(function(p){
+
 html+=`
 
 <div class="item">
 
-<strong>Loja:</strong>
-${p.lojistaNome||"-"}<br>
+<strong>
+Loja:
+</strong>
+${p.lojaNome||p.lojistaNome||"-"}
 
-<strong>Cliente:</strong>
-${p.clienteNome||"-"}<br>
+<br>
 
-<strong>Endereço:</strong>
-${p.enderecoEntrega||"-"}<br>
+<strong>
+Cliente:
+</strong>
+${p.clienteNome||"-"}
 
-<strong>Veículo:</strong>
-${p.veiculo||"-"}
+<br>
+
+<strong>
+Endereço:
+</strong>
+${p.enderecoEntrega||"-"}
+
+<br>
+
+<strong>
+Tipo:
+</strong>
+${String(
+p.tipoEntrega||"normal"
+).toUpperCase()}
+
+<br>
+
+<strong>
+Distância:
+</strong>
+${Number(
+p.distanciaKm||0
+).toFixed(2)} km
+
+<br>
+
+<strong>
+Tempo:
+</strong>
+${p.tempoEstimadoMin||"-"} min
+
+<br>
+
+<strong>
+Rastreio:
+</strong>
+${p.rastreio||"-"}
+
+<br>
+
+<strong>
+Valor da entrega:
+</strong>
+R$
+${Number(
+p.valorTaxa||0
+).toFixed(2)
+.replace(".",",")}
 
 <button
 class="verde"
-onclick="aceitarPedido('${doc.id}')"
+onclick="aceitarPedido('${p.id}')"
 >
 ACEITAR
 </button>
@@ -1630,6 +4357,10 @@ div.innerHTML=html;
 
 }
 
+}
+
+
+/* MINHAS */
 
 const minhas=
 await db.collection("orders")
@@ -1640,10 +4371,12 @@ usuarioAtual.uid
 )
 .get();
 
+
 const lista=
 document.getElementById(
 "listaAceitasMotoboy"
 );
+
 
 if(minhas.empty){
 
@@ -1662,511 +4395,56 @@ html+=`
 
 <div class="item">
 
-<strong>Cliente:</strong>
-${p.clienteNome||"-"}<br>
-
-<strong>Endereço:</strong>
-${p.enderecoEntrega||"-"}<br>
-
-<strong>Status:</strong>
-${p.status||"-"}
-
-<input
-id="codigo_${doc.id}"
-maxlength="4"
-inputmode="numeric"
-placeholder="Código de 4 dígitos"
->
-
-<button
-class="azul"
-onclick="finalizarPedido('${doc.id}')"
->
-FINALIZAR
-</button>
-
-</div>
-
-`;
-
-});
-
-lista.innerHTML=html;
-
-}
-
-}catch(e){
-
-console.error(e);
-
-document.getElementById(
-"listaPedidosMotoboy"
-).innerHTML=
-'<div class="item">Erro ao carregar.</div>';
-
-}
-
-}
-
-
-/* =====================================================
-   ACEITAR
-===================================================== */
-
-async function aceitarPedido(id){
-
-if(!usuarioAtual)return;
-
-try{
-
-const ref=
-db.collection("orders")
-.doc(id);
-
-await db.runTransaction(async function(transaction){
-
-const snap=
-await transaction.get(ref);
-
-if(!snap.exists){
-
-throw new Error(
-"Entrega não encontrada."
-);
-
-}
-
-const p=snap.data();
-
-if(p.status!=="pendente"){
-
-throw new Error(
-"Esta entrega já foi aceita."
-);
-
-}
-
-transaction.update(
-ref,
-{
-
-motoboyId:
-usuarioAtual.uid,
-
-status:
-"em_rota",
-
-aceitoEm:
-firebase.firestore.FieldValue.serverTimestamp()
-
-}
-);
-
-});
-
-alert(
-"Entrega aceita!"
-);
-
-await carregarMotoboy();
-
-}catch(e){
-
-alert(
-e.message||erroHumano(e)
-);
-
-}
-
-}
-
-
-/* =====================================================
-   FINALIZAR
-===================================================== */
-
-async function finalizarPedido(id){
-
-if(!usuarioAtual)return;
-
-const campo=
-document.getElementById(
-"codigo_"+id
-);
-
-const codigo=
-campo.value.trim();
-
-if(!/^\d{4}$/.test(codigo)){
-
-alert(
-"Digite o código de 4 dígitos."
-);
-
-return;
-
-}
-
-try{
-
-const ref=
-db.collection("orders")
-.doc(id);
-
-const snap=await ref.get();
-
-if(!snap.exists){
-
-alert(
-"Entrega não encontrada."
-);
-
-return;
-
-}
-
-const p=snap.data();
-
-if(p.motoboyId!==usuarioAtual.uid){
-
-alert(
-"Esta entrega não pertence a você."
-);
-
-return;
-
-}
-
-if(String(p.codigo4Digitos)!==codigo){
-
-alert(
-"Código incorreto."
-);
-
-return;
-
-}
-
-await ref.update({
-
-status:"finalizado",
-
-finalizadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
-
-});
-
-alert(
-"Entrega finalizada!"
-);
-
-await carregarMotoboy();
-
-}catch(e){
-
-alert(
-"Erro:\n"+erroHumano(e)
-);
-
-}
-
-}
-
-
-/* =====================================================
-   PIX MOTOBOY
-===================================================== */
-
-async function salvarPixMotoboy(){
-
-if(!usuarioAtual)return;
-
-const pix=
-document.getElementById(
-"pixMotoboy"
-).value.trim();
-
-if(!pix){
-
-alert(
-"Digite sua chave PIX."
-);
-
-return;
-
-}
-
-try{
-
-await db.collection("profiles")
-.doc(usuarioAtual.uid)
-.update({
-
-pix:pix
-
-});
-
-alert(
-"Chave PIX salva."
-);
-
-}catch(e){
-
-alert(
-"Erro:\n"+erroHumano(e)
-);
-
-}
-
-}
-
-
-async function carregarPixMotoboy(){
-
-if(!usuarioAtual)return;
-
-try{
-
-const snap=
-await db.collection("profiles")
-.doc(usuarioAtual.uid)
-.get();
-
-if(snap.exists){
-
-const pix=
-snap.data().pix||"";
-
-document.getElementById(
-"pixMotoboy"
-).value=pix;
-
-}
-
-}catch(e){
-
-console.error(e);
-
-}
-
-}
-
-
-/* =====================================================
-   SAQUE
-===================================================== */
-
-async function solicitarSaque(){
-
-if(!usuarioAtual)return;
-
-try{
-
-const wallet=
-await db.collection("wallets")
-.doc(usuarioAtual.uid)
-.get();
-
-const saldo=
-wallet.exists
-?Number(wallet.data().saldo||0)
-:0;
-
-if(saldo<=0){
-
-alert(
-"Você não possui saldo."
-);
-
-return;
-
-}
-
-const pix=
-document.getElementById(
-"pixMotoboy"
-).value.trim();
-
-if(!pix){
-
-alert(
-"Cadastre sua chave PIX."
-);
-
-return;
-
-}
-
-await db.collection("transactions")
-.add({
-
-uid:usuarioAtual.uid,
-
-tipo:"saque_motoboy",
-
-valor:-saldo,
-
-pix:pix,
-
-status:"pendente",
-
-criadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
-
-});
-
-alert(
-"Solicitação enviada ao administrador."
-);
-
-}catch(e){
-
-alert(
-"Erro:\n"+erroHumano(e)
-);
-
-}
-
-}
-
-
-/* =====================================================
-   EXTRATO 90 DIAS
-===================================================== */
-
-async function carregarExtrato(tipo){
-
-if(!usuarioAtual)return;
-
-const id=
-tipo==="lojista"
-?"extratoLojista"
-:"extratoMotoboy";
-
-const div=
-document.getElementById(id);
-
-if(!div)return;
-
-div.textContent="Carregando...";
-
-try{
-
-const snap=
-await db.collection("transactions")
-.where(
-"uid",
-"==",
-usuarioAtual.uid
-)
-.get();
-
-const limite=
-new Date();
-
-limite.setDate(
-limite.getDate()-90
-);
-
-let lista=[];
-
-snap.forEach(function(doc){
-
-const t=doc.data();
-
-let data=null;
-
-if(
-t.criadoEm &&
-typeof t.criadoEm.toDate==="function"
-){
-
-data=t.criadoEm.toDate();
-
-}
-
-if(!data||data>=limite){
-
-lista.push({
-...t,
-data:data
-});
-
-}
-
-});
-
-lista.sort(function(a,b){
-
-return(
-(b.data?b.data.getTime():0)-
-(a.data?a.data.getTime():0)
-);
-
-});
-
-if(lista.length===0){
-
-div.innerHTML=
-'<div class="item">Nenhum movimento nos últimos 90 dias.</div>';
-
-return;
-
-}
-
-let html=
-"<table>"+
-"<tr>"+
-"<th>Data</th>"+
-"<th>Tipo</th>"+
-"<th>Valor</th>"+
-"<th>Status</th>"+
-"</tr>";
-
-lista.forEach(function(t){
-
-html+=`
-
-<tr>
-
-<td>
-${t.data
-?t.data.toLocaleDateString("pt-BR")
-:"-"}
-</td>
-
-<td>${t.tipo||"-"}</td>
-
-<td>
-R$
-${Number(t.valor||0)
-.toFixed(2)
-.replace(".",",")}
-</td>
-
-<td>${t.status||"-"}</td>
-
-</tr>
-
-`;
-
-});
-
-html+="</table>";
-
-div.innerHTML=html;
-
-}catch(e){
-
-div.innerHTML=
-'<div class="item">Erro ao carregar extrato.</div>';
-
-}
-
-}
-
-
-/* =====================================================
+<strong>
+Loja:
+</strong>
+${p.lojaNome||p.lojistaNome||"-"}
+
+<br>
+
+<strong>
+Cliente:
+</strong>
+${p.clienteNome||"-"}
+
+<br>
+
+<strong>
+Endereço:
+</strong>
+${p.enderecoEntrega||"-"}
+
+<br>
+
+<strong>
+Tipo:
+</strong>
+${String(
+p.tipoEntrega||"normal"
+).toUpperCase()}
+
+<br>
+
+<strong>
+Distância:
+</strong>
+${Number(
+p.distanciaKm||0
+).toFixed(2)} km
+
+<br>
+
+<strong>
+Tempo:
+</strong>
+${p.tempoEstimadoMin||"-"} min
+
+<br>
+
+<strong>
+Rastreio:
+</strong>
+${p.rastreio|/* =====================================================
    ADMIN
 ===================================================== */
 
@@ -2181,10 +4459,12 @@ await db.collection("profiles")
 .doc(usuarioAtual.uid)
 .get();
 
+
 if(
-!perfil.exists ||
-String(perfil.data().tipo||"")
-.toLowerCase()!=="admin"
+!perfil.exists||
+String(
+perfil.data().tipo||""
+).toLowerCase()!=="admin"
 ){
 
 alert(
@@ -2198,6 +4478,11 @@ return;
 }
 
 
+/* CONFIGURAÇÕES */
+
+await carregarConfigTaxas();
+
+
 /* TRANSAÇÕES */
 
 const trans=
@@ -2208,6 +4493,7 @@ let receitas=0;
 let pagamentos=0;
 let pendentes=[];
 
+
 trans.forEach(function(doc){
 
 const t=doc.data();
@@ -2215,11 +4501,12 @@ const t=doc.data();
 if(t.status==="aprovado"){
 
 if(
-t.tipo==="recarga_50" ||
+t.tipo==="recarga_50"||
 t.tipo==="recarga"
 ){
 
-receitas+=Number(t.valor||0);
+receitas+=
+Number(t.valor||0);
 
 }
 
@@ -2227,20 +4514,25 @@ if(
 t.tipo==="pagamento_motoboy"
 ){
 
-pagamentos+=Number(t.valor||0);
+pagamentos+=
+Number(t.valor||0);
 
 }
 
 }
+
 
 if(
-t.tipo==="recarga_50" &&
+t.tipo==="recarga_50"&&
 t.status==="pendente"
 ){
 
 pendentes.push({
+
 id:doc.id,
+
 ...t
+
 });
 
 }
@@ -2251,14 +4543,18 @@ id:doc.id,
 document.getElementById(
 "adminReceitas"
 ).textContent=
-receitas.toFixed(2)
+receitas
+.toFixed(2)
 .replace(".",",");
+
 
 document.getElementById(
 "adminPagamentos"
 ).textContent=
-pagamentos.toFixed(2)
+pagamentos
+.toFixed(2)
 .replace(".",",");
+
 
 document.getElementById(
 "adminLucro"
@@ -2275,7 +4571,8 @@ document.getElementById(
 "adminRecargas"
 );
 
-if(pendentes.length===0){
+
+if(!pendentes.length){
 
 rec.innerHTML=
 '<div class="item">Nenhuma recarga pendente.</div>';
@@ -2290,10 +4587,16 @@ html+=`
 
 <div class="item">
 
-<strong>UID:</strong>
-${t.uid}<br>
+<strong>
+UID:
+</strong>
+${t.uid}
 
-<strong>Valor:</strong>
+<br>
+
+<strong>
+Valor:
+</strong>
 R$
 ${Number(t.valor||0)
 .toFixed(2)
@@ -2301,7 +4604,11 @@ ${Number(t.valor||0)
 
 <button
 class="verde"
-onclick="aprovarRecarga('${t.id}','${t.uid}',${Number(t.valor||0)})"
+onclick="aprovarRecarga(
+'${t.id}',
+'${t.uid}',
+${Number(t.valor||0)}
+)"
 >
 APROVAR
 </button>
@@ -2317,18 +4624,154 @@ rec.innerHTML=html;
 }
 
 
-/* USUÁRIOS */
+/* =====================================================
+   MOTOBOYS PENDENTES
+===================================================== */
+
+const motos=
+await db.collection("motoboys")
+.where(
+"aprovado",
+"==",
+false
+)
+.get();
+
+
+const motosDiv=
+document.getElementById(
+"adminMotoboys"
+);
+
+
+if(motos.empty){
+
+motosDiv.innerHTML=
+'<div class="item">Nenhum motoboy aguardando aprovação.</div>';
+
+}else{
+
+let html="";
+
+motos.forEach(function(doc){
+
+const m=doc.data();
+
+html+=`
+
+<div class="item">
+
+<strong>
+${m.codigo||"-"}
+</strong>
+
+<br>
+
+<strong>
+Nome:
+</strong>
+${m.nome||"-"}
+
+<br>
+
+<strong>
+Telefone:
+</strong>
+${m.telefone||"-"}
+
+<br>
+
+<strong>
+E-mail:
+</strong>
+${m.email||"-"}
+
+<br>
+
+<strong>
+CNH:
+</strong>
+
+${
+m.cnhUrl
+?`<a
+href="${m.cnhUrl}"
+target="_blank"
+style="color:#ffc400">
+VER CNH
+</a>`
+:"Não enviada"
+}
+
+<br>
+
+<strong>
+CRLV:
+</strong>
+
+${
+m.crlvUrl
+?`<a
+href="${m.crlvUrl}"
+target="_blank"
+style="color:#ffc400">
+VER CRLV
+</a>`
+:"Não enviado"
+}
+
+<br>
+
+<strong>
+Selfie:
+</strong>
+
+${
+m.selfieUrl
+?`<a
+href="${m.selfieUrl}"
+target="_blank"
+style="color:#ffc400">
+VER SELFIE
+</a>`
+:"Não enviada"
+}
+
+<button
+class="verde"
+onclick="aprovarMotoboy('${doc.id}')"
+>
+APROVAR ${m.codigo||""}
+</button>
+
+</div>
+
+`;
+
+});
+
+motosDiv.innerHTML=html;
+
+}
+
+
+/* =====================================================
+   USUÁRIOS
+===================================================== */
 
 const users=
 await db.collection("profiles")
 .get();
+
 
 const usersDiv=
 document.getElementById(
 "adminUsuarios"
 );
 
+
 let usersHtml="";
+
 
 users.forEach(function(doc){
 
@@ -2338,27 +4781,45 @@ usersHtml+=`
 
 <div class="item">
 
-<strong>Nome:</strong>
-${u.nome||"-"}<br>
+<strong>
+Nome:
+</strong>
+${u.nome||"-"}
 
-<strong>E-mail:</strong>
-${u.email||"-"}<br>
+<br>
 
-<strong>Telefone:</strong>
-${u.telefone||"-"}<br>
+<strong>
+E-mail:
+</strong>
+${u.email||"-"}
 
-<strong>TIPO:</strong>
-${u.tipo||"-"}<br>
+<br>
 
-<strong>UID:</strong>
+<strong>
+Telefone:
+</strong>
+${u.telefone||"-"}
+
+<br>
+
+<strong>
+TIPO:
+</strong>
+${u.tipo||"-"}
+
+<br>
+
+<strong>
+Conta:
+</strong>
+${u.tipoConta||"-"}
+
+<br>
+
+<strong>
+UID:
+</strong>
 ${doc.id}
-
-<button
-class="azul"
-onclick="editarSaldo('${doc.id}')"
->
-EDITAR SALDO
-</button>
 
 </div>
 
@@ -2366,23 +4827,29 @@ EDITAR SALDO
 
 });
 
+
 usersDiv.innerHTML=
 usersHtml||
 '<div class="item">Nenhum usuário.</div>';
 
 
-/* PEDIDOS */
+/* =====================================================
+   PEDIDOS
+===================================================== */
 
 const pedidos=
 await db.collection("orders")
 .get();
+
 
 const pedidosDiv=
 document.getElementById(
 "adminPedidos"
 );
 
+
 let pedidosHtml="";
+
 
 pedidos.forEach(function(doc){
 
@@ -2392,23 +4859,83 @@ pedidosHtml+=`
 
 <div class="item">
 
-<strong>ID:</strong>
-${doc.id}<br>
+<strong>
+ID:
+</strong>
+${doc.id}
 
-<strong>Loja:</strong>
-${p.lojistaNome||"-"}<br>
+<br>
 
-<strong>Cliente:</strong>
-${p.clienteNome||"-"}<br>
+<strong>
+Loja:
+</strong>
+${p.lojaNome||p.lojistaNome||"-"}
 
-<strong>Veículo:</strong>
-${p.veiculo||"-"}<br>
+<br>
 
-<strong>Status:</strong>
-${p.status||"-"}<br>
+<strong>
+Cliente:
+</strong>
+${p.clienteNome||"-"}
 
-<strong>Motorista:</strong>
+<br>
+
+<strong>
+Tipo:
+</strong>
+${p.tipoEntrega||"-"}
+
+<br>
+
+<strong>
+Veículo:
+</strong>
+${p.veiculo||"-"}
+
+<br>
+
+<strong>
+Status:
+</strong>
+${p.status||"-"}
+
+<br>
+
+<strong>
+Motorista:
+</strong>
 ${p.motoboyId||"Aguardando"}
+
+<br>
+
+<strong>
+Rastreio:
+</strong>
+${p.rastreio||"-"}
+
+<br>
+
+<strong>
+Distância:
+</strong>
+${Number(
+p.distanciaKm||0
+).toFixed(2)}
+km
+
+<br>
+
+<strong>
+Valor calculado:
+</strong>
+
+<span class="valor-admin">
+R$
+${Number(
+p.valorTaxa||0
+).toFixed(2)
+.replace(".",",")}
+</span>
 
 </div>
 
@@ -2416,9 +4943,114 @@ ${p.motoboyId||"Aguardando"}
 
 });
 
+
 pedidosDiv.innerHTML=
 pedidosHtml||
 '<div class="item">Nenhuma entrega.</div>';
+
+
+/* =====================================================
+   CÁLCULOS SUPER / RETORNO
+===================================================== */
+
+const calculosDiv=
+document.getElementById(
+"adminCalculos"
+);
+
+
+let calculosHtml="";
+
+
+pedidos.forEach(function(doc){
+
+const p=doc.data();
+
+if(
+p.valorRetornoMotoboy||
+p.valorSuperAdmin||
+p.retornoPct||
+p.superPct
+){
+
+calculosHtml+=`
+
+<div class="item">
+
+<strong>
+Pedido:
+</strong>
+${doc.id}
+
+<br>
+
+<strong>
+Valor entrega:
+</strong>
+R$
+${Number(
+p.valorTaxa||0
+).toFixed(2)
+.replace(".",",")}
+
+<br>
+
+<strong>
+Retorno:
+</strong>
+${Number(
+p.retornoPct||0
+)}%
+
+<br>
+
+<strong>
+Motoboy recebe retorno:
+</strong>
+
+<span class="valor-admin">
+R$
+${Number(
+p.valorRetornoMotoboy||0
+).toFixed(2)
+.replace(".",",")}
+</span>
+
+<br>
+
+<strong>
+Super:
+</strong>
+${Number(
+p.superPct||0
+)}%
+
+<br>
+
+<strong>
+Admin:
+</strong>
+
+<span class="valor-admin">
+R$
+${Number(
+p.valorSuperAdmin||0
+).toFixed(2)
+.replace(".",",")}
+</span>
+
+</div>
+
+`;
+
+}
+
+});
+
+
+calculosDiv.innerHTML=
+calculosHtml||
+'<div class="item">Nenhum cálculo registrado.</div>';
 
 }catch(e){
 
@@ -2426,6 +5058,86 @@ console.error(e);
 
 alert(
 "Erro no painel admin:\n"+
+erroHumano(e)
+);
+
+}
+
+}
+
+
+/* =====================================================
+   APROVAR MOTOBOY
+===================================================== */
+
+async function aprovarMotoboy(uid){
+
+if(!usuarioAtual)return;
+
+try{
+
+const ref=
+db.collection("motoboys")
+.doc(uid);
+
+const snap=
+await ref.get();
+
+if(!snap.exists){
+
+alert(
+"Motoboy não encontrado."
+);
+
+return;
+
+}
+
+
+const dados=snap.data();
+
+
+await ref.update({
+
+aprovado:true,
+
+aprovadoPor:
+usuarioAtual.uid,
+
+aprovadoEm:
+firebase.firestore.FieldValue
+.serverTimestamp()
+
+});
+
+
+await db.collection("profiles")
+.doc(uid)
+.set({
+
+aprovado:true,
+
+motoboyCodigo:
+dados.codigo||"",
+
+numeroMotoboy:
+dados.numero||null
+
+},{
+merge:true
+});
+
+
+alert(
+"Motoboy "+(dados.codigo||"")+" aprovado."
+);
+
+await carregarAdmin();
+
+}catch(e){
+
+alert(
+"Erro ao aprovar:\n"+
 erroHumano(e)
 );
 
@@ -2454,13 +5166,20 @@ const transRef=
 db.collection("transactions")
 .doc(transactionId);
 
-await db.runTransaction(async function(transaction){
+
+await db.runTransaction(
+async function(transaction){
 
 const wallet=
-await transaction.get(walletRef);
+await transaction.get(
+walletRef
+);
 
 const trans=
-await transaction.get(transRef);
+await transaction.get(
+transRef
+);
+
 
 if(!trans.exists){
 
@@ -2469,6 +5188,7 @@ throw new Error(
 );
 
 }
+
 
 if(
 trans.data().status!=="pendente"
@@ -2480,6 +5200,7 @@ throw new Error(
 
 }
 
+
 if(wallet.exists){
 
 transaction.update(
@@ -2487,14 +5208,15 @@ walletRef,
 {
 
 saldo:
-firebase.firestore.FieldValue.increment(
-Number(valor)
-),
+firebase.firestore.FieldValue
+.increment(Number(valor)),
 
 atualizadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
+firebase.firestore.FieldValue
+.serverTimestamp()
 
 }
+
 );
 
 }else{
@@ -2506,12 +5228,15 @@ walletRef,
 saldo:Number(valor),
 
 atualizadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
+firebase.firestore.FieldValue
+.serverTimestamp()
 
 }
+
 );
 
 }
+
 
 transaction.update(
 transRef,
@@ -2523,12 +5248,15 @@ aprovadoPor:
 usuarioAtual.uid,
 
 aprovadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
+firebase.firestore.FieldValue
+.serverTimestamp()
 
 }
+
 );
 
 });
+
 
 alert(
 "Recarga aprovada."
@@ -2539,7 +5267,8 @@ await carregarAdmin();
 }catch(e){
 
 alert(
-"Erro:\n"+erroHumano(e)
+"Erro:\n"+
+erroHumano(e)
 );
 
 }
@@ -2565,6 +5294,7 @@ Number(
 valor.replace(",",".")
 );
 
+
 if(isNaN(saldo)){
 
 alert(
@@ -2575,6 +5305,7 @@ return;
 
 }
 
+
 try{
 
 await db.collection("wallets")
@@ -2584,11 +5315,13 @@ await db.collection("wallets")
 saldo:saldo,
 
 atualizadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
+firebase.firestore.FieldValue
+.serverTimestamp()
 
 },{
 merge:true
 });
+
 
 alert(
 "Saldo atualizado."
@@ -2599,7 +5332,109 @@ await carregarAdmin();
 }catch(e){
 
 alert(
-"Erro:\n"+erroHumano(e)
+"Erro:\n"+
+erroHumano(e)
+);
+
+}
+
+}
+
+
+/* =====================================================
+   EDITAR SALDO PELO PAINEL
+===================================================== */
+
+async function editarSaldoAdmin(){
+
+const uid=
+document.getElementById(
+"editarSaldoUid"
+).value.trim();
+
+const valor=
+Number(
+document.getElementById(
+"editarSaldoValor"
+).value||0
+);
+
+
+if(!uid){
+
+alert(
+"Digite o UID."
+);
+
+return;
+
+}
+
+
+if(valor<0){
+
+alert(
+"Saldo inválido."
+);
+
+return;
+
+}
+
+
+await editarSaldoDireto(
+uid,
+valor
+);
+
+
+}
+
+
+async function editarSaldoDireto(
+uid,
+saldo
+){
+
+try{
+
+await db.collection("wallets")
+.doc(uid)
+.set({
+
+saldo:Number(saldo),
+
+atualizadoEm:
+firebase.firestore.FieldValue
+.serverTimestamp(),
+
+editadoPor:
+usuarioAtual.uid
+
+},{
+merge:true
+});
+
+
+alert(
+"Saldo atualizado."
+);
+
+document.getElementById(
+"editarSaldoUid"
+).value="";
+
+document.getElementById(
+"editarSaldoValor"
+).value="";
+
+await carregarAdmin();
+
+}catch(e){
+
+alert(
+"Erro:\n"+
+erroHumano(e)
 );
 
 }
@@ -2630,7 +5465,12 @@ document.getElementById(
 "pagamentoMotoboyPix"
 ).value.trim();
 
-if(!uid||valor<=0||!pix){
+
+if(
+!uid||
+valor<=0||
+!pix
+){
 
 alert(
 "Preencha UID, valor e PIX."
@@ -2640,6 +5480,7 @@ return;
 
 }
 
+
 try{
 
 await db.collection("transactions")
@@ -2647,7 +5488,8 @@ await db.collection("transactions")
 
 uid:uid,
 
-tipo:"pagamento_motoboy",
+tipo:
+"pagamento_motoboy",
 
 valor:valor,
 
@@ -2659,13 +5501,16 @@ aprovadoPor:
 usuarioAtual.uid,
 
 criadoEm:
-firebase.firestore.FieldValue.serverTimestamp()
+firebase.firestore.FieldValue
+.serverTimestamp()
 
 });
+
 
 alert(
 "Pagamento registrado."
 );
+
 
 document.getElementById(
 "pagamentoMotoboyUid"
@@ -2679,12 +5524,14 @@ document.getElementById(
 "pagamentoMotoboyPix"
 ).value="";
 
+
 await carregarAdmin();
 
 }catch(e){
 
 alert(
-"Erro:\n"+erroHumano(e)
+"Erro:\n"+
+erroHumano(e)
 );
 
 }
@@ -2704,7 +5551,161 @@ await atualizarSaldo();
 
 
 /* =====================================================
-   INÍCIO
+   MODAL FINALIZAÇÃO
+===================================================== */
+
+function abrirModalFinalizar(id){
+
+pedidoFinalizarId=id;
+
+const modal=
+document.getElementById(
+"modalFinalizar"
+);
+
+if(modal){
+
+modal.classList.remove("oculto");
+
+}
+
+}
+
+
+function fecharModalFinalizar(){
+
+pedidoFinalizarId=null;
+
+const modal=
+document.getElementById(
+"modalFinalizar"
+);
+
+if(modal){
+
+modal.classList.add("oculto");
+
+}
+
+}
+
+
+async function confirmarFinalizacao(){
+
+if(!pedidoFinalizarId){
+
+alert(
+"Entrega não selecionada."
+);
+
+return;
+
+}
+
+const id=
+pedidoFinalizarId;
+
+const campo=
+document.getElementById(
+"codigoFinalizacao"
+);
+
+const codigo=
+campo.value.trim();
+
+
+if(!/^\d{4}$/.test(codigo)){
+
+alert(
+"Digite 4 dígitos."
+);
+
+return;
+
+}
+
+
+try{
+
+const ref=
+db.collection("orders")
+.doc(id);
+
+const snap=
+await ref.get();
+
+if(!snap.exists){
+
+alert(
+"Entrega não encontrada."
+);
+
+return;
+
+}
+
+const p=snap.data();
+
+
+if(
+p.motoboyId!==usuarioAtual.uid
+){
+
+alert(
+"Esta entrega não pertence a você."
+);
+
+return;
+
+}
+
+
+if(
+String(p.codigo4Digitos)!==
+codigo
+){
+
+alert(
+"Código incorreto."
+);
+
+return;
+
+}
+
+
+await processarFinalizacaoFinanceira(
+id,
+p
+);
+
+
+fecharModalFinalizar();
+
+campo.value="";
+
+alert(
+"Entrega finalizada com sucesso."
+);
+
+await carregarMotoboy();
+
+await atualizarSaldo();
+
+}catch(e){
+
+alert(
+"Erro:\n"+
+erroHumano(e)
+);
+
+}
+
+}
+
+
+/* =====================================================
+   INICIALIZAÇÃO
 ===================================================== */
 
 document.addEventListener(
@@ -2712,6 +5713,8 @@ document.addEventListener(
 function(){
 
 mostrarLogin();
+
+alterarTipoCadastro();
 
 }
 );
