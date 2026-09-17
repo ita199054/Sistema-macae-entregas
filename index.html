@@ -1,28 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Anjos Flash - Macaé Entregas</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@18.2.0",
-    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-    "firebase/app": "https://esm.sh/firebase@10.7.1/app",
-    "firebase/firestore": "https://esm.sh/firebase@10.7.1/firestore"
-  }
-}
-</script>
 </head>
-<body>
-<div id="root"></div>
+<body class="bg-gray-100">
+<div id="root" class="p-4"></div>
 <script type="module">
-import React, { useState, useEffect } from "react";
-import { createRoot } from "react-dom/client";
-import { initializeApp, getApps } from "firebase/app";
-import { getFirestore, collection, addDoc, doc, updateDoc, increment, onSnapshot } from "firebase/firestore";
+import React, { useState, useEffect } from "https://esm.sh/react@18.2.0";
+import { createRoot } from "https://esm.sh/react-dom@18.2.0/client";
+import { initializeApp, getApps } from "https://esm.sh/firebase@10.7.1/firebase/app";
+import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc } from "https://esm.sh/firebase@10.7.1/firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
@@ -32,11 +22,58 @@ const firebaseConfig = {
   messagingSenderId: "725133182752",
   appId: "1:725133182752:web:5f9a98fa97269dcdcab945"
 };
-if(!getApps().length) initializeApp(firebaseConfig);
+if (!getApps().length) initializeApp(firebaseConfig);
 const db = getFirestore();
 
-// AQUI VAI TODO O RESTO DO SEU CÓDIGO DO APP - A PARTIR DO export default function App()...
+function App(){
+  const [tela,setTela]=useState("inicio");
+  const [lojistas,setLojistas]=useState([]);
+  const [motoboys,setMotoboys]=useState([]);
+  const [end,setEnd]=useState("");
+  const [km,setKm]=useState(3);
+  const [tipo,setTipo]=useState("normal");
+  
+  useEffect(()=>{
+    const unsub1 = onSnapshot(collection(db,"lojistas"), s=> setLojistas(s.docs.map(d=>d.data())));
+    const unsub2 = onSnapshot(collection(db,"motoboys"), s=> setMotoboys(s.docs.map(d=>d.data())));
+    return ()=>{unsub1(); unsub2();};
+  },[]);
 
+  const criarEntrega = async () => {
+    if(!end) return alert("Coloca o endereço!");
+    await addDoc(collection(db,"entregas"), { endereco: end, km, tipo, status:"pendente", data: new Date() });
+    alert("Entrega criada! Motoboys vão receber.");
+    setEnd("");
+  };
+
+  return React.createElement("div", {className:"max-w-md mx-auto bg-white min-h-screen rounded-xl shadow p-4"},
+    tela==="inicio" && React.createElement("div", null,
+      React.createElement("h1", {className:"text-2xl font-bold text-center"}, "Anjos Flash - Macaé"),
+      React.createElement("p", {className:"text-center text-gray-500 mb-6"}, "Valor travado por região"),
+      React.createElement("button", {onClick:()=>setTela("lojista"), className:"w-full bg-blue-600 text-white p-3 rounded mb-3"}, "Sou Lojista"),
+      React.createElement("button", {onClick:()=>setTela("motoboy"), className:"w-full bg-green-600 text-white p-3 rounded"}, "Sou Motoboy")
+    ),
+    tela==="lojista" && React.createElement("div", null,
+      React.createElement("h2", {className:"font-bold mb-2"}, "Nova Entrega"),
+      React.createElement("input", {value:end, onChange:e=>setEnd(e.target.value), placeholder:"Endereço de entrega", className:"w-full border p-2 rounded mb-2"}),
+      React.createElement("div", {className:"flex gap-2 mb-2"},
+        React.createElement("input", {type:"number", value:km, onChange:e=>setKm(e.target.value), className:"border p-2 rounded w-1/2"}),
+        React.createElement("select", {value:tipo, onChange:e=>setTipo(e.target.value), className:"border p-2 rounded w-1/2"},
+          React.createElement("option", {value:"normal"}, "Normal"),
+          React.createElement("option", {value:"express"}, "Express")
+        )
+      ),
+      React.createElement("button", {onClick:criarEntrega, className:"w-full bg-blue-600 text-white p-3 rounded mb-2"}, "Solicitar Motoboy"),
+      React.createElement("button", {onClick:()=>setTela("inicio"), className:"w-full bg-gray-200 p-2 rounded"}, "Voltar")
+    ),
+    tela==="motoboy" && React.createElement("div", null,
+      React.createElement("h2", {className:"font-bold"}, "Painel Motoboy"),
+      React.createElement("p", {className:"text-sm text-gray-500 mb-4"}, `${motoboys.length} motoboys online | ${lojistas.length} lojas`),
+      React.createElement("button", {onClick:()=>setTela("inicio"), className:"w-full bg-gray-200 p-2 rounded mt-4"}, "Voltar")
+    )
+  );
+}
+createRoot(document.getElementById("root")).render(React.createElement(App));
 </script>
 </body>
 </html>
