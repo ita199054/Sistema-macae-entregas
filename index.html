@@ -1,55 +1,1366 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Anjos Flash</title>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Anjos em Duas Rodas Delivery</title>
+
 <style>
-body{background:#000;color:#fff;font-family:Arial;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
-.card{background:#111;border:2px solid #D4AF37;padding:24px;border-radius:16px;width:90%;max-width:400px}
-h1{color:#D4AF37;text-align:center;margin:0 0 16px}
-input,select{width:100%;padding:14px;margin:8px 0;background:#222;color:#fff;border:1px solid #333;border-radius:10px;box-sizing:border-box}
-button{width:100%;padding:14px;border:none;border-radius:10px;font-weight:900;margin-top:8px;cursor:pointer}
-.gold{background:#D4AF37;color:#000}
-.dark{background:#222;color:#D4AF37;border:1px solid #D4AF37}
-#msg{color:#ffcc00;margin-top:12px;text-align:center;font-size:14px;min-height:20px}
+:root{
+  --laranja:#ff7200;
+  --laranja2:#ff8c1a;
+  --preto:#080808;
+  --preto2:#151515;
+  --cinza:#f3f3f3;
+  --cinza2:#e5e5e5;
+  --branco:#ffffff;
+  --verde:#16a34a;
+  --vermelho:#dc2626;
+  --azul:#2563eb;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--cinza);
+  color:#111;
+}
+
+button,
+input,
+select{
+  font-family:inherit;
+}
+
+button{
+  border:0;
+  cursor:pointer;
+}
+
+.hidden{
+  display:none!important;
+}
+
+header{
+  width:100%;
+  background:var(--preto);
+  color:white;
+  padding:15px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 2px 12px rgba(0,0,0,.25);
+}
+
+.logo{
+  font-weight:900;
+  font-size:20px;
+  letter-spacing:.3px;
+}
+
+.logo span{
+  color:var(--laranja);
+}
+
+.header-user{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.header-user small{
+  color:#bbb;
+}
+
+.btn{
+  padding:12px 16px;
+  border-radius:10px;
+  font-weight:800;
+  transition:.2s;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+}
+
+.btn-primary{
+  background:var(--laranja);
+  color:white;
+}
+
+.btn-dark{
+  background:var(--preto2);
+  color:white;
+}
+
+.btn-light{
+  background:#eee;
+  color:#111;
+}
+
+.btn-green{
+  background:var(--verde);
+  color:white;
+}
+
+.btn-red{
+  background:var(--vermelho);
+  color:white;
+}
+
+.btn-blue{
+  background:var(--azul);
+  color:white;
+}
+
+.btn-disabled,
+button:disabled{
+  background:#bdbdbd!important;
+  color:#eee!important;
+  cursor:not-allowed;
+  transform:none!important;
+}
+
+.container{
+  max-width:1150px;
+  margin:0 auto;
+  padding:22px 15px 60px;
+}
+
+.auth-box{
+  max-width:450px;
+  margin:50px auto;
+}
+
+.auth-card{
+  background:white;
+  border-radius:18px;
+  padding:28px;
+  box-shadow:0 5px 25px rgba(0,0,0,.08);
+}
+
+.auth-title{
+  text-align:center;
+  margin-bottom:25px;
+}
+
+.auth-title h1{
+  margin:0;
+  font-size:27px;
+}
+
+.auth-title p{
+  color:#777;
+}
+
+.tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:20px;
+}
+
+.tabs button{
+  flex:1;
+}
+
+.form-group{
+  margin-bottom:14px;
+}
+
+.form-group label{
+  display:block;
+  font-size:14px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+
+.form-group input,
+.form-group select{
+  width:100%;
+  padding:13px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  outline:none;
+  font-size:15px;
+  background:white;
+}
+
+.form-group input:focus,
+.form-group select:focus{
+  border-color:var(--laranja);
+}
+
+.full{
+  width:100%;
+}
+
+.hero{
+  background:linear-gradient(135deg,#080808,#202020);
+  color:white;
+  border-radius:18px;
+  padding:25px;
+  margin-bottom:18px;
+}
+
+.hero h1{
+  margin:0 0 8px;
+}
+
+.hero p{
+  margin:4px 0;
+  color:#ccc;
+}
+
+.balance-card{
+  background:var(--laranja);
+  color:white;
+  border-radius:16px;
+  padding:20px;
+}
+
+.balance-label{
+  font-size:14px;
+  opacity:.9;
+}
+
+.balance{
+  font-size:40px;
+  font-weight:900;
+  margin:4px 0;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:16px;
+  margin-bottom:18px;
+}
+
+.card{
+  background:white;
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 4px 18px rgba(0,0,0,.06);
+}
+
+.card h2,
+.card h3{
+  margin-top:0;
+}
+
+.card p{
+  line-height:1.5;
+}
+
+.status{
+  display:inline-block;
+  padding:7px 12px;
+  border-radius:30px;
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.status-pendente{
+  background:#fff3cd;
+  color:#856404;
+}
+
+.status-em_rota{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+.status-finalizado{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.status-cancelado{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.order{
+  border:1px solid #e5e5e5;
+  border-radius:13px;
+  padding:15px;
+  margin-bottom:12px;
+  background:#fff;
+}
+
+.order strong{
+  font-size:16px;
+}
+
+.order-line{
+  margin:5px 0;
+}
+
+.muted{
+  color:#777;
+}
+
+.small{
+  font-size:12px;
+}
+
+.pix{
+  background:#f7f7f7;
+  border:2px dashed var(--laranja);
+  border-radius:12px;
+  padding:15px;
+  text-align:center;
+}
+
+.pix-key{
+  font-size:20px;
+  font-weight:900;
+  letter-spacing:1px;
+}
+
+.admin-stat{
+  background:#111;
+  color:white;
+  border-radius:15px;
+  padding:20px;
+}
+
+.admin-stat .value{
+  font-size:30px;
+  font-weight:900;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,
+td{
+  padding:11px 8px;
+  border-bottom:1px solid #eee;
+  text-align:left;
+  font-size:13px;
+  white-space:nowrap;
+}
+
+th{
+  background:#fafafa;
+  font-weight:900;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.65);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+  z-index:200;
+}
+
+.modal-card{
+  width:100%;
+  max-width:500px;
+  max-height:90vh;
+  overflow:auto;
+  background:white;
+  border-radius:18px;
+  padding:22px;
+}
+
+.modal-actions{
+  display:flex;
+  gap:10px;
+  margin-top:15px;
+}
+
+.modal-actions button{
+  flex:1;
+}
+
+.toast{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  background:#111;
+  color:white;
+  padding:14px 18px;
+  border-radius:10px;
+  z-index:999;
+  box-shadow:0 5px 20px rgba(0,0,0,.25);
+}
+
+.empty{
+  text-align:center;
+  padding:25px;
+  color:#777;
+}
+
+.section-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.code-box{
+  background:#111;
+  color:#ff8c1a;
+  padding:15px;
+  text-align:center;
+  border-radius:10px;
+  font-size:25px;
+  font-weight:900;
+  letter-spacing:6px;
+}
+
+.warning{
+  background:#fff7ed;
+  border-left:5px solid var(--laranja);
+  padding:12px;
+  border-radius:8px;
+}
+
+.success-box{
+  background:#ecfdf5;
+  border-left:5px solid var(--verde);
+  padding:12px;
+  border-radius:8px;
+}
+
+@media(max-width:600px){
+
+  header{
+    padding:12px;
+  }
+
+  .logo{
+    font-size:16px;
+  }
+
+  .header-user small{
+    display:none;
+  }
+
+  .container{
+    padding:15px 10px 40px;
+  }
+
+  .hero{
+    padding:19px;
+  }
+
+  .balance{
+    font-size:32px;
+  }
+
+  .auth-box{
+    margin:20px auto;
+  }
+
+  .auth-card{
+    padding:20px;
+  }
+
+  .modal-actions{
+    flex-direction:column;
+  }
+}
 </style>
 </head>
+
 <body>
-<div class="card">
-<h1>👑 ANJOS FLASH</h1>
-<input id="email" type="email" placeholder="Email">
-<input id="senha" type="password" placeholder="Senha">
-<select id="tipo"><option value="lojista">🏪 Lojista</option><option value="motorista">🏍️ Motorista</option><option value="admin">👑 Admin</option></select>
-<button class="gold" onclick="entrar()">ENTRAR</button>
-<button class="dark" onclick="cadastrar()">CADASTRAR</button>
-<div id="msg">Pronto - Vercel OK</div>
-<div style="margin-top:12px;text-align:center"><a href="lojista.html" style="color:#D4AF37">Lojista</a> | <a href="motoboy.html" style="color:#D4AF37">Motoboy</a> | <a href="Admin.html" style="color:#D4AF37">Admin</a></div>
+
+<header>
+
+  <div class="logo">
+    ANJOS <span>EM DUAS RODAS</span>
+  </div>
+
+  <div class="header-user">
+
+    <small id="headerUser"></small>
+
+    <button
+      id="logoutButton"
+      class="btn btn-light hidden"
+      onclick="logoutUser()">
+      Sair
+    </button>
+
+  </div>
+
+</header>
+
+
+<!-- LOGIN / CADASTRO -->
+
+<div id="authScreen">
+
+  <div class="auth-box">
+
+    <div class="auth-card">
+
+      <div class="auth-title">
+
+        <h1>ANJOS EM DUAS RODAS</h1>
+
+        <p>Delivery</p>
+
+      </div>
+
+
+      <div class="tabs">
+
+        <button
+          id="loginTab"
+          class="btn btn-dark"
+          onclick="showLogin()">
+          Entrar
+        </button>
+
+        <button
+          id="registerTab"
+          class="btn btn-light"
+          onclick="showRegister()">
+          Criar conta
+        </button>
+
+      </div>
+
+
+      <!-- LOGIN -->
+
+      <div id="loginForm">
+
+        <div class="form-group">
+
+          <label>E-mail</label>
+
+          <input
+            id="loginEmail"
+            type="email"
+            autocomplete="email"
+            placeholder="seu@email.com">
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>Senha</label>
+
+          <input
+            id="loginPassword"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Sua senha">
+
+        </div>
+
+
+        <button
+          class="btn btn-primary full"
+          onclick="loginUser()">
+
+          ENTRAR
+
+        </button>
+
+      </div>
+
+
+      <!-- CADASTRO -->
+
+      <div id="registerForm" class="hidden">
+
+        <div class="form-group">
+
+          <label>Nome</label>
+
+          <input
+            id="registerName"
+            type="text"
+            placeholder="Nome completo">
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>E-mail</label>
+
+          <input
+            id="registerEmail"
+            type="email"
+            placeholder="seu@email.com">
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>Senha</label>
+
+          <input
+            id="registerPassword"
+            type="password"
+            minlength="6"
+            placeholder="Mínimo 6 caracteres">
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>Tipo de conta</label>
+
+          <select id="registerType">
+
+            <option value="LOJISTA">
+              LOJISTA
+            </option>
+
+            <option value="MOTOBOY">
+              MOTOBOY
+            </option>
+
+            <option value="FRANQUEADO">
+              FRANQUEADO
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="warning small">
+          A criação pública de ADMIN fica bloqueada por segurança.
+        </div>
+
+        <br>
+
+        <button
+          class="btn btn-primary full"
+          onclick="registerUser()">
+
+          CRIAR CONTA
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
 </div>
-<script>
-const firebaseConfig={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.firebasestorage.app",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945"};
-firebase.initializeApp(firebaseConfig);
-const auth=firebase.auth(); const db=firebase.firestore();
-function mostrar(t){document.getElementById("msg").innerText=t;}
-async function entrar(){
-  const e=document.getElementById("email").value.trim(); const s=document.getElementById("senha").value;
-  if(!e||!s) return mostrar("Digite email e senha");
-  try{ mostrar("Entrando..."); const cred=await auth.signInWithEmailAndPassword(e,s); const snap=await db.collection("usuarios").doc(cred.user.uid).get();
-    if(!snap.exists){mostrar("Sem perfil, clique Cadastrar"); return;}
-    const u=snap.data(); if(u.role==="lojista") location.href="lojista.html"; else if(u.role==="motorista") location.href="motoboy.html"; else location.href="Admin.html";
-  }catch(err){mostrar(err.message);}
+
+
+<!-- APLICATIVO -->
+
+<div id="appScreen" class="hidden">
+
+  <main class="container">
+
+    <div id="dashboard"></div>
+
+  </main>
+
+</div>
+
+
+<!-- MODAL PEDIDO -->
+
+<div id="orderModal" class="modal hidden">
+
+  <div class="modal-card">
+
+    <h2>Novo Pedido</h2>
+
+    <div class="form-group">
+
+      <label>Nome do cliente</label>
+
+      <input id="clientName">
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Endereço de entrega</label>
+
+      <input id="deliveryAddress">
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Valor do produto</label>
+
+      <input
+        id="productValue"
+        type="number"
+        min="0"
+        step="0.01">
+
+    </div>
+
+    <div class="modal-actions">
+
+      <button
+        class="btn btn-light"
+        onclick="closeOrderModal()">
+        Cancelar
+      </button>
+
+      <button
+        class="btn btn-primary"
+        onclick="createOrder()">
+        Criar Pedido — R$8,00
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- MODAL FINALIZAR -->
+
+<div id="finishModal" class="modal hidden">
+
+  <div class="modal-card">
+
+    <h2>Finalizar entrega</h2>
+
+    <p>
+      Digite o código de 4 dígitos informado pelo cliente.
+    </p>
+
+    <div class="form-group">
+
+      <label>Código</label>
+
+      <input
+        id="finishCode"
+        maxlength="4"
+        inputmode="numeric"
+        placeholder="0000">
+
+    </div>
+
+    <div class="modal-actions">
+
+      <button
+        class="btn btn-light"
+        onclick="closeFinishModal()">
+        Cancelar
+      </button>
+
+      <button
+        class="btn btn-green"
+        onclick="finishOrder()">
+        Finalizar
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div id="toast" class="toast hidden"></div>
+
+
+<script type="module">
+
+/* =========================================================
+   FIREBASE
+   ANJOS EM DUAS RODAS DELIVERY
+   ========================================================= */
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  updateProfile
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  addDoc,
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  getDocs,
+  onSnapshot,
+  runTransaction,
+  serverTimestamp,
+  Timestamp
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+  apiKey:
+  "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
+
+  authDomain:
+  "anjos-flash.firebaseapp.com",
+
+  projectId:
+  "anjos-flash",
+
+  storageBucket:
+  "anjos-flash.firebasestorage.app",
+
+  messagingSenderId:
+  "725133182752",
+
+  appId:
+  "1:725133182752:web:5f9a98fa97269dcdcab945",
+
+  measurementId:
+  "G-9CSJXXNR0C"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
+
+/* =========================================================
+   ESTADO
+   ========================================================= */
+
+let currentUser = null;
+let currentProfile = null;
+let currentWallet = null;
+
+let finishOrderId = null;
+
+
+/* =========================================================
+   FUNÇÕES BÁSICAS
+   ========================================================= */
+
+window.toast = function(message){
+
+  const el = document.getElementById("toast");
+
+  el.textContent = message;
+
+  el.classList.remove("hidden");
+
+  setTimeout(()=>{
+    el.classList.add("hidden");
+  },3500);
+
+};
+
+
+function money(value){
+
+  return new Intl.NumberFormat(
+    "pt-BR",
+    {
+      style:"currency",
+      currency:"BRL"
+    }
+  ).format(Number(value || 0));
+
 }
-async function cadastrar(){
-  const e=document.getElementById("email").value.trim(); const s=document.getElementById("senha").value; const tipo=document.getElementById("tipo").value;
-  if(!e||!s) return mostrar("Digite email e senha");
-  try{ mostrar("Cadastrando..."); const cred=await auth.createUserWithEmailAndPassword(e,s);
-    await db.collection("usuarios").doc(cred.user.uid).set({email:e,role:tipo,nome:e.split("@")[0],saldo:tipo==="lojista"?70:0,aprovado:tipo==="motorista"?false:true,veiculo:tipo==="motorista"?"moto":null,codigoMotorista:tipo==="motorista"?"M"+Math.floor(1000+Math.random()*9000):null,criadoEm:firebase.firestore.FieldValue.serverTimestamp()});
-    mostrar("Cadastrado! Entrando..."); setTimeout(entrar,1000);
-  }catch(err){mostrar(err.message);}
+
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
 }
-</script>
-</body>
-</html>
+
+
+/* =========================================================
+   AUTH TELA
+   ========================================================= */
+
+window.showLogin = function(){
+
+  document
+    .getElementById("loginForm")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("registerForm")
+    .classList.add("hidden");
+
+  document
+    .getElementById("loginTab")
+    .className="btn btn-dark";
+
+  document
+    .getElementById("registerTab")
+    .className="btn btn-light";
+
+};
+
+
+window.showRegister = function(){
+
+  document
+    .getElementById("loginForm")
+    .classList.add("hidden");
+
+  document
+    .getElementById("registerForm")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("loginTab")
+    .className="btn btn-light";
+
+  document
+    .getElementById("registerTab")
+    .className="btn btn-dark";
+
+};
+
+
+/* =========================================================
+   CADASTRO
+   ========================================================= */
+
+window.registerUser = async function(){
+
+  try{
+
+    const nome =
+      document
+      .getElementById("registerName")
+      .value.trim();
+
+    const email =
+      document
+      .getElementById("registerEmail")
+      .value.trim()
+      .toLowerCase();
+
+    const senha =
+      document
+      .getElementById("registerPassword")
+      .value;
+
+    const tipo =
+      document
+      .getElementById("registerType")
+      .value;
+
+
+    if(!nome || !email || !senha){
+
+      toast("Preencha todos os campos.");
+
+      return;
+
+    }
+
+
+    if(senha.length < 6){
+
+      toast("A senha precisa ter pelo menos 6 caracteres.");
+
+      return;
+
+    }
+
+
+    const result =
+      await createUserWithEmailAndPassword(
+        auth,
+        email,
+        senha
+      );
+
+
+    const user = result.user;
+
+
+    await updateProfile(
+      user,
+      {
+        displayName:nome
+      }
+    );
+
+
+    await setDoc(
+      doc(db,"profiles",user.uid),
+      {
+        id:user.uid,
+        email:email,
+        nome:nome,
+        tipo:tipo,
+        createdAt:serverTimestamp()
+      }
+    );
+
+
+    await setDoc(
+      doc(db,"wallets",user.uid),
+      {
+        userId:user.uid,
+        saldo:0,
+        tipo:tipo,
+        updatedAt:serverTimestamp()
+      }
+    );
+
+
+    toast("Conta criada com sucesso.");
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(firebaseError(error));
+
+  }
+
+};
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+window.loginUser = async function(){
+
+  try{
+
+    const email =
+      document
+      .getElementById("loginEmail")
+      .value.trim()
+      .toLowerCase();
+
+    const password =
+      document
+      .getElementById("loginPassword")
+      .value;
+
+
+    if(!email || !password){
+
+      toast("Informe e-mail e senha.");
+
+      return;
+
+    }
+
+
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(firebaseError(error));
+
+  }
+
+};
+
+
+/* =========================================================
+   ERROS FIREBASE
+   ========================================================= */
+
+function firebaseError(error){
+
+  const code = error?.code || "";
+
+  const messages = {
+
+    "auth/invalid-email":
+    "E-mail inválido.",
+
+    "auth/user-not-found":
+    "Usuário não encontrado.",
+
+    "auth/wrong-password":
+    "Senha incorreta.",
+
+    "auth/invalid-credential":
+    "E-mail ou senha incorretos.",
+
+    "auth/email-already-in-use":
+    "Este e-mail já está cadastrado.",
+
+    "auth/weak-password":
+    "Senha muito fraca.",
+
+    "auth/too-many-requests":
+    "Muitas tentativas. Aguarde um pouco.",
+
+    "permission-denied":
+    "Permissão negada pelo banco.",
+
+  };
+
+  return messages[code] ||
+    error?.message ||
+    "Ocorreu um erro.";
+
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+window.logoutUser = async function(){
+
+  await signOut(auth);
+
+};
+
+
+/* =========================================================
+   OBSERVA LOGIN
+   ========================================================= */
+
+onAuthStateChanged(
+  auth,
+  async(user)=>{
+
+    if(!user){
+
+      currentUser=null;
+      currentProfile=null;
+      currentWallet=null;
+
+      document
+        .getElementById("authScreen")
+        .classList.remove("hidden");
+
+      document
+        .getElementById("appScreen")
+        .classList.add("hidden");
+
+      document
+        .getElementById("logoutButton")
+        .classList.add("hidden");
+
+      document
+        .getElementById("headerUser")
+        .textContent="";
+
+      return;
+
+    }
+
+
+    currentUser=user;
+
+    await loadUserData();
+
+  }
+);
+
+
+/* =========================================================
+   CARREGA PERFIL
+   ========================================================= */
+
+async function loadUserData(){
+
+  try{
+
+    const profileSnap =
+      await getDoc(
+        doc(db,"profiles",currentUser.uid)
+      );
+
+
+    if(!profileSnap.exists()){
+
+      toast(
+        "Perfil não encontrado. Verifique o Firestore."
+      );
+
+      return;
+
+    }
+
+
+    currentProfile =
+      profileSnap.data();
+
+
+    const walletSnap =
+      await getDoc(
+        doc(db,"wallets",currentUser.uid)
+      );
+
+
+    if(walletSnap.exists()){
+
+      currentWallet =
+        walletSnap.data();
+
+    }else{
+
+      currentWallet={
+        userId:currentUser.uid,
+        saldo:0,
+        tipo:currentProfile.tipo
+      };
+
+    }
+
+
+    document
+      .getElementById("authScreen")
+      .classList.add("hidden");
+
+    document
+      .getElementById("appScreen")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("logoutButton")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("headerUser")
+      .textContent =
+      `${currentProfile.nome} • ${currentProfile.tipo}`;
+
+
+    renderDashboard();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(firebaseError(error));
+
+  }
+
+}
+
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+async function renderDashboard(){
+
+  if(!currentProfile){
+
+    return;
+
+  }
+
+
+  if(currentProfile.tipo==="LOJISTA"){
+
+    await renderLojista();
+
+  }
+
+  else if(currentProfile.tipo==="MOTOBOY"){
+
+    await renderMotoboy();
+
+  }
+
+  else if(currentProfile.tipo==="FRANQUEADO"){
+
+    await renderFranqueado();
+
+  }
+
+  else if(currentProfile.tipo==="ADMIN"){
+
+    await renderAdmin();
+
+  }
+
+}
+
+
+/* =========================================================
+   LOJISTA
+   ========================================================= */
+
+async function renderLojista(){
+
+  const saldo =
+    Number(currentWallet?.saldo || 0);
+
+  const permitido =
+    saldo >= 8;
+
+
+  document
+    .getElementById("dashboard")
+    .innerHTML = `
+
+    <div class="hero">
+
+      <h1>Olá, ${escapeHtml(currentProfile.nome)}</h1>
+
+      <p>Painel do lojista</p>
+
+    </div>
+
+
+    <div class="grid">
+
+ 
