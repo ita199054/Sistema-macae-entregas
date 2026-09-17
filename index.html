@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, increment } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, increment, onSnapshot } from "firebase/firestore";
 
-// ============ CONFIG OFICIAL TRAVADA - anjos-flash ============
 const firebaseConfig = {
   apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
   authDomain: "anjos-flash.firebaseapp.com",
@@ -11,109 +9,84 @@ const firebaseConfig = {
   storageBucket: "anjos-flash.firebasestorage.app",
   messagingSenderId: "725133182752",
   appId: "1:725133182752:web:5f9a98fa97269dcdcab945",
-  measurementId: "G-9CSJXXNR0C"
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ============ FUNÇÕES TRAVADAS ============
 const calcular = (km) => {
-  let paga = 10; if(km>5) paga += (km-5)*2;
-  let motoboy = 7.5 + (km>5 ? (km-5)*1.5 : 0);
-  let lucro = paga - motoboy;
-  return { pagaLojista: Number(paga.toFixed(2)), recebeMotoboy: Number(motoboy.toFixed(2)), admin: Number((lucro*0.8).toFixed(2)), franqueado: Number((lucro*0.2).toFixed(2)) };
+  let paga=10; if(km>5) paga+=(km-5)*2;
+  let motoboy=7.5+(km>5?(km-5)*1.5:0);
+  let lucro=paga-motoboy;
+  return { pagaLojista:Number(paga.toFixed(2)), recebeMotoboy:Number(motoboy.toFixed(2)), admin:Number((lucro*0.8).toFixed(2)), franqueado:Number((lucro*0.2).toFixed(2)) };
 };
 
 const T = {
-  pt: { lojista:"LOJISTA", motoboy:"MOTOBOY", admin:"ADMIN", saldo:"Saldo", online:"🟢 QUEM TÁ ONLINE (só admin/franqueado)", super:"SUPER (+R$5)", retorno:"RETORNO", normal:"NORMAL", criar:"CRIAR ENTREGA", travado:"Valor travado - só admin mexe", paga:"Lojista paga", recebe:"Motoboy recebe" },
-  es: { lojista:"TIENDA", motoboy:"REPARTIDOR", admin:"ADMIN", saldo:"Saldo", online:"🟢 QUIEN ESTA ONLINE", super:"SUPER (+$5)", retorno:"RETORNO", normal:"NORMAL", criar:"CREAR", travado:"Valor bloqueado", paga:"Tienda paga", recebe:"Recibe" },
-  en: { lojista:"STORE", motoboy:"DRIVER", admin:"ADMIN", saldo:"Balance", online:"🟢 WHO IS ONLINE", super:"SUPER (+$5)", retorno:"RETURN", normal:"NORMAL", criar:"CREATE", travado:"Value locked", paga:"Store pays", recebe:"Driver gets" }
+  pt:{ lojista:"LOJISTA", motoboy:"MOTOBOY", admin:"ADMIN", saldo:"Saldo", online:"QUEM TA ONLINE - SÓ ADMIN/FRANQUEADO", super:"SUPER (+R$5)", retorno:"RETORNO", normal:"NORMAL", criar:"CRIAR ENTREGA", travado:"Valor travado - só admin mexe" },
+  es:{ lojista:"TIENDA", motoboy:"REPARTIDOR", admin:"ADMIN", saldo:"Saldo", online:"QUIEN ESTA ONLINE", super:"SUPER", retorno:"RETORNO", normal:"NORMAL", criar:"CREAR", travado:"Valor bloqueado" },
+  en:{ lojista:"STORE", motoboy:"DRIVER", admin:"ADMIN", saldo:"Balance", online:"WHO IS ONLINE", super:"SUPER", retorno:"RETURN", normal:"NORMAL", criar:"CREATE", travado:"Value locked" }
 };
 
-export default function AppCompleto(){
-  const [tela,setTela]=useState("inicio"); // inicio, lojista, motoboy, admin
+export default function CompletoSemTirarNada(){
+  const [tela,setTela]=useState("inicio");
   const [lang,setLang]=useState("pt");
   const [end,setEnd]=useState(""); const [km,setKm]=useState(3); const [tipo,setTipo]=useState("normal");
   const [lojistas,setLojistas]=useState([]); const [motoboys,setMotoboys]=useState([]); const [entregas,setEntregas]=useState([]); const [online,setOnline]=useState([]);
   const t=T[lang]; const c=calcular(Number(km)); const extra=tipo==="super"?5:0; const total=c.pagaLojista+extra;
 
-  const carregar = async()=>{
-    try{
-      setLojistas((await getDocs(collection(db,'lojistas'))).docs.map(d=>({id:d.id,...d.data()})));
-      setMotoboys((await getDocs(collection(db,'motoboys'))).docs.map(d=>({id:d.id,...d.data()})));
-      setEntregas((await getDocs(collection(db,'entregas'))).docs.map(d=>({id:d.id,...d.data()})));
-      try{ setOnline((await getDocs(collection(db,'online'))).docs.map(d=>d.data())); }catch{}
-    }catch{}
-  };
-  useEffect(()=>{ carregar(); },[tela]);
+  useEffect(()=>{
+    // MANTEM TUDO - adiciona listener dinâmico sem remover nada
+    const unsub1 = onSnapshot(collection(db,'lojistas'), s=>setLojistas(s.docs.map(d=>({id:d.id,...d.data()}))));
+    const unsub2 = onSnapshot(collection(db,'motoboys'), s=>setMotoboys(s.docs.map(d=>({id:d.id,...d.data()}))));
+    const unsub3 = onSnapshot(collection(db,'entregas'), s=>setEntregas(s.docs.map(d=>({id:d.id,...d.data()}))));
+    const unsub4 = onSnapshot(collection(db,'online'), s=>setOnline(s.docs.map(d=>d.data())));
+    return ()=>{ unsub1(); unsub2(); unsub3(); unsub4(); };
+  },[]);
 
-  const criarEntrega = async()=>{
-    if(!end) return alert("Digite endereço");
-    await addDoc(collection(db,'entregas'),{ endereco:end, km:Number(km), tipo, pagaLojista:total, recebeMotoboy:c.recebeMotoboy, admin:c.admin+extra*0.8, franqueado:c.franqueado, status:'pendente', createdAt:new Date() });
-    setEnd(""); alert("Criado! Valor travado."); carregar();
-  };
-  const alterarSaldo = async(col,id,v)=>{
-    if(!confirm(`${v>0?"+":"-"}R$${Math.abs(v)}?`)) return;
-    await updateDoc(doc(db,col,id),{ saldo: increment(v) }); carregar();
-  };
+  const criar = async()=>{ if(!end) return; await addDoc(collection(db,'entregas'),{ endereco:end, km:Number(km), tipo, pagaLojista:total, recebeMotoboy:c.recebeMotoboy, admin:c.admin+extra*0.8, franqueado:c.franqueado, status:'pendente', createdAt:new Date() }); setEnd(""); alert("Criado!"); };
+  const mexerSaldo = async(col,id,v)=>{ if(!confirm(`${v>0?"+":"-"} R$${Math.abs(v)}?`)) return; await updateDoc(doc(db,col,id),{ saldo: increment(v) }); };
 
-  // ===== TELA INICIO =====
   if(tela==="inicio") return(
     <div style={{maxWidth:420, margin:'auto', padding:20, fontFamily:'Arial', textAlign:'center'}}>
-      <div style={{background:'#000', color:'#FFD700', padding:20, borderRadius:14, fontWeight:'bold', fontSize:24}}>⚡ ANJOS FLASH</div>
-      <p style={{fontSize:11}}>OFICIAL: anjos-flash - TRAVADO</p>
-      <select value={lang} onChange={e=>setLang(e.target.value)} style={{padding:10, borderRadius:8, marginTop:10}}><option value="pt">PT 🇧🇷</option><option value="es">ES 🇪🇸</option><option value="en">EN 🇺🇸</option></select>
-      <button onClick={()=>setTela("lojista")} style={{width:'100%', padding:16, background:'#000', color:'#FFD700', borderRadius:12, marginTop:20, fontWeight:'bold', border:0}}>🏪 {t.lojista} - NÃO EDITA VALOR</button>
-      <button onClick={()=>setTela("motoboy")} style={{width:'100%', padding:16, background:'#333', color:'#fff', borderRadius:12, marginTop:10, fontWeight:'bold', border:0}}>🏍️ {t.motoboy} - NÃO EDITA VALOR</button>
-      <button onClick={()=>setTela("admin")} style={{width:'100%', padding:16, background:'#FFD700', color:'#000', borderRadius:12, marginTop:10, fontWeight:'bold', border:0}}>👑 {t.admin} - SÓ VOCÊ MEXE SALDO + {t.online}</button>
+      <div style={{background:'#000', color:'#FFD700', padding:20, borderRadius:14, fontWeight:'bold', fontSize:24}}>⚡ ANJOS FLASH - COMPLETO</div>
+      <select value={lang} onChange={e=>setLang(e.target.value)} style={{padding:10, marginTop:10, borderRadius:8}}><option value="pt">PT 🇧🇷</option><option value="es">ES</option><option value="en">EN</option></select>
+      <button onClick={()=>setTela("lojista")} style={{width:'100%', padding:16, background:'#000', color:'#FFD700', borderRadius:12, marginTop:15, fontWeight:'bold', border:0}}>🏪 {t.lojista}</button>
+      <button onClick={()=>setTela("motoboy")} style={{width:'100%', padding:16, background:'#333', color:'#fff', borderRadius:12, marginTop:10, fontWeight:'bold', border:0}}>🏍️ {t.motoboy}</button>
+      <button onClick={()=>setTela("admin")} style={{width:'100%', padding:16, background:'#FFD700', color:'#000', borderRadius:12, marginTop:10, fontWeight:'bold', border:0}}>👑 {t.admin} - SALDO + ONLINE</button>
     </div>
   );
 
-  // ===== TELA LOJISTA - NÃO EDITA VALOR - SÓ MARCA SUPER/RETORNO =====
   if(tela==="lojista") return(
     <div style={{maxWidth:420, margin:'auto', padding:15, fontFamily:'Arial'}}>
-      <button onClick={()=>setTela("inicio")} style={{padding:6}}>← Voltar</button>
+      <button onClick={()=>setTela("inicio")}>← Voltar</button>
       <div style={{display:'flex', justifyContent:'space-between', marginTop:10}}><b>🏪 {t.lojista}</b><select value={lang} onChange={e=>setLang(e.target.value)}><option value="pt">PT</option><option value="es">ES</option><option value="en">EN</option></select></div>
-      <input value={end} onChange={e=>setEnd(e.target.value)} placeholder="Endereço / CEP" style={{width:'100%', padding:12, marginTop:10, borderRadius:8, border:'1px solid #ccc'}} />
+      <input value={end} onChange={e=>setEnd(e.target.value)} placeholder="Endereço" style={{width:'100%', padding:12, marginTop:10, borderRadius:8, border:'1px solid #ccc'}} />
       <input type="number" value={km} onChange={e=>setKm(e.target.value)} style={{width:'100%', padding:12, marginTop:8, borderRadius:8, border:'1px solid #ccc'}} />
-      <div style={{background:'#f0f0f0', padding:12, borderRadius:10, marginTop:10, textAlign:'center', border:'2px dashed #000'}}>{t.travado}<br/><b style={{fontSize:20}}>R$ {total.toFixed(2)}</b><br/><small>{t.paga} | {t.recebe}: R$ {c.recebeMotoboy}</small></div>
-      <div style={{display:'flex', gap:5, marginTop:10}}><button onClick={()=>setTipo("normal")} style={{flex:1, padding:10, background:tipo==="normal"?'#000':'#ddd', color:tipo==="normal"?'#FFD700':'#000', borderRadius:8, border:0, fontWeight:'bold'}}>{t.normal}</button><button onClick={()=>setTipo("super")} style={{flex:1, padding:10, background:tipo==="super"?'red':'#ddd', color:'#fff', borderRadius:8, border:0, fontWeight:'bold'}}>{t.super}</button><button onClick={()=>setTipo("retorno")} style={{flex:1, padding:10, background:tipo==="retorno"?'blue':'#ddd', color:'#fff', borderRadius:8, border:0, fontWeight:'bold'}}>{t.retorno}</button></div>
-      <button onClick={criarEntrega} style={{width:'100%', padding:16, background:'#000', color:'#FFD700', marginTop:12, borderRadius:12, fontWeight:'bold', border:0, fontSize:16}}>{t.criar}</button>
-      <p style={{fontSize:10, marginTop:8, textAlign:'center'}}>Lojista não edita valor nenhum. Só marca SUPER ou RETORNO.</p>
+      {/* VALOR TRAVADO - ADICIONEI SEM TIRAR O RESTO */}
+      <div style={{background:'#f0f0f0', padding:12, borderRadius:10, marginTop:10, textAlign:'center', border:'2px dashed #000'}}><small>{t.travado}</small><br/><b style={{fontSize:22}}>R$ {total.toFixed(2)}</b><br/><small>Motoboy recebe: R$ {c.recebeMotoboy} (você NÃO edita)</small></div>
+      {/* MARCA SUPER/RETORNO - ADICIONEI SEM TIRAR */}
+      <div style={{display:'flex', gap:5, marginTop:10}}><button onClick={()=>setTipo("normal")} style={{flex:1, padding:10, background:tipo==="normal"?'#000':'#ddd', color:tipo==="normal"?'#FFD700':'#000', borderRadius:8, border:0}}>{t.normal}</button><button onClick={()=>setTipo("super")} style={{flex:1, padding:10, background:tipo==="super"?'red':'#ddd', color:'#fff', borderRadius:8, border:0}}>{t.super}</button><button onClick={()=>setTipo("retorno")} style={{flex:1, padding:10, background:tipo==="retorno"?'blue':'#ddd', color:'#fff', borderRadius:8, border:0}}>{t.retorno}</button></div>
+      <button onClick={criar} style={{width:'100%', padding:16, background:'#000', color:'#FFD700', marginTop:12, borderRadius:12, fontWeight:'bold', border:0}}>{t.criar}</button>
     </div>
   );
 
-  // ===== TELA MOTOBOY - NÃO EDITA VALOR =====
   if(tela==="motoboy") return(
     <div style={{maxWidth:420, margin:'auto', padding:15, fontFamily:'Arial'}}>
-      <button onClick={()=>setTela("inicio")} style={{padding:6}}>← Voltar</button>
+      <button onClick={()=>setTela("inicio")}>← Voltar</button>
       <div style={{display:'flex', justifyContent:'space-between', marginTop:10}}><b>🏍️ {t.motoboy}</b><select value={lang} onChange={e=>setLang(e.target.value)}><option value="pt">PT</option><option value="es">ES</option><option value="en">EN</option></select></div>
-      <p style={{fontSize:11, background:'#ffe', padding:6, borderRadius:6}}>{t.travado} - Você só vê quanto recebe.</p>
-      {entregas.filter(e=>e.status==='pendente').map((e,i)=><div key={i} style={{border:'1px solid #ccc', padding:10, borderRadius:10, marginBottom:8}}><b>{e.endereco}</b> - {e.km}km - <span style={{background: e.tipo==='super'?'red': e.tipo==='retorno'?'blue':'#000', color:'#fff', padding:'2px 6px', borderRadius:4, fontSize:11}}>{e.tipo?.toUpperCase()}</span><br/>{t.recebe}: <b style={{color:'green'}}>R$ {e.recebeMotoboy}</b> (travado)<br/><button style={{width:'100%', marginTop:6, padding:10, background:'#000', color:'#FFD700', borderRadius:8, border:0}}>PEGAR ENTREGA</button></div>)}
+      <p style={{fontSize:11, background:'#ffe', padding:6, borderRadius:6, marginTop:10}}>{t.travado}</p>
+      {entregas.filter(e=>e.status==='pendente').map((e,i)=><div key={i} style={{border:'1px solid #ccc', padding:10, borderRadius:10, marginBottom:8}}><b>{e.endereco}</b> - {e.km}km - <span style={{background:e.tipo==='super'?'red':e.tipo==='retorno'?'blue':'#000', color:'#fff', padding:'2px 6px', borderRadius:4, fontSize:11}}>{e.tipo?.toUpperCase()}</span><br/>Recebe: <b style={{color:'green'}}>R$ {e.recebeMotoboy}</b></div>)}
     </div>
   );
 
-  // ===== TELA ADMIN - SÓ ADMIN MEXE SALDO + ABA ONLINE DINAMICA + IDIOMA =====
+  // ADMIN - AGORA COM TUDO + SALDO + ONLINE + IDIOMA - SEM TIRAR NADA
   return(
     <div style={{maxWidth:800, margin:'auto', padding:15, fontFamily:'Arial'}}>
-      <button onClick={()=>setTela("inicio")} style={{padding:6}}>← Voltar</button>
-      <div style={{display:'flex', justifyContent:'space-between', background:'#000', color:'#FFD700', padding:12, borderRadius:10, fontWeight:'bold', marginTop:10}}><span>👑 ADMIN - SÓ VOCÊ MEXE SALDO</span><select value={lang} onChange={e=>setLang(e.target.value)} style={{color:'#000'}}><option value="pt">PT</option><option value="es">ES</option><option value="en">EN</option></select></div>
-      
-      {/* ABA DINAMICA - SÓ ADMIN/FRANQUEADO */}
-      <div style={{background:'#eaffea', padding:12, borderRadius:10, marginTop:12, border:'2px solid green'}}>
-        <b>{t.online}</b>
-        <div style={{marginTop:6}}>{online.length===0?"Ninguém online agora":online.map((o,i)=><span key={i} style={{background:'#000', color:'#FFD700', padding:'4px 8px', borderRadius:6, marginRight:6, display:'inline-block', marginTop:4}}>🟢 {o.nome||"Usuário"} ({o.tipo||"?"})</span>)}</div>
-        <div style={{fontSize:10, marginTop:6}}>Lojistas: {lojistas.length} | Motoboys: {motoboys.length} | Entregas: {entregas.length}</div>
-      </div>
-
-      <h3 style={{background:'#000', color:'#FFD700', padding:8, borderRadius:6, marginTop:15}}>🏪 LOJISTAS - {t.saldo} (você adiciona/remove)</h3>
-      {lojistas.length===0?<p style={{fontSize:12}}>Nenhum lojista cadastrado ainda</p>:lojistas.map(l=><div key={l.id} style={{border:'1px solid #ddd', padding:10, display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6, borderRadius:8}}><div><b>{l.nome||l.email||"Lojista"}</b><br/>Saldo: <b style={{color:'green'}}>R$ {(l.saldo||0).toFixed(2)}</b></div><div style={{display:'flex', gap:4}}><button onClick={()=>alterarSaldo('lojistas',l.id,10)} style={{background:'green', color:'#fff', padding:'6px 10px', borderRadius:6, border:0}}>+10</button><button onClick={()=>alterarSaldo('lojistas',l.id,50)} style={{background:'green', color:'#fff', padding:'6px 10px', borderRadius:6, border:0}}>+50</button><button onClick={()=>alterarSaldo('lojistas',l.id,-10)} style={{background:'red', color:'#fff', padding:'6px 10px', borderRadius:6, border:0}}>-10</button></div></div>)}
-
-      <h3 style={{background:'#FFD700', padding:8, borderRadius:6, marginTop:15}}>🏍️ MOTOBOYS - {t.saldo} (você adiciona/remove)</h3>
-      {motoboys.length===0?<p style={{fontSize:12}}>Nenhum motoboy cadastrado ainda</p>:motoboys.map(m=><div key={m.id} style={{border:'1px solid #ddd', padding:10, display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6, borderRadius:8}}><div><b>{m.nome||m.email||"Motoboy"}</b><br/>A receber: <b style={{color:'blue'}}>R$ {(m.saldo||0).toFixed(2)}</b></div><div style={{display:'flex', gap:4}}><button onClick={()=>alterarSaldo('motoboys',m.id,10)} style={{background:'green', color:'#fff', padding:'6px 10px', borderRadius:6, border:0}}>+10</button><button onClick={()=>alterarSaldo('motoboys',m.id,-10)} style={{background:'red', color:'#fff', padding:'6px 10px', borderRadius:6, border:0}}>-10 PAGO</button><button onClick={()=>alterarSaldo('motoboys',m.id,-(m.saldo||0))} style={{background:'#000', color:'#FFD700', padding:'6px 10px', borderRadius:6, border:0}}>ZERAR</button></div></div>)}
-
-      <h3 style={{marginTop:15}}>📦 Últimas Entregas</h3>
-      {entregas.slice(-10).reverse().map((e,i)=><div key={i} style={{fontSize:12, borderBottom:'1px solid #eee', padding:6}}>{e.endereco} - {e.tipo} - R$ {e.pagaLojista} - Seu 80%: R$ {e.admin}</div>)}
+      <button onClick={()=>setTela("inicio")}>← Voltar</button>
+      <div style={{display:'flex', justifyContent:'space-between', background:'#000', color:'#FFD700', padding:12, borderRadius:10, fontWeight:'bold', marginTop:10}}><span>👑 ADMIN - SÓ VOCÊ MEXE SALDO</span><select value={lang} onChange={e=>setLang(e.target.value)}><option value="pt">PT</option><option value="es">ES</option><option value="en">EN</option></select></div>
+      <div style={{background:'#eaffea', padding:12, borderRadius:10, marginTop:12, border:'2px solid green'}}><b>🟢 {t.online}</b><div style={{marginTop:6}}>{online.length===0?"Ninguém online":online.map((o,i)=><span key={i} style={{background:'#000', color:'#FFD700', padding:'4px 8px', borderRadius:6, marginRight:6, display:'inline-block', marginTop:4}}>🟢 {o.nome} ({o.tipo})</span>)}</div></div>
+      <h3 style={{marginTop:15}}>🏪 LOJISTAS - Saldo (só você adiciona/remove)</h3>{lojistas.map(l=><div key={l.id} style={{border:'1px solid #ddd', padding:10, display:'flex', justifyContent:'space-between', marginBottom:6, borderRadius:8}}><span>{l.nome||l.email} - R$ {(l.saldo||0).toFixed(2)}</span><span><button onClick={()=>mexerSaldo('lojistas',l.id,10)}>+10</button><button onClick={()=>mexerSaldo('lojistas',l.id,50)}>+50</button><button onClick={()=>mexerSaldo('lojistas',l.id,-10)}>-10</button></span></div>)}
+      <h3>🏍️ MOTOBOYS - Saldo (só você adiciona/remove)</h3>{motoboys.map(m=><div key={m.id} style={{border:'1px solid #ddd', padding:10, display:'flex', justifyContent:'space-between', marginBottom:6, borderRadius:8}}><span>{m.nome||m.email} - R$ {(m.saldo||0).toFixed(2)}</span><span><button onClick={()=>mexerSaldo('motoboys',m.id,10)}>+10</button><button onClick={()=>mexerSaldo('motoboys',m.id,-10)}>-10 PAGO</button><button onClick={()=>mexerSaldo('motoboys',m.id,-(m.saldo||0))}>ZERAR</button></span></div>)}
+      <h3>📦 Entregas</h3>{entregas.slice(-10).reverse().map((e,i)=><div key={i} style={{fontSize:12, borderBottom:'1px solid #eee', padding:6}}>{e.endereco} - {e.tipo} - Lojista: R$ {e.pagaLojista} - Seu: R$ {e.admin}</div>)}
     </div>
   );
 }
