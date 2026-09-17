@@ -1,281 +1,119 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ANJOS EM DUAS RODAS - COMPLETO</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<style>
-*{box-sizing:border-box;font-family:Arial}body{margin:0;background:#0f0f0f;color:white}
-.top{height:58px;background:#111;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #222;position:sticky;top:0;z-index:20}
-.container{max-width:520px;margin:0 auto;padding:10px}
-.card{background:#1e1e1e;border-radius:16px;padding:12px;margin-bottom:10px;border:1px solid #333}
-.cardW{background:#fff;color:#111;border-radius:16px;padding:12px;margin-bottom:10px}
-input,select{width:100%;background:#2a2a2a;border:1px solid #444;color:white;padding:11px;border-radius:10px;margin:4px 0}
-button{width:100%;padding:11px;border-radius:10px;border:none;font-weight:800;cursor:pointer}
-.btnO{background:#ff7a00;color:#111}.btnG{background:#333;color:white}.btnW{background:#25D366;color:white}
-#mapLojista,#mapMoto,#mapAdmin{height:260px;border-radius:12px;z-index:1}
-.toast{position:fixed;top:15px;left:50%;transform:translateX(-50%);background:#111;border:1px solid #444;padding:10px 18px;border-radius:12px;display:none;z-index:999}
-.foto{width:48px;height:48px;border-radius:50%;border:2px solid #00ff88;object-fit:cover}
-</style>
-</head>
-<body>
-<div class="top">🏍️ <b>ANJOS <span style="color:#ff7a00">EM DUAS RODAS</span></b></div>
-<div class="container">
+import { useState, useEffect } from "react";
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, increment } from "firebase/firestore";
 
-<div id="authDiv">
-<div class="card"><h3>Entrar</h3><input id="email" placeholder="E-mail"><input id="senha" type="password" placeholder="Senha"><button class="btnO" onclick="login()">ENTRAR</button><div id="msgAuth" style="color:#ff5555;font-size:12px"></div></div>
-<div class="card"><b>🔍 RASTREIO CLIENTE - Digite código 4 dígitos</b><input id="codigoRastreio" placeholder="Ex: 0001"><button class="btnG" onclick="rastrearCliente()">RASTREAR PEDIDO #0001</button><div id="resultRastreio" style="margin-top:8px"></div></div>
-</div>
+// ============ CONFIG OFICIAL TRAVADA - anjos-flash ============
+const firebaseConfig = {
+  apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
+  authDomain: "anjos-flash.firebaseapp.com",
+  projectId: "anjos-flash",
+  storageBucket: "anjos-flash.firebasestorage.app",
+  messagingSenderId: "725133182752",
+  appId: "1:725133182752:web:5f9a98fa97269dcdcab945",
+  measurementId: "G-9CSJXXNR0C"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-<div id="appDiv" style="display:none">
-<div class="card" style="display:flex;justify-content:space-between;align-items:center">
-<div>
-<div id="infoUser" style="font-weight:800"></div>
-<div id="tipoTxt" style="color:#ff7a00;font-weight:900;font-size:12px"></div>
-<div id="codigoTxt" style="font-size:13px;color:#00ff88;font-weight:900"></div>
-<div style="font-size:11px">Saldo <b id="saldoTxt" style="color:#00ff88"></b></div>
-</div>
-<button class="btnG" style="width:60px" onclick="logout()">Sair</button>
-</div>
+// ============ FUNÇÕES TRAVADAS ============
+const calcular = (km) => {
+  let paga = 10; if(km>5) paga += (km-5)*2;
+  let motoboy = 7.5 + (km>5 ? (km-5)*1.5 : 0);
+  let lucro = paga - motoboy;
+  return { pagaLojista: Number(paga.toFixed(2)), recebeMotoboy: Number(motoboy.toFixed(2)), admin: Number((lucro*0.8).toFixed(2)), franqueado: Number((lucro*0.2).toFixed(2)) };
+};
 
-<!-- LOJISTA -->
-<div id="painelLojista" style="display:none">
-<div class="cardW"><b>🏪 LOJISTA - Criar Pedido #0001</b><div style="font-size:11px">Se não digitar código do motoboy, dispara para GERAL</div></div>
-<div class="card">
-<input id="clienteNome" placeholder="Nome cliente">
-<input id="clienteEndereco" placeholder="Endereço entrega">
-<input id="valorProduto" type="number" placeholder="Valor produto R$">
-<div style="background:#00ff8815;border:1px solid #00ff88;border-radius:10px;padding:8px;margin:6px 0">
-<label style="font-size:11px;color:#00ff88;font-weight:800">🏍️ CHAMAR MOTOBOY POR CÓDIGO (opcional)</label>
-<input id="codigoMotoAlvo" placeholder="Ex: MOTO-0001 - vazio = GERAL">
-<div style="font-size:9px;color:#aaa">Vazio = todos online veem | Com código = só aquele motoboy vê</div>
-</div>
-<button class="btnO" onclick="criarPedido()">CRIAR PEDIDO #0001</button>
-<div id="ultimoCodigo" style="margin-top:8px"></div>
-</div>
-<div class="card"><div id="mapLojista"></div></div>
-<div class="card"><b>Meus pedidos - foto do motoboy + KM + MIN</b><div id="listaLojista"></div></div>
-</div>
+const T = {
+  pt: { lojista:"LOJISTA", motoboy:"MOTOBOY", admin:"ADMIN", saldo:"Saldo", online:"🟢 QUEM TÁ ONLINE (só admin/franqueado)", super:"SUPER (+R$5)", retorno:"RETORNO", normal:"NORMAL", criar:"CRIAR ENTREGA", travado:"Valor travado - só admin mexe", paga:"Lojista paga", recebe:"Motoboy recebe" },
+  es: { lojista:"TIENDA", motoboy:"REPARTIDOR", admin:"ADMIN", saldo:"Saldo", online:"🟢 QUIEN ESTA ONLINE", super:"SUPER (+$5)", retorno:"RETORNO", normal:"NORMAL", criar:"CREAR", travado:"Valor bloqueado", paga:"Tienda paga", recebe:"Recibe" },
+  en: { lojista:"STORE", motoboy:"DRIVER", admin:"ADMIN", saldo:"Balance", online:"🟢 WHO IS ONLINE", super:"SUPER (+$5)", retorno:"RETURN", normal:"NORMAL", criar:"CREATE", travado:"Value locked", paga:"Store pays", recebe:"Driver gets" }
+};
 
-<!-- MOTOBOY -->
-<div id="painelMotoboy" style="display:none">
-<div class="cardW">
-<b>🏍️ MOTOBOY</b>
-<div style="font-size:14px">SEU CÓDIGO: <b id="meuCodigo" style="color:#ff7a00;font-size:22px"></b></div>
-<div id="statusMoto" style="font-size:11px"></div>
-<button id="btnOnline" class="btnO" style="margin-top:6px" onclick="toggleOnline()">FICAR ONLINE</button>
-</div>
-<div class="card"><div id="mapMoto"></div></div>
-<div class="card"><b>📥 Chamadas pra você (Geral ou Direta)</b><div id="listaMoto"></div></div>
-<div class="card"><b>✅ Minhas corridas</b><div id="listaMinhasCorridas"></div></div>
-</div>
+export default function AppCompleto(){
+  const [tela,setTela]=useState("inicio"); // inicio, lojista, motoboy, admin
+  const [lang,setLang]=useState("pt");
+  const [end,setEnd]=useState(""); const [km,setKm]=useState(3); const [tipo,setTipo]=useState("normal");
+  const [lojistas,setLojistas]=useState([]); const [motoboys,setMotoboys]=useState([]); const [entregas,setEntregas]=useState([]); const [online,setOnline]=useState([]);
+  const t=T[lang]; const c=calcular(Number(km)); const extra=tipo==="super"?5:0; const total=c.pagaLojista+extra;
 
-<!-- ADMIN -->
-<div id="painelAdmin" style="display:none">
-<div class="cardW"><b>ADMIN - <span id="emailTxt"></span></b> <span id="adminTipo"></span><br><button class="btnO" style="margin-top:6px" onclick="carregarAdmin()">🔄 ATUALIZAR</button></div>
-<div class="card"><b>Pendentes - ao aprovar gera MOTO-0001 automático</b><div id="adminUsuarios"></div></div>
-<div class="card"><b>Todos Motoboys - com código e foto</b><div id="listaTodosMotoboys"></div></div>
-<div class="card"><b>Todas Lojas</b><div id="listaTodasLojas"></div></div>
-<div class="card"><b>Pedidos #0001</b><div id="adminPedidos"></div><div id="mapAdmin" style="margin-top:8px"></div></div>
-</div>
+  const carregar = async()=>{
+    try{
+      setLojistas((await getDocs(collection(db,'lojistas'))).docs.map(d=>({id:d.id,...d.data()})));
+      setMotoboys((await getDocs(collection(db,'motoboys'))).docs.map(d=>({id:d.id,...d.data()})));
+      setEntregas((await getDocs(collection(db,'entregas'))).docs.map(d=>({id:d.id,...d.data()})));
+      try{ setOnline((await getDocs(collection(db,'online'))).docs.map(d=>d.data())); }catch{}
+    }catch{}
+  };
+  useEffect(()=>{ carregar(); },[tela]);
 
-</div></div>
-<div id="toast" class="toast"></div>
+  const criarEntrega = async()=>{
+    if(!end) return alert("Digite endereço");
+    await addDoc(collection(db,'entregas'),{ endereco:end, km:Number(km), tipo, pagaLojista:total, recebeMotoboy:c.recebeMotoboy, admin:c.admin+extra*0.8, franqueado:c.franqueado, status:'pendente', createdAt:new Date() });
+    setEnd(""); alert("Criado! Valor travado."); carregar();
+  };
+  const alterarSaldo = async(col,id,v)=>{
+    if(!confirm(`${v>0?"+":"-"}R$${Math.abs(v)}?`)) return;
+    await updateDoc(doc(db,col,id),{ saldo: increment(v) }); carregar();
+  };
 
-<script>
-const firebaseConfig={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.firebasestorage.app",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945"};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore();
-const auth=firebase.auth();
-let usuarioAtual=null, perfilAtual=null, mapL=null, mapM=null, mapA=null;
+  // ===== TELA INICIO =====
+  if(tela==="inicio") return(
+    <div style={{maxWidth:420, margin:'auto', padding:20, fontFamily:'Arial', textAlign:'center'}}>
+      <div style={{background:'#000', color:'#FFD700', padding:20, borderRadius:14, fontWeight:'bold', fontSize:24}}>⚡ ANJOS FLASH</div>
+      <p style={{fontSize:11}}>OFICIAL: anjos-flash - TRAVADO</p>
+      <select value={lang} onChange={e=>setLang(e.target.value)} style={{padding:10, borderRadius:8, marginTop:10}}><option value="pt">PT 🇧🇷</option><option value="es">ES 🇪🇸</option><option value="en">EN 🇺🇸</option></select>
+      <button onClick={()=>setTela("lojista")} style={{width:'100%', padding:16, background:'#000', color:'#FFD700', borderRadius:12, marginTop:20, fontWeight:'bold', border:0}}>🏪 {t.lojista} - NÃO EDITA VALOR</button>
+      <button onClick={()=>setTela("motoboy")} style={{width:'100%', padding:16, background:'#333', color:'#fff', borderRadius:12, marginTop:10, fontWeight:'bold', border:0}}>🏍️ {t.motoboy} - NÃO EDITA VALOR</button>
+      <button onClick={()=>setTela("admin")} style={{width:'100%', padding:16, background:'#FFD700', color:'#000', borderRadius:12, marginTop:10, fontWeight:'bold', border:0}}>👑 {t.admin} - SÓ VOCÊ MEXE SALDO + {t.online}</button>
+    </div>
+  );
 
-function toastM(m){ const t=document.getElementById("toast"); t.textContent=m; t.style.display="block"; setTimeout(()=>t.style.display="none",3000); }
-async function login(){ try{ await auth.signInWithEmailAndPassword(email.value,senha.value);}catch(e){msgAuth.textContent=e.message;}}
-function logout(){ auth.signOut(); }
+  // ===== TELA LOJISTA - NÃO EDITA VALOR - SÓ MARCA SUPER/RETORNO =====
+  if(tela==="lojista") return(
+    <div style={{maxWidth:420, margin:'auto', padding:15, fontFamily:'Arial'}}>
+      <button onClick={()=>setTela("inicio")} style={{padding:6}}>← Voltar</button>
+      <div style={{display:'flex', justifyContent:'space-between', marginTop:10}}><b>🏪 {t.lojista}</b><select value={lang} onChange={e=>setLang(e.target.value)}><option value="pt">PT</option><option value="es">ES</option><option value="en">EN</option></select></div>
+      <input value={end} onChange={e=>setEnd(e.target.value)} placeholder="Endereço / CEP" style={{width:'100%', padding:12, marginTop:10, borderRadius:8, border:'1px solid #ccc'}} />
+      <input type="number" value={km} onChange={e=>setKm(e.target.value)} style={{width:'100%', padding:12, marginTop:8, borderRadius:8, border:'1px solid #ccc'}} />
+      <div style={{background:'#f0f0f0', padding:12, borderRadius:10, marginTop:10, textAlign:'center', border:'2px dashed #000'}}>{t.travado}<br/><b style={{fontSize:20}}>R$ {total.toFixed(2)}</b><br/><small>{t.paga} | {t.recebe}: R$ {c.recebeMotoboy}</small></div>
+      <div style={{display:'flex', gap:5, marginTop:10}}><button onClick={()=>setTipo("normal")} style={{flex:1, padding:10, background:tipo==="normal"?'#000':'#ddd', color:tipo==="normal"?'#FFD700':'#000', borderRadius:8, border:0, fontWeight:'bold'}}>{t.normal}</button><button onClick={()=>setTipo("super")} style={{flex:1, padding:10, background:tipo==="super"?'red':'#ddd', color:'#fff', borderRadius:8, border:0, fontWeight:'bold'}}>{t.super}</button><button onClick={()=>setTipo("retorno")} style={{flex:1, padding:10, background:tipo==="retorno"?'blue':'#ddd', color:'#fff', borderRadius:8, border:0, fontWeight:'bold'}}>{t.retorno}</button></div>
+      <button onClick={criarEntrega} style={{width:'100%', padding:16, background:'#000', color:'#FFD700', marginTop:12, borderRadius:12, fontWeight:'bold', border:0, fontSize:16}}>{t.criar}</button>
+      <p style={{fontSize:10, marginTop:8, textAlign:'center'}}>Lojista não edita valor nenhum. Só marca SUPER ou RETORNO.</p>
+    </div>
+  );
 
-// CONTADORES
-async function gerarCodigoPedido(){
- const ref=db.collection("config").doc("contador");
- const doc=await ref.get();
- let u=doc.exists?doc.data().ultimoCodigo||0:0;
- u++;
- await ref.set({ultimoCodigo:u},{merge:true});
- return String(u).padStart(4,'0');
+  // ===== TELA MOTOBOY - NÃO EDITA VALOR =====
+  if(tela==="motoboy") return(
+    <div style={{maxWidth:420, margin:'auto', padding:15, fontFamily:'Arial'}}>
+      <button onClick={()=>setTela("inicio")} style={{padding:6}}>← Voltar</button>
+      <div style={{display:'flex', justifyContent:'space-between', marginTop:10}}><b>🏍️ {t.motoboy}</b><select value={lang} onChange={e=>setLang(e.target.value)}><option value="pt">PT</option><option value="es">ES</option><option value="en">EN</option></select></div>
+      <p style={{fontSize:11, background:'#ffe', padding:6, borderRadius:6}}>{t.travado} - Você só vê quanto recebe.</p>
+      {entregas.filter(e=>e.status==='pendente').map((e,i)=><div key={i} style={{border:'1px solid #ccc', padding:10, borderRadius:10, marginBottom:8}}><b>{e.endereco}</b> - {e.km}km - <span style={{background: e.tipo==='super'?'red': e.tipo==='retorno'?'blue':'#000', color:'#fff', padding:'2px 6px', borderRadius:4, fontSize:11}}>{e.tipo?.toUpperCase()}</span><br/>{t.recebe}: <b style={{color:'green'}}>R$ {e.recebeMotoboy}</b> (travado)<br/><button style={{width:'100%', marginTop:6, padding:10, background:'#000', color:'#FFD700', borderRadius:8, border:0}}>PEGAR ENTREGA</button></div>)}
+    </div>
+  );
+
+  // ===== TELA ADMIN - SÓ ADMIN MEXE SALDO + ABA ONLINE DINAMICA + IDIOMA =====
+  return(
+    <div style={{maxWidth:800, margin:'auto', padding:15, fontFamily:'Arial'}}>
+      <button onClick={()=>setTela("inicio")} style={{padding:6}}>← Voltar</button>
+      <div style={{display:'flex', justifyContent:'space-between', background:'#000', color:'#FFD700', padding:12, borderRadius:10, fontWeight:'bold', marginTop:10}}><span>👑 ADMIN - SÓ VOCÊ MEXE SALDO</span><select value={lang} onChange={e=>setLang(e.target.value)} style={{color:'#000'}}><option value="pt">PT</option><option value="es">ES</option><option value="en">EN</option></select></div>
+      
+      {/* ABA DINAMICA - SÓ ADMIN/FRANQUEADO */}
+      <div style={{background:'#eaffea', padding:12, borderRadius:10, marginTop:12, border:'2px solid green'}}>
+        <b>{t.online}</b>
+        <div style={{marginTop:6}}>{online.length===0?"Ninguém online agora":online.map((o,i)=><span key={i} style={{background:'#000', color:'#FFD700', padding:'4px 8px', borderRadius:6, marginRight:6, display:'inline-block', marginTop:4}}>🟢 {o.nome||"Usuário"} ({o.tipo||"?"})</span>)}</div>
+        <div style={{fontSize:10, marginTop:6}}>Lojistas: {lojistas.length} | Motoboys: {motoboys.length} | Entregas: {entregas.length}</div>
+      </div>
+
+      <h3 style={{background:'#000', color:'#FFD700', padding:8, borderRadius:6, marginTop:15}}>🏪 LOJISTAS - {t.saldo} (você adiciona/remove)</h3>
+      {lojistas.length===0?<p style={{fontSize:12}}>Nenhum lojista cadastrado ainda</p>:lojistas.map(l=><div key={l.id} style={{border:'1px solid #ddd', padding:10, display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6, borderRadius:8}}><div><b>{l.nome||l.email||"Lojista"}</b><br/>Saldo: <b style={{color:'green'}}>R$ {(l.saldo||0).toFixed(2)}</b></div><div style={{display:'flex', gap:4}}><button onClick={()=>alterarSaldo('lojistas',l.id,10)} style={{background:'green', color:'#fff', padding:'6px 10px', borderRadius:6, border:0}}>+10</button><button onClick={()=>alterarSaldo('lojistas',l.id,50)} style={{background:'green', color:'#fff', padding:'6px 10px', borderRadius:6, border:0}}>+50</button><button onClick={()=>alterarSaldo('lojistas',l.id,-10)} style={{background:'red', color:'#fff', padding:'6px 10px', borderRadius:6, border:0}}>-10</button></div></div>)}
+
+      <h3 style={{background:'#FFD700', padding:8, borderRadius:6, marginTop:15}}>🏍️ MOTOBOYS - {t.saldo} (você adiciona/remove)</h3>
+      {motoboys.length===0?<p style={{fontSize:12}}>Nenhum motoboy cadastrado ainda</p>:motoboys.map(m=><div key={m.id} style={{border:'1px solid #ddd', padding:10, display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6, borderRadius:8}}><div><b>{m.nome||m.email||"Motoboy"}</b><br/>A receber: <b style={{color:'blue'}}>R$ {(m.saldo||0).toFixed(2)}</b></div><div style={{display:'flex', gap:4}}><button onClick={()=>alterarSaldo('motoboys',m.id,10)} style={{background:'green', color:'#fff', padding:'6px 10px', borderRadius:6, border:0}}>+10</button><button onClick={()=>alterarSaldo('motoboys',m.id,-10)} style={{background:'red', color:'#fff', padding:'6px 10px', borderRadius:6, border:0}}>-10 PAGO</button><button onClick={()=>alterarSaldo('motoboys',m.id,-(m.saldo||0))} style={{background:'#000', color:'#FFD700', padding:'6px 10px', borderRadius:6, border:0}}>ZERAR</button></div></div>)}
+
+      <h3 style={{marginTop:15}}>📦 Últimas Entregas</h3>
+      {entregas.slice(-10).reverse().map((e,i)=><div key={i} style={{fontSize:12, borderBottom:'1px solid #eee', padding:6}}>{e.endereco} - {e.tipo} - R$ {e.pagaLojista} - Seu 80%: R$ {e.admin}</div>)}
+    </div>
+  );
 }
-async function gerarCodigoMotoboy(){
- const ref=db.collection("config").doc("contadorMoto");
- const doc=await ref.get();
- let u=doc.exists?doc.data().ultimoMoto||0:0;
- u++;
- await ref.set({ultimoMoto:u},{merge:true});
- return "MOTO-"+String(u).padStart(4,'0');
-}
-
-auth.onAuthStateChanged(async u=>{
- if(!u){ authDiv.style.display="block"; appDiv.style.display="none"; return; }
- usuarioAtual=u;
- authDiv.style.display="none"; appDiv.style.display="block";
- painelLojista.style.display="none"; painelMotoboy.style.display="none"; painelAdmin.style.display="none";
- const p=await db.collection("profiles").doc(u.uid).get();
- if(!p.exists){ infoUser.textContent="Sem perfil no Firestore"; return; }
- perfilAtual=p.data();
- if(u.email.toLowerCase()=="super@macae.com" && perfilAtual.tipo!="admin"){
-   await db.collection("profiles").doc(u.uid).update({tipo:"admin"});
-   perfilAtual.tipo="admin";
- }
- // AUTO NUMERA MOTOBOY SE NÃO TEM CÓDIGO
- if(perfilAtual.tipo=="motoboy" &&!perfilAtual.codigoMoto){
-   const novo=await gerarCodigoMotoboy();
-   await db.collection("profiles").doc(u.uid).update({codigoMoto:novo});
-   perfilAtual.codigoMoto=novo;
- }
- infoUser.textContent=perfilAtual.nome||u.email;
- tipoTxt.textContent=perfilAtual.tipo.toUpperCase();
- codigoTxt.textContent=perfilAtual.codigoMoto||"";
- const w=await db.collection("wallets").doc(u.uid).get();
- saldoTxt.textContent="R$"+(w.exists?Number(w.data().saldo||0):0).toFixed(2);
-
- if(perfilAtual.tipo=="lojista"){
-   painelLojista.style.display="block";
-   if(!mapL){ mapL=L.map('mapLojista').setView([-22.37,-41.78],12); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapL); }
-   escutarLojista();
- }
- else if(perfilAtual.tipo=="motoboy"){
-   painelMotoboy.style.display="block";
-   meuCodigo.textContent=perfilAtual.codigoMoto;
-   statusMoto.textContent="Status: "+perfilAtual.docStatus+" | "+(perfilAtual.online?"🟢 ONLINE":"🔴 OFFLINE");
-   if(!mapM){ mapM=L.map('mapMoto').setView([-22.37,-41.78],12); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapM); }
-   escutarMoto();
- }
- else if(perfilAtual.tipo=="admin"||perfilAtual.tipo=="franqueado"){
-   painelAdmin.style.display="block";
-   emailTxt.textContent=u.email; adminTipo.textContent=perfilAtual.tipo;
-   if(!mapA){ mapA=L.map('mapAdmin').setView([-22.37,-41.78],12); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapA); }
-   carregarAdmin();
- }
-});
-
-async function criarPedido(){
- if(!clienteNome.value) return toastM("Digite nome cliente");
- const codigo=await gerarCodigoPedido();
- const alvo=document.getElementById("codigoMotoAlvo").value.trim().toUpperCase()||null;
- await db.collection("orders").add({
-   codigo:codigo,
-   clienteNome:clienteNome.value,
-   endereco:clienteEndereco.value,
-   valor:Number(valorProduto.value)||10,
-   lojistaId:usuarioAtual.uid,
-   lojistaNome:perfilAtual.nome,
-   codigoMotoAlvo:alvo,
-   status:"pendente",
-   km:null, minutos:null,
-   motoboyId:null, motoboyCodigo:null, motoboyNome:null,
-   criadoEm:firebase.firestore.FieldValue.serverTimestamp()
- });
- const textoW=`🏍️ *ANJOS EM DUAS RODAS*%0A%0APedido *#${codigo}* criado!%0ACliente: ${clienteNome.value}%0AEndereço: ${clienteEndereco.value}%0A%0A🔍 Rastreio: *${codigo}*%0AAcesse: cae-entregas.vercel.app e digite ${codigo}`;
- ultimoCodigo.innerHTML=`
-   ✅ Pedido <b style="color:#ff7a00">#${codigo}</b> criado! ${alvo?`Chamando <b>${alvo}</b>`:'<b>DISPARADO PARA GERAL</b>'}<br>
-   <button class="btnW" style="margin-top:8px" onclick="window.open('https://wa.me/?text=${textoW}','_blank')">📱 ENVIAR #${codigo} VIA WHATSAPP PRO CLIENTE</button>
-   <button class="btnG" style="margin-top:6px" onclick="navigator.clipboard.writeText('${codigo}');toastM('Copiado #${codigo}')">📋 COPIAR CÓDIGO ${codigo}</button>`;
- clienteNome.value=""; clienteEndereco.value=""; valorProduto.value=""; document.getElementById("codigoMotoAlvo").value="";
- toastM(`#${codigo} ${alvo?"só para "+alvo:"para geral"}!`);
-}
-
-function escutarLojista(){
- db.collection("orders").where("lojistaId","==",usuarioAtual.uid).orderBy("criadoEm","desc").limit(20).onSnapshot(async snap=>{
-   let h="";
-   for(const doc of snap.docs){
-     const o=doc.data();
-     let fotoHtml="";
-     if(o.motoboyId){
-       try{
-         const pm=await db.collection("profiles").doc(o.motoboyId).get();
-         if(pm.exists){
-           const f=pm.data().fotoUrl||pm.data().foto||"";
-           if(f) fotoHtml=`<img src="${f}" class="foto">`;
-           else fotoHtml=`<div class="foto" style="display:flex;align-items:center;justify-content:center;background:#222">🏍️</div>`;
-         }
-       }catch(e){}
-     }
-     h+=`<div class="card" style="border-left:5px solid ${o.status=="aceito"?"#00ff88":"#ff7a00"}">
-       <div style="display:flex;justify-content:space-between"><b style="color:#ff7a00">#${o.codigo}</b><span style="background:${o.status=="aceito"?"#00ff88":"#ff7a00"}20;color:${o.status=="aceito"?"#00ff88":"#ff7a00"};padding:4px 8px;border-radius:20px;font-size:10px;font-weight:900">${o.status.toUpperCase()}</span></div>
-       Cliente: ${o.clienteNome}<br>
-       ${o.codigoMotoAlvo?`Chamado: <b>${o.codigoMotoAlvo}</b> ${!o.motoboyCodigo?"(só ele vê)":""}<br>`:`<span style="font-size:11px;color:#00ff88">📢 DISPARADO PARA GERAL</span><br>`}
-       ${o.motoboyCodigo?`<div style="display:flex;gap:10px;align-items:center;background:#00ff8815;border:1px solid #00ff88;border-radius:12px;padding:8px;margin-top:6px">${fotoHtml}<div><div style="font-weight:900;color:#00ff88">${o.motoboyCodigo} - ${o.motoboyNome}</div><div style="font-size:12px">📏 ${o.km}km | ⏱️ ${o.minutos}min</div><div style="font-size:10px;color:#aaa">Aceitou seu pedido</div></div></div>`:`<div style="margin-top:6px;color:#ff7a00">⏳ Aguardando motoboy aceitar...</div>`}
-       <div style="font-size:10px;color:#777;margin-top:4px">Rastreio cliente: ${o.codigo} | R$${o.valor}</div>
-     </div>`;
-   }
-   listaLojista.innerHTML=h||"Nenhum pedido ainda";
- });
-}
-
-function escutarMoto(){
- db.collection("orders").where("status","==","pendente").onSnapshot(snap=>{
-   let h="";
-   snap.forEach(doc=>{
-     const o=doc.data();
-     const praMim=!o.codigoMotoAlvo || o.codigoMotoAlvo==perfilAtual.codigoMoto;
-     if(!praMim) return;
-     h+=`<div class="card" style="${o.codigoMotoAlvo? 'border:2px solid #00ff88;background:#00ff8810':''}">
-       <b style="color:#ff7a00">#${o.codigo}</b> - ${o.clienteNome}<br>
-       📍 ${o.endereco}<br>
-       🏪 Loja: ${o.lojistaNome}<br>
-       ${o.codigoMotoAlvo?`<span style="background:#00ff88;color:#000;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:900">🔥 CHAMADA DIRETA PRA VOCÊ ${o.codigoMotoAlvo}</span><br>`: `<span style="font-size:11px;color:#aaa">📢 Chamada GERAL</span><br>`}
-       <button class="btnO" style="margin-top:6px" onclick="aceitar('${doc.id}')">✅ ACEITAR #${o.codigo}</button>
-     </div>`;
-   });
-   listaMoto.innerHTML=h||"Nenhum pedido pra você agora. Se lojista não digitar código, aparece aqui pra todos!";
- });
- db.collection("orders").where("motoboyId","==",usuarioAtual.uid).orderBy("criadoEm","desc").limit(20).onSnapshot(snap=>{
-   let h=""; snap.forEach(doc=>{ const o=doc.data(); h+=`<div class="card" style="padding:8px;font-size:12px"><b>#${o.codigo}</b> ${o.clienteNome} - ${o.status}<br>📏 ${o.km}km ⏱️ ${o.minutos}min</div>`; }); listaMinhasCorridas.innerHTML=h||"Nenhuma ainda";
- });
-}
-
-async function aceitar(id){
- const km=(Math.random()*4+1.2).toFixed(1);
- const min=Math.ceil(km*4+3);
- await db.collection("orders").doc(id).update({status:"aceito",motoboyId:usuarioAtual.uid,motoboyCodigo:perfilAtual.codigoMoto,motoboyNome:perfilAtual.nome,km:km,minutos:min,aceitoEm:firebase.firestore.FieldValue.serverTimestamp()});
- toastM(`Aceito! ${km}km / ${min}min - Loja já vê sua foto!`);
-}
-async function toggleOnline(){
- const novo=!perfilAtual.online;
- await db.collection("profiles").doc(usuarioAtual.uid).update({online:novo});
- perfilAtual.online=novo;
- statusMoto.textContent="Status: "+perfilAtual.docStatus+" | "+(novo?"🟢 ONLINE":"🔴 OFFLINE");
- toastM(novo?"🟢 ONLINE":"🔴 OFFLINE");
-}
-async function carregarAdmin(){
- const pend=await db.collection("profiles").where("docStatus","==","pendente").get();
- let h=""; pend.forEach(d=>{ const u=d.data(); h+=`<div class="card"><b>${u.nome}</b> - ${u.tipo}<br>${u.codigoMoto||"Sem código - vai gerar MOTO-0001 ao aprovar"}<br><button class="btnO" onclick="aprovarMoto('${d.id}')">✅ APROVAR E GERAR CÓDIGO</button></div>`; });
- adminUsuarios.innerHTML=h||"Nenhum pendente";
- const all=await db.collection("profiles").get();
- let m="", l="";
- all.forEach(doc=>{ const u=doc.data(); if(u.tipo=="motoboy") m+=`<div class="card" style="padding:8px;font-size:11px;display:flex;gap:8px;align-items:center">${u.fotoUrl?`<img src="${u.fotoUrl}" class="foto" style="width:32px;height:32px">`:"🏍️"} <div><b>${u.codigoMoto||"SEM CÓDIGO"}</b> - ${u.nome}<br>${u.online?"🟢 Online":"🔴 Offline"}</div></div>`; if(u.tipo=="lojista") l+=`<div class="card" style="padding:6px;font-size:11px">🏪 ${u.nome}</div>`; });
- listaTodosMotoboys.innerHTML=m; listaTodasLojas.innerHTML=l;
- const ped=await db.collection("orders").orderBy("criadoEm","desc").limit(30).get();
- let ph=""; ped.forEach(d=>{ const o=d.data(); ph+=`<div class="card" style="padding:6px;font-size:11px">#${o.codigo} - ${o.status} | ${o.codigoMotoAlvo||"GERAL"} -> ${o.motoboyCodigo||"?"} | ${o.km||"?"}km</div>`; });
- adminPedidos.innerHTML=ph;
-}
-async function aprovarMoto(id){
- const p=await db.collection("profiles").doc(id).get();
- let cod=p.data().codigoMoto;
- if(!cod){ cod=await gerarCodigoMotoboy(); }
- await db.collection("profiles").doc(id).update({docStatus:"aprovado",codigoMoto:cod});
- alert(`Aprovado! Código: ${cod}`);
- carregarAdmin();
-}
-async function rastrearCliente(){
- const cod=document.getElementById("codigoRastreio").value.trim().padStart(4,'0');
- if(!cod) return;
- const q=await db.collection("orders").where("codigo","==",cod).limit(1).get();
- if(q.empty){ resultRastreio.innerHTML="<span style='color:red'>Código #"+cod+" não encontrado</span>"; return; }
- const o=q.docs[0].data();
- resultRastreio.innerHTML=`<div class="cardW"><b>#${o.codigo} - ${o.status.toUpperCase()}</b><br>Cliente: ${o.clienteNome}<br>Loja: ${o.lojistaNome}<br>${o.motoboyNome?`Motoboy: <b>${o.motoboyCodigo} - ${o.motoboyNome}</b><br>📏 ${o.km}km ⏱️ ${o.minutos}min`:"⏳ Aguardando motoboy..."}</div>`;
-}
-</script>
-</body>
-</html>
