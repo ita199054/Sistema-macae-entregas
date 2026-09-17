@@ -4,394 +4,133 @@ service cloud.firestore {
 
   match /databases/{database}/documents {
 
-
-    /* =====================================================
-       FUNÇÃO: USUÁRIO LOGADO
-       ===================================================== */
-
-    function logged() {
-
+    function logado() {
       return request.auth != null;
-
     }
 
-
-    /* =====================================================
-       FUNÇÃO: PERFIL DO USUÁRIO ATUAL
-       ===================================================== */
-
-    function myProfile() {
-
-      return get(
-        /databases/$(database)/documents/profiles/$(request.auth.uid)
-      ).data;
-
+    function admin() {
+      return logado()
+        && get(
+          /databases/$(database)/documents/profiles/$(request.auth.uid)
+        ).data.tipo == "admin";
     }
 
+    match /profiles/{uid} {
 
-    /* =====================================================
-       FUNÇÃO: ADMIN
-       ===================================================== */
-
-    function isAdmin() {
-
-      return logged()
-        && myProfile().tipo == "ADMIN";
-
-    }
-
-
-    /* =====================================================
-       PROFILES
-       ===================================================== */
-
-    match /profiles/{userId} {
-
-
-      /*
-       Usuário pode visualizar o próprio perfil.
-       ADMIN pode visualizar todos.
-      */
-
-      allow read: if logged()
+      allow read:
+        if logado()
         && (
-          userId == request.auth.uid
-          || isAdmin()
+          request.auth.uid == uid
+          || admin()
         );
 
+      allow create:
+        if logado()
+        && request.auth.uid == uid
+        && request.resource.data.tipo != "admin";
 
-      /*
-       Cadastro inicial.
-       O usuário só pode criar seu próprio perfil.
-
-       ADMIN não pode ser criado pelo cadastro público.
-      */
-
-      allow create: if logged()
-        && userId == request.auth.uid
-        && request.resource.data.id == request.auth.uid
-        && request.resource.data.tipo in [
-          "LOJISTA",
-          "MOTOBOY",
-          "FRANQUEADO"
-        ];
-
-
-      /*
-       Usuário normal não pode transformar a própria conta
-       em ADMIN.
-
-       ADMIN pode alterar perfis.
-      */
-
-      allow update: if isAdmin()
+      allow update:
+        if admin()
         || (
-          logged()
-          && userId == request.auth.uid
-          && request.resource.data.tipo ==
-             resource.data.tipo
+          logado()
+          && request.auth.uid == uid
         );
 
-
-      allow delete: if isAdmin();
-
+      allow delete:
+        if admin();
     }
 
+    match /wallets/{uid} {
 
-    /* =====================================================
-       WALLETS
-       ===================================================== */
-
-    match /wallets/{userId} {
-
-
-      /*
-       Usuário pode apenas visualizar a própria wallet.
-       ADMIN pode visualizar todas.
-      */
-
-      allow read: if logged()
+      allow read:
+        if logado()
         && (
-          userId == request.auth.uid
-          || isAdmin()
+          request.auth.uid == uid
+          || admin()
         );
 
+      allow create:
+        if logado()
+        && request.auth.uid == uid
+        && request.resource.data.saldo == 0;
 
-      /*
-       A criação da wallet é permitida apenas no cadastro
-       do próprio usuário e deve começar com saldo zero.
+      allow update:
+        if admin()
+        || (
+          logado()
+          && request.auth.uid == uid
+          && request.resource.data.saldo ==
+             resource.data.saldo - 8
+        );
 
-       Isso impede que alguém crie R$100, R$1.000 etc.
-      */
-
-      allow create: if logged()
-        && userId == request.auth.uid
-        && request.resource.data.userId == request.auth.uid
-        && request.resource.data.saldo == 0
-        && request.resource.data.tipo in [
-          "LOJISTA",
-          "MOTOBOY",
-          "FRANQUEADO"
-        ];
-
-
-      /*
-       SOMENTE ADMIN pode alterar saldo.
-      */
-
-      allow update: if isAdmin();
-
-
-      /*
-       Wallet não deve ser apagada pelo usuário.
-      */
-
-      allow delete: if isAdmin();
-
+      allow delete:
+        if admin();
     }
 
+    match /orders/{id} {
 
-    /* =====================================================
-       ORDERS
-       ===================================================== */
-
-    match /orders/{orderId} {
-
-
-      /*
-       Lojista, motoboy e ADMIN podem visualizar pedidos
-       compatíveis com sua função.
-      */
-
-      allow read: if logged()
-        && (
-          isAdmin()
-
-          ||
-
-          (
-            myProfile().tipo == "LOJISTA"
-            && resource.data.lojistaId ==
-               request.auth.uid
-          )
-
-          ||
-
-          (
-            myProfile().tipo == "MOTOBOY"
-            && (
-              resource.data.status == "pendente"
-              || resource.data.motoboyId ==
-                 request.auth.uid
-            )
-          )
-        );
-
-
-      /*
-       Pedido novo:
-
-       somente LOJISTA;
-
-       somente para o próprio lojista;
-
-       começa como pendente;
-
-       motoboy ainda é null;
-
-       taxa financeira não é alterada diretamente aqui.
-      */
-
-      allow create: if logged()
-        && myProfile().tipo == "LOJISTA"
+      allow create:
+        if logado()
         && request.resource.data.lojistaId ==
-           request.auth.uid
-        && request.resource.data.status ==
-           "pendente"
-        && request.resource.data.motoboyId == null
-        && request.resource.data.codigo4Digitos.matches(
-             "^[0-9]{4}$"
-           );
+           request.auth.uid;
 
+      allow read:
+        if logado()
+        && (
+          admin()
+          || resource.data.lojistaId == request.auth.uid
+          || resource.data.motoboyId == request.auth.uid
+        );
 
-      /*
-       Atualizações:
-
-       ADMIN pode fazer qualquer alteração.
-
-       MOTOBOY pode aceitar pedido pendente.
-
-       MOTOBOY pode finalizar somente seu próprio pedido
-       e somente usando código correto.
-      */
-
-      allow update: if isAdmin()
-
-        ||
-
-        (
-          logged()
-          && myProfile().tipo == "MOTOBOY"
-
+      allow update:
+        if admin()
+        || (
+          logado()
           && (
-
-            /*
-             ACEITAR
-            */
-
-            (
-              resource.data.status == "pendente"
-
-              && request.resource.data.status ==
-                 "em_rota"
-
-              && request.resource.data.motoboyId ==
-                 request.auth.uid
-            )
-
-            ||
-
-            /*
-             FINALIZAR
-            */
-
-            (
-              resource.data.status == "em_rota"
-
-              && resource.data.motoboyId ==
-                 request.auth.uid
-
-              && request.resource.data.status ==
-                 "finalizado"
-
-              && request.resource.data.motoboyId ==
-                 request.auth.uid
-
-              && request.resource.data.codigo4Digitos ==
-                 resource.data.codigo4Digitos
-            )
-
+            resource.data.lojistaId == request.auth.uid
+            || resource.data.motoboyId == request.auth.uid
           )
         );
 
-
-      /*
-       Exclusão somente ADMIN.
-      */
-
-      allow delete: if isAdmin();
-
+      allow delete:
+        if admin();
     }
 
+    match /transactions/{id} {
 
-    /* =====================================================
-       TRANSACTIONS
-       ===================================================== */
-
-    match /transactions/{transactionId} {
-
-
-      /*
-       Usuário visualiza somente suas transações.
-       ADMIN visualiza tudo.
-      */
-
-      allow read: if logged()
-        && (
-          resource.data.userId ==
-          request.auth.uid
-          || isAdmin()
+      allow create:
+        if admin()
+        || (
+          logado()
+          && request.resource.data.uid ==
+             request.auth.uid
+          && request.resource.data.tipo ==
+             "recarga_50"
+          && request.resource.data.valor == 50
+          && request.resource.data.status ==
+             "pendente"
+        )
+        || (
+          logado()
+          && request.resource.data.uid ==
+             request.auth.uid
+          && request.resource.data.tipo ==
+             "taxa_pedido"
+          && request.resource.data.valor == -8
         );
 
-
-      /*
-       LOJISTA pode criar SOMENTE solicitação de recarga
-       de exatamente R$50.
-
-       Não pode criar pagamento de motoboy,
-       ajuste de saldo ou crédito falso.
-      */
-
-      allow create: if logged()
-
+      allow read:
+        if logado()
         && (
-
-          (
-            myProfile().tipo == "LOJISTA"
-
-            && request.resource.data.userId ==
-               request.auth.uid
-
-            && request.resource.data.tipo ==
-               "recarga_50"
-
-            && request.resource.data.valor == 50
-
-            && request.resource.data.status ==
-               "pendente"
-          )
-
-          ||
-
-          /*
-           ADMIN pode registrar pagamento ao motoboy.
-          */
-
-          (
-            isAdmin()
-
-            && request.resource.data.tipo ==
-               "pagamento_motoboy"
-
-            && request.resource.data.valor > 0
-
-            && request.resource.data.status ==
-               "aprovada"
-          )
-
-          ||
-
-          /*
-           O próprio lojista pode registrar a taxa do pedido
-           apenas quando a operação financeira do pedido
-           também estiver protegida pelo fluxo do aplicativo.
-
-           Para maior segurança em produção, recomenda-se
-           mover essa operação para Cloud Functions.
-          */
-
-          (
-            myProfile().tipo == "LOJISTA"
-
-            && request.resource.data.userId ==
-               request.auth.uid
-
-            && request.resource.data.tipo ==
-               "taxa_pedido"
-
-            && request.resource.data.valor == -8
-
-            && request.resource.data.status ==
-               "aprovada"
-          )
-
+          admin()
+          || resource.data.uid == request.auth.uid
         );
 
+      allow update:
+        if admin();
 
-      /*
-       Usuário comum não pode alterar transações.
-
-       ADMIN pode alterar.
-      */
-
-      allow update: if isAdmin();
-
-
-      allow delete: if isAdmin();
-
+      allow delete:
+        if admin();
     }
-
-
   }
-
 }
