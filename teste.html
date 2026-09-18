@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html><body style="background:black;color:white;padding:20px;font-family:Arial">
+<h1>TESTE DE LOGIN - ANJOS</h1>
+<input id="email" placeholder="email" style="width:100%;padding:12px">
+<input id="senha" type="password" placeholder="senha" style="width:100%;padding:12px">
+<button onclick="testar()" style="width:100%;padding:15px;background:yellow;font-weight:900">TESTAR LOGIN</button>
+<div id="log" style="background:#222;padding:15px;margin-top:15px;white-space:pre-wrap"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
+  authDomain: "anjos-flash.firebaseapp.com",
+  projectId: "anjos-flash",
+  storageBucket: "anjos-flash.firebasestorage.app",
+  messagingSenderId: "725133182752",
+  appId: "1:725133182752:web:5f9a98fa97269dcdcab945",
+  measurementId: "G-9CSJXXNR0C"
+};
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();
+const db=firebase.firestore();
+
+function log(t){document.getElementById('log').textContent+=t+"\n"; console.log(t);}
+
+log("Firebase carregado: "+firebase.apps.length);
+log("Tentando ver auth...");
+
+async function testar(){
+  const email=document.getElementById('email').value.trim();
+  const senha=document.getElementById('senha').value;
+  log("Clicou testar: "+email);
+  try{
+    log("Chamando signInWithEmailAndPassword...");
+    const cred=await auth.signInWithEmailAndPassword(email,senha);
+    log("✅ SUCESSO AUTH! UID: "+cred.user.uid+" Email: "+cred.user.email);
+    const snap=await db.collection("profiles").doc(cred.user.uid).get();
+    if(!snap.exists){
+      log("❌ ERRO: Logou no Auth mas NÃO tem profiles/"+cred.user.uid+" no Firestore");
+      log("Você precisa criar o perfil manualmente no Firestore ou fazer cadastro");
+    } else {
+      log("✅ PERFIL ENCONTRADO: "+JSON.stringify(snap.data()));
+    }
+  }catch(e){
+    log("❌ ERRO AUTH: code="+e.code+" message="+e.message);
+    log("Se for auth/invalid-credential = e-mail ou senha errados");
+    log("Se for auth/operation-not-allowed = ative Email/Senha no Firebase Console > Authentication > Sign-in method");
+    log("Se for auth/network-request-failed = sem internet ou AdBlock bloqueando");
+  }
+}
+
+auth.onAuthStateChanged(u=>{
+  if(u) log("onAuthStateChanged LOGADO: "+u.email);
+  else log("onAuthStateChanged DESLOGADO");
+});
+</script>
+</body></html>
