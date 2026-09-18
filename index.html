@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ANJOS EM DUAS RODAS - FINAL 100% CORRIGIDO</title>
+<title>ANJOS EM DUAS RODAS - FINAL CORRIGIDO</title>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -17,7 +17,7 @@ h2,h3{color:#ffd400;margin-top:0}
 input,select,textarea{width:100%;padding:12px;margin:6px 0 10px;border-radius:8px;border:1px solid #444;background:#0e0e0e;color:#fff}
 button{border:0;border-radius:8px;padding:12px 16px;margin:4px;background:#ffd400;color:#000;font-weight:800;cursor:pointer}
 .btn-danger{background:#d90000;color:#fff}.btn-green{background:#00a63c;color:#fff}
-.hidden{display:none!important}.msg{padding:10px;border-radius:8px;background:#222;margin:8px 0;white-space:pre-wrap}
+.hidden{display:none!important}.msg{padding:12px;border-radius:8px;background:#222;margin:8px 0;white-space:pre-wrap;display:block;border:1px solid #444}
 .order{border:1px solid #444;border-radius:10px;padding:13px;margin:9px 0;background:#101010}
 .badge{padding:5px 8px;border-radius:15px;background:#333;font-size:11px;font-weight:bold}
 .online{background:#008f38}.offline{background:#555}.small{font-size:12px;color:#aaa}
@@ -33,7 +33,7 @@ button{border:0;border-radius:8px;padding:12px 16px;margin:4px;background:#ffd40
 <input id="loginEmail" placeholder="E-mail">
 <input id="loginSenha" type="password" placeholder="Senha">
 <button id="btnLogin" onclick="entrar()">ENTRAR</button>
-<div id="mensagemLogin" class="msg"></div>
+<div id="mensagemLogin" class="msg">Aguardando login... Se não logar, vai aparecer o erro aqui em vermelho</div>
 <hr>
 <h3>Primeiro acesso?</h3>
 <input id="cadNome" placeholder="Nome">
@@ -59,7 +59,6 @@ button{border:0;border-radius:8px;padding:12px 16px;margin:4px;background:#ffd40
 <div id="seletorLojaBox" class="hidden">
 <select id="pedidoLojaSelecionada"></select>
 <input id="novaLojaNome" placeholder="Nome nova loja"><input id="novaLojaEndereco" placeholder="Endereço"><button onclick="cadastrarNovaLoja()" class="btn-green">+ ADD LOJA</button>
-<div id="listaLojasSuper" class="small"></div><div id="sugestaoMotoboys" class="small"></div>
 </div>
 <div class="tabs">
 <button onclick="mostrarAbaLojista('pedidos')">📦 PEDIDOS</button>
@@ -99,31 +98,30 @@ button{border:0;border-radius:8px;padding:12px 16px;margin:4px;background:#ffd40
 <div class="card">
 <h2>ADMIN - CONTROLE TOTAL</h2>
 <div class="tabs">
-<button onclick="mostrarAdminAba('taxas')">TAXAS KM BASE</button>
+<button onclick="mostrarAdminAba('taxas')">TAXAS</button>
 <button onclick="mostrarAdminAba('super')">SUPER %</button>
 <button onclick="mostrarAdminAba('retorno')">RETORNO %</button>
 <button onclick="mostrarAdminAba('aprovacoes')">APROVAÇÕES #0001</button>
-<button onclick="mostrarAdminAba('saldo')">SALDO LOJISTA / ZERAR MOTOBOY</button>
+<button onclick="mostrarAdminAba('saldo')">SALDO / ZERAR</button>
 <button onclick="mostrarAdminAba('pedidos')">PEDIDOS</button>
 </div>
-<div id="adminAbaTaxas"><input id="taxaKmBase" type="number" step="0.1" placeholder="KM base"><input id="taxaValorBase" type="number" placeholder="Valor base R$"><input id="taxaAdicionalKm" type="number" placeholder="Adicional KM R$"><input id="taxaApp" type="number" placeholder="Taxa App R$"><button onclick="salvarTaxas()">SALVAR TAXAS</button><div id="msgTaxas" class="msg"></div></div>
+<div id="adminAbaTaxas"><input id="taxaKmBase" type="number" step="0.1" placeholder="KM base"><input id="taxaValorBase" type="number" placeholder="Valor base R$"><input id="taxaAdicionalKm" type="number" placeholder="Adicional KM"><input id="taxaApp" type="number" placeholder="Taxa App"><button onclick="salvarTaxas()">SALVAR TAXAS</button><div id="msgTaxas" class="msg"></div></div>
 <div id="adminAbaSuper" class="hidden"><input id="superPct" type="number" placeholder="SUPER % admin"><button onclick="salvarSuper()">SALVAR SUPER</button></div>
 <div id="adminAbaRetorno" class="hidden"><input id="retornoPct" type="number" placeholder="RETORNO % motoboy"><button onclick="salvarRetorno()">SALVAR RETORNO</button></div>
 <div id="adminAbaAprovacoes" class="hidden"><div id="adminAprovacoes"></div></div>
 <div id="adminAbaSaldo" class="hidden">
-<h3>💰 Adicionar saldo pro lojista (recarga)</h3>
+<h3>💰 Adicionar saldo lojista</h3>
 <input id="adminSaldoLojistaEmail" placeholder="E-mail do lojista">
-<input id="adminSaldoLojistaValor" type="number" placeholder="Valor R$ ex: 50">
-<button class="btn-green" onclick="adicionarSaldoLojista()">ADICIONAR SALDO LOJISTA</button>
+<input id="adminSaldoLojistaValor" type="number" placeholder="Valor R$">
+<button class="btn-green" onclick="adicionarSaldoLojista()">ADICIONAR SALDO</button>
 <div id="msgSaldoLojista" class="msg"></div>
 <hr>
-<h3>🗑️ Zerar saldo motoboy (quando pagar no PIX)</h3>
-<input id="adminZeraMotoboyEmail" placeholder="E-mail do motoboy">
-<button class="btn-danger" onclick="zerarSaldoMotoboy()">ZERAR SALDO MOTOBOY</button>
+<h3>🗑️ Zerar saldo motoboy</h3>
+<input id="adminZeraMotoboyEmail" placeholder="E-mail motoboy">
+<button class="btn-danger" onclick="zerarSaldoMotoboy()">ZERAR SALDO</button>
 <div id="msgZeraMotoboy" class="msg"></div>
 <hr>
-<h3>Todos os saldos</h3>
-<button onclick="carregarListaSaldos()">Atualizar lista</button>
+<button onclick="carregarListaSaldos()">Atualizar lista saldos</button>
 <div id="adminListaSaldos"></div>
 </div>
 <div id="adminAbaPedidos" class="hidden"><div id="adminPedidos"></div></div>
@@ -131,20 +129,74 @@ button{border:0;border-radius:8px;padding:12px 16px;margin:4px;background:#ffd40
 </section>
 
 </section>
-</div><script>
-window.onerror = function(msg, src, line){ document.body.innerHTML += "<div style='background:red;color:white;padding:10px'>ERRO JS: "+msg+" linha "+line+"</div>"; };
-const firebaseConfig={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.appspot.com",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945"};
-firebase.initializeApp(firebaseConfig);
-const auth=firebase.auth(), db=firebase.firestore(), storage=firebase.storage();
-let usuarioAtual=null, perfilAtual=null;
-let taxas={kmBase:3,valorBase:8,valorAdicionalKm:2,taxaApp:2,retornoPct:90,superPct:10};
-function $(id){return document.getElementById(id);}
-function agora(){return firebase.firestore.FieldValue.serverTimestamp();}
-function escapeHtml(t){return String(t||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");}
-function mostrarMsg(id,txt,ok){const el=$(id); if(el){el.textContent=txt; el.style.border="1px solid "+(ok?"green":"red");}}
-$("cadTipo").addEventListener("change",()=>{$("documentosCadastro").classList.toggle("hidden", $("cadTipo").value!=="motoboy");});
-async function uploadArquivo(file,pasta,uid){if(!file) return ""; const ref=storage.ref().child(pasta+"/"+uid+"/"+Date.now()+"_"+file.name); await ref.put(file); return await ref.getDownloadURL();}
-async function carregarTaxas(){try{const s=await db.collection("config_taxas").doc("valores").get(); if(s.exists){taxas={...taxas,...s.data()};} if($("taxaKmBase")){$("taxaKmBase").value=taxas.kmBase; $("taxaValorBase").value=taxas.valorBase; $("taxaAdicionalKm").value=taxas.valorAdicionalKm; $("taxaApp").value=taxas.taxaApp; $("retornoPct").value=taxas.retornoPct; $("superPct").value=taxas.superPct;}}catch(e){async function carregarPedidosLojista(){
+</div><section id="painelMotoboy" class="hidden">
+<div class="card">
+<h2>MOTOBOY <span id="codigoMotoboy">#----</span> <span id="statusMotoboy" class="badge offline">OFFLINE</span></h2>
+<button id="btnOnline" onclick="alternarOnline()">FICAR ONLINE</button>
+<input id="pixMotoboy" placeholder="PIX"><button onclick="salvarPix()">SALVAR PIX</button>
+<div class="tabs">
+<button onclick="mostrarAbaMotoboy('disponiveis')">🟢 DISPONÍVEIS</button>
+<button onclick="mostrarAbaMotoboy('minhas')">📦 MINHAS</button>
+<button onclick="mostrarAbaMotoboy('saldo')">💰 SALDO / EXTRATO</button>
+</div>
+<div id="abaMotoboyDisponiveis"><div id="listaPedidosMotoboy"></div></div>
+<div id="abaMotoboyMinhas" class="hidden"><div id="listaAceitasMotoboy"></div></div>
+<div id="abaMotoboySaldo" class="hidden">
+<h3>💰 Seu Saldo: <span id="saldoMotoboy">R$ 0,00</span></h3>
+<div id="extratoMotoboy"></div>
+</div>
+</div>
+</section>
+
+<section id="painelAdmin" class="hidden">
+<div class="card">
+<h2>ADMIN - CONTROLE TOTAL</h2>
+<div class="tabs">
+<button onclick="mostrarAdminAba('taxas')">TAXAS</button>
+<button onclick="mostrarAdminAba('super')">SUPER %</button>
+<button onclick="mostrarAdminAba('retorno')">RETORNO %</button>
+<button onclick="mostrarAdminAba('aprovacoes')">APROVAÇÕES #0001</button>
+<button onclick="mostrarAdminAba('saldo')">SALDO / ZERAR</button>
+<button onclick="mostrarAdminAba('pedidos')">PEDIDOS</button>
+</div>
+<div id="adminAbaTaxas"><input id="taxaKmBase" type="number" step="0.1" placeholder="KM base"><input id="taxaValorBase" type="number" placeholder="Valor base R$"><input id="taxaAdicionalKm" type="number" placeholder="Adicional KM"><input id="taxaApp" type="number" placeholder="Taxa App"><button onclick="salvarTaxas()">SALVAR TAXAS</button><div id="msgTaxas" class="msg"></div></div>
+<div id="adminAbaSuper" class="hidden"><input id="superPct" type="number" placeholder="SUPER % admin"><button onclick="salvarSuper()">SALVAR SUPER</button></div>
+<div id="adminAbaRetorno" class="hidden"><input id="retornoPct" type="number" placeholder="RETORNO % motoboy"><button onclick="salvarRetorno()">SALVAR RETORNO</button></div>
+<div id="adminAbaAprovacoes" class="hidden"><div id="adminAprovacoes"></div></div>
+<div id="adminAbaSaldo" class="hidden">
+<h3>💰 Adicionar saldo lojista</h3>
+<input id="adminSaldoLojistaEmail" placeholder="E-mail do lojista">
+<input id="adminSaldoLojistaValor" type="number" placeholder="Valor R$">
+<button class="btn-green" onclick="adicionarSaldoLojista()">ADICIONAR SALDO</button>
+<div id="msgSaldoLojista" class="msg"></div>
+<hr>
+<h3>🗑️ Zerar saldo motoboy</h3>
+<input id="adminZeraMotoboyEmail" placeholder="E-mail motoboy">
+<button class="btn-danger" onclick="zerarSaldoMotoboy()">ZERAR SALDO</button>
+<div id="msgZeraMotoboy" class="msg"></div>
+<hr>
+<button onclick="carregarListaSaldos()">Atualizar lista saldos</button>
+<div id="adminListaSaldos"></div>
+</div>
+<div id="adminAbaPedidos" class="hidden"><div id="adminPedidos"></div></div>
+</div>
+</section>
+
+</section>
+</div>async function criarPedido(){
+ const cliente=$("pedidoCliente").value.trim(), tel=$("pedidoTelefone").value.trim(), endereco=$("pedidoEndereco").value.trim(), veiculo=$("pedidoVeiculo").value, motoboyCodigo=$("pedidoMotoboyCodigo").value.trim().toUpperCase(), tipo=$("pedidoTipo").value, obs=$("pedidoObs").value.trim();
+ if(!cliente||!tel||!endereco){mostrarMsg("mensagemPedido","Preencha cliente,tel,endereço",false); return;}
+ try{
+  mostrarMsg("mensagemPedido","Calculando...",true); await carregarTaxas(); const loja=await obterLojaPrincipal(); const origem=loja.lat?{lat:Number(loja.lat),lng:Number(loja.lng)}:await geocodificar(loja.endereco); const destino=await geocodificar(endereco); const km=Number(distKm(origem.lat,origem.lng,destino.lat,destino.lng).toFixed(2)); const tempoMin=estimarTempo(km,veiculo); const valorPagoLojista=await calcularValorEntrega(km); const valorRecebeMotoboy=valorPagoLojista*(Number(taxas.retornoPct||90)/100);
+  const ref=db.collection("pedidos").doc(); const codigo4Digitos=geraRastreio(); const pedidoNumero=String(Date.now()).slice(-4);
+  await ref.set({id:ref.id,pedidoNumero,rastreio:geraRastreio(),codigo4Digitos,lojistaId:usuarioAtual.uid,lojaId:loja.id||null,lojaNome:loja.nome||perfilAtual.nome,lojaEndereco:loja.endereco||"",cliente,telefone:tel,endereco,tipo,veiculo,obs,motoboyCodigo,motoboyId:null,distanciaKm:km,tempoMin,valorPagoLojista,valorRecebeMotoboy,status:"aguardando",criadoEm:agora(),atualizadoEm:agora()});
+  await db.collection("transacoes").doc().set({uid:usuarioAtual.uid,tipo:"pagamento_entrega",pedidoId:ref.id,valor:-valorPagoLojista,criadoEm:agora()});
+  mostrarMsg("mensagemPedido","✅ Pedido #"+pedidoNumero+" R$ "+valorPagoLojista.toFixed(2)+" Código: "+codigo4Digitos,true); carregarPedidosLojista();
+ }catch(e){mostrarMsg("mensagemPedido",e.message,false);}
+}
+async function carregarLojista(){await carregarTaxas(); await carregarLojasLojista(); carregarPedidosLojista(); carregarSaldoLojista();}
+function mostrarAbaLojista(nome){$("abaLojistaPedidos").classList.add("hidden"); $("abaLojistaSaldo").classList.add("hidden"); if(nome==="pedidos") $("abaLojistaPedidos").classList.remove("hidden"); if(nome==="saldo"){ $("abaLojistaSaldo").classList.remove("hidden"); carregarSaldoLojista(); carregarExtratoLojista(); }}
+async function carregarPedidosLojista(){
   const box=$("listaPedidosLojista"); box.innerHTML="Carregando...";
   const snap=await db.collection("pedidos").where("lojistaId","==",usuarioAtual.uid).get();
   const docs=snap.docs.sort((a,b)=>(b.data().criadoEm?.seconds||0)-(a.data().criadoEm?.seconds||0));
@@ -152,29 +204,6 @@ async function carregarTaxas(){try{const s=await db.collection("config_taxas").d
   box.innerHTML="";
   for(const doc of docs){
     const p=doc.data();
-    let htmlMotoboy = "<div style='background:#333;padding:6px;border-radius:6px'>Aguardando motoboy aceitar - "+p.distanciaKm+"km / "+p.tempoMin+"min</div>";
+    let htmlMotoboy="<div style='background:#333;padding:6px'>Aguardando motoboy - "+p.distanciaKm+"km</div>";
     if(p.motoboyId){
-      try{
-        const motSnap=await db.collection("motoboys").doc(p.motoboyId).get();
-        if(motSnap.exists){
-          const m=motSnap.data();
-          htmlMotoboy="<div style='background:#1f1f1f;border:1px solid #ffd400;border-radius:10px;padding:10px;margin-top:8px'>"+
-            "<b style='color:#ffd400'>✅ Motoboy aceitou - Está a "+p.distanciaKm+"km / "+p.tempoMin+"min da loja</b><br>"+
-            "<img src='"+(m.documentos?.selfie||"")+"' style='width:80px;height:80px;border-radius:50%;border:2px solid #ffd400' onerror=\"this.style.display='none'\"><br>"+
-            "<b>"+escapeHtml(m.nome)+" - "+escapeHtml(m.codigo)+"</async function finalizarPedido(id){
-  const input=$("codigo_"+id); const codDigitado=input? input.value.trim():"";
-  if(!codDigitado){ alert("Digite o código secreto de 4 dígitos que o cliente recebeu!"); return; }
-  const ref=db.collection("pedidos").doc(id);
-  try{
-    await db.runTransaction(async tx=>{
-      const snap=await tx.get(ref); if(!snap.exists) throw new Error("Pedido não existe"); const p=snap.data();
-      if(p.status!=="em_rota") throw new Error("Pedido não está em rota");
-      if(p.motoboyId!==usuarioAtual.uid) throw new Error("Não é seu pedido");
-      if(String(p.codigo4Digitos)!==String(codDigitado)) throw new Error("❌ CÓDIGO SECRETO INCORRETO! Peça o código de 4 dígitos para o cliente.");
-      const walletRef=db.collection("wallets").doc(usuarioAtual.uid);
-      const w=await tx.get(walletRef); const saldoAtual=w.exists? Number(w.data().saldo||0):0;
-      tx.set(walletRef,{uid:usuarioAtual.uid,saldo:saldoAtual+Number(p.valorRecebeMotoboy||0),atualizadoEm:agora()},{merge:true});
-      tx.set(db.collection("transacoes").doc(),{uid:usuarioAtual.uid,tipo:"retorno_motoboy",pedidoId:id,valor:p.valorRecebeMotoboy,criadoEm:agora()});
-      tx.update(ref,{status:"finalizado",codigoConfirmado:codDigitado,finalizadoEm:agora(),atualizadoEm:agora()});
-    });
-    alert("✅ Entrega finalizada!
+      try{const m=(await db.collection("motoboys").doc(p.motoboyId).get()).data(); if(m){
