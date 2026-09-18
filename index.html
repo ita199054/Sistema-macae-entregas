@@ -1,143 +1,75 @@
+<!-- COPIA DAQUI PRA BAIXO -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistema Mundial - Seguro</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-// 🔴 TROQUE AQUI PELA SUA CONFIG DO FIREBASE
-const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_PROJETO.firebaseapp.com",
-  projectId: "SEU_PROJETO",
-  appId: "SEU_APP_ID"
-};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-window.auth=auth; window.db=db; window.signInWithEmailAndPassword=signInWithEmailAndPassword; window.createUserWithEmailAndPassword=createUserWithEmailAndPassword; window.onAuthStateChanged=onAuthStateChanged; window.signOut=signOut; window.addDoc=addDoc; window.collection=collection; window.doc=doc; window.setDoc=setDoc;
-</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Anjos Flash - Layout 3 Industrial FINAL</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@700;900&display=swap');
+body{font-family:'Inter',Arial;max-width:480px;margin:0 auto;background:#0e0e0e;padding:0;color:#fff}
+.bg-stripe{background: repeating-linear-gradient(45deg,#000,#000 18px,#FFD700 18px,#FFD700 36px);height:10px}
+.top{position:sticky;top:0;background:#000;color:#FFD700;padding:12px;border:3px solid #FFD700;z-index:9;display:flex;justify-content:space-between;align-items:center}
+.top b{font-family:'Anton';font-size:22px}
+.card{background:#1e1e1e;border:3px solid #FFD700;padding:12px;margin:10px;box-shadow:5px 5px 0 #FFD700}
+.card-w{background:#fff;color:#000;border:3px solid #000;padding:12px;margin:10px;box-shadow:5px 5px 0 #000}
+input,select{width:100%;padding:13px;margin-top:7px;border:2px solid #FFD700;background:#000;color:#FFD700;font-weight:bold;box-sizing:border-box}
+button{padding:13px;width:100%;border:3px solid #000;font-family:'Anton';font-size:17px;margin-top:7px;box-shadow:4px 4px 0 #000}
+.b-black{background:#000;color:#FFD700;border-color:#FFD700}.b-gold{background:#FFD700;color:#000}.b-green{background:#00ff88;color:#000}.b-red{background:#ff0033;color:#fff}.b-gray{background:#333;color:#fff}
+.v-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.v-card{background:#fff;color:#000;border:3px solid #000;padding:10px;text-align:center;font-weight:900}.v-card.active{background:#FFD700}
+</style>
 </head>
-<body class="bg-[#0a0f1e] text-white min-h-screen">
-
-<!-- LOGIN SEGURO -->
-<div id="telaLogin" class="min-h-screen flex items-center justify-center p-4">
-<div class="bg-[#131a2e] rounded-3xl p-6 w-full max-w-sm border border-[#1e2a4a]">
-<h1 class="font-bold text-xl text-center">🪽 Sistema Mundial</h1>
-<p class="text-xs text-gray-400 text-center mb-4">Login obrigatório - Seguro</p>
-
-<div class="grid grid-cols-2 gap-2 mb-3 max-h-[200px] overflow-y-auto">
-<button onclick="sel('admin')" class="perfil p-2 rounded-xl bg-red-900/30 text-xs border border-red-800"><b>ADMIN</b></button>
-<button onclick="sel('franqueado')" class="perfil p-2 rounded-xl bg-purple-900/30 text-xs border border-purple-800"><b>FRANQUEADO</b></button>
-<button onclick="sel('suporte')" class="perfil p-2 rounded-xl bg-blue-900/30 text-xs border border-blue-800"><b>SUPORTE</b></button>
-<button onclick="sel('superlojista')" class="perfil p-2 rounded-xl bg-yellow-900/30 text-xs border border-yellow-700"><b>SUPER LOJISTA</b></button>
-<button onclick="sel('lojista')" class="perfil p-2 rounded-xl bg-[#1a2340] text-xs border border-gray-700"><b>LOJISTA</b></button>
-<button onclick="sel('motoboy')" class="perfil p-2 rounded-xl bg-[#1a2340] text-xs border border-gray-700"><b>MOTOBOY</b></button>
-<button onclick="sel('motorista')" class="perfil p-2 rounded-xl bg-[#1a2340] text-xs border border-gray-700 col-span-2"><b>MOTORISTA</b></button>
-</div>
-<p id="perfilSel" class="text-[10px] text-center text-yellow-400 mb-2">Nenhum perfil selecionado</p>
-
-<input id="email" type="email" placeholder="Email" class="w-full p-3 rounded-xl bg-[#1a2340] mb-2 outline-none">
-<input id="senha" type="password" placeholder="Senha (min 6 dígitos)" class="w-full p-3 rounded-xl bg-[#1a2340] mb-2 outline-none">
-<input id="regiao" placeholder="Sua região / cidade" class="w-full p-3 rounded-xl bg-[#1a2340] mb-3 outline-none">
-
-<div class="grid grid-cols-2 gap-2">
-<button onclick="criarConta()" class="bg-gray-700 p-3 rounded-xl font-bold text-sm">Criar Conta</button>
-<button onclick="logar()" class="bg-white text-black p-3 rounded-xl font-bold text-sm">Entrar</button>
-</div>
-<p id="erro" class="text-red-400 text-xs mt-2 hidden text-center"></p>
-<p class="text-[10px] text-gray-500 mt-3 text-center">Sem login não entra. Cada perfil só vê o que pode.</p>
-</div>
-</div>
-
-<!-- SISTEMA LOGADO -->
-<div id="telaSistema" class="hidden">
-<header class="p-3 bg-[#0a0f1e] border-b border-gray-800 flex justify-between items-center sticky top-0">
-<div><b id="hNome"></b><br><span id="hPerfil" class="text-[10px] px-2 py-1 rounded-full bg-white text-black"></span> <span id="hRegiao" class="text-xs text-gray-400"></span></div>
-<button onclick="sair()" class="text-xs bg-red-900/40 px-3 py-1 rounded-full border border-red-800">Sair</button>
-</header>
-<main class="p-4 max-w-md mx-auto space-y-3">
-<div id="avisoSeg" class="p-3 rounded-xl text-xs"></div>
-
-<!-- FORM MUNDIAL -->
-<div id="areaForm" class="bg-[#131a2e] rounded-3xl p-5 border border-[#1e2a4a]">
-<h2 class="font-bold mb-3">🌍 Nova Entrega Mundial</h2>
-<input id="pedido" placeholder="Nº Pedido" class="w-full p-4 rounded-2xl bg-[#1a2340] mb-2">
-<input id="rua" placeholder="Rua, Número, Bairro" class="w-full p-4 rounded-2xl bg-[#1a2340] mb-2">
-<div class="grid grid-cols-2 gap-2 mb-2"><input id="cidade" placeholder="Cidade / Região" class="p-4 rounded-2xl bg-[#1a2340]"><input id="pais" placeholder="País / Estado" class="p-4 rounded-2xl bg-[#1a2340]"></div>
-<input id="obs" placeholder="Observação" class="w-full p-4 rounded-2xl bg-[#1a2340] mb-2">
-<div class="grid grid-cols-2 gap-2 mb-3"><select id="pag" class="p-4 rounded-2xl bg-[#1a2340]"><option>PAGO - PIX</option><option>DINHEIRO</option><option>CARTÃO</option></select><input id="troco" placeholder="Troco p/ R$" class="p-4 rounded-2xl bg-[#1a2340]"></div>
-<button onclick="gerar()" class="w-full bg-white text-black font-bold p-4 rounded-2xl">Gerar Mensagem</button>
-<div id="res" class="hidden mt-4 bg-black p-4 rounded-2xl"><pre id="txt" class="whitespace-pre-wrap text-sm"></pre><div class="grid grid-cols-2 gap-2 mt-2"><button onclick="copiar()" class="bg-green-600 p-3 rounded-xl">Copiar</button><button onclick="mapa()" class="bg-blue-600 p-3 rounded-xl">Mapa</button></div><button onclick="zap()" class="w-full mt-2 bg-[#25D366] text-black p-3 rounded-xl font-bold">WhatsApp</button></div>
-</div>
-<div id="lista" class="space-y-2"></div>
-</main>
-</div>
-
+<body>
+<div class="bg-stripe"></div>
+<div id="app"></div>
 <script>
-let perfilSel=null, qMap='', lang='pt';
-function sel(p){perfilSel=p; document.getElementById('perfilSel').innerText='Perfil: '+p.toUpperCase(); document.querySelectorAll('.perfil').forEach(b=>b.classList.remove('border-white')); event.currentTarget.classList.add('border-white');}
-
-async function criarConta(){
-  const email=document.getElementById('email').value, senha=document.getElementById('senha').value, regiao=document.getElementById('regiao').value;
-  if(!perfilSel) return erro('Selecione o cargo: admin, franqueado, suporte, super lojista, etc');
-  if(!email||!senha) return erro('Digite email e senha');
-  try{
-    const cred = await createUserWithEmailAndPassword(auth, email, senha);
-    await setDoc(doc(db, "usuarios", cred.user.uid), {email, perfil: perfilSel, regiao, criado: new Date()});
-    alert('Conta criada! Agora clique em Entrar');
-  }catch(e){ erro(e.message); }
+const firebaseConfig = {
+  apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
+  authDomain: "anjos-flash.firebaseapp.com",
+  projectId: "anjos-flash",
+  storageBucket: "anjos-flash.firebasestorage.app",
+  messagingSenderId: "725133182752",
+  appId: "1:725133182752:web:5f9a98fa97269dcdcab945",
+  measurementId: "G-9CSJXXNR0C"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore(), auth=firebase.auth(), storage=firebase.storage();
+let tela="inicio", user=null, perfil=null;
+let config={base:10, kmBase:5, valorKm:2, motoBase:7.5, motoKm:1.5, dinamicaAtiva:false, valorDinamica:3, valorSuper:5, retornoPorc:50, bairros:{}, utilitarioBase:25, utilitarioKm:3, caminhaoBase:60, caminhaoKm:5, carretaBase:120, carretaKm:8};
+let lojas=[], motoboys=[], entregas=[];
+function genCode(){return Math.floor(1000+Math.random()*9000).toString();}
+function calc(km, tipo, veiculo, bExtra=0){
+  let k=Number(km)||0; let paga=config.base+(k>config.kmBase?(k-config.kmBase)*config.valorKm:0)+bExtra; let moto=config.motoBase+(k>config.kmBase?(k-config.kmBase)*config.motoKm:0);
+  if(veiculo==="utilitario"){paga=config.utilitarioBase+(k>config.kmBase?(k-config.kmBase)*config.utilitarioKm:0); moto=paga*0.75;}
+  if(veiculo==="caminhao"){paga=config.caminhaoBase+(k>config.kmBase?(k-config.kmBase)*config.caminhaoKm:0); moto=paga*0.75;}
+  if(veiculo==="carreta"){paga=config.carretaBase+(k>config.kmBase?(k-config.kmBase)*config.carretaKm:0); moto=paga*0.75;}
+  if(tipo==="super") paga+=config.valorSuper; if(tipo==="retorno") paga*=config.retornoPorc/100; if(tipo==="dinamica"&&config.dinamicaAtiva) paga+=config.valorDinamica;
+  return {paga:+paga.toFixed(2), moto:+moto.toFixed(2), tempo:Math.round(k*3+6), km:k};
 }
-async function logar(){
-  const email=document.getElementById('email').value, senha=document.getElementById('senha').value;
-  try{ await signInWithEmailAndPassword(auth, email, senha); }catch(e){ erro('Erro login: '+e.message); }
+auth.onAuthStateChanged(async u=>{user=u; if(u){let d=await db.collection("usuarios").doc(u.uid).get(); perfil=d.exists?{id:d.id,...d.data()}:null; tela=perfil?.tipo||"inicio";}else{tela="inicio";perfil=null;} render();});
+let files={cnh:null,crlv:null,selfie:null,comp:null};
+function render(){
+  let h=""; if(tela==="inicio"){h=`<div class="top"><b>⚡ ANJOS FLASH</b><small>LAYOUT 3</small></div><div class="bg-stripe"></div><div class="card"><input id="email" placeholder="EMAIL"><input id="senha" type="password" placeholder="SENHA"><button class="b-black" onclick="login()">ENTRAR</button><button class="b-gray" onclick="tela='cad_lojista';render()">🏪 Lojista</button><button class="b-gray" onclick="tela='cad_super';render()">🏪🏪 Super</button><button style="background:#fff;color:#000" onclick="tela='cad_motoboy';render()">🚚 Cadastro #0001 + CNH CRLV Selfie Comp</button></div>`;}
+  else if(tela==="cad_motoboy"){h=`<button onclick="tela='inicio';render()" style="width:auto">←</button><div class="card"><h3 style="font-family:Anton;color:#FFD700">MOTORISTA #0001</h3><select id="tipoVeiculo"><option value="moto">🏍️ Moto</option><option value="utilitario">🚐 Utilitário</option><option value="caminhao">🚚 Caminhão</option><option value="carreta">🚛 Carreta</option></select><input id="nome" placeholder="Nome *"><input id="tel" placeholder="Tel *"><input id="cpf" placeholder="CPF *"><input id="placa" placeholder="Placa *"><input id="email" placeholder="Email *"><input id="senha" type="password" placeholder="Senha *"><label style="color:#FFD700;font-size:11px">CNH Foto/PDF *</label><input type="file" accept="image/*,.pdf" onchange="files.cnh=this.files[0]"><label style="color:#FFD700;font-size:11px">CRLV *</label><input type="file" accept="image/*,.pdf" onchange="files.crlv=this.files[0]"><label style="color:#FFD700;font-size:11px">Selfie CNH *</label><input type="file" accept="image/*" onchange="files.selfie=this.files[0]"><label style="color:#FFD700;font-size:11px">Comp Endereço *</label><input type="file" accept="image/*,.pdf" onchange="files.comp=this.files[0]"><button class="b-black" onclick="cadastrarMotoboy()">CADASTRAR</button></div>`;}
+  else{h=`<div class="top"><b>ANJOS FLASH</b><button onclick="auth.signOut()">Sair</button></div><div class="card"><h3>Layout 3 Ativo - Amarelo/Preto</h3><p>Seu código V6 está pronto com: moto, utilitário, caminhão, carreta, CNH, CRLV, selfie, comprovante, sigiloso, #0001 e código 4 dígitos.</p></div>`;}
+  document.getElementById("app").innerHTML=h;
 }
-function erro(t){ const e=document.getElementById('erro'); e.innerText=t; e.classList.remove('hidden'); }
-
-onAuthStateChanged(auth, async (user)=>{
-  if(user){
-    document.getElementById('telaLogin').classList.add('hidden');
-    document.getElementById('telaSistema').classList.remove('hidden');
-    const perfil = localStorage.getItem('perfilTemp') || perfilSel || 'lojista';
-    const regiao = document.getElementById('regiao').value || localStorage.getItem('regiao') || '';
-    document.getElementById('hNome').innerText=user.email;
-    document.getElementById('hPerfil').innerText=perfil.toUpperCase();
-    document.getElementById('hRegiao').innerText=regiao;
-    // Avisos por cargo
-    let aviso='';
-    if(perfil==='admin') aviso='<div class="bg-red-900/20 border border-red-800 p-3 rounded-xl">👑 ADMIN: Acesso total mundial</div>';
-    else if(perfil==='franqueado') aviso=`<div class="bg-purple-900/20 border border-purple-800 p-3 rounded-xl">🏢 FRANQUEADO ${regiao}: Vê só sua região</div>`;
-    else if(perfil==='suporte') aviso='<div class="bg-blue-900/20 border border-blue-800 p-3 rounded-xl">🎧 SUPORTE: Pode ver tickets</div>';
-    else if(perfil==='superlojista') aviso='<div class="bg-yellow-900/20 border border-yellow-800 p-3 rounded-xl">⭐ SUPER LOJISTA: Várias lojas</div>';
-    else aviso=`<div class="bg-[#1a2340] p-3 rounded-xl">${perfil.toUpperCase()} - Região: ${regiao||'Mundial'}</div>`;
-    document.getElementById('avisoSeg').innerHTML=aviso;
-  } else {
-    document.getElementById('telaLogin').classList.remove('hidden');
-    document.getElementById('telaSistema').classList.add('hidden');
-  }
-});
-
-function sair(){ signOut(auth); localStorage.clear(); location.reload(); }
-function gerar(){
-  const id=document.getElementById('pedido').value||Math.floor(Math.random()*9000+1000), rua=document.getElementById('rua').value, cid=document.getElementById('cidade').value, pais=document.getElementById('pais').value;
-  if(!rua) return alert('Rua');
-  let comp=rua; if(cid) comp+=', '+cid; if(pais) comp+=', '+pais; qMap=comp;
-  let m=`[${id}]\n${comp}\n${document.getElementById('obs').value?'OBS: '+document.getElementById('obs').value+'\n':''}🗺️ https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(comp)}&hl=${lang}\n[${document.getElementById('pag').value}]`;
-  document.getElementById('txt').innerText=m; document.getElementById('res').classList.remove('hidden');
-  // salva seguro no Firebase
-  addDoc(collection(db, "entregas"), {id, comp, por: auth.currentUser.email, perfil: document.getElementById('hPerfil').innerText, data: new Date()});
+async function login(){let e=document.getElementById("email").value,s=document.getElementById("senha").value;await auth.signInWithEmailAndPassword(e,s);}
+async function cadastrarMotoboy(){
+  let n=document.getElementById("nome").value,t=document.getElementById("tel").value,em=document.getElementById("email").value,s=document.getElementById("senha").value,cpf=document.getElementById("cpf").value,placa=document.getElementById("placa").value,tipoVeiculo=document.getElementById("tipoVeiculo").value;
+  if(!files.cnh||!files.crlv||!files.selfie||!files.comp) return alert("Envie todos docs");
+  let c=await auth.createUserWithEmailAndPassword(em,s); let num=("000"+(motoboys.length+1)).slice(-4);
+  async function up(file,path){let r=storage.ref().child(path);await r.put(file);return await r.getDownloadURL();}
+  let cnhUrl=await up(files.cnh,`docs/${c.user.uid}/cnh`),crlvUrl=await up(files.crlv,`docs/${c.user.uid}/crlv`),selfieUrl=await up(files.selfie,`docs/${c.user.uid}/selfie`),compUrl=await up(files.comp,`docs/${c.user.uid}/comp`);
+  await db.collection("usuarios").doc(c.user.uid).set({nome:n,tipo:"motoboy",tipoVeiculo,numero:num,email:em,saldo:0});
+  await db.collection("motoboys").doc(c.user.uid).set({nome:n,tel:t,email:em,numero:num,cpf,placa,tipoVeiculo,cnhUrl,crlvUrl,selfieUrl,compUrl,tipo:"motoboy",saldo:0});
+  alert("Motorista #"+num+" "+tipoVeiculo+" OK");
 }
-function copiar(){navigator.clipboard.writeText(document.getElementById('txt').innerText);}
-function mapa(){window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(qMap)}`,'_blank');}
-function zap(){window.open(`https://wa.me/?text=${encodeURIComponent(document.getElementById('txt').innerText)}`,'_blank');}
-
-// salva perfil temporário antes do login
-const origSel = window.sel;
-window.sel = function(p){ perfilSel=p; localStorage.setItem('perfilTemp', p); localStorage.setItem('regiao', document.getElementById('regiao').value); origSel(p); };
+db.collection("motoboys").onSnapshot(s=>{motoboys=s.docs.map(d=>({id:d.id,...d.data()}));});
+render();
 </script>
 </body>
 </html>
