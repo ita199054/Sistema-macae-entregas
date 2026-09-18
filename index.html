@@ -1,140 +1,121 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Anjos Flash - Layout 3 Industrial</title>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@700;900&display=swap');
-body{font-family:'Inter',Arial;max-width:480px;margin:0 auto;background:#0e0e0e;padding:0;color:#fff}
-.bg-stripe{background: repeating-linear-gradient(45deg,#000,#000 18px,#FFD700 18px,#FFD700 36px);height:10px}
-.top{position:sticky;top:0;background:#000;color:#FFD700;padding:12px;border:3px solid #FFD700;border-left:0;border-right:0;z-index:9;display:flex;justify-content:space-between;align-items:center}
-.top b{font-family:'Anton';font-size:22px}
-.card{background:#1e1e1e;border:3px solid #FFD700;border-radius:0;padding:12px;margin:10px;box-shadow:5px 5px 0 #FFD700}
-.card-w{background:#fff;color:#000;border:3px solid #000;padding:12px;margin:10px;box-shadow:5px 5px 0 #000}
-input,select{width:100%;padding:13px;margin-top:7px;border:2px solid #FFD700;background:#000;color:#FFD700;font-weight:bold;border-radius:0;box-sizing:border-box}
-button{padding:13px;width:100%;border:3px solid #000;border-radius:0;font-family:'Anton';font-size:17px;margin-top:7px;box-shadow:4px 4px 0 #000}
-.b-black{background:#000;color:#FFD700;border-color:#FFD700}.b-gold{background:#FFD700;color:#000}.b-green{background:#00ff88;color:#000}.b-red{background:#ff0033;color:#fff}.b-gray{background:#333;color:#fff}
-.small{font-size:11px;color:#888}.flex{display:flex;justify-content:space-between;align-items:center;gap:6px}
-.tag{padding:3px 8px;font-family:'Anton';font-size:11px;border:2px solid #000}
-.tag-super{background:#ff0055;color:#fff}.tag-retorno{background:#0055ff;color:#fff}
-.v-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.v-card{background:#fff;color:#000;border:3px solid #000;padding:10px;text-align:center;font-weight:900}
-.v-card.active{background:#FFD700}
-</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema Entregas Mundial</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-<div class="bg-stripe"></div>
-<div id="app"></div>
+<body class="bg-gray-950 text-white min-h-screen">
+<header class="p-4 bg-gray-900 border-b border-gray-800 sticky top-0 z-50 flex justify-between items-center">
+  <div>
+    <h1 class="font-bold text-xl" data-i18n="title">🪽 Sistema Mundial</h1>
+    <p class="text-xs text-gray-400" id="saudacao"></p>
+  </div>
+  <!-- SELETOR DE IDIOMAS -->
+  <select id="idioma" onchange="mudarIdioma(this.value)" class="bg-gray-800 p-2 rounded-xl text-sm border border-gray-700">
+    <option value="pt">🇧🇷 PT</option>
+    <option value="en">🇺🇸 EN</option>
+    <option value="es">🇪🇸 ES</option>
+    <option value="fr">🇫🇷 FR</option>
+  </select>
+</header>
+
+<main class="p-4 pb-24 max-w-md mx-auto space-y-4">
+<div class="bg-gray-900 rounded-2xl p-4 border border-gray-800">
+  <h2 class="font-bold mb-3" data-i18n="nova">🌍 Nova Entrega Mundial</h2>
+  <input id="orderId" class="w-full p-3 rounded-xl bg-gray-800 mb-2 outline-none">
+  <input id="endereco" class="w-full p-3 rounded-xl bg-gray-800 mb-2 outline-none">
+  <div class="grid grid-cols-2 gap-2 mb-2">
+    <input id="cidade" class="p-3 rounded-xl bg-gray-800 outline-none">
+    <input id="pais" class="p-3 rounded-xl bg-gray-800 outline-none">
+  </div>
+  <input id="obs" class="w-full p-3 rounded-xl bg-gray-800 mb-2 outline-none">
+  <div class="grid grid-cols-2 gap-2 mb-2">
+    <select id="pagamento" class="p-3 rounded-xl bg-gray-800">
+      <option value="PAGO" data-i18n="pago">PAGO - PIX</option>
+      <option value="DINHEIRO" data-i18n="dinheiro">DINHEIRO</option>
+      <option value="CARTÃO" data-i18n="cartao">CARTÃO</option>
+    </select>
+    <input id="troco" class="p-3 rounded-xl bg-gray-800">
+  </div>
+  <button onclick="gerarEntrega()" class="w-full bg-white text-black font-bold p-3 rounded-xl" data-i18n="gerar">Gerar Mensagem</button>
+</div>
+
+<div id="resultado" class="hidden bg-gray-900 rounded-2xl p-4 border border-green-900">
+  <pre id="textoFinal" class="whitespace-pre-wrap text-sm bg-black p-3 rounded-xl mb-3"></pre>
+  <div class="grid grid-cols-2 gap-2">
+    <button onclick="copiar()" class="bg-green-600 p-3 rounded-xl font-bold" data-i18n="copiar"><i class="fa-solid fa-copy"></i> Copiar</button>
+    <button onclick="abrirMaps()" class="bg-blue-600 p-3 rounded-xl font-bold" data-i18n="mapa"><i class="fa-solid fa-map"></i> Mapa Local</button>
+  </div>
+  <button onclick="enviarWhats()" class="w-full mt-2 bg-[#25D366] p-3 rounded-xl font-bold text-black"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+</div>
+<div id="lista" class="space-y-2"></div>
+</main>
+
 <script>
-const firebaseConfig={apiKey:"AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain:"anjos-flash.firebaseapp.com",projectId:"anjos-flash",storageBucket:"anjos-flash.firebasestorage.app",messagingSenderId:"725133182752",appId:"1:725133182752:web:5f9a98fa97269dcdcab945",measurementId:"G-9CSJXXNR0C"};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore(), auth=firebase.auth(), storage=firebase.storage();
-let tela="inicio", user=null, perfil=null;
-let config={base:10, kmBase:5, valorKm:2, motoBase:7.5, motoKm:1.5, dinamicaAtiva:false, valorDinamica:3, valorSuper:5, retornoPorc:50, bairros:{}, utilitarioBase:25, utilitarioKm:3, caminhaoBase:60, caminhaoKm:5, carretaBase:120, carretaKm:8};
-let lojas=[], motoboys=[], entregas=[];
-function genCode(){return Math.floor(1000+Math.random()*9000).toString();}
-function calc(km, tipo, veiculo, bairroExtra=0){
-  let k=Number(km)||0; let paga=config.base + (k>config.kmBase? (k-config.kmBase)*config.valorKm:0)+bairroExtra; let moto=config.motoBase + (k>config.kmBase? (k-config.kmBase)*config.motoKm:0);
-  if(veiculo==="utilitario"){paga=config.utilitarioBase + (k>config.kmBase?(k-config.kmBase)*config.utilitarioKm:0); moto=paga*0.75;}
-  if(veiculo==="caminhao"){paga=config.caminhaoBase + (k>config.kmBase?(k-config.kmBase)*config.caminhaoKm:0); moto=paga*0.75;}
-  if(veiculo==="carreta"){paga=config.carretaBase + (k>config.kmBase?(k-config.kmBase)*config.carretaKm:0); moto=paga*0.75;}
-  if(tipo==="super") paga+=config.valorSuper; if(tipo==="retorno") paga*=config.retornoPorc/100; if(tipo==="dinamica"&&config.dinamicaAtiva) paga+=config.valorDinamica;
-  if(veiculo==="moto"&&tipo==="super") moto+=config.valorSuper*0.8;
-  let lucro=paga-moto; return {paga:+paga.toFixed(2), moto:+moto.toFixed(2), lucro:+lucro.toFixed(2), lucroFranq:+(lucro*0.5).toFixed(2), lucroAdmin:+(lucro*0.5).toFixed(2), tempo:Math.round(k*3+6), km:k};
+const traducoes = {
+  pt: { title:"🪽 Sistema Mundial", nova:"🌍 Nova Entrega Mundial", orderId:"Nº Pedido", endereco:"Rua, Número, Bairro", cidade:"Cidade / Região", pais:"País / Estado", obs:"Observação", pago:"PAGO - PIX", dinheiro:"DINHEIRO", cartao:"CARTÃO", troco:"Troco p/ R$", gerar:"Gerar Mensagem", copiar:"Copiar", mapa:"Mapa Local" },
+  en: { title:"🪽 World System", nova:"🌍 New Worldwide Delivery", orderId:"Order #", endereco:"Street, Number, District", cidade:"City / Region", pais:"Country / State", obs:"Note", pago:"PAID - PIX", dinheiro:"CASH", cartao:"CARD", troco:"Change for $", gerar:"Generate Message", copiar:"Copy", mapa:"Local Map" },
+  es: { title:"🪽 Sistema Mundial", nova:"🌍 Nueva Entrega Mundial", orderId:"Nº Pedido", endereco:"Calle, Número, Barrio", cidade:"Ciudad / Región", pais:"País / Estado", obs:"Observación", pago:"PAGADO", dinheiro:"EFECTIVO", cartao:"TARJETA", troco:"Cambio para $", gerar:"Generar Mensaje", copiar:"Copiar", mapa:"Mapa Local" },
+  fr: { title:"🪽 Système Mondial", nova:"🌍 Nouvelle Livraison", orderId:"Commande #", endereco:"Rue, Numéro, Quartier", cidade:"Ville / Région", pais:"Pays / État", obs:"Observation", pago:"PAYÉ", dinheiro:"ESPÈCES", cartao:"CARTE", troco:"Monnaie pour €", gerar:"Générer Message", copiar:"Copier", mapa:"Carte Locale" }
+};
+let lang = 'pt';
+let queryMaps = '';
+
+function mudarIdioma(l){
+  lang = l;
+  localStorage.setItem('lang', l);
+  const t = traducoes[l];
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(t[k]) el.innerText = el.innerText.includes('🪽') || el.innerText.includes('🌍') ? t[k] : t[k];
+  });
+  document.getElementById('orderId').placeholder = t.orderId;
+  document.getElementById('endereco').placeholder = t.endereco;
+  document.getElementById('cidade').placeholder = t.cidade;
+  document.getElementById('pais').placeholder = t.pais;
+  document.getElementById('obs').placeholder = t.obs;
+  document.getElementById('troco').placeholder = t.troco;
+  document.getElementById('pagamento').options[0].text = t.pago;
+  document.getElementById('pagamento').options[1].text = t.dinheiro;
+  document.getElementById('pagamento').options[2].text = t.cartao;
+  document.querySelector('[data-i18n="gerar"]').innerText = t.gerar;
+  document.querySelector('[data-i18n="copiar"]').innerHTML = `<i class="fa-solid fa-copy"></i> ${t.copiar}`;
+  document.querySelector('[data-i18n="mapa"]').innerHTML = `<i class="fa-solid fa-map"></i> ${t.mapa}`;
 }
-auth.onAuthStateChanged(async u=>{user=u; if(u){let d=await db.collection("usuarios").doc(u.uid).get(); perfil=d.exists?{id:d.id,...d.data()}:null; tela=perfil?.tipo||"inicio"; if(perfil?.tipo==="lojista_super") tela="lojista_super";} else {tela="inicio"; perfil=null;} render();});
-let files={cnh:null,crlv:null,selfie:null,comp:null};
-function render(){
-  let h="";
-  if(tela==="inicio"){
-    h=`<div class="top"><b>⚡ ANJOS FLASH</b><small>LAYOUT 3</small></div><div class="bg-stripe"></div>
-    <div class="card"><b>Login</b><input id="email" placeholder="EMAIL"><input id="senha" type="password" placeholder="SENHA"><button class="b-black" onclick="login()">ENTRAR</button>
-    <div class="flex"><button class="b-gray" onclick="tela='cad_lojista';render()">🏪 Lojista</button><button class="b-gray" onclick="tela='cad_super';render()">🏪🏪 Super</button></div>
-    <button class="b-gray" style="background:#fff;color:#000" onclick="tela='cad_motoboy';render()">🚚 Cadastro #0001 - CNH CRLV Selfie Comp + Veículo</button>
-    <button class="b-gold" onclick="tela='login_franquia';render()">🏢 Franqueado / Suporte / Admin</button></div>`;
-  }
-  else if(tela==="cad_lojista"||tela==="cad_super"){
-    let isSuper=tela==="cad_super";
-    h=`<button onclick="tela='inicio';render()" style="width:auto">←</button><div class="card"><h3 style="font-family:Anton;color:#FFD700">${isSuper?'🏪🏪 SUPER':'🏪 LOJISTA'}</h3>
-    <input id="nome" placeholder="Nome loja"><input id="dono" placeholder="Dono"><input id="tel" placeholder="WhatsApp"><input id="endereco" placeholder="Endereço"><input id="bairro" placeholder="Bairro"><input id="email" placeholder="Email"><input id="senha" type="password" placeholder="Senha"><button class="b-black" onclick="cadastrarLojista(${isSuper})">CADASTRAR</button></div>`;
-  }
-  else if(tela==="cad_motoboy"){
-    h=`<button onclick="tela='inicio';render()" style="width:auto">←</button><div class="card"><h3 style="font-family:Anton;color:#FFD700">🏍️🚚 MOTORISTA #0001</h3>
-    <select id="tipoVeiculo"><option value="moto">🏍️ Moto</option><option value="utilitario">🚐 Utilitário</option><option value="caminhao">🚚 Caminhão</option><option value="carreta">🚛 Carreta</option></select>
-    <input id="nome" placeholder="Nome *"><input id="tel" placeholder="Telefone *"><input id="cpf" placeholder="CPF *"><input id="placa" placeholder="Placa *"><input id="modelo" placeholder="Modelo"><input id="email" placeholder="Email *"><input id="senha" type="password" placeholder="Senha *">
-    <label class="small" style="color:#FFD700">📸 CNH Foto/PDF *</label><input type="file" accept="image/*,.pdf" onchange="files.cnh=this.files[0]">
-    <label class="small" style="color:#FFD700">📄 CRLV Veículo *</label><input type="file" accept="image/*,.pdf" onchange="files.crlv=this.files[0]">
-    <label class="small" style="color:#FFD700">🤳 Selfie com CNH *</label><input type="file" accept="image/*" onchange="files.selfie=this.files[0]">
-    <label class="small" style="color:#FFD700">🏠 Comprovante Endereço *</label><input type="file" accept="image/*,.pdf" onchange="files.comp=this.files[0]">
-    <button class="b-black" onclick="cadastrarMotoboy()">CADASTRAR COM DOCUMENTOS</button></div>`;
-  }
-  else if(tela==="login_franquia"){h=`<button onclick="tela='inicio';render()" style="width:auto">←</button><div class="card"><h3>Franqueado/Suporte/Admin</h3><input id="email" placeholder="Email"><input id="senha" type="password" placeholder="Senha"><button class="b-black" onclick="login()">ENTRAR</button><div class="small">admin@anjos.com / 123456<br>suporte@anjos.com / 123456<br>franqueado@anjos.com / 123456</div></div>`;}
-  else if(tela==="lojista"||tela==="lojista_super"){
-    let isSuper=tela==="lojista_super"; let minhasLojas=isSuper?lojas.filter(l=>l.dono===perfil.dono||l.ownerId===user.uid):lojas.filter(l=>l.ownerId===user.uid);
-    let lojaAtivaId=document.getElementById("lojaSel")?.value||(minhasLojas[0]?.id||""); let lojaAtiva=lojas.find(l=>l.id===lojaAtivaId)||minhasLojas[0];
-    let saldoTotal=isSuper?minhasLojas.reduce((a,b)=>a+(b.saldo||0),0):(lojaAtiva?.saldo||0);
-    let extrato=entregas.filter(e=>isSuper?minhasLojas.some(l=>l.id===e.lojaId):e.lojaId===lojaAtivaId);
-    let kmVal=document.getElementById("km")?.value||3; let bairroExtra=config.bairros[document.getElementById("bairroEnt")?.value]||0;
-    let veiculoSel=document.getElementById("veiculo")?.value||"moto"; let tipoSel=document.querySelector('input[name="tipo"]:checked')?.value||"normal"; let c=calc(kmVal,tipoSel,veiculoSel,bairroExtra);
-    h=`<div class="top"><div><b>${lojaAtiva?.nome||perfil.nome}</b><br><small style="color:#fff">SALDO R$${saldoTotal.toFixed(2)}</small></div><button onclick="sair()" style="width:auto" class="b-gray">Sair</button></div><div class="bg-stripe"></div>
-    ${isSuper?`<div class="card">Loja: <select id="lojaSel" onchange="render()">${minhasLojas.map(l=>`<option value="${l.id}" ${l.id===lojaAtivaId?'selected':''}>${l.nome} - R$${(l.saldo||0).toFixed(2)}</option>`).join('')}</select></div>`:''}
-    <div class="card-w"><h3 style="font-family:Anton">📦 NOVA ENTREGA - ESCOLHA VEÍCULO</h3>
-    <input id="end" placeholder="Endereço cliente"><input id="bairroEnt" placeholder="Bairro"><input id="km" type="number" value="${kmVal}" oninput="render()"><input id="motoboyNum" placeholder="#0001 direcionar">
-    <div class="v-grid"><div class="v-card ${veiculoSel==='moto'?'active':''}" onclick="document.getElementById('veiculo').value='moto';render()">🏍️ MOTO<br>R$${calc(kmVal,tipoSel,'moto',bairroExtra).paga}</div><div class="v-card ${veiculoSel==='utilitario'?'active':''}" onclick="document.getElementById('veiculo').value='utilitario';render()">🚐 UTIL<br>R$${calc(kmVal,tipoSel,'utilitario',bairroExtra).paga}</div><div class="v-card ${veiculoSel==='caminhao'?'active':''}" onclick="document.getElementById('veiculo').value='caminhao';render()">🚚 CAMINHÃO<br>R$${calc(kmVal,tipoSel,'caminhao',bairroExtra).paga}</div><div class="v-card ${veiculoSel==='carreta'?'active':''}" onclick="document.getElementById('veiculo').value='carreta';render()">🚛 CARRETA<br>R$${calc(kmVal,tipoSel,'carreta',bairroExtra).paga}</div></div><select id="veiculo" style="display:none"><option value="moto">moto</option><option value="utilitario">utilitario</option><option value="caminhao">caminhao</option><option value="carreta">carreta</option></select>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"><label><input type="radio" name="tipo" value="normal" ${tipoSel==='normal'?'checked':''} onchange="render()"> Normal</label><label><input type="radio" name="tipo" value="super" ${tipoSel==='super'?'checked':''} onchange="render()"> SUPER</label><label><input type="radio" name="tipo" value="retorno" ${tipoSel==='retorno'?'checked':''} onchange="render()"> RETORNO 50%</label></div>
-    <div style="background:#000;color:#FFD700;padding:10px;text-align:center;font-family:Anton;font-size:18px;margin-top:8px">VOCÊ PAGA: R$${c.paga}<br><small style="font-family:Inter;font-size:10px;color:#fff">Você não vê quanto motoboy ganha | ${veiculoSel.toUpperCase()}</small></div>
-    <button class="b-black" onclick="criarEntrega()">CRIAR COM CÓDIGO 4 DÍGITOS</button></div>
-    <div class="card"><h4 style="color:#FFD700;font-family:Anton">ENTREGAS</h4>${extrato.slice(-20).reverse().map(e=>`<div style="border-bottom:1px solid #333;padding:6px 0"><b>${e.endereco}</b> [${e.veiculo||'moto'}] ${e.tipo}<br>${e.km}km ${e.tempo}min Você pagou R$${e.paga}<br>${e.motoboyNome?`🏍️ ${e.motoboyNome} #${e.motoboyNumero} aceitou`:'Aguardando'}<br>Código: ${e.codigo}</div>`).join('')||'Nenhuma'}</div>`;
-  }
-  else if(tela==="motoboy"){
-    let disp=entregas.filter(e=>e.status==='pendente' && e.veiculo===perfil.tipoVeiculo && (!e.motoboyDestino || e.motoboyDestino===perfil.numero));
-    let minhas=entregas.filter(e=>e.motoboyId===user.uid && e.status!=='entregue');
-    h=`<div class="top"><div>🏍️ #${perfil.numero} ${perfil.nome} [${perfil.tipoVeiculo?.toUpperCase()}]<br><small style="color:#fff">Saldo R$${(perfil.saldo||0).toFixed(2)}</small></div><button onclick="sair()" style="width:auto" class="b-gray">Sair</button></div><div class="bg-stripe"></div>
-    <div class="card"><h3 style="font-family:Anton;color:#FFD700">Disponíveis ${perfil.tipoVeiculo}</h3>${disp.map(e=>`<div style="background:#fff;color:#000;padding:10px;margin-bottom:8px;border:3px solid #000"><b>${e.lojaNome} [${e.veiculo}]</b> ${e.tipo}<br>${e.km}km ${e.tempo}min<br>💰 VOCÊ RECEBE R$${e.moto}<br><small>Você não vê quanto lojista pagou</small><br><div class="flex"><button class="b-green" onclick="aceitar('${e.id}')">ACEITAR</button><button class="b-red" onclick="rejeitar('${e.id}')">REJEITAR</button></div></div>`).join('')||'Nenhuma'}</div>
-    <div class="card"><h3 style="font-family:Anton;color:#FFD700">Minhas</h3>${minhas.map(e=>`<div style="background:#FFD700;color:#000;padding:8px;margin-bottom:8px;border:3px solid #000"><b>${e.endereco}</b> R$${e.moto}<br>${e.status==='aceita'?`<button class="b-black" onclick="chegueiLoja('${e.id}')">CHEGUEI NA LOJA</button>`:''}${e.status==='na_loja'?`<button class="b-black" onclick="finalizar('${e.id}')">FINALIZAR</button>`:''}</div>`).join('')}</div>`;
-  }
-  else if(tela==="franqueado"){
-    let meuLucro=entregas.reduce((a,e)=>a+(e.lucroFranq||0),0);
-    h=`<div class="top"><div>🏢 FRANQUEADO R$${meuLucro.toFixed(2)}</div><button onclick="sair()" style="width:auto">Sair</button></div><div class="bg-stripe"></div>
-    <div class="card"><h3 style="font-family:Anton;color:#FFD700">Controles - NÃO mexe saldo</h3>Dinâmica <select id="din"><option value="false" ${!config.dinamicaAtiva?'selected':''}>OFF</option><option value="true" ${config.dinamicaAtiva?'selected':''}>ON</option></select><input id="vDin" type="number" value="${config.valorDinamica}"><input id="vSuper" type="number" value="${config.valorSuper}"><input id="vRet" type="number" value="${config.retornoPorc}"><button class="b-black" onclick="salvarConfig()">SALVAR</button></div>`;
-  }
-  else if(tela==="suporte"){
-    h=`<div class="top"><b>🎧 SUPORTE</b><button onclick="sair()" style="width:auto">Sair</button></div><div class="bg-stripe"></div>
-    <div class="card"><h3>Lojistas</h3>${lojas.map(l=>`<div class="flex">${l.nome} R$${(l.saldo||0).toFixed(2)}<span><button onclick="addSaldoLoja('${l.id}',10)" style="width:50px" class="b-green">+10</button><button onclick="zerarLoja('${l.id}')" style="width:50px" class="b-red">Zera</button></span></div>`).join('')}</div>
-    <div class="card"><h3>Motoboys</h3>${motoboys.map(m=>`<div class="flex">#${m.numero} ${m.nome} [${m.tipoVeiculo||'moto'}] R$${(m.saldo||0).toFixed(2)}<span><button onclick="addSaldoMoto('${m.id}',10)" style="width:50px" class="b-green">+10</button><button onclick="zerarMoto('${m.id}')" style="width:50px" class="b-red">Zera</button></span></div>`).join('')}</div>`;
-  }
-  else if(tela==="admin"){h=`<div class="top"><b>👑 ADMIN</b><button onclick="sair()" style="width:auto">Sair</button></div><div class="card"><h3>Admin - Docs</h3>${motoboys.map(m=>`<div style="border-bottom:1px solid #333;padding:6px 0">#${m.numero} ${m.nome} [${m.tipoVeiculo}]<br>Tel ${m.tel} ${m.cpf} Placa ${m.placa}<br>${m.cnhUrl?`<a href="${m.cnhUrl}" target="_blank" style="color:#FFD700">CNH</a>`:''} ${m.crlvUrl?`<a href="${m.crlvUrl}" target="_blank" style="color:#FFD700">CRLV</a>`:''} ${m.selfieUrl?`<a href="${m.selfieUrl}" target="_blank" style="color:#FFD700">SELFIE</a>`:''} ${m.compUrl?`<a href="${m.compUrl}" target="_blank" style="color:#FFD700">COMP</a>`:''}</div>`).join('')}</div>`;}
-  document.getElementById("app").innerHTML=h;
+
+document.getElementById('saudacao').innerText = new Date().toLocaleString(lang,{weekday:'long', hour:'2-digit', minute:'2-digit'}) + ' - Mundial';
+
+function gerarEntrega(){
+  const id = document.getElementById('orderId').value || Math.floor(Math.random()*9000+1000);
+  const end = document.getElementById('endereco').value;
+  const cidade = document.getElementById('cidade').value;
+  const pais = document.getElementById('pais').value;
+  const obs = document.getElementById('obs').value;
+  const pag = document.getElementById('pagamento').value;
+  const troco = document.getElementById('troco').value;
+  if(!end) return alert('Digite o endereço');
+  let enderecoCompleto = end; if(cidade) enderecoCompleto += ', ' + cidade; if(pais) enderecoCompleto += ', ' + pais;
+  queryMaps = enderecoCompleto;
+  let msg = `[${id}]\n${enderecoCompleto}\n`;
+  if(obs) msg+=`OBS: ${obs}\n`;
+  msg+=`🗺️ https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(enderecoCompleto)}&hl=${lang}\n`;
+  msg+=`[${pag}]${troco ? ' troco: '+troco : ''}`;
+  document.getElementById('textoFinal').innerText = msg;
+  document.getElementById('resultado').classList.remove('hidden');
+  const card = `<div class="bg-gray-900 p-3 rounded-xl border border-gray-800 text-sm"><b>#${id}</b> - ${enderecoCompleto}<br><span class="text-gray-400">${cidade||'World'} - ${pag}</span></div>`;
+  document.getElementById('lista').innerHTML = card + document.getElementById('lista').innerHTML;
 }
-async function login(){let e=document.getElementById("email").value,s=document.getElementById("senha").value;try{await auth.signInWithEmailAndPassword(e,s);}catch(err){alert(err.message)}}
-async function cadastrarLojista(isSuper){let n=document.getElementById("nome").value,d=document.getElementById("dono").value||n,t=document.getElementById("tel").value,en=document.getElementById("endereco").value,em=document.getElementById("email").value,s=document.getElementById("senha").value;let c=await auth.createUserWithEmailAndPassword(em,s);await db.collection("usuarios").doc(c.user.uid).set({nome:n,dono:d,tipo:isSuper?"lojista_super":"lojista",email:em});await db.collection("lojistas").doc(c.user.uid).set({nome:n,dono:d,tel:t,endereco:en,email:em,tipo:isSuper?"lojista_super":"lojista",ownerId:c.user.uid,saldo:0,criadoAt:new Date()});}
-async function cadastrarMotoboy(){
-  let n=document.getElementById("nome").value,t=document.getElementById("tel").value,em=document.getElementById("email").value,s=document.getElementById("senha").value,cpf=document.getElementById("cpf").value,placa=document.getElementById("placa").value,modelo=document.getElementById("modelo").value,tipoVeiculo=document.getElementById("tipoVeiculo").value;
-  if(!n||!t||!em||!s||!cpf||!placa) return alert("Preencha *"); if(!files.cnh||!files.crlv||!files.selfie||!files.comp) return alert("Envie CNH, CRLV, Selfie, Comprovante");
-  try{let c=await auth.createUserWithEmailAndPassword(em,s);let num=("000"+(motoboys.length+1)).slice(-4);
-  async function up(file,path){let ref=storage.ref().child(path);await ref.put(file);return await ref.getDownloadURL();}
-  let cnhUrl=await up(files.cnh,`docs/${c.user.uid}/cnh`),crlvUrl=await up(files.crlv,`docs/${c.user.uid}/crlv`),selfieUrl=await up(files.selfie,`docs/${c.user.uid}/selfie`),compUrl=await up(files.comp,`docs/${c.user.uid}/comp`);
-  await db.collection("usuarios").doc(c.user.uid).set({nome:n,tipo:"motoboy",tipoVeiculo,numero:num,email:em,saldo:0});await db.collection("motoboys").doc(c.user.uid).set({nome:n,tel:t,email:em,numero:num,cpf,placa,modelo,tipoVeiculo,cnhUrl,crlvUrl,selfieUrl,compUrl,tipo:"motoboy",saldo:0,criadoAt:new Date()});alert("Motorista #"+num+" "+tipoVeiculo+" cadastrado!");}catch(e){alert(e.message);}}
-async function criarEntrega(){let end=document.getElementById("end").value,km=document.getElementById("km").value,tipo=document.querySelector('input[name="tipo"]:checked')?.value||"normal",dest=document.getElementById("motoboyNum").value,veiculo=document.getElementById("veiculo").value||"moto";let bairro=document.getElementById("bairroEnt")?.value||"";let extra=config.bairros[bairro]||0;let c=calc(km,tipo,veiculo,extra);let loja=lojas.find(l=>l.ownerId===user.uid);let codigo=genCode();await db.collection("entregas").add({endereco:end,bairro,km:Number(km),tempo:c.tempo,paga:c.paga,moto:c.moto,lucro:c.lucro,lucroFranq:c.lucroFranq,lucroAdmin:c.lucroAdmin,tipo,veiculo,status:"pendente",codigo,lojaId:loja?.id||user.uid,lojaNome:loja?.nome||perfil.nome,lojaEndereco:loja?.endereco||"",motoboyDestino:dest?dest.replace("#",""):"",criadoAt:new Date()});}
-async function aceitar(id){await db.collection("entregas").doc(id).update({status:"aceita",motoboyId:user.uid,motoboyNome:perfil.nome,motoboyNumero:perfil.numero,motoboyVeiculo:perfil.tipoVeiculo});}
-async function rejeitar(id){await db.collection("entregas").doc(id).update({rejeitados:firebase.firestore.FieldValue.arrayUnion(user.uid)});}
-async function chegueiLoja(id){await db.collection("entregas").doc(id).update({status:"na_loja"});}
-async function finalizar(id){let e=entregas.find(x=>x.id===id);let cod=prompt("Código "+e.codigo);if(cod!==e.codigo)return alert("Errado");await db.collection("entregas").doc(id).update({status:"entregue"});await db.collection("motoboys").doc(user.uid).update({saldo:firebase.firestore.FieldValue.increment(e.moto)});await db.collection("usuarios").doc(user.uid).update({saldo:firebase.firestore.FieldValue.increment(e.moto)});}
-async function salvarConfig(){config.dinamicaAtiva=document.getElementById("din").value==="true";config.valorDinamica=Number(document.getElementById("vDin").value);config.valorSuper=Number(document.getElementById("vSuper").value);config.retornoPorc=Number(document.getElementById("vRet").value);await db.collection("config").doc("geral").set(config);alert("Salvo");}
-async function addSaldoLoja(id,v){await db.collection("lojistas").doc(id).update({saldo:firebase.firestore.FieldValue.increment(Number(v))});}
-async function zerarLoja(id){if(!confirm("Zerar?"))return;await db.collection("lojistas").doc(id).update({saldo:0});}
-async function addSaldoMoto(id,v){await db.collection("motoboys").doc(id).update({saldo:firebase.firestore.FieldValue.increment(Number(v))});await db.collection("usuarios").doc(id).update({saldo:firebase.firestore.FieldValue.increment(Number(v))});}
-async function zerarMoto(id){if(!confirm("Zerar?"))return;await db.collection("motoboys").doc(id).update({saldo:0});await db.collection("usuarios").doc(id).update({saldo:0});}
-async function sair(){await auth.signOut();tela="inicio";render();}
-db.collection("config").doc("geral").onSnapshot(d=>{if(d.exists){config={...config,...d.data()};render();}});
-db.collection("lojistas").onSnapshot(s=>{lojas=s.docs.map(d=>({id:d.id,...d.data()}));render();});
-db.collection("motoboys").onSnapshot(s=>{motoboys=s.docs.map(d=>({id:d.id,...d.data()}));render();});
-db.collection("entregas").onSnapshot(s=>{entregas=s.docs.map(d=>({id:d.id,...d.data()}));render();});
-render();
+function copiar(){ navigator.clipboard.writeText(document.getElementById('textoFinal').innerText); alert('Copiado / Copied!'); }
+function abrirMaps(){ window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(queryMaps)}&hl=${lang}`,'_blank'); }
+function enviarWhats(){ window.open(`https://wa.me/?text=${encodeURIComponent(document.getElementById('textoFinal').innerText)}`,'_blank'); }
+
+// carrega idioma salvo
+const saved = localStorage.getItem('lang') || 'pt';
+document.getElementById('idioma').value = saved;
+mudarIdioma(saved);
 </script>
 </body>
 </html>
