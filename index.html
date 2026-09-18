@@ -1,81 +1,172 @@
-<!-- CORREÇÃO DO BOTÃO TRAVADO -->
-<style>
-/* Remove o botão que tava bloqueando */
-#chat-anel, .botao-flutuante, [style*="position: fixed"]{pointer-events:none !important}
-#telaLogin button, #login button{pointer-events:auto !important; position:relative; z-index:9999}
-</style>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema Mundial - Anjos Flash V6</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white min-h-screen">
+
+<!-- LOGIN -->
+<div id="telaLogin" class="min-h-screen flex items-center justify-center p-4">
+<div class="bg-zinc-900 border-2 border-yellow-400 rounded-2xl p-6 w-full max-w-sm">
+<h1 class="font-black text-xl text-center text-yellow-400">ANJOS FLASH V6</h1>
+<p class="text-xs text-center text-gray-400 mb-4">Sistema Mundial - Login Obrigatório</p>
+
+<div class="grid grid-cols-2 gap-2 mb-3">
+<button onclick="selecionar('admin')" class="cargo p-3 rounded-xl bg-red-900/40 border border-red-600 text-xs font-bold">👑 ADMIN</button>
+<button onclick="selecionar('franqueado')" class="cargo p-3 rounded-xl bg-purple-900/30 border border-purple-600 text-xs font-bold">🏢 FRANQUEADO</button>
+<button onclick="selecionar('suporte')" class="cargo p-3 rounded-xl bg-blue-900/30 border border-blue-600 text-xs font-bold">🎧 SUPORTE</button>
+<button onclick="selecionar('superlojista')" class="cargo p-3 rounded-xl bg-yellow-900/30 border border-yellow-600 text-xs font-bold">⭐ SUPER LOJISTA</button>
+<button onclick="selecionar('lojista')" class="cargo p-3 rounded-xl bg-zinc-800 border border-zinc-700 text-xs font-bold">🏪 LOJISTA</button>
+<button onclick="selecionar('motoboy')" class="cargo p-3 rounded-xl bg-zinc-800 border border-zinc-700 text-xs font-bold">🏍️ MOTOBOY</button>
+<button onclick="selecionar('motorista')" class="cargo p-3 rounded-xl bg-zinc-800 border border-zinc-700 text-xs font-bold col-span-2">🚛 MOTORISTA</button>
+</div>
+
+<p id="perfilEscolhido" class="text-center text-yellow-400 text-xs font-bold mb-3">↓ SELECIONE SEU CARGO ACIMA ↓</p>
+
+<input id="email" placeholder="Email" class="w-full p-3 rounded-xl bg-black border border-zinc-700 mb-2 outline-none">
+<input id="regiao" placeholder="Sua região - Ex: Macaé" class="w-full p-3 rounded-xl bg-black border border-zinc-700 mb-4 outline-none">
+
+<button id="btnEntrar" onclick="entrarSistema()" class="w-full bg-yellow-400 text-black p-4 rounded-xl font-black text-lg">ENTRAR NO SISTEMA</button>
+<p id="msgErro" class="text-red-400 text-xs text-center mt-2 hidden"></p>
+</div>
+</div>
+
+<!-- SISTEMA -->
+<div id="telaSistema" class="hidden min-h-screen bg-black">
+<div class="bg-yellow-400 text-black p-3 flex justify-between items-center">
+<div><b id="nomeLogado" class="font-black"></b><br><span id="perfilLogado" class="text-xs bg-black text-yellow-400 px-2 py-1 rounded-full"></span></div>
+<button onclick="sairSistema()" class="bg-black text-yellow-400 px-4 py-2 rounded-full font-black text-xs">SAIR</button>
+</div>
+
+<div class="p-4 max-w-md mx-auto space-y-4">
+<div id="painelAdmin" class="hidden">
+<div class="bg-zinc-900 border-2 border-yellow-400 p-4 rounded-xl">
+<h2 class="font-black text-yellow-400">PAINEL ADMIN - VÊ TUDO</h2>
+<div class="grid grid-cols-3 gap-2 mt-3 text-center">
+<div class="bg-black p-3 rounded"><b id="qtdUsuarios">0</b><br><span class="text-[10px]">Usuários</span></div>
+<div class="bg-black p-3 rounded"><b id="qtdEntregas">0</b><br><span class="text-[10px]">Entregas</span></div>
+<div class="bg-black p-3 rounded"><b>LAYOUT 3</b><br><span class="text-[10px]">Amarelo/Preto</span></div>
+</div>
+<button onclick="carregarDados()" class="w-full mt-3 bg-yellow-400 text-black p-2 rounded font-black text-xs">ATUALIZAR DADOS</button>
+</div>
+<div id="listaAdmin" class="mt-3 space-y-2"></div>
+</div>
+
+<div class="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl">
+<h2 class="font-bold mb-3">🌍 Nova Entrega Mundial</h2>
+<input id="rua" placeholder="Rua, Número, Bairro" class="w-full p-3 rounded-xl bg-black border border-zinc-700 mb-2">
+<div class="grid grid-cols-2 gap-2 mb-2">
+<input id="cidade" placeholder="Cidade / Região" class="w-full p-3 rounded-xl bg-black border border-zinc-700">
+<input id="pais" placeholder="País / Estado" class="w-full p-3 rounded-xl bg-black border border-zinc-700">
+</div>
+<input id="obs" placeholder="Observação" class="w-full p-3 rounded-xl bg-black border border-zinc-700 mb-3">
+<button onclick="gerarEntrega()" class="w-full bg-white text-black p-3 rounded-xl font-black">GERAR MENSAGEM</button>
+<div id="resultado" class="hidden mt-3 bg-black p-3 rounded-xl border border-green-600">
+<pre id="textoMsg" class="whitespace-pre-wrap text-sm"></pre>
+<button onclick="copiarMsg()" class="w-full mt-2 bg-green-600 p-2 rounded font-bold">COPIAR</button>
+</div>
+</div>
+
+<div id="listaEntregas" class="space-y-2"></div>
+</div>
+</div>
 
 <script>
-// LOGIN SEMPRE FUNCIONA - MESMO SEM FIREBASE
-let perfilSel = localStorage.getItem('perfil') || null;
-
-function sel(perfil){
-  perfilSel = perfil;
-  localStorage.setItem('perfil', perfil);
-  document.getElementById('perfilTxt').innerText = 'Selecionado: ' + perfil.toUpperCase();
-  document.querySelectorAll('.perfil').forEach(b=>{
-    b.style.borderColor='#333'; b.style.background='#1a2340';
-  });
+let perfilAtual = null;
+function selecionar(p){
+  perfilAtual = p;
+  localStorage.setItem('perfil', p);
+  document.getElementById('perfilEscolhido').innerText = 'SELECIONADO: ' + p.toUpperCase() + ' ✓';
+  document.querySelectorAll('.cargo').forEach(b=>{b.style.borderColor='#3f3f46'; b.style.opacity='0.6'});
   event.currentTarget.style.borderColor='white';
-  event.currentTarget.style.background='#2a3a60';
-  console.log('Perfil selecionado:', perfil);
-  // Destrava o botão
-  document.getElementById('btnEntrar').disabled=false;
-  document.getElementById('btnEntrar').style.opacity='1';
+  event.currentTarget.style.opacity='1';
+  event.currentTarget.style.background='#27272a';
 }
 
-function entrar(){
-  console.log('Clicou entrar, perfil:', perfilSel);
-  const email = document.getElementById('email')?.value || 'teste@teste.com';
-  const regiao = document.getElementById('regiao')?.value || 'Macaé';
+function entrarSistema(){
+  const email = document.getElementById('email').value;
+  const regiao = document.getElementById('regiao').value;
 
-  if(!perfilSel){
-    alert('⚠️ Primeiro selecione o cargo em cima: ADMIN, FRANQUEADO, SUPORTE, SUPER LOJISTA, LOJISTA, MOTOBOY ou MOTORISTA');
+  if(!perfilAtual){
+    document.getElementById('msgErro').innerText='⚠️ CLIQUE EM UM CARGO EM CIMA PRIMEIRO!';
+    document.getElementById('msgErro').classList.remove('hidden');
+    return;
+  }
+  if(!email){
+    document.getElementById('msgErro').innerText='Digite o email';
+    document.getElementById('msgErro').classList.remove('hidden');
     return;
   }
 
-  // Salva e entra na hora - sem travar
-  localStorage.setItem('logado', JSON.stringify({email, perfil: perfilSel, regiao}));
-  localStorage.setItem('email', email);
-  localStorage.setItem('regiao', regiao);
+  const dados = {email, perfil: perfilAtual, regiao: regiao || 'Mundial'};
+  localStorage.setItem('logado', JSON.stringify(dados));
 
-  // Esconde login e mostra sistema
-  document.getElementById('telaLogin').style.display='none';
-  document.getElementById('login').style.display='none';
-  document.getElementById('telaSistema').classList.remove('hidden');
-  document.getElementById('sistema').classList.remove('hidden');
-  document.getElementById('sistema').style.display='block';
+  // Salva usuário
+  let users = JSON.parse(localStorage.getItem('todosUsuarios')||'[]');
+  if(!users.find(u=>u.email===email)){
+    users.push({...dados, id: Date.now()});
+    localStorage.setItem('todosUsuarios', JSON.stringify(users));
+  }
 
-  document.getElementById('hNome').innerText = email;
-  document.getElementById('hPerfil').innerText = perfilSel.toUpperCase();
-  document.getElementById('hRegiao').innerText = regiao;
-
-  let aviso = '';
-  if(perfilSel==='admin') aviso='👑 ADMIN - Acesso total';
-  else if(perfilSel==='franqueado') aviso='🏢 FRANQUEADO '+regiao+' - Só sua região';
-  else if(perfilSel==='suporte') aviso='🎧 SUPORTE - Tickets';
-  else if(perfilSel==='super lojista' || perfilSel==='superlojista') aviso='⭐ SUPER LOJISTA - Várias lojas';
-  else aviso=perfilSel.toUpperCase()+' - '+regiao;
-  
-  document.getElementById('aviso').innerHTML = aviso;
-  document.getElementById('avisoSeg').innerHTML = aviso;
+  mostrarSistema(dados);
 }
 
-// Se já logou antes, entra direto
-window.addEventListener('load', ()=>{
-  const logado = localStorage.getItem('logado');
-  if(logado){
-    const u = JSON.parse(logado);
-    perfilSel = u.perfil;
-    setTimeout(()=>entrar(), 200);
-  }
-  // Garante botão destravado
-  const btn = document.getElementById('btnEntrar');
-  if(btn){ btn.disabled=false; btn.style.opacity='1'; }
-});
-</script>
+function mostrarSistema(u){
+  document.getElementById('telaLogin').classList.add('hidden');
+  document.getElementById('telaSistema').classList.remove('hidden');
+  document.getElementById('nomeLogado').innerText = u.email;
+  document.getElementById('perfilLogado').innerText = u.perfil.toUpperCase() + ' - ' + u.regiao;
 
-<!-- BOTÃO ENTRAR CORRIGIDO - TROCA O SEU POR ESSE -->
-<button id="btnEntrar" onclick="entrar()" class="w-full bg-white text-black p-4 rounded-2xl font-black text-base mt-2" style="z-index:9999; position:relative; opacity:1;">
-  ENTRAR NO SISTEMA
-</button>
+  if(u.perfil==='admin'){
+    document.getElementById('painelAdmin').classList.remove('hidden');
+    carregarDados();
+  }
+}
+
+function sairSistema(){ localStorage.removeItem('logado'); location.reload(); }
+
+function carregarDados(){
+  const users = JSON.parse(localStorage.getItem('todosUsuarios')||'[]');
+  const entregas = JSON.parse(localStorage.getItem('entregas')||'[]');
+  document.getElementById('qtdUsuarios').innerText = users.length;
+  document.getElementById('qtdEntregas').innerText = entregas.length;
+
+  let html='';
+  users.forEach(u=>{
+    html+=`<div class="bg-zinc-900 p-2 rounded text-xs flex justify-between"><span><b>${u.email}</b> - ${u.perfil} - ${u.regiao}</span><span class="text-yellow-400">${u.perfil==='admin'?'👑':''}</span></div>`;
+  });
+  document.getElementById('listaAdmin').innerHTML = html;
+}
+
+let mapaLink='';
+function gerarEntrega(){
+  const rua = document.getElementById('rua').value;
+  const cidade = document.getElementById('cidade').value;
+  const pais = document.getElementById('pais').value;
+  const obs = document.getElementById('obs').value;
+  if(!rua){ alert('Digite a rua'); return; }
+  let completo = rua; if(cidade) completo+=', '+cidade; if(pais) completo+=', '+pais;
+  mapaLink = completo;
+  const id = Math.floor(Math.random()*9000+1000);
+  const msg = `[${id}]\n${completo}\n${obs?'OBS: '+obs+'\n':''}🗺️ https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(completo)}\n[${JSON.parse(localStorage.getItem('logado')).perfil.toUpperCase()}]`;
+  document.getElementById('textoMsg').innerText = msg;
+  document.getElementById('resultado').classList.remove('hidden');
+
+  let entregas = JSON.parse(localStorage.getItem('entregas')||'[]');
+  entregas.unshift({id, endereco: completo, data: new Date().toLocaleString()});
+  localStorage.setItem('entregas', JSON.stringify(entregas));
+  document.getElementById('listaEntregas').innerHTML = `<div class="bg-zinc-900 p-3 rounded-xl text-sm"><b>#${id}</b> - ${completo}</div>` + document.getElementById('listaEntregas').innerHTML;
+  if(JSON.parse(localStorage.getItem('logado')).perfil==='admin') carregarDados();
+}
+
+function copiarMsg(){ navigator.clipboard.writeText(document.getElementById('textoMsg').innerText); alert('Copiado!'); }
+
+// Auto login
+const logado = localStorage.getItem('logado');
+if(logado){ mostrarSistema(JSON.parse(logado)); }
+</script>
+</body>
+</html>
