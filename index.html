@@ -7,9 +7,21 @@
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 font-sans">
+
+<!-- LOGIN OBRIGATÓRIO -->
+<div id="telaLogin" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+  <div class="bg-white p-6 rounded-xl w-full max-w-sm">
+    <h2 class="font-bold text-xl mb-1">🔒 Anjos Flash</h2>
+    <p class="text-xs mb-4">Faça login para continuar</p>
+    <input id="loginEmail" placeholder="Email" class="w-full border p-3 rounded mb-2 text-sm">
+    <input id="loginSenha" type="password" placeholder="Senha" class="w-full border p-3 rounded mb-2 text-sm">
+    <button onclick="fazerLogin()" class="w-full bg-orange-500 text-white p-3 rounded font-bold">ENTRAR</button>
+    <p class="text-[10px] text-center mt-3 text-gray-500">Não entra mais direto clicando no select. Tem que logar.</p>
+  </div>
+</div>
+
 <div id="app" class="max-w-[420px] mx-auto bg-white min-h-screen shadow-xl">
 
-<!-- HEADER -->
 <div class="bg-white p-4 flex justify-between items-center border-b sticky top-0 z-10">
   <div class="flex items-center gap-2"><span class="text-2xl">🏍️</span><b class="text-xl">Anjos <span class="text-orange-500">Flash</span></b></div>
   <select id="roleSelect" class="border p-2 rounded text-xs">
@@ -22,93 +34,88 @@
   </select>
 </div>
 
-<!-- SELETOR DE IDIOMA -->
 <div class="flex gap-2 p-2 text-xs">
   <button onclick="setLang('pt')" class="px-2 py-1 bg-black text-white rounded">PT</button>
   <button onclick="setLang('en')" class="px-2 py-1 border rounded">EN</button>
   <button onclick="setLang('es')" class="px-2 py-1 border rounded">ES</button>
   <button onclick="setLang('fr')" class="px-2 py-1 border rounded">FR</button>
+  <span id="userLogadoInfo" class="ml-auto text-[10px] text-gray-500"></span>
 </div>
 
-<!-- TELA MOTOBOY -->
 <div id="telaMotoboy" class="p-4">
   <div class="flex items-center gap-3 mb-4">
     <img id="fotoMotoboy" src="https://i.pravatar.cc/100" class="w-14 h-14 rounded-full object-cover border-2 border-orange-500">
-    <div><b id="nomeMotoboy">João Silva</b><br><span class="bg-black text-white text-xs px-2 py-1 rounded" id="codigoMotoboy">#0001</span> <span class="text-xs">⭐ 5.0 | 124 corridas</span></div>
+    <div><b id="nomeMotoboy">João Silva</b><br><span class="bg-black text-white text-xs px-2 py-1 rounded" id="codigoMotoboy">#0001</span> <span class="text-xs">⭐ 5.0</span></div>
   </div>
   <div class="bg-orange-100 p-4 rounded-xl mb-4">
     <p class="text-sm text-orange-800">Ganhos de hoje - SÓ O QUE VAI RECEBER</p>
     <h1 class="text-3xl font-bold">R$ <span id="ganhoMotoboy">187,50</span></h1>
-    <p class="text-xs mt-1">8 entregas concluídas • 5h 12m online</p>
+    <p class="text-xs mt-1">8 entregas • 5h 12m online</p>
   </div>
   <div id="alertaMaquininha" class="hidden bg-orange-500 text-white p-3 rounded-xl mb-4">
     <b>🏧 Devolução Maquininha pendente</b><br><span class="text-sm">R$ 200,00 • Entregar na base até 18:00 hoje</span>
   </div>
-  <h3 class="font-bold mb-2">Entregas de hoje</h3>
-  <div id="listaEntregasMotoboy" class="space-y-2"></div>
-  <div class="mt-4 p-3 bg-gray-50 rounded">
-    <h4 class="font-bold text-sm">📊 EXTRATO 90 DIAS - SÓ A RECEBER</h4>
-    <div id="extratoMotoboy" class="text-xs mt-2"></div>
-  </div>
+  <h3 class="font-bold mb-2 text-sm">Entregas de hoje</h3>
+  <div id="listaEntregasMotoboy" class="space-y-2 text-xs"></div>
+  <div class="mt-4 p-3 bg-gray-50 rounded"><h4 class="font-bold text-sm">📊 EXTRATO 90 DIAS - SÓ A RECEBER</h4><div id="extratoMotoboy" class="text-xs mt-2"></div></div>
 </div>
 
-<!-- TELA LOJISTA -->
 <div id="telaLojista" class="p-4 hidden">
   <h2 class="font-bold text-lg mb-3">📦 Pedir Entrega</h2>
   <label class="text-xs">Veículo</label>
-  <select id="veiculo" class="w-full border p-3 rounded mb-2">
+  <select id="veiculo" class="w-full border p-3 rounded mb-2 text-sm">
     <option value="MOTO">MOTO - R$ 8 fixo + R$ 1,50/km</option>
     <option value="UTILITARIO">UTILITÁRIO - R$ 15 + R$ 2,50/km</option>
     <option value="CAMINHAO_3_4">CAMINHÃO 3/4 - R$ 25 + R$ 4,00/km</option>
     <option value="CAMINHAO_TRUCK">TRUCK - R$ 50 + R$ 6,00/km</option>
     <option value="CARRETA">CARRETA - R$ 100 + R$ 8,50/km</option>
   </select>
-  <input id="km" type="number" value="5" class="w-full border p-3 rounded mb-2" placeholder="Distância km">
-  <label class="flex items-center gap-2 text-sm mb-2"><input type="checkbox" id="precisaRetorno"> Precisa retorno com maquininha / dinheiro?</label>
-  <div id="divRetorno" class="hidden">
-    <select id="tipoRetorno" class="w-full border p-3 rounded mb-2"><option value="MAQUININHA_CARTAO">Máquina de Cartão</option><option value="DINHEIRO">Dinheiro</option></select>
-  </div>
+  <input id="km" type="number" value="5" class="w-full border p-3 rounded mb-2 text-sm" placeholder="Distância km">
+  <label class="flex items-center gap-2 text-sm mb-2"><input type="checkbox" id="precisaRetorno"> Precisa retorno com maquininha?</label>
+  <div id="divRetorno" class="hidden"><select id="tipoRetorno" class="w-full border p-3 rounded mb-2 text-sm"><option value="MAQUININHA_CARTAO">Máquina de Cartão</option><option value="DINHEIRO">Dinheiro</option></select></div>
   <div class="border border-orange-300 p-3 rounded mb-3 bg-orange-50">
     <label class="flex items-center gap-2 text-sm font-bold"><input type="checkbox" id="usarFavorito"> Chamar motoboy pelo código #</label>
-    <div id="divFavorito" class="hidden mt-2 flex gap-2">
-      <input id="codigoFav" placeholder="#0001" class="border p-2 rounded flex-1"><button onclick="buscarMotoboy()" class="bg-orange-500 text-white px-3 rounded">Buscar</button>
-    </div>
-    <div id="cardFav" class="hidden mt-2 flex items-center gap-3 p-2 bg-white rounded"></div>
+    <div id="divFavorito" class="hidden mt-2 flex gap-2"><input id="codigoFav" placeholder="#0001" class="border p-2 rounded flex-1 text-sm"><button onclick="buscarMotoboy()" class="bg-orange-500 text-white px-3 rounded text-sm">Buscar</button></div>
+    <div id="cardFav" class="hidden mt-2 flex items-center gap-3 p-2 bg-white rounded text-sm"></div>
   </div>
-  <h3 class="font-bold">Total a PAGAR: R$ <span id="totalLojista">0.00</span></h3>
-  <p class="text-[10px] text-gray-500">Você só vê o que paga. Motoboy não vê isso.</p>
-  <button onclick="criarPedido()" class="w-full bg-black text-white p-4 rounded-xl mt-3 font-bold">CRIAR PEDIDO ANJOS FLASH</button>
-  <div class="mt-4 p-3 bg-gray-50 rounded">
-    <h4 class="font-bold text-sm">📊 EXTRATO 90 DIAS - SÓ O QUE PAGOU</h4>
-    <div id="extratoLojista" class="text-xs mt-2"></div>
-  </div>
+  <h3 class="font-bold text-sm">Total a PAGAR: R$ <span id="totalLojista">0.00</span></h3>
+  <p class="text-[10px] text-gray-500">Você só vê o que paga.</p>
+  <button onclick="criarPedido()" class="w-full bg-black text-white p-4 rounded-xl mt-3 font-bold text-sm">CRIAR PEDIDO ANJOS FLASH</button>
+  <div class="mt-4 p-3 bg-gray-50 rounded"><h4 class="font-bold text-sm">📊 EXTRATO 90 DIAS - SÓ O QUE PAGOU</h4><div id="extratoLojista" class="text-xs mt-2"></div></div>
 </div>
 
-<!-- TELA ADMIN - CORRIDAS EM ABERTO + SALDO -->
 <div id="telaAdmin" class="p-4 hidden">
   <div class="bg-black text-white p-4 rounded-xl mb-4">
-    <h2 class="font-bold">👮 ADMIN - Painel Global</h2>
-    <p class="text-xs">Só ADMIN/SUPORTE edita preço e saldo</p>
-    <div class="mt-2 flex gap-2"><span>Tarifa Dinâmica:</span><button id="btnDinamica" onclick="toggleDinamica()" class="bg-green-500 px-2 rounded text-xs">DESLIGADA x1.0</button></div>
+    <h2 class="font-bold">👮 ADMIN - Preço e Dinâmica (Só ADMIN/SUPORTE edita)</h2>
+    <div class="mt-3 space-y-2 text-[11px]">
+      <div class="flex gap-1 items-center"><span class="w-16">MOTO</span> fixo <input id="editFixoMoto" type="number" value="8" class="text-black p-1 rounded w-12"> km <input id="editKmMoto" type="number" value="1.5" step="0.1" class="text-black p-1 rounded w-12"> rep <input id="editRepMoto" type="number" value="1.1" step="0.1" class="text-black p-1 rounded w-12"></div>
+      <div class="flex gap-1 items-center"><span class="w-16">UTIL</span> fixo <input id="editFixoUtil" type="number" value="15" class="text-black p-1 rounded w-12"> km <input id="editKmUtil" type="number" value="2.5" step="0.1" class="text-black p-1 rounded w-12"> rep <input id="editRepUtil" type="number" value="1.9" step="0.1" class="text-black p-1 rounded w-12"></div>
+      <div class="flex gap-1 items-center"><span class="w-16">3/4</span> fixo <input id="editFixo34" type="number" value="25" class="text-black p-1 rounded w-12"> km <input id="editKm34" type="number" value="4" step="0.1" class="text-black p-1 rounded w-12"> rep <input id="editRep34" type="number" value="3" step="0.1" class="text-black p-1 rounded w-12"></div>
+    </div>
+    <div class="mt-3 flex gap-2 items-center flex-wrap">
+      <span class="text-xs">Dinâmica:</span>
+      <input id="inputDinamica" type="number" value="1.5" step="0.1" min="1" max="3" class="text-black p-1 rounded w-14 text-xs">
+      <button id="btnDinamica" onclick="toggleDinamica()" class="bg-green-500 px-3 py-1 rounded text-xs">DESLIGADA</button>
+      <button onclick="salvarPrecos()" class="bg-orange-500 px-3 py-1 rounded text-xs">SALVAR</button>
+    </div>
+    <p class="text-[9px] mt-2 opacity-70">Lojista e motoboy NÃO vê isso</p>
   </div>
   <div class="border-2 border-red-500 p-3 rounded-xl mb-4">
-    <h3 class="font-bold text-red-600">🚨 Corridas em Aberto - Sem Motoboy</h3>
-    <p class="text-xs">Mais de 5 min = urgente</p>
-    <div id="corridasAbertas" class="mt-2 space-y-2"></div>
+    <h3 class="font-bold text-red-600 text-sm">🚨 Corridas em Aberto - Sem Motoboy</h3>
+    <div id="corridasAbertas" class="mt-2 space-y-2 text-xs"></div>
   </div>
   <div class="bg-gray-900 text-white p-3 rounded-xl">
-    <h3 class="font-bold">💰 Saldo - Só Admin mexe</h3>
+    <h3 class="font-bold text-sm">💰 Saldo - Só Admin mexe</h3>
     <input id="userSaldo" placeholder="ID do usuário" class="w-full p-2 rounded text-black mt-2 text-xs">
     <input id="valorSaldo" type="number" placeholder="Valor +50 ou -20" class="w-full p-2 rounded text-black mt-1 text-xs">
-    <input id="motivoSaldo" placeholder="Motivo: Bônus corrida #123" class="w-full p-2 rounded text-black mt-1 text-xs">
-    <button onclick="mexerSaldo()" class="w-full bg-orange-500 p-2 rounded mt-2 font-bold">Adicionar / Remover Saldo</button>
+    <input id="motivoSaldo" placeholder="Motivo: Bônus" class="w-full p-2 rounded text-black mt-1 text-xs">
+    <button onclick="mexerSaldo()" class="w-full bg-orange-500 p-2 rounded mt-2 font-bold text-sm">Adicionar / Remover Saldo</button>
   </div>
   <div id="listaTodosPedidos" class="mt-4 text-xs"></div>
 </div>
 
-<!-- CADASTRO MOTOBOY -->
 <div id="telaCadastro" class="p-4 border-t mt-4">
-  <h3 class="font-bold">🏍️ Cadastro Motoboy - CNH PDF/Foto + Selfie + Comprovante + CRLV</h3>
+  <h3 class="font-bold text-sm">🏍️ Cadastro Motoboy - CNH + Selfie + Comp + CRLV</h3>
   <input id="cadNome" placeholder="Nome completo" class="w-full border p-2 rounded mt-2 text-sm">
   <input id="cadCpf" placeholder="CPF" class="w-full border p-2 rounded mt-1 text-sm">
   <input id="cadEmail" placeholder="Email" class="w-full border p-2 rounded mt-1 text-sm">
@@ -126,7 +133,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, doc, setDoc, updateDoc, Timestamp, getCountFromServer } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const firebaseConfig = {
@@ -135,15 +142,15 @@ const firebaseConfig = {
   projectId: "anjos-flash",
   storageBucket: "anjos-flash.firebasestorage.app",
   messagingSenderId: "725133182752",
-  appId: "1:725133182752:web:5f9a98fa97269dcdcab945",
-  measurementId: "G-9CSJXXNR0C"
+  appId: "1:725133182752:web:5f9a98fa97269dcdcab945"
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
 
-let role = "LOJISTA";
+let role = null;
+let userLogado = null;
 let dinamica = 1;
 let dinamicaLigada = false;
 let motoboyFavData = null;
@@ -156,13 +163,34 @@ const precos = {
   CARRETA:{fixo:100, km:8.5, repasse:6.5}
 };
 
-window.setLang = (l)=>alert("Idioma: "+l+" - i18n pronto no código");
+window.setLang = (l)=>alert("Idioma: "+l);
 
-document.getElementById("roleSelect").addEventListener("change", e=>{
-  role = e.target.value;
+window.fazerLogin = async ()=>{
+  const email = document.getElementById("loginEmail").value.trim();
+  const senha = document.getElementById("loginSenha").value.trim();
+  if(!email||!senha){ alert("Digite email e senha"); return; }
+  try{
+    const cred = await signInWithEmailAndPassword(auth, email, senha);
+    userLogado = cred.user;
+    document.getElementById("telaLogin").classList.add("hidden");
+    document.getElementById("userLogadoInfo").innerText = "Logado: "+email;
+    role = document.getElementById("roleSelect").value;
+    mostrarTelaPorRole();
+    carregarExtratos();
+    if(role==="ADMIN"||role==="SUPORTE") carregarAbertas();
+  }catch(e){ alert("Erro login: "+e.message); }
+};
+
+function mostrarTelaPorRole(){
   document.getElementById("telaMotoboy").classList.toggle("hidden", role!=="MOTOBOY_MOTORISTA");
   document.getElementById("telaLojista").classList.toggle("hidden",!(role==="LOJISTA"||role==="SUPER_LOJISTA"));
   document.getElementById("telaAdmin").classList.toggle("hidden",!(role==="ADMIN"||role==="SUPORTE"||role==="FRANQUEADO"));
+}
+
+document.getElementById("roleSelect").addEventListener("change", e=>{
+  if(!userLogado){ alert("FAÇA LOGIN PRIMEIRO!"); e.target.value="LOJISTA"; return; }
+  role = e.target.value;
+  mostrarTelaPorRole();
   if(role==="ADMIN"||role==="SUPORTE") carregarAbertas();
 });
 
@@ -188,11 +216,28 @@ document.getElementById("veiculo").addEventListener("change", calc);
 document.getElementById("km").addEventListener("input", calc);
 calc();
 
+window.salvarPrecos = async ()=>{
+  if(role!=="ADMIN" && role!=="SUPORTE"){ alert("Só ADMIN/SUPORTE edita preço"); return; }
+  precos.MOTO.fixo = Number(document.getElementById("editFixoMoto").value);
+  precos.MOTO.km = Number(document.getElementById("editKmMoto").value);
+  precos.MOTO.repasse = Number(document.getElementById("editRepMoto").value);
+  precos.UTILITARIO.fixo = Number(document.getElementById("editFixoUtil").value);
+  precos.UTILITARIO.km = Number(document.getElementById("editKmUtil").value);
+  precos.UTILITARIO.repasse = Number(document.getElementById("editRepUtil").value);
+  precos.CAMINHAO_3_4.fixo = Number(document.getElementById("editFixo34").value);
+  precos.CAMINHAO_3_4.km = Number(document.getElementById("editKm34").value);
+  precos.CAMINHAO_3_4.repasse = Number(document.getElementById("editRep34").value);
+  await setDoc(doc(db, "pricing_config", "atual"), {precos, atualizado_em: Timestamp.now(), por: role, dinamica});
+  alert("Preços salvos! Lojista NÃO vê isso");
+  calc();
+};
+
 window.toggleDinamica = ()=>{
+  if(role!=="ADMIN" && role!=="SUPORTE"){ alert("Só ADMIN/SUPORTE"); return; }
   dinamicaLigada =!dinamicaLigada;
-  dinamica = dinamicaLigada? 1.5 : 1;
-  document.getElementById("btnDinamica").innerText = (dinamicaLigada? "LIGADA x"+dinamica : "DESLIGADA x1.0");
-  document.getElementById("btnDinamica").className = dinamicaLigada? "bg-red-500 px-2 rounded text-xs" : "bg-green-500 px-2 rounded text-xs";
+  dinamica = Number(document.getElementById("inputDinamica").value) || 1.5;
+  document.getElementById("btnDinamica").innerText = (dinamicaLigada? `LIGADA x${dinamica}` : "DESLIGADA");
+  document.getElementById("btnDinamica").className = dinamicaLigada? "bg-red-500 px-3 py-1 rounded text-xs" : "bg-green-500 px-3 py-1 rounded text-xs";
   calc();
 };
 
@@ -207,33 +252,25 @@ window.buscarMotoboy = async ()=>{
 };
 
 window.criarPedido = async ()=>{
+  if(!userLogado){ alert("Faça login"); return; }
   const {lojista, motoboy, margem} = calc();
   const veic = document.getElementById("veiculo").value;
   const km = Number(document.getElementById("km").value);
   const precisaRet = document.getElementById("precisaRetorno").checked;
   const tipoRet = document.getElementById("tipoRetorno").value;
   const usarFav = document.getElementById("usarFavorito").checked;
-
   await addDoc(collection(db, "pedidos"), {
-    loja_id: "loja_macae_001",
-    owner_id: role==="SUPER_LOJISTA"? "owner_001" : "loja_macae_001",
+    loja_id: "loja_macae_001", owner_id: role==="SUPER_LOJISTA"? "owner_001" : "loja_macae_001",
     motorista_id: usarFav && motoboyFavData? motoboyFavData.userId : null,
     motorista_codigo: usarFav? document.getElementById("codigoFav").value : null,
-    motorista_nome: motoboyFavData?.nome || null,
-    motorista_foto: motoboyFavData?.foto_url || null,
-    veiculo_solicitado: veic,
-    distancia_km: km,
-    precisa_retorno: precisaRet,
-    tipo_retorno: precisaRet? tipoRet : null,
-    valor_lojista: lojista,
-    valor_motoboy: motoboy,
-    margem_plataforma: margem,
-    tarifa_dinamica: dinamica,
+    motorista_nome: motoboyFavData?.nome || null, motorista_foto: motoboyFavData?.foto_url || null,
+    veiculo_solicitado: veic, distancia_km: km, precisa_retorno: precisaRet, tipo_retorno: precisaRet? tipoRet : null,
+    valor_lojista: lojista, valor_motoboy: motoboy, margem_plataforma: margem,
+    tarifa_dinamica: dinamicaLigada? dinamica : 1,
     status: usarFav? "AGUARDANDO_ACEITE_FAVORITO" : "AGUARDANDO",
-    cidade: "Macaé, RJ",
-    criado_em: Timestamp.now()
+    cidade: "Macaé, RJ", criado_em: Timestamp.now()
   });
-  alert(`Pedido criado! Lojista paga R$ ${lojista.toFixed(2)} | Motoboy ganha R$ ${motoboy.toFixed(2)} | Sua margem R$ ${margem.toFixed(2)}`);
+  alert(`Criado! Paga R$ ${lojista.toFixed(2)} | Motoboy R$ ${motoboy.toFixed(2)} | Margem R$ ${margem.toFixed(2)}`);
   carregarExtratos();
 };
 
@@ -246,11 +283,10 @@ async function carregarExtratos(){
     htmlLoj += `<div class="border-b py-1">#${d.id.slice(0,4)} ${p.veiculo_solicitado} ${p.distancia_km}km - PAGO R$ ${p.valor_lojista?.toFixed(2)} ${p.precisa_retorno? "📦 "+p.tipo_retorno : ""}</div>`;
     htmlMoto += `<div class="border-b py-1">#${d.id.slice(0,4)} ${p.veiculo_solicitado} - A RECEBER R$ ${p.valor_motoboy?.toFixed(2)} ${p.motorista_codigo? "Fav "+p.motorista_codigo : ""}</div>`;
   });
-  document.getElementById("extratoLojista").innerHTML = htmlLoj;
-  document.getElementById("extratoMotoboy").innerHTML = htmlMoto;
-  document.getElementById("listaEntregasMotoboy").innerHTML = htmlMoto;
+  document.getElementById("extratoLojista").innerHTML = htmlLoj || "Sem pedidos";
+  document.getElementById("extratoMotoboy").innerHTML = htmlMoto || "Sem entregas";
+  document.getElementById("listaEntregasMotoboy").innerHTML = htmlMoto || "Sem entregas";
 }
-carregarExtratos();
 
 async function carregarAbertas(){
   const q = query(collection(db, "pedidos"), where("status","in",["AGUARDANDO","AGUARDANDO_ACEITE_FAVORITO"]));
@@ -260,21 +296,21 @@ async function carregarAbertas(){
       const p = d.data();
       if(!p.motorista_id){
         const tempo = Math.floor((Date.now()/1000 - p.criado_em.seconds)/60);
-        html += `<div class="border p-2 rounded ${tempo>5? "border-red-500 bg-red-50":"bg-white"}">#${d.id.slice(0,4)} ${p.veiculo_solicitado} ${p.distancia_km}km - ${tempo}min - Lojista R$${p.valor_lojista?.toFixed(2)} / Motoboy R$${p.valor_motoboy?.toFixed(2)} / Margem R$${p.margem_plataforma?.toFixed(2)} ${p.motorista_codigo? "<br>⭐ FAVORITO "+p.motorista_codigo:""} ${p.precisa_retorno? "<br>📦 RETORNO "+p.tipo_retorno:""}</div>`;
+        html += `<div class="border p-2 rounded ${tempo>5? "border-red-500 bg-red-50":"bg-white"}">#${d.id.slice(0,4)} ${p.veiculo_solicitado} ${p.distancia_km}km - ${tempo}min - Lojista R$${p.valor_lojista?.toFixed(2)} / Moto R$${p.valor_motoboy?.toFixed(2)} ${p.motorista_codigo? "<br>⭐ FAV "+p.motorista_codigo:""} ${p.precisa_retorno? "<br>📦 RET "+p.tipo_retorno:""}</div>`;
       }
     });
     document.getElementById("corridasAbertas").innerHTML = html || "Nenhuma corrida aberta";
-    document.getElementById("listaTodosPedidos").innerHTML = "<b>Todos pedidos (Admin vê tudo):</b><br>"+html;
+    document.getElementById("listaTodosPedidos").innerHTML = "<b>Todos pedidos:</b><br>"+html;
   });
 }
 
 window.mexerSaldo = async ()=>{
+  if(role!=="ADMIN" && role!=="SUPORTE"){ alert("Só ADMIN/SUPORTE"); return; }
   const uid = document.getElementById("userSaldo").value;
   const val = Number(document.getElementById("valorSaldo").value);
   const mot = document.getElementById("motivoSaldo").value;
-  if(role!=="ADMIN" && role!=="SUPORTE"){ alert("Só ADMIN/SUPORTE mexe no saldo"); return; }
   await addDoc(collection(db, "transacoes"), {userId:uid, valor:val, motivo:mot, criado_por:role, criado_em:Timestamp.now()});
-  alert("Saldo lançado! Motoboy só vê 'A receber', lojista só vê 'Pago'");
+  alert("Saldo lançado!");
 };
 
 window.cadastrarMotoboy = async ()=>{
@@ -286,7 +322,7 @@ window.cadastrarMotoboy = async ()=>{
   const fileSelfie = document.getElementById("fileSelfie").files[0];
   const fileComp = document.getElementById("fileComp").files[0];
   const fileCRLV = document.getElementById("fileCRLV").files[0];
-  if(!fileCNH||!fileSelfie||!fileComp||!fileCRLV){ alert("Envie os 4 arquivos: CNH, Selfie, Comprovante, CRLV"); return; }
+  if(!fileCNH||!fileSelfie||!fileComp||!fileCRLV){ alert("Envie CNH, Selfie, Comprovante, CRLV"); return; }
   const cred = await createUserWithEmailAndPassword(auth, email, senha);
   const uid = cred.user.uid;
   const countSnap = await getCountFromServer(collection(db, "motoristas"));
@@ -306,12 +342,11 @@ window.cadastrarMotoboy = async ()=>{
     documentos:{cnh:urlCNH, selfie:urlSelfie, comprovante:urlComp, crlv:urlCRLV},
     criado_em: Timestamp.now(), cidade:"Macaé, RJ"
   });
-  alert("Motoboy cadastrado com código "+codigo+"! Foto, CNH, Comprovante e CRLV enviados. Aguarde aprovação ADMIN.");
+  alert("Cadastrado "+codigo+"! Aguarde aprovação");
   document.getElementById("codigoMotoboy").innerText = codigo;
   document.getElementById("nomeMotoboy").innerText = nome;
   document.getElementById("fotoMotoboy").src = urlSelfie;
 };
-
 </script>
 </body>
 </html>
