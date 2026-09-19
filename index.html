@@ -1,44 +1,81 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sistema Macaé</title><script src="https://cdn.tailwindcss.com"></script></head>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Anjos Flash V6 - Seguro</title><script src="https://cdn.tailwindcss.com"></script></head>
 <body class="bg-black text-white">
 <div id="login" class="min-h-screen flex items-center justify-center p-4">
 <div class="bg-zinc-900 border-2 border-yellow-400 rounded-2xl p-6 w-full max-w-sm">
 <h1 class="font-black text-center text-yellow-400 text-xl">ANJOS FLASH V6</h1>
-<p class="text-xs text-center text-gray-400 mb-4">sistema-macae-entregas.vercel.app</p>
+<p class="text-xs text-center text-gray-400 mb-4">Login Seguro com Senha</p>
+
 <div class="grid grid-cols-2 gap-2 mb-3">
-<button onclick="setP('admin')" class="p-3 rounded-xl bg-red-900/40 border border-red-600 text-xs font-bold">👑 ADMIN</button>
-<button onclick="setP('franqueado')" class="p-3 rounded-xl bg-purple-900/30 border border-purple-600 text-xs font-bold">🏢 FRANQUEADO</button>
-<button onclick="setP('suporte')" class="p-3 rounded-xl bg-blue-900/30 border border-blue-600 text-xs font-bold">🎧 SUPORTE</button>
-<button onclick="setP('superlojista')" class="p-3 rounded-xl bg-yellow-900/30 border border-yellow-600 text-xs font-bold">⭐ SUPER LOJISTA</button>
-<button onclick="setP('lojista')" class="p-3 rounded-xl bg-zinc-800 border border-zinc-700 text-xs">🏪 LOJISTA</button>
-<button onclick="setP('motoboy')" class="p-3 rounded-xl bg-zinc-800 border border-zinc-700 text-xs">🏍️ MOTOBOY</button>
-<button onclick="setP('motorista')" class="p-3 rounded-xl bg-zinc-800 border border-zinc-700 text-xs col-span-2">🚛 MOTORISTA</button>
+<button onclick="setP('admin')" class="cargo p-3 rounded-xl bg-red-900/40 border border-zinc-700 text-xs font-bold">👑 ADMIN</button>
+<button onclick="setP('franqueado')" class="cargo p-3 rounded-xl bg-purple-900/30 border border-zinc-700 text-xs font-bold">🏢 FRANQUEADO</button>
+<button onclick="setP('suporte')" class="cargo p-3 rounded-xl bg-blue-900/30 border border-zinc-700 text-xs font-bold">🎧 SUPORTE</button>
+<button onclick="setP('superlojista')" class="cargo p-3 rounded-xl bg-yellow-900/30 border border-zinc-700 text-xs font-bold">⭐ SUPER LOJISTA</button>
+<button onclick="setP('lojista')" class="cargo p-3 rounded-xl bg-zinc-800 border border-zinc-700 text-xs">🏪 LOJISTA</button>
+<button onclick="setP('motoboy')" class="cargo p-3 rounded-xl bg-zinc-800 border border-zinc-700 text-xs">🏍️ MOTOBOY</button>
+<button onclick="setP('motorista')" class="cargo p-3 rounded-xl bg-zinc-800 border border-zinc-700 text-xs col-span-2">🚛 MOTORISTA</button>
 </div>
-<p id="sel" class="text-center text-yellow-400 text-xs font-bold mb-3">SELECIONE SEU CARGO</p>
-<input id="email" placeholder="Email" class="w-full p-3 rounded-xl bg-black border border-zinc-700 mb-2">
-<input id="regiao" placeholder="Região: Macaé" value="Macaé" class="w-full p-3 rounded-xl bg-black border border-zinc-700 mb-3">
-<button onclick="entrar()" class="w-full bg-yellow-400 text-black p-4 rounded-xl font-black text-lg">ENTRAR NO SISTEMA</button>
-<p id="erro" class="hidden text-red-400 text-xs text-center mt-2"></p>
+<p id="sel" class="text-center text-yellow-400 text-xs font-bold mb-3">SELECIONE O CARGO ↑</p>
+
+<input id="email" type="email" placeholder="Email" class="w-full p-3 rounded-xl bg-black border border-zinc-700 mb-2 outline-none">
+<input id="senha" type="password" placeholder="Senha (min 6 dígitos)" class="w-full p-3 rounded-xl bg-black border border-zinc-700 mb-2 outline-none">
+<input id="regiao" placeholder="Região: Macaé" value="Macaé" class="w-full p-3 rounded-xl bg-black border border-zinc-700 mb-3 outline-none">
+
+<div class="grid grid-cols-2 gap-2">
+<button onclick="criarConta()" class="bg-zinc-800 p-3 rounded-xl font-bold text-sm border border-zinc-700">CRIAR CONTA</button>
+<button onclick="entrar()" class="bg-yellow-400 text-black p-3 rounded-xl font-black text-sm">ENTRAR</button>
+</div>
+<p id="erro" class="hidden text-red-400 text-xs text-center mt-3 p-2 bg-red-900/30 rounded"></p>
 </div></div>
-<div id="sistema" class="hidden"><div class="bg-yellow-400 text-black p-3 flex justify-between"><div><b id="nLog"></b><br><span id="pLog" class="text-xs bg-black text-yellow-400 px-2 py-1 rounded-full"></span></div><button onclick="localStorage.clear();location.reload()" class="bg-black text-yellow-400 px-4 py-2 rounded-full text-xs font-black">SAIR</button></div>
-<div class="p-4 max-w-md mx-auto"><div id="adminBox" class="hidden bg-zinc-900 border-2 border-yellow-400 p-4 rounded-xl mb-4"><h2 class="font-black text-yellow-400">PAINEL ADMIN - VÊ TUDO</h2><p id="tot" class="text-xs mt-2"></p><div id="listaA" class="mt-2 space-y-1"></div></div>
-<div class="bg-zinc-900 p-5 rounded-2xl border border-zinc-800"><h2 class="font-bold mb-3">🌍 Nova Entrega</h2><input id="rua" placeholder="Rua, Número, Bairro" class="w-full p-3 rounded-xl bg-black border border-zinc-700 mb-2"><div class="grid grid-cols-2 gap-2 mb-2"><input id="cid" placeholder="Cidade / Região" class="p-3 rounded-xl bg-black border border-zinc-700"><input id="pais" placeholder="País" class="p-3 rounded-xl bg-black border border-zinc-700"></div><button onclick="gerar()" class="w-full bg-white text-black p-3 rounded-xl font-black">GERAR MENSAGEM</button><div id="res" class="hidden mt-3 bg-black p-3 rounded-xl"><pre id="txtMsg" class="whitespace-pre-wrap text-sm"></pre></div></div></div></div>
+
+<div id="sistema" class="hidden"><div class="bg-yellow-400 text-black p-3 flex justify-between"><div><b id="nLog"></b><br><span id="pLog" class="text-xs bg-black text-yellow-400 px-2 py-1 rounded-full"></span></div><button onclick="localStorage.removeItem('logado');location.reload()" class="bg-black text-yellow-400 px-4 py-2 rounded-full text-xs font-black">SAIR</button></div>
+<div class="p-4 max-w-md mx-auto"><div id="adminBox" class="hidden bg-zinc-900 border-2 border-yellow-400 p-4 rounded-xl mb-4"><h2 class="font-black text-yellow-400">PAINEL ADMIN - VÊ TUDO</h2><p id="tot" class="text-xs mt-2"></p><div id="listaA" class="mt-2 space-y-1"></div></div></div></div>
+
 <script>
 let perfil=null;
-function setP(p){perfil=p; localStorage.setItem('perfil',p); document.getElementById('sel').innerText='✓ '+p.toUpperCase(); document.getElementById('erro').classList.add('hidden')}
-function entrar(){
- if(!perfil){document.getElementById('erro').innerText='⚠️ Selecione ADMIN, FRANQUEADO, SUPORTE, SUPER LOJISTA, LOJISTA, MOTOBOY ou MOTORISTA em cima!'; document.getElementById('erro').classList.remove('hidden'); return;}
- const email=document.getElementById('email').value; if(!email){document.getElementById('erro').innerText='Digite email'; document.getElementById('erro').classList.remove('hidden'); return;}
- const regiao=document.getElementById('regiao').value||'Macaé';
- localStorage.setItem('logado',JSON.stringify({email,perfil,regiao}));
- let users=JSON.parse(localStorage.getItem('users')||'[]'); if(!users.find(u=>u.email===email)) users.push({email,perfil,regiao}); localStorage.setItem('users',JSON.stringify(users));
- mostrar({email,perfil,regiao});
+function setP(p){
+ perfil=p; localStorage.setItem('perfil',p);
+ document.getElementById('sel').innerText='✓ '+p.toUpperCase();
+ document.querySelectorAll('.cargo').forEach(b=>{b.style.borderColor='#3f3f46'; b.style.opacity='0.6'});
+ event.currentTarget.style.borderColor='white'; event.currentTarget.style.opacity='1';
+ document.getElementById('erro').classList.add('hidden');
 }
+function criarConta(){
+ const email=document.getElementById('email').value, senha=document.getElementById('senha').value, regiao=document.getElementById('regiao').value;
+ if(!perfil) return erro('Selecione o cargo em cima!');
+ if(!email || !email.includes('@')) return erro('Digite email válido');
+ if(!senha || senha.length<6) return erro('Senha min 6 dígitos');
+ let users=JSON.parse(localStorage.getItem('users')||'[]');
+ if(users.find(u=>u.email===email)) return erro('Email já existe, clique em ENTRAR');
+ users.push({email,senha,perfil,regiao,criado:new Date().toLocaleString()});
+ localStorage.setItem('users',JSON.stringify(users));
+ alert('✅ Conta criada! Agora clique em ENTRAR');
+}
+function entrar(){
+ const email=document.getElementById('email').value, senha=document.getElementById('senha').value;
+ if(!perfil) return erro('Selecione o cargo!');
+ if(!senha) return erro('Digite a senha');
+ let users=JSON.parse(localStorage.getItem('users')||'[]');
+ let u=users.find(u=>u.email===email && u.senha===senha);
+ if(!u){
+   // permite primeiro admin sem conta
+   if(email==='super@macar.com' && senha==='123456' && perfil==='admin'){
+     u={email,senha,perfil,regiao:'Mundial'};
+   } else {
+     return erro('Email ou senha errados. Clique em CRIAR CONTA primeiro');
+   }
+ }
+ if(u.perfil!==perfil) return erro(`Esse email é ${u.perfil.toUpperCase()}, selecione ${u.perfil.toUpperCase()} em cima`);
+ localStorage.setItem('logado',JSON.stringify(u));
+ mostrar(u);
+}
+function erro(t){let e=document.getElementById('erro'); e.innerText='⚠️ '+t; e.classList.remove('hidden');}
 function mostrar(u){
  document.getElementById('login').classList.add('hidden'); document.getElementById('sistema').classList.remove('hidden');
  document.getElementById('nLog').innerText=u.email; document.getElementById('pLog').innerText=u.perfil.toUpperCase()+' - '+u.regiao;
- if(u.perfil==='admin'){document.getElementById('adminBox').classList.remove('hidden'); const users=JSON.parse(localStorage.getItem('users')||'[]'); document.getElementById('tot').innerText=users.length+' usuários cadastrados'; document.getElementById('listaA').innerHTML=users.map(x=>`<div class="text-xs bg-black p-2 rounded">${x.email} - ${x.perfil} - ${x.regiao}</div>`).join('');}
+ if(u.perfil==='admin'){document.getElementById('adminBox').classList.remove('hidden'); const users=JSON.parse(localStorage.getItem('users')||'[]'); document.getElementById('tot').innerText=users.length+' usuários cadastrados'; document.getElementById('listaA').innerHTML=users.map(x=>`<div class="text-xs bg-black p-2 rounded flex justify-between"><span>${x.email} - ${x.perfil} - ${x.regiao}</span><span class="text-gray-500">${x.criado||''}</span></div>`).join('');}
 }
-function gerar(){let r=document.getElementById('rua').value,c=document.getElementById('cid').value,p=document.getElementById('pais').value; if(!r)return alert('Rua'); let comp=r; if(c)comp+=', '+c; if(p)comp+=', '+p; document.getElementById('txtMsg').innerText=`[${Math.floor(Math.random()*9000)}]\n${comp}\n🗺️ https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(comp)}`; document.getElementById('res').classList.remove('hidden');}
 let lg=localStorage.getItem('logado'); if(lg) mostrar(JSON.parse(lg));
 </script>
 </body></html>
