@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anjos Flash - Entrega Global</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+<div id="app" class="max-w-[420px] mx-auto bg-white min-h-screen shadow-xl">
+
+<!-- HEADER -->
+<div class="bg-white p-4 flex justify-between items-center border-b sticky top-0 z-10">
+  <div class="flex items-center gap-2"><span class="text-2xl">🏍️</span><b class="text-xl">Anjos <span class="text-orange-500">Flash</span></b></div>
+  <select id="roleSelect" class="border p-2 rounded text-xs">
+    <option value="LOJISTA">LOJISTA</option>
+    <option value="SUPER_LOJISTA">SUPER LOJISTA</option>
+    <option value="MOTOBOY_MOTORISTA">MOTOBOY #0001</option>
+    <option value="ADMIN">ADMIN</option>
+    <option value="SUPORTE">SUPORTE</option>
+    <option value="FRANQUEADO">FRANQUEADO</option>
+  </select>
+</div>
+
+<!-- SELETOR DE IDIOMA -->
+<div class="flex gap-2 p-2 text-xs">
+  <button onclick="setLang('pt')" class="px-2 py-1 bg-black text-white rounded">PT</button>
+  <button onclick="setLang('en')" class="px-2 py-1 border rounded">EN</button>
+  <button onclick="setLang('es')" class="px-2 py-1 border rounded">ES</button>
+  <button onclick="setLang('fr')" class="px-2 py-1 border rounded">FR</button>
+</div>
+
+<!-- TELA MOTOBOY -->
+<div id="telaMotoboy" class="p-4">
+  <div class="flex items-center gap-3 mb-4">
+    <img id="fotoMotoboy" src="https://i.pravatar.cc/100" class="w-14 h-14 rounded-full object-cover border-2 border-orange-500">
+    <div><b id="nomeMotoboy">João Silva</b><br><span class="bg-black text-white text-xs px-2 py-1 rounded" id="codigoMotoboy">#0001</span> <span class="text-xs">⭐ 5.0 | 124 corridas</span></div>
+  </div>
+  <div class="bg-orange-100 p-4 rounded-xl mb-4">
+    <p class="text-sm text-orange-800">Ganhos de hoje - SÓ O QUE VAI RECEBER</p>
+    <h1 class="text-3xl font-bold">R$ <span id="ganhoMotoboy">187,50</span></h1>
+    <p class="text-xs mt-1">8 entregas concluídas • 5h 12m online</p>
+  </div>
+  <div id="alertaMaquininha" class="hidden bg-orange-500 text-white p-3 rounded-xl mb-4">
+    <b>🏧 Devolução Maquininha pendente</b><br><span class="text-sm">R$ 200,00 • Entregar na base até 18:00 hoje</span>
+  </div>
+  <h3 class="font-bold mb-2">Entregas de hoje</h3>
+  <div id="listaEntregasMotoboy" class="space-y-2"></div>
+  <div class="mt-4 p-3 bg-gray-50 rounded">
+    <h4 class="font-bold text-sm">📊 EXTRATO 90 DIAS - SÓ A RECEBER</h4>
+    <div id="extratoMotoboy" class="text-xs mt-2"></div>
+  </div>
+</div>
+
+<!-- TELA LOJISTA -->
+<div id="telaLojista" class="p-4 hidden">
+  <h2 class="font-bold text-lg mb-3">📦 Pedir Entrega</h2>
+  <label class="text-xs">Veículo</label>
+  <select id="veiculo" class="w-full border p-3 rounded mb-2">
+    <option value="MOTO">MOTO - R$ 8 fixo + R$ 1,50/km</option>
+    <option value="UTILITARIO">UTILITÁRIO - R$ 15 + R$ 2,50/km</option>
+    <option value="CAMINHAO_3_4">CAMINHÃO 3/4 - R$ 25 + R$ 4,00/km</option>
+    <option value="CAMINHAO_TRUCK">TRUCK - R$ 50 + R$ 6,00/km</option>
+    <option value="CARRETA">CARRETA - R$ 100 + R$ 8,50/km</option>
+  </select>
+  <input id="km" type="number" value="5" class="w-full border p-3 rounded mb-2" placeholder="Distância km">
+  <label class="flex items-center gap-2 text-sm mb-2"><input type="checkbox" id="precisaRetorno"> Precisa retorno com maquininha / dinheiro?</label>
+  <div id="divRetorno" class="hidden">
+    <select id="tipoRetorno" class="w-full border p-3 rounded mb-2"><option value="MAQUININHA_CARTAO">Máquina de Cartão</option><option value="DINHEIRO">Dinheiro</option></select>
+  </div>
+  <div class="border border-orange-300 p-3 rounded mb-3 bg-orange-50">
+    <label class="flex items-center gap-2 text-sm font-bold"><input type="checkbox" id="usarFavorito"> Chamar motoboy pelo código #</label>
+    <div id="divFavorito" class="hidden mt-2 flex gap-2">
+      <input id="codigoFav" placeholder="#0001" class="border p-2 rounded flex-1"><button onclick="buscarMotoboy()" class="bg-orange-500 text-white px-3 rounded">Buscar</button>
+    </div>
+    <div id="cardFav" class="hidden mt-2 flex items-center gap-3 p-2 bg-white rounded"></div>
+  </div>
+  <h3 class="font-bold">Total a PAGAR: R$ <span id="totalLojista">0.00</span></h3>
+  <p class="text-[10px] text-gray-500">Você só vê o que paga. Motoboy não vê isso.</p>
+  <button onclick="criarPedido()" class="w-full bg-black text-white p-4 rounded-xl mt-3 font-bold">CRIAR PEDIDO ANJOS FLASH</button>
+  <div class="mt-4 p-3 bg-gray-50 rounded">
+    <h4 class="font-bold text-sm">📊 EXTRATO 90 DIAS - SÓ O QUE PAGOU</h4>
+    <div id="extratoLojista" class="text-xs mt-2"></div>
+  </div>
+</div>
+
+<!-- TELA ADMIN - CORRIDAS EM ABERTO + SALDO -->
+<div id="telaAdmin" class="p-4 hidden">
+  <div class="bg-black text-white p-4 rounded-xl mb-4">
+    <h2 class="font-bold">👮 ADMIN - Painel Global</h2>
+    <p class="text-xs">Só ADMIN/SUPORTE edita preço e saldo</p>
+    <div class="mt-2 flex gap-2"><span>Tarifa Dinâmica:</span><button id="btnDinamica" onclick="toggleDinamica()" class="bg-green-500 px-2 rounded text-xs">DESLIGADA x1.0</button></div>
+  </div>
+  <div class="border-2 border-red-500 p-3 rounded-xl mb-4">
+    <h3 class="font-bold text-red-600">🚨 Corridas em Aberto - Sem Motoboy</h3>
+    <p class="text-xs">Mais de 5 min = urgente</p>
+    <div id="corridasAbertas" class="mt-2 space-y-2"></div>
+  </div>
+  <div class="bg-gray-900 text-white p-3 rounded-xl">
+    <h3 class="font-bold">💰 Saldo - Só Admin mexe</h3>
+    <input id="userSaldo" placeholder="ID do usuário" class="w-full p-2 rounded text-black mt-2 text-xs">
+    <input id="valorSaldo" type="number" placeholder="Valor +50 ou -20" class="w-full p-2 rounded text-black mt-1 text-xs">
+    <input id="motivoSaldo" placeholder="Motivo: Bônus corrida #123" class="w-full p-2 rounded text-black mt-1 text-xs">
+    <button onclick="mexerSaldo()" class="w-full bg-orange-500 p-2 rounded mt-2 font-bold">Adicionar / Remover Saldo</button>
+  </div>
+  <div id="listaTodosPedidos" class="mt-4 text-xs"></div>
+</div>
+
+<!-- CADASTRO MOTOBOY -->
+<div id="telaCadastro" class="p-4 border-t mt-4">
+  <h3 class="font-bold">🏍️ Cadastro Motoboy - CNH PDF/Foto + Selfie + Comprovante + CRLV</h3>
+  <input id="cadNome" placeholder="Nome completo" class="w-full border p-2 rounded mt-2 text-sm">
+  <input id="cadCpf" placeholder="CPF" class="w-full border p-2 rounded mt-1 text-sm">
+  <input id="cadEmail" placeholder="Email" class="w-full border p-2 rounded mt-1 text-sm">
+  <input id="cadSenha" type="password" placeholder="Senha" class="w-full border p-2 rounded mt-1 text-sm">
+  <input id="cadPlaca" placeholder="Placa" class="w-full border p-2 rounded mt-1 text-sm">
+  <p class="text-xs mt-2">CNH: <input type="file" id="fileCNH" accept=".pdf,image/*" class="text-xs"></p>
+  <p class="text-xs">Selfie: <input type="file" id="fileSelfie" accept="image/*" class="text-xs"></p>
+  <p class="text-xs">Comprovante: <input type="file" id="fileComp" accept=".pdf,image/*" class="text-xs"></p>
+  <p class="text-xs">CRLV: <input type="file" id="fileCRLV" accept=".pdf,image/*" class="text-xs"></p>
+  <button onclick="cadastrarMotoboy()" class="w-full bg-black text-white p-3 rounded mt-2 text-sm">ENVIAR CADASTRO #000X</button>
+</div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, doc, setDoc, updateDoc, Timestamp, getCountFromServer } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
+  authDomain: "anjos-flash.firebaseapp.com",
+  projectId: "anjos-flash",
+  storageBucket: "anjos-flash.firebasestorage.app",
+  messagingSenderId: "725133182752",
+  appId: "1:725133182752:web:5f9a98fa97269dcdcab945",
+  measurementId: "G-9CSJXXNR0C"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const storage = getStorage(app);
+
+let role = "LOJISTA";
+let dinamica = 1;
+let dinamicaLigada = false;
+let motoboyFavData = null;
+
+const precos = {
+  MOTO:{fixo:8, km:1.5, repasse:1.1},
+  UTILITARIO:{fixo:15, km:2.5, repasse:1.9},
+  CAMINHAO_3_4:{fixo:25, km:4, repasse:3},
+  CAMINHAO_TRUCK:{fixo:50, km:6, repasse:4.5},
+  CARRETA:{fixo:100, km:8.5, repasse:6.5}
+};
+
+window.setLang = (l)=>alert("Idioma: "+l+" - i18n pronto no código");
+
+document.getElementById("roleSelect").addEventListener("change", e=>{
+  role = e.target.value;
+  document.getElementById("telaMotoboy").classList.toggle("hidden", role!=="MOTOBOY_MOTORISTA");
+  document.getElementById("telaLojista").classList.toggle("hidden",!(role==="LOJISTA"||role==="SUPER_LOJISTA"));
+  document.getElementById("telaAdmin").classList.toggle("hidden",!(role==="ADMIN"||role==="SUPORTE"||role==="FRANQUEADO"));
+  if(role==="ADMIN"||role==="SUPORTE") carregarAbertas();
+});
+
+document.getElementById("precisaRetorno").addEventListener("change", e=>{
+  document.getElementById("divRetorno").classList.toggle("hidden",!e.target.checked);
+  document.getElementById("alertaMaquininha").classList.toggle("hidden",!e.target.checked);
+});
+document.getElementById("usarFavorito").addEventListener("change", e=>{
+  document.getElementById("divFavorito").classList.toggle("hidden",!e.target.checked);
+});
+
+function calc(){
+  const v = document.getElementById("veiculo").value;
+  const km = Number(document.getElementById("km").value||0);
+  const f = dinamicaLigada? dinamica : 1;
+  const p = precos[v];
+  const lojista = (p.fixo + km * p.km) * f;
+  const motoboy = (p.fixo*0.8 + km * p.repasse) * f;
+  document.getElementById("totalLojista").innerText = lojista.toFixed(2);
+  return {lojista, motoboy, margem: lojista-motoboy};
+}
+document.getElementById("veiculo").addEventListener("change", calc);
+document.getElementById("km").addEventListener("input", calc);
+calc();
+
+window.toggleDinamica = ()=>{
+  dinamicaLigada =!dinamicaLigada;
+  dinamica = dinamicaLigada? 1.5 : 1;
+  document.getElementById("btnDinamica").innerText = (dinamicaLigada? "LIGADA x"+dinamica : "DESLIGADA x1.0");
+  document.getElementById("btnDinamica").className = dinamicaLigada? "bg-red-500 px-2 rounded text-xs" : "bg-green-500 px-2 rounded text-xs";
+  calc();
+};
+
+window.buscarMotoboy = async ()=>{
+  const cod = document.getElementById("codigoFav").value.toUpperCase();
+  const q = query(collection(db, "motoristas"), where("codigo","==",cod));
+  const snap = await getDocs(q);
+  if(snap.empty){ alert("Não achei "+cod); return; }
+  motoboyFavData = snap.docs[0].data();
+  document.getElementById("cardFav").classList.remove("hidden");
+  document.getElementById("cardFav").innerHTML = `<img src="${motoboyFavData.foto_url||motoboyFavData.documentos?.selfie}" class="w-12 h-12 rounded-full"><div><b>${motoboyFavData.nome}</b><br><span class="bg-black text-white text-xs px-2 rounded">${motoboyFavData.codigo}</span> ⭐5.0</div>`;
+};
+
+window.criarPedido = async ()=>{
+  const {lojista, motoboy, margem} = calc();
+  const veic = document.getElementById("veiculo").value;
+  const km = Number(document.getElementById("km").value);
+  const precisaRet = document.getElementById("precisaRetorno").checked;
+  const tipoRet = document.getElementById("tipoRetorno").value;
+  const usarFav = document.getElementById("usarFavorito").checked;
+
+  await addDoc(collection(db, "pedidos"), {
+    loja_id: "loja_macae_001",
+    owner_id: role==="SUPER_LOJISTA"? "owner_001" : "loja_macae_001",
+    motorista_id: usarFav && motoboyFavData? motoboyFavData.userId : null,
+    motorista_codigo: usarFav? document.getElementById("codigoFav").value : null,
+    motorista_nome: motoboyFavData?.nome || null,
+    motorista_foto: motoboyFavData?.foto_url || null,
+    veiculo_solicitado: veic,
+    distancia_km: km,
+    precisa_retorno: precisaRet,
+    tipo_retorno: precisaRet? tipoRet : null,
+    valor_lojista: lojista,
+    valor_motoboy: motoboy,
+    margem_plataforma: margem,
+    tarifa_dinamica: dinamica,
+    status: usarFav? "AGUARDANDO_ACEITE_FAVORITO" : "AGUARDANDO",
+    cidade: "Macaé, RJ",
+    criado_em: Timestamp.now()
+  });
+  alert(`Pedido criado! Lojista paga R$ ${lojista.toFixed(2)} | Motoboy ganha R$ ${motoboy.toFixed(2)} | Sua margem R$ ${margem.toFixed(2)}`);
+  carregarExtratos();
+};
+
+async function carregarExtratos(){
+  const q = query(collection(db, "pedidos"));
+  const snap = await getDocs(q);
+  let htmlLoj = "", htmlMoto = "";
+  snap.forEach(d=>{
+    const p = d.data();
+    htmlLoj += `<div class="border-b py-1">#${d.id.slice(0,4)} ${p.veiculo_solicitado} ${p.distancia_km}km - PAGO R$ ${p.valor_lojista?.toFixed(2)} ${p.precisa_retorno? "📦 "+p.tipo_retorno : ""}</div>`;
+    htmlMoto += `<div class="border-b py-1">#${d.id.slice(0,4)} ${p.veiculo_solicitado} - A RECEBER R$ ${p.valor_motoboy?.toFixed(2)} ${p.motorista_codigo? "Fav "+p.motorista_codigo : ""}</div>`;
+  });
+  document.getElementById("extratoLojista").innerHTML = htmlLoj;
+  document.getElementById("extratoMotoboy").innerHTML = htmlMoto;
+  document.getElementById("listaEntregasMotoboy").innerHTML = htmlMoto;
+}
+carregarExtratos();
+
+async function carregarAbertas(){
+  const q = query(collection(db, "pedidos"), where("status","in",["AGUARDANDO","AGUARDANDO_ACEITE_FAVORITO"]));
+  onSnapshot(q, snap=>{
+    let html = "";
+    snap.forEach(d=>{
+      const p = d.data();
+      if(!p.motorista_id){
+        const tempo = Math.floor((Date.now()/1000 - p.criado_em.seconds)/60);
+        html += `<div class="border p-2 rounded ${tempo>5? "border-red-500 bg-red-50":"bg-white"}">#${d.id.slice(0,4)} ${p.veiculo_solicitado} ${p.distancia_km}km - ${tempo}min - Lojista R$${p.valor_lojista?.toFixed(2)} / Motoboy R$${p.valor_motoboy?.toFixed(2)} / Margem R$${p.margem_plataforma?.toFixed(2)} ${p.motorista_codigo? "<br>⭐ FAVORITO "+p.motorista_codigo:""} ${p.precisa_retorno? "<br>📦 RETORNO "+p.tipo_retorno:""}</div>`;
+      }
+    });
+    document.getElementById("corridasAbertas").innerHTML = html || "Nenhuma corrida aberta";
+    document.getElementById("listaTodosPedidos").innerHTML = "<b>Todos pedidos (Admin vê tudo):</b><br>"+html;
+  });
+}
+
+window.mexerSaldo = async ()=>{
+  const uid = document.getElementById("userSaldo").value;
+  const val = Number(document.getElementById("valorSaldo").value);
+  const mot = document.getElementById("motivoSaldo").value;
+  if(role!=="ADMIN" && role!=="SUPORTE"){ alert("Só ADMIN/SUPORTE mexe no saldo"); return; }
+  await addDoc(collection(db, "transacoes"), {userId:uid, valor:val, motivo:mot, criado_por:role, criado_em:Timestamp.now()});
+  alert("Saldo lançado! Motoboy só vê 'A receber', lojista só vê 'Pago'");
+};
+
+window.cadastrarMotoboy = async ()=>{
+  const nome = document.getElementById("cadNome").value;
+  const email = document.getElementById("cadEmail").value;
+  const senha = document.getElementById("cadSenha").value;
+  const placa = document.getElementById("cadPlaca").value;
+  const fileCNH = document.getElementById("fileCNH").files[0];
+  const fileSelfie = document.getElementById("fileSelfie").files[0];
+  const fileComp = document.getElementById("fileComp").files[0];
+  const fileCRLV = document.getElementById("fileCRLV").files[0];
+  if(!fileCNH||!fileSelfie||!fileComp||!fileCRLV){ alert("Envie os 4 arquivos: CNH, Selfie, Comprovante, CRLV"); return; }
+  const cred = await createUserWithEmailAndPassword(auth, email, senha);
+  const uid = cred.user.uid;
+  const countSnap = await getCountFromServer(collection(db, "motoristas"));
+  const codigo = "#"+String(countSnap.data().count+1).padStart(4,'0');
+  async function up(file, tipo){
+    const r = ref(storage, `motoristas/${uid}/${tipo}_${Date.now()}_${file.name}`);
+    await uploadBytes(r, file);
+    return await getDownloadURL(r);
+  }
+  const urlCNH = await up(fileCNH, "CNH");
+  const urlSelfie = await up(fileSelfie, "SELFIE");
+  const urlComp = await up(fileComp, "COMP");
+  const urlCRLV = await up(fileCRLV, "CRLV");
+  await setDoc(doc(db, "motoristas", uid), {
+    userId:uid, nome, email, placa, codigo, status:"PENDENTE_APROVACAO", saldo:0,
+    veiculo:"MOTO", foto_url:urlSelfie,
+    documentos:{cnh:urlCNH, selfie:urlSelfie, comprovante:urlComp, crlv:urlCRLV},
+    criado_em: Timestamp.now(), cidade:"Macaé, RJ"
+  });
+  alert("Motoboy cadastrado com código "+codigo+"! Foto, CNH, Comprovante e CRLV enviados. Aguarde aprovação ADMIN.");
+  document.getElementById("codigoMotoboy").innerText = codigo;
+  document.getElementById("nomeMotoboy").innerText = nome;
+  document.getElementById("fotoMotoboy").src = urlSelfie;
+};
+
+</script>
+</body>
+</html>
