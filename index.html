@@ -6,13 +6,13 @@
 <title>Anjos Flash</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 font-sans">
-<div id="telaLogin" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
-  <div class="bg-white p-6 rounded-xl w-full max-w-sm">
-    <h2 class="font-bold text-xl mb-1">🏍️ Anjos <span class="text-orange-500">Flash</span></h2>
-    <div class="flex gap-2 mb-4 mt-3">
+<body class="bg-gray-100">
+<div id="telaLogin" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 overflow-y-auto">
+  <div class="bg-white p-6 rounded-xl w-full max-w-sm my-8">
+    <h2 class="font-bold text-xl">🏍️ Anjos <span class="text-orange-500">Flash</span></h2>
+    <div class="flex gap-2 my-3">
       <button id="tabEntrar" onclick="setAba('entrar')" class="flex-1 bg-black text-white py-2 rounded text-sm font-bold">ENTRAR</button>
-      <button id="tabCadastrar" onclick="setAba('cadastrar')" class="flex-1 border py-2 rounded text-sm">CRIAR CONTA</button>
+      <button id="tabCadastrar" onclick="setAba('cadastrar')" class="flex-1 border py-2 rounded text-sm">CRIAR</button>
     </div>
     <div id="abaEntrar">
       <input id="loginEmail" placeholder="Email" class="w-full border p-3 rounded mb-2 text-sm">
@@ -31,109 +31,79 @@
       <input id="cadEmailLogin" placeholder="Email" class="w-full border p-3 rounded mb-2 text-sm">
       <input id="cadSenhaLogin" type="password" placeholder="Senha" class="w-full border p-3 rounded mb-2 text-sm">
       <input id="cadNomeLogin" placeholder="Nome" class="w-full border p-3 rounded mb-2 text-sm">
-      <button onclick="fazerCadastro()" class="w-full bg-black text-white p-3 rounded font-bold">CRIAR CONTA</button>
+      <div class="bg-yellow-50 p-2 rounded border">
+        <p class="text-[11px] font-bold">📄 Docs Motoboy (foto ou PDF)</p>
+        <label class="text-[10px]">CNH</label><input type="file" id="cadFileCNH" accept="image/*,.pdf" class="w-full text-[11px] mb-1 border p-1 bg-white rounded">
+        <label class="text-[10px]">CRLV</label><input type="file" id="cadFileCRLV" accept="image/*,.pdf" class="w-full text-[11px] mb-1 border p-1 bg-white rounded">
+        <label class="text-[10px]">Comprovante</label><input type="file" id="cadFileComp" accept="image/*,.pdf" class="w-full text-[11px] mb-1 border p-1 bg-white rounded">
+        <label class="text-[10px]">ANTT</label><input type="file" id="cadFileANTT" accept="image/*,.pdf" class="w-full text-[11px] mb-1 border p-1 bg-white rounded">
+        <label class="text-[10px]">Selfie</label><input type="file" id="cadFileSelfie" accept="image/*" class="w-full text-[11px] border p-1 bg-white rounded">
+      </div>
+      <button onclick="fazerCadastro()" class="w-full bg-black text-white p-3 rounded font-bold mt-3">CRIAR CONTA</button>
     </div>
   </div>
 </div>
 
 <div id="app" class="max-w-[420px] mx-auto bg-white min-h-screen shadow-xl">
-<div class="bg-white p-4 flex justify-between items-center border-b sticky top-0 z-10">
-  <div class="flex items-center gap-2"><span class="text-2xl">🏍️</span><b class="text-xl">Anjos <span class="text-orange-500">Flash</span></b></div>
-  <div class="flex items-center gap-2">
-    <span id="roleRealBadge" class="bg-black text-white text-[10px] px-3 py-2 rounded font-bold">...</span>
+<div class="p-4 flex justify-between items-center border-b sticky top-0 bg-white z-10">
+  <b class="text-xl">🏍️ Anjos <span class="text-orange-500">Flash</span></b>
+  <div class="flex gap-2 items-center">
+    <select id="langSelect" onchange="setLang(this.value)" class="border px-2 py-1 rounded text-[11px]"><option value="pt">PT</option><option value="en">EN</option><option value="es">ES</option></select>
+    <span id="roleRealBadge" class="bg-black text-white text-[10px] px-2 py-1 rounded">...</span>
     <button onclick="fazerLogout()" class="text-[10px] border px-2 py-1 rounded">SAIR</button>
   </div>
 </div>
-<div class="flex gap-2 p-2 text-xs items-center"><span class="px-2 py-1 bg-black text-white rounded">PT</span><span id="userLogadoInfo" class="ml-auto text-[10px] text-gray-500"></span></div>
 
-<!-- MOTOBOY -->
 <div id="telaMotoboy" class="p-4 hidden">
-  <div class="flex items-center gap-3 mb-4">
-    <img id="fotoMotoboy" src="https://i.pravatar.cc/100" class="w-14 h-14 rounded-full border-2 border-orange-500">
-    <div><b id="nomeMotoboy">Motoboy</b><br><span id="codigoMotoboy" class="bg-black text-white text-xs px-2 py-1 rounded">#0001</span></div>
+  <div class="bg-orange-100 p-4 rounded-xl mb-3"><p class="text-sm">Ganhos</p><h1 class="text-3xl font-bold">R$ <span id="ganhoMotoboy">0,00</span></h1></div>
+  <div class="border-2 border-green-500 p-3 rounded-xl mb-3">
+    <h4 class="font-bold text-sm">🔑 Confirmar entrega com código do cliente</h4>
+    <div class="flex gap-2 mt-2"><input id="codigoEntregaInput" placeholder="Código 4 dígitos" class="border p-2 rounded flex-1 text-sm"><button onclick="confirmarEntrega()" class="bg-green-600 text-white px-4 rounded font-bold">OK</button></div>
   </div>
-  <div class="bg-orange-100 p-4 rounded-xl mb-4"><p class="text-sm">Ganhos hoje - SÓ A RECEBER</p><h1 class="text-3xl font-bold">R$ <span id="ganhoMotoboy">0,00</span></h1></div>
   <div id="listaEntregasMotoboy" class="space-y-2 text-xs"></div>
-  <div class="mt-4 p-3 bg-gray-50 rounded"><h4 class="font-bold text-sm">📊 EXTRATO 90 DIAS</h4><div id="extratoMotoboy" class="text-xs mt-2"></div></div>
 </div>
 
-<!-- LOJISTA -->
 <div id="telaLojista" class="p-4 hidden">
-  <h2 class="font-bold text-lg mb-3">📦 Pedir Entrega</h2>
-  <label class="text-xs">Veículo</label>
-  <select id="veiculo" class="w-full border p-3 rounded mb-2 text-sm">
-    <option value="MOTO">MOTO</option>
-    <option value="UTILITARIO">UTILITÁRIO</option>
-    <option value="CAMINHAO_3_4">CAMINHÃO 3/4</option>
-    <option value="CAMINHAO_TRUCK">TRUCK</option>
-    <option value="CARRETA">CARRETA</option>
-  </select>
-  <label class="text-xs">Distância km</label>
-  <input id="km" type="number" value="3" class="w-full border p-3 rounded mb-2 text-sm">
-  <label class="text-xs">Taxa por bairro (opcional)</label>
-  <input id="taxaBairro" type="number" value="0" step="0.5" placeholder="Ex: 2,00" class="w-full border p-3 rounded mb-2 text-sm">
-  <label class="flex items-center gap-2 text-sm mb-2"><input type="checkbox" id="precisaRetorno"> RETORNO 50% (lojista vê 15,00 se for 10)</label>
-  <label class="flex items-center gap-2 text-sm mb-2"><input type="checkbox" id="precisaDinamica"> DINÂMICA +4,50 / +3,00</label>
-  <div class="border border-orange-300 p-3 rounded mb-3 bg-orange-50">
-    <label class="flex items-center gap-2 text-sm font-bold"><input type="checkbox" id="usarFavorito"> Chamar motoboy # favorito</label>
-    <div id="divFavorito" class="hidden mt-2 flex gap-2"><input id="codigoFav" placeholder="#0001" class="border p-2 rounded flex-1 text-sm"><button onclick="buscarMotoboy()" class="bg-orange-500 text-white px-3 rounded text-sm">Buscar</button></div>
-    <div id="cardFav" class="hidden mt-2 p-2 bg-white rounded text-sm"></div>
+  <h2 class="font-bold mb-3">📦 Pedir Entrega - 10 até 5km</h2>
+  <select id="veiculo" class="w-full border p-3 rounded mb-2 text-sm"><option value="MOTO">MOTO</option><option value="UTILITARIO">UTILITÁRIO</option><option value="CAMINHAO_3_4">CAMINHÃO 3/4</option><option value="CAMINHAO_TRUCK">TRUCK</option><option value="CARRETA">CARRETA</option></select>
+  <input id="km" type="number" value="3" placeholder="km" class="w-full border p-3 rounded mb-2 text-sm">
+  <select id="bairroSelect" class="w-full border p-3 rounded mb-2 text-sm bg-yellow-50"><option value="">Centro (sem taxa)</option></select>
+  <label class="flex gap-2 text-sm mb-2"><input type="checkbox" id="precisaRetorno"> RETORNO 50% (lojista vê 15 se for 10)</label>
+  <label class="flex gap-2 text-sm mb-2"><input type="checkbox" id="precisaDinamica"> DINÂMICA +4,50 / +3,00</label>
+  <div class="bg-gray-100 p-3 rounded text-sm border">
+    <div class="font-bold">Total: R$ <span id="totalLojista">10.00</span></div>
+    <div class="text-[11px] opacity-70" id="textoLojistaSimples">Corrida + retorno + dinâmica</div>
+    <div class="text-[10px] text-red-600 hidden" id="detalheRealAdmin"></div>
   </div>
-  <div class="bg-gray-100 p-3 rounded text-sm">
-    <div>LOJISTA paga: R$ <b id="totalLojista">10.00</b></div>
-    <div class="text-[11px] opacity-70">MOTOBOY recebe: R$ <b id="totalMotoboyPreview">7.50</b> | Sua margem: R$ <b id="margemPreview">2.50</b></div>
-    <div class="text-[10px] mt-1">Regra: 10 até 5km + 2/km + bairro + 50% retorno + 4,50 dinâmica</div>
-  </div>
-  <button onclick="criarPedido()" class="w-full bg-black text-white p-4 rounded-xl mt-3 font-bold text-sm">CRIAR PEDIDO</button>
-  <div class="mt-4 p-3 bg-gray-50 rounded"><h4 class="font-bold text-sm">📊 EXTRATO - SÓ O QUE PAGOU</h4><div id="extratoLojista" class="text-xs mt-2"></div></div>
-  <div id="telaSuperLojista" class="mt-4 hidden">
-    <div class="bg-orange-50 border border-orange-300 p-3 rounded-xl">
-      <h2 class="font-bold text-sm">🏪 SUPER LOJISTA - Minhas Lojas</h2>
-      <div class="flex gap-2 mt-2"><input id="nomeNovaLoja" placeholder="Nome filial" class="flex-1 border p-2 rounded text-xs"><input id="endNovaLoja" placeholder="Endereço" class="flex-1 border p-2 rounded text-xs"><button onclick="adicionarLoja()" class="bg-black text-white px-3 rounded text-xs">+</button></div>
-      <div id="listaMinhasLojas" class="mt-2 text-xs"></div>
-      <select id="lojaSelecionadaSuper" class="w-full border p-2 rounded mt-2 text-xs bg-white"></select>
-    </div>
-  </div>
+  <button onclick="criarPedido()" class="w-full bg-black text-white p-4 rounded-xl mt-3 font-bold">CRIAR PEDIDO + GERAR CÓDIGO</button>
+  <div class="mt-4"><h4 class="font-bold text-sm">📊 Meus pedidos - CÓDIGO + MAPS</h4><div id="extratoLojista" class="text-xs mt-2 space-y-2"></div></div>
+  <div id="telaSuperLojista" class="hidden mt-4"><div class="bg-orange-50 border p-3 rounded"><h2 class="font-bold text-sm">🏪 Minhas Lojas</h2><div class="flex gap-2 mt-2"><input id="nomeNovaLoja" placeholder="Filial" class="flex-1 border p-2 rounded text-xs"><input id="endNovaLoja" placeholder="End" class="flex-1 border p-2 rounded text-xs"><button onclick="adicionarLoja()" class="bg-black text-white px-3 rounded text-xs">+</button></div><div id="listaMinhasLojas" class="mt-2 text-xs"></div><select id="lojaSelecionadaSuper" class="w-full border p-2 rounded mt-2 text-xs"></select></div></div>
 </div>
 
-<!-- ADMIN / FRANQUEADO / SUPORTE -->
 <div id="telaAdmin" class="p-4 hidden">
   <div class="bg-black text-white p-4 rounded-xl mb-4">
-    <h2 class="font-bold">👮 ADMIN / FRANQUIA / SUPORTE - Editar preços LOJISTA | MOTOBOY</h2>
-    <p class="text-[10px] opacity-60">Todos aqui podem editar. Saldo só ADMIN abaixo.</p>
+    <h2 class="font-bold text-sm">👮 ADMIN / FRANQUIA / SUPORTE</h2>
     <div class="mt-3 grid grid-cols-2 gap-2 text-[11px]">
-      <div>LOJISTA até 5km<br><input id="editBaseLojista" type="number" value="10" step="0.5" class="text-black p-2 rounded w-full"></div>
-      <div>MOTOBOY até 5km<br><input id="editBaseMoto" type="number" value="7.5" step="0.5" class="text-black p-2 rounded w-full"></div>
-      <div>LOJISTA km extra<br><input id="editExtraLojista" type="number" value="2" step="0.5" class="text-black p-2 rounded w-full"></div>
-      <div>MOTOBOY km extra<br><input id="editExtraMoto" type="number" value="1.5" step="0.5" class="text-black p-2 rounded w-full"></div>
-      <div>SUPER LOJISTA até 5km<br><input id="editBaseSuper" type="number" value="8" step="0.5" class="text-black p-2 rounded w-full"></div>
-      <div>SUPER MOTOBOY até 5km<br><input id="editBaseSuperMoto" type="number" value="5" step="0.5" class="text-black p-2 rounded w-full"></div>
-      <div>RETORNO LOJISTA %<br><input id="editRetPerc" type="number" value="50" class="text-black p-2 rounded w-full"></div>
-      <div>RETORNO MOTO R$<br><input id="editRetMoto" type="number" value="2" step="0.5" class="text-black p-2 rounded w-full"></div>
-      <div>DINÂMICA LOJISTA R$<br><input id="editDinLoj" type="number" value="4.5" step="0.5" class="text-black p-2 rounded w-full"></div>
-      <div>DINÂMICA MOTO R$<br><input id="editDinMoto" type="number" value="3" step="0.5" class="text-black p-2 rounded w-full"></div>
+      <div>LOJISTA até 5km<br><input id="editBaseLojista" type="number" value="10" class="text-black p-2 rounded w-full"></div>
+      <div>MOTO até 5km<br><input id="editBaseMoto" type="number" value="7.5" class="text-black p-2 rounded w-full"></div>
+      <div>LOJ extra<br><input id="editExtraLojista" type="number" value="2" class="text-black p-2 rounded w-full"></div>
+      <div>MOTO extra<br><input id="editExtraMoto" type="number" value="1.5" class="text-black p-2 rounded w-full"></div>
+      <div>SUPER até 5km<br><input id="editBaseSuper" type="number" value="8" class="text-black p-2 rounded w-full"></div>
+      <div>SUPER MOTO<br><input id="editBaseSuperMoto" type="number" value="5" class="text-black p-2 rounded w-full"></div>
+      <div>RET %<br><input id="editRetPerc" type="number" value="50" class="text-black p-2 rounded w-full"></div>
+      <div>RET MOTO<br><input id="editRetMoto" type="number" value="2" class="text-black p-2 rounded w-full"></div>
+      <div>DIN LOJ<br><input id="editDinLoj" type="number" value="4.5" class="text-black p-2 rounded w-full"></div>
+      <div>DIN MOTO<br><input id="editDinMoto" type="number" value="3" class="text-black p-2 rounded w-full"></div>
     </div>
-    <button onclick="salvarPrecosNovo()" class="bg-orange-500 w-full py-2 rounded mt-4 text-xs font-bold">SALVAR REGRAS - ADMIN/FRANQUIA/SUPORTE</button>
+    <button onclick="salvarPrecosNovo()" class="bg-orange-500 w-full py-2 rounded mt-3 text-xs font-bold">SALVAR</button>
+    <div class="mt-4 border-t border-gray-600 pt-3">
+      <h4 class="text-xs font-bold">📍 Bairros - lojista não vê nome só total</h4>
+      <div class="flex gap-1 mt-2"><input id="nomeBairroNovo" placeholder="Lagomar" class="text-black p-2 rounded flex-1 text-xs"><input id="valorBairroNovo" type="number" placeholder="5" class="text-black p-2 rounded w-16 text-xs"><button onclick="addBairro()" class="bg-white text-black px-3 rounded text-xs">+</button></div>
+      <div id="listaBairrosAdmin" class="mt-2 text-[11px]"></div>
+    </div>
   </div>
-
-  <div class="border-2 border-red-500 p-3 rounded-xl mb-4"><h3 class="font-bold text-red-600 text-sm">🚨 Corridas em Aberto</h3><div id="corridasAbertas" class="mt-2 text-xs"></div></div>
-
-  <!-- SÓ ADMIN VÊ E EDITA SALDO -->
-  <div id="boxSaldo" class="bg-gray-900 text-white p-3 rounded-xl hidden">
-    <h3 class="font-bold text-sm">💰 Saldo - SÓ ADMIN EDITA</h3>
-    <p class="text-[10px] opacity-60">Franquia e Suporte NÃO vêem isso</p>
-    <input id="userSaldo" placeholder="ID usuário / email" class="w-full p-2 rounded text-black mt-2 text-xs">
-    <input id="valorSaldo" type="number" placeholder="+50 ou -20" class="w-full p-2 rounded text-black mt-1 text-xs">
-    <input id="motivoSaldo" placeholder="Motivo" class="w-full p-2 rounded text-black mt-1 text-xs">
-    <button onclick="mexerSaldo()" class="w-full bg-orange-500 p-2 rounded mt-2 font-bold text-sm">Lançar Saldo - SÓ ADMIN</button>
-  </div>
-</div>
-
-<div id="telaCadastroDocs" class="p-4 border-t mt-4 hidden">
-  <h3 class="font-bold text-sm">🏍️ Enviar Documentos #0001</h3>
-  <input id="cadNome" placeholder="Nome" class="w-full border p-2 rounded mt-2 text-sm"><input id="cadPlaca" placeholder="Placa" class="w-full border p-2 rounded mt-1 text-sm">
-  <p class="text-xs mt-2">CNH: <input type="file" id="fileCNH" class="text-xs"></p><p class="text-xs">Selfie: <input type="file" id="fileSelfie" class="text-xs"></p><p class="text-xs">Comp: <input type="file" id="fileComp" class="text-xs"></p><p class="text-xs">CRLV: <input type="file" id="fileCRLV" class="text-xs"></p>
-  <button onclick="cadastrarMotoboy()" class="w-full bg-black text-white p-3 rounded mt-2 text-sm">ENVIAR</button>
+  <div class="border-2 border-red-500 p-3 rounded-xl mb-4"><h3 class="font-bold text-red-600 text-sm">🚨 Abertas</h3><div id="corridasAbertas" class="mt-2 text-xs"></div></div>
+  <div id="boxSaldo" class="bg-gray-900 text-white p-3 rounded-xl hidden"><h3 class="font-bold text-sm">💰 Saldo SÓ ADMIN</h3><input id="userSaldo" placeholder="ID/email" class="w-full p-2 rounded text-black mt-2 text-xs"><input id="valorSaldo" type="number" placeholder="+50" class="w-full p-2 rounded text-black mt-1 text-xs"><input id="motivoSaldo" placeholder="Motivo" class="w-full p-2 rounded text-black mt-1 text-xs"><button onclick="mexerSaldo()" class="w-full bg-orange-500 p-2 rounded mt-2 font-bold text-sm">Lançar</button></div>
 </div>
 </div>
 
@@ -142,271 +112,94 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, doc, setDoc, getDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
-  authDomain: "anjos-flash.firebaseapp.com",
-  projectId: "anjos-flash",
-  storageBucket: "anjos-flash.firebasestorage.app",
-  messagingSenderId: "725133182752",
-  appId: "1:725133182752:web:5f9a98fa97269dcdcab945"
-};
+const firebaseConfig = { apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44", authDomain: "anjos-flash.firebaseapp.com", projectId: "anjos-flash", storageBucket: "anjos-flash.firebasestorage.app", messagingSenderId: "725133182752", appId: "1:725133182752:web:5f9a98fa97269dcdcab945" };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
+let userLogado=null, userRoleReal=null;
+let regraAtual = { baseLoj:10, extraLoj:2, baseMoto:7.5, extraMoto:1.5, baseSuper:8, baseSuperMoto:5, retPerc:50, retMoto:2, dinLoj:4.5, dinMoto:3, bairros: {"Lagomar":5,"Cavaleiros":3,"Granja":7} };
 
-let userLogado=null, userRoleReal=null, motoboyFavData=null;
-let dinamicaLigada=false;
-let regraAtual = { baseLoj:10, extraLoj:2, baseMoto:7.5, extraMoto:1.5, baseSuper:8, baseSuperMoto:5, retPerc:50, retMoto:2, dinLoj:4.5, dinMoto:3 };
-
-window.setAba = (aba)=>{
-  document.getElementById("abaEntrar").classList.toggle("hidden", aba!=="entrar");
-  document.getElementById("abaCadastrar").classList.toggle("hidden", aba!=="cadastrar");
-};
-
-async function buscarRoleReal(user){
-  try{
-    let snap = await getDoc(doc(db, "usuarios", user.uid));
-    if(snap.exists()) return snap.data().role || snap.data().tipo || "LOJISTA";
-    snap = await getDoc(doc(db, "usuarios", user.email));
-    if(snap.exists()) return snap.data().role || snap.data().tipo || "LOJISTA";
-    let q = await getDocs(query(collection(db, "usuarios"), where("email","==",user.email)));
-    if(!q.empty) return q.docs[0].data().role || q.docs[0].data().tipo || "LOJISTA";
-    q = await getDocs(query(collection(db, "motoristas"), where("userId","==",user.uid)));
-    if(!q.empty) return q.docs[0].data().role || "MOTOBOY_MOTORISTA";
-    q = await getDocs(query(collection(db, "motoristas"), where("email","==",user.email)));
-    if(!q.empty) return q.docs[0].data().role || "MOTOBOY_MOTORISTA";
-  }catch(e){}
-  return "LOJISTA";
-}
-function normalizaRole(r){
-  r=(r||"").toString().toLowerCase();
-  if(r.includes("admin")) return "ADMIN";
-  if(r.includes("super")) return "SUPER_LOJISTA";
-  if(r.includes("moto")) return "MOTOBOY_MOTORISTA";
-  if(r.includes("franque")) return "FRANQUEADO";
-  if(r.includes("suporte")||r.includes("support")) return "SUPORTE";
-  return "LOJISTA";
-}
-
-onAuthStateChanged(auth, async (user)=>{
-  if(user){
-    userLogado=user;
-    let cru = await buscarRoleReal(user);
-    userRoleReal = normalizaRole(cru);
-    document.getElementById("roleRealBadge").innerText = userRoleReal;
-    document.getElementById("userLogadoInfo").innerText = "Logado: "+user.email+" | "+userRoleReal;
-    document.getElementById("telaLogin").classList.add("hidden");
-    await carregarPrecos();
-    mostrarTelaPorRole();
-    carregarExtratos();
-    if(userRoleReal==="SUPER_LOJISTA") carregarMinhasLojas();
-    if(userRoleReal==="ADMIN"||userRoleReal==="SUPORTE"||userRoleReal==="FRANQUEADO") carregarAbertas();
-    if(userRoleReal==="MOTOBOY_MOTORISTA") document.getElementById("telaCadastroDocs").classList.remove("hidden");
-  } else {
-    document.getElementById("telaLogin").classList.remove("hidden");
-  }
-});
-
-window.fazerLogin = async ()=>{ try{ await signInWithEmailAndPassword(auth, document.getElementById("loginEmail").value.trim(), document.getElementById("loginSenha").value.trim()); }catch(e){ alert(e.message); } };
+window.setLang = (l)=>{ localStorage.setItem("lang",l); };
+window.setAba = (aba)=>{ document.getElementById("abaEntrar").classList.toggle("hidden", aba!=="entrar"); document.getElementById("abaCadastrar").classList.toggle("hidden", aba!=="cadastrar"); };
+async function buscarRoleReal(user){ try{ let snap=await getDoc(doc(db,"usuarios",user.uid)); if(snap.exists()) return snap.data().role; snap=await getDoc(doc(db,"usuarios",user.email)); if(snap.exists()) return snap.data().role; let q=await getDocs(query(collection(db,"usuarios"), where("email","==",user.email))); if(!q.empty) return q.docs[0].data().role; q=await getDocs(query(collection(db,"motoristas"), where("userId","==",user.uid))); if(!q.empty) return "MOTOBOY_MOTORISTA"; }catch(e){} return "LOJISTA"; }
+function normalizaRole(r){ r=(r||"").toLowerCase(); if(r.includes("admin")) return "ADMIN"; if(r.includes("super")) return "SUPER_LOJISTA"; if(r.includes("moto")) return "MOTOBOY_MOTORISTA"; if(r.includes("franque")) return "FRANQUEADO"; if(r.includes("suporte")) return "SUPORTE"; return "LOJISTA"; }
+onAuthStateChanged(auth, async (user)=>{ if(user){ userLogado=user; userRoleReal=normalizaRole(await buscarRoleReal(user)); document.getElementById("roleRealBadge").innerText=userRoleReal; document.getElementById("telaLogin").classList.add("hidden"); await carregarPrecos(); mostrarTelaPorRole(); carregarExtratos(); if(userRoleReal==="SUPER_LOJISTA") carregarMinhasLojas(); if(["ADMIN","SUPORTE","FRANQUEADO"].includes(userRoleReal)) carregarAbertas(); } else document.getElementById("telaLogin").classList.remove("hidden"); });
+window.fazerLogin = async ()=>{ await signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginSenha.value.trim()); };
 window.fazerCadastro = async ()=>{
-  const email=document.getElementById("cadEmailLogin").value.trim();
-  const senha=document.getElementById("cadSenhaLogin").value.trim();
-  const nome=document.getElementById("cadNomeLogin").value.trim();
-  const tipo=document.getElementById("tipoCadastro").value;
-  try{
-    const cred=await createUserWithEmailAndPassword(auth, email, senha);
-    await setDoc(doc(db, "usuarios", cred.user.uid), {userId:cred.user.uid, nome, email, role:tipo, tipo:tipo, criadoEm: Timestamp.now()});
-    await setDoc(doc(db, "usuarios", email), {userId:cred.user.uid, nome, email, role:tipo, tipo:tipo, criadoEm: Timestamp.now()});
-    alert("Criado como "+tipo);
-  }catch(e){ alert(e.message); }
+  const email=cadEmailLogin.value.trim(), senha=cadSenhaLogin.value.trim(), nome=cadNomeLogin.value.trim(), tipo=tipoCadastro.value;
+  const cred=await createUserWithEmailAndPassword(auth,email,senha);
+  async function up(f,t){ if(!f) return null; const r=ref(storage, `usuarios/${cred.user.uid}/${t}_${Date.now()}_${f.name}`); await uploadBytes(r,f); return await getDownloadURL(r); }
+  const docs={ cnh: await up(cadFileCNH.files[0],"CNH"), crlv: await up(cadFileCRLV.files[0],"CRLV"), comp: await up(cadFileComp.files[0],"COMP"), antt: await up(cadFileANTT.files[0],"ANTT"), selfie: await up(cadFileSelfie.files[0],"SELFIE") };
+  await setDoc(doc(db,"usuarios",cred.user.uid),{userId:cred.user.uid,nome,email,role:tipo,docs,criadoEm:Timestamp.now()});
+  await setDoc(doc(db,"usuarios",email),{userId:cred.user.uid,nome,email,role:tipo,docs,criadoEm:Timestamp.now()});
+  if(tipo==="MOTOBOY_MOTORISTA") await setDoc(doc(db,"motoristas",cred.user.uid),{userId:cred.user.uid,nome,email,role:tipo,docs,status:"PENDENTE",criado_em:Timestamp.now()},{merge:true});
+  alert("Criado!");
 };
 window.fazerLogout = async ()=>{ await signOut(auth); location.reload(); };
-
 function mostrarTelaPorRole(){
-  if(!userRoleReal) return;
-  document.getElementById("telaMotoboy").classList.add("hidden");
-  document.getElementById("telaLojista").classList.add("hidden");
-  document.getElementById("telaAdmin").classList.add("hidden");
-  document.getElementById("telaSuperLojista").classList.add("hidden");
-  document.getElementById("boxSaldo").classList.add("hidden");
-
-  if(userRoleReal==="MOTOBOY_MOTORISTA"){
-    document.getElementById("telaMotoboy").classList.remove("hidden");
-  } else if(userRoleReal==="ADMIN"||userRoleReal==="SUPORTE"||userRoleReal==="FRANQUEADO"){
-    document.getElementById("telaAdmin").classList.remove("hidden");
-    if(userRoleReal==="ADMIN"){ document.getElementById("boxSaldo").classList.remove("hidden"); }
-  } else if(userRoleReal==="SUPER_LOJISTA"){
-    document.getElementById("telaLojista").classList.remove("hidden");
-    document.getElementById("telaSuperLojista").classList.remove("hidden");
-  } else {
-    document.getElementById("telaLojista").classList.remove("hidden");
-  }
+  telaMotoboy.classList.add("hidden"); telaLojista.classList.add("hidden"); telaAdmin.classList.add("hidden"); telaSuperLojista.classList.add("hidden"); boxSaldo.classList.add("hidden");
+  if(userRoleReal==="MOTOBOY_MOTORISTA") telaMotoboy.classList.remove("hidden");
+  else if(["ADMIN","SUPORTE","FRANQUEADO"].includes(userRoleReal)){ telaAdmin.classList.remove("hidden"); if(userRoleReal==="ADMIN") boxSaldo.classList.remove("hidden"); }
+  else if(userRoleReal==="SUPER_LOJISTA"){ telaLojista.classList.remove("hidden"); telaSuperLojista.classList.remove("hidden"); }
+  else telaLojista.classList.remove("hidden");
   calc();
 }
-
-async function carregarPrecos(){
-  try{
-    const snap = await getDoc(doc(db, "pricing_config", "atual"));
-    if(snap.exists()){
-      const p = snap.data();
-      regraAtual = p.regra || regraAtual;
-      document.getElementById("editBaseLojista").value = regraAtual.baseLoj;
-      document.getElementById("editExtraLojista").value = regraAtual.extraLoj;
-      document.getElementById("editBaseMoto").value = regraAtual.baseMoto;
-      document.getElementById("editExtraMoto").value = regraAtual.extraMoto;
-      document.getElementById("editBaseSuper").value = regraAtual.baseSuper;
-      document.getElementById("editBaseSuperMoto").value = regraAtual.baseSuperMoto;
-      document.getElementById("editRetPerc").value = regraAtual.retPerc;
-      document.getElementById("editRetMoto").value = regraAtual.retMoto;
-      document.getElementById("editDinLoj").value = regraAtual.dinLoj;
-      document.getElementById("editDinMoto").value = regraAtual.dinMoto;
-    }
-  }catch(e){}
-  calc();
-}
-
-window.salvarPrecosNovo = async ()=>{
-  if(!(userRoleReal==="ADMIN"||userRoleReal==="FRANQUEADO"||userRoleReal==="SUPORTE")){ alert("Só ADMIN/FRANQUIA/SUPORTE"); return; }
-  regraAtual = {
-    baseLoj: Number(document.getElementById("editBaseLojista").value),
-    extraLoj: Number(document.getElementById("editExtraLojista").value),
-    baseMoto: Number(document.getElementById("editBaseMoto").value),
-    extraMoto: Number(document.getElementById("editExtraMoto").value),
-    baseSuper: Number(document.getElementById("editBaseSuper").value),
-    baseSuperMoto: Number(document.getElementById("editBaseSuperMoto").value),
-    retPerc: Number(document.getElementById("editRetPerc").value),
-    retMoto: Number(document.getElementById("editRetMoto").value),
-    dinLoj: Number(document.getElementById("editDinLoj").value),
-    dinMoto: Number(document.getElementById("editDinMoto").value)
-  };
-  await setDoc(doc(db, "pricing_config", "atual"), {regra: regraAtual, atualizado_em: Timestamp.now(), por: userRoleReal});
-  alert("Regras salvas! LOJISTA | MOTOBOY atualizado");
-  calc();
-};
-
-// CALC COM SUA REGRA
+async function carregarPrecos(){ try{ const s=await getDoc(doc(db,"pricing_config","atual")); if(s.exists()){ regraAtual={...regraAtual,...s.data().regra}; editBaseLojista.value=regraAtual.baseLoj; editExtraLojista.value=regraAtual.extraLoj; editBaseMoto.value=regraAtual.baseMoto; editExtraMoto.value=regraAtual.extraMoto; editBaseSuper.value=regraAtual.baseSuper; editBaseSuperMoto.value=regraAtual.baseSuperMoto; editRetPerc.value=regraAtual.retPerc; editRetMoto.value=regraAtual.retMoto; editDinLoj.value=regraAtual.dinLoj; editDinMoto.value=regraAtual.dinMoto; } }catch(e){} renderBairros(); calc(); }
+function renderBairros(){ bairroSelect.innerHTML='<option value="">Centro (sem taxa)</option>'; Object.entries(regraAtual.bairros||{}).forEach(([n,v])=>{ let o=document.createElement("option"); o.value=n; o.text=`${n} + R$ ${v} (lojista só vê total)`; bairroSelect.appendChild(o); }); let h=""; Object.entries(regraAtual.bairros||{}).forEach(([n,v])=>{ h+=`<div class="flex justify-between bg-white/20 p-1 rounded mb-1"><span>${n} + R$ ${v}</span><button onclick="delBairro('${n}')" class="bg-red-500 px-2 rounded">X</button></div>`; }); listaBairrosAdmin.innerHTML=h; }
+window.addBairro = async ()=>{ const n=nomeBairroNovo.value.trim(), v=Number(valorBairroNovo.value); if(!n) return; regraAtual.bairros[n]=v; await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true}); nomeBairroNovo.value=""; valorBairroNovo.value=""; renderBairros(); calc(); };
+window.delBairro = async (n)=>{ delete regraAtual.bairros[n]; await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true}); renderBairros(); calc(); };
+window.salvarPrecosNovo = async ()=>{ regraAtual={...regraAtual, baseLoj:Number(editBaseLojista.value), extraLoj:Number(editExtraLojista.value), baseMoto:Number(editBaseMoto.value), extraMoto:Number(editExtraMoto.value), baseSuper:Number(editBaseSuper.value), baseSuperMoto:Number(editBaseSuperMoto.value), retPerc:Number(editRetPerc.value), retMoto:Number(editRetMoto.value), dinLoj:Number(editDinLoj.value), dinMoto:Number(editDinMoto.value)}; await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true}); alert("Salvo!"); calc(); };
 window.calc = function(){
-  const km = Number(document.getElementById("km")?.value||0);
-  const taxaBairro = Number(document.getElementById("taxaBairro")?.value||0);
-  const temRetorno = document.getElementById("precisaRetorno")?.checked;
-  const temDinamica = document.getElementById("precisaDinamica")?.checked;
-
-  let baseLoj = regraAtual.baseLoj, extraLoj = regraAtual.extraLoj, baseMoto = regraAtual.baseMoto, extraMoto = regraAtual.extraMoto;
-  if(userRoleReal==="SUPER_LOJISTA"){ baseLoj = regraAtual.baseSuper; baseMoto = regraAtual.baseSuperMoto; }
-
-  let lojista = km <=5? baseLoj : baseLoj + (km-5)*extraLoj;
-  lojista += taxaBairro;
-  let motoboy = km <=5? baseMoto : baseMoto + (km-5)*extraMoto;
-
-  if(temRetorno){
-    lojista = lojista + (lojista * regraAtual.retPerc/100); // 50% - lojista vê já 15
-    motoboy = motoboy + regraAtual.retMoto; // +2
-  }
-  if(temDinamica){
-    lojista += regraAtual.dinLoj; // +4,50
-    motoboy += regraAtual.dinMoto; // +3,00
-  }
-
-  const elL = document.getElementById("totalLojista"); if(elL) elL.innerText = lojista.toFixed(2);
-  const elM = document.getElementById("totalMotoboyPreview"); if(elM) elM.innerText = motoboy.toFixed(2);
-  const elMg = document.getElementById("margemPreview"); if(elMg) elMg.innerText = (lojista-motoboy).toFixed(2);
+  const km=Number(km.value||0), bairro=bairroSelect.value, taxa=Number(regraAtual.bairros[bairro]||0);
+  const ret=precisaRetorno.checked, din=precisaDinamica.checked;
+  let baseLoj=regraAtual.baseLoj, extraLoj=regraAtual.extraLoj, baseMoto=regraAtual.baseMoto, extraMoto=regraAtual.extraMoto;
+  if(userRoleReal==="SUPER_LOJISTA"){ baseLoj=regraAtual.baseSuper; baseMoto=regraAtual.baseSuperMoto; }
+  let lojista = km<=5? baseLoj : baseLoj + (km-5)*extraLoj; lojista+=taxa;
+  let motoboy = km<=5? baseMoto : baseMoto + (km-5)*extraMoto;
+  if(ret){ lojista+=lojista*regraAtual.retPerc/100; motoboy+=regraAtual.retMoto; }
+  if(din){ lojista+=regraAtual.dinLoj; motoboy+=regraAtual.dinMoto; }
+  totalLojista.innerText=lojista.toFixed(2);
+  if(userRoleReal==="LOJISTA"||userRoleReal==="SUPER_LOJISTA"){ textoLojistaSimples.innerText=`Corrida R$ ${lojista.toFixed(2)} ${ret?"+ retorno":""} ${din?"+ dinâmica":""} - bairro já incluso`; detalheRealAdmin.classList.add("hidden"); } else { detalheRealAdmin.classList.remove("hidden"); detalheRealAdmin.innerText=`ADMIN: Base ${baseLoj} + bairro ${bairro}+${taxa} + ret ${regraAtual.retPerc}% + din = ${lojista.toFixed(2)}`; }
   return {lojista, motoboy, margem: lojista-motoboy};
 };
+km.addEventListener("input", calc); bairroSelect.addEventListener("change", calc); precisaRetorno.addEventListener("change", calc); precisaDinamica.addEventListener("change", calc);
 
-document.getElementById("km")?.addEventListener("input", calc);
-document.getElementById("taxaBairro")?.addEventListener("input", calc);
-document.getElementById("precisaRetorno")?.addEventListener("change", calc);
-document.getElementById("precisaDinamica")?.addEventListener("change", calc);
-
-window.adicionarLoja = async ()=>{
-  const nome=document.getElementById("nomeNovaLoja").value.trim();
-  const end=document.getElementById("endNovaLoja").value.trim();
-  if(!nome) return;
-  await addDoc(collection(db, "lojas"), {owner_id:userLogado.uid, nome, endereco:end, criado_em: Timestamp.now()});
-  document.getElementById("nomeNovaLoja").value=""; document.getElementById("endNovaLoja").value="";
-  carregarMinhasLojas();
-};
-async function carregarMinhasLojas(){
-  try{
-    const snap=await getDocs(query(collection(db, "lojas"), where("owner_id","==",userLogado.uid)));
-    let html="", options="";
-    snap.forEach(d=>{ const l=d.data(); html+=`<div class="border p-2 rounded bg-white"><b>${l.nome}</b> ${l.endereco||""}</div>`; options+=`<option value="${d.id}">${l.nome}</option>`; });
-    document.getElementById("listaMinhasLojas").innerHTML=html||"Nenhuma";
-    const sel=document.getElementById("lojaSelecionadaSuper"); if(sel) sel.innerHTML=options;
-  }catch(e){}
-}
-window.buscarMotoboy = async ()=>{
-  const cod=document.getElementById("codigoFav").value.toUpperCase();
-  const snap=await getDocs(query(collection(db, "motoristas"), where("codigo","==",cod)));
-  if(snap.empty){ alert("Não achei "+cod); return; }
-  motoboyFavData=snap.docs[0].data();
-  document.getElementById("cardFav").classList.remove("hidden");
-  document.getElementById("cardFav").innerHTML=`<b>${motoboyFavData.nome}</b> ${motoboyFavData.codigo}`;
-};
 window.criarPedido = async ()=>{
   const {lojista, motoboy, margem}=calc();
-  const km=Number(document.getElementById("km").value);
-  let lojaId=userLogado.uid;
-  const sel=document.getElementById("lojaSelecionadaSuper"); if(sel && sel.value) lojaId=sel.value;
-  await addDoc(collection(db, "pedidos"), {
-    loja_id: lojaId, owner_id: userLogado.uid,
-    veiculo_solicitado: document.getElementById("veiculo").value, distancia_km: km,
-    taxa_bairro: Number(document.getElementById("taxaBairro").value||0),
-    precisa_retorno: document.getElementById("precisaRetorno").checked,
-    precisa_dinamica: document.getElementById("precisaDinamica").checked,
-    valor_lojista: lojista, valor_motoboy: motoboy, margem_plataforma: margem,
-    status: "AGUARDANDO", criado_em: Timestamp.now()
+  const bairro=bairroSelect.value;
+  const codigoSecreto = Math.floor(1000 + Math.random()*9000).toString();
+  await addDoc(collection(db,"pedidos"),{
+    loja_id:userLogado.uid, owner_id:userLogado.uid, veiculo_solicitado:veiculo.value, distancia_km:Number(km.value), bairro:bairro, taxa_bairro:regraAtual.bairros[bairro]||0, precisa_retorno:precisaRetorno.checked, precisa_dinamica:precisaDinamica.checked, valor_lojista:lojista, valor_motoboy:motoboy, margem_plataforma:margem, codigo_secreto:codigoSecreto, status:"AGUARDANDO", criado_em:Timestamp.now()
   });
-  alert("Criado! Lojista R$ "+lojista.toFixed(2)+" | Moto R$ "+motoboy.toFixed(2));
+  alert(`✅ CRIADO!\nCÓDIGO SECRETO: ${codigoSecreto}\nEnvia pro cliente no zap!`);
   carregarExtratos();
 };
+
 async function carregarExtratos(){
   if(!userLogado) return;
-  try{
-    const snap=await getDocs(query(collection(db, "pedidos"), where("owner_id","==",userLogado.uid)));
-    let html=""; snap.forEach(d=>{ const p=d.data(); html+=`<div class="border-b py-1">#${d.id.slice(0,4)} ${p.veiculo_solicitado||""} ${p.distancia_km||0}km - PAGO R$ ${Number(p.valor_lojista||0).toFixed(2)}</div>`; });
-    const e1=document.getElementById("extratoLojista"); if(e1) e1.innerHTML=html||"Sem";
-    const e2=document.getElementById("extratoMotoboy"); if(e2) e2.innerHTML=html||"Sem";
-    const e3=document.getElementById("listaEntregasMotoboy"); if(e3) e3.innerHTML=html||"Sem";
-  }catch(e){}
-}
-async function carregarAbertas(){
-  onSnapshot(query(collection(db, "pedidos"), where("status","==","AGUARDANDO")), snap=>{
-    let html=""; snap.forEach(d=>{ const p=d.data(); if(!p.motorista_id){ html+=`<div class="border p-2 rounded bg-white mb-1">#${d.id.slice(0,4)} ${p.veiculo_solicitado} ${p.distancia_km}km R$${(p.valor_lojista||0).toFixed(2)} ${p.precisa_retorno?"RETORNO":""} ${p.precisa_dinamica?"DIN":""}</div>`; } });
-    const el=document.getElementById("corridasAbertas"); if(el) el.innerHTML=html||"Nenhuma aberta";
+  const snap=await getDocs(query(collection(db,"pedidos"), where("owner_id","==",userLogado.uid)));
+  let html="";
+  snap.forEach(d=>{
+    const p=d.data();
+    const mapsLink=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.bairro||"Macaé")}`;
+    html+=`<div class="border p-2 rounded bg-white">
+      <div class="flex justify-between"><b>#${d.id.slice(0,4)} ${p.veiculo_solicitado} ${p.distancia_km}km</b><b>R$ ${Number(p.valor_lojista||0).toFixed(2)}</b></div>
+      <div class="mt-2 bg-black text-white p-2 rounded text-center">🔑 CÓDIGO: <b class="text-xl">${p.codigo_secreto||"----"}</b> <button onclick="navigator.clipboard.writeText('${p.codigo_secreto}');alert('Copiado ${p.codigo_secreto}')" class="bg-white text-black px-2 rounded ml-2 text-[11px]">COPIAR</button></div>
+      <div class="flex gap-2 mt-2">
+        <a href="${mapsLink}" target="_blank" class="flex-1 bg-blue-600 text-white text-center py-2 rounded text-xs font-bold">🗺️ MAPS</a>
+        <button onclick="const t='Seu código Anjos Flash: ${p.codigo_secreto} - entrega R$ ${Number(p.valor_lojista||0).toFixed(2)}'; navigator.clipboard.writeText(t); alert('Copiado para enviar no WhatsApp:\\n'+t)" class="flex-1 bg-green-600 text-white py-2 rounded text-xs font-bold">📤 ENVIAR CLIENTE</button>
+      </div>
+      <div class="text-[10px] opacity-60 mt-1">${p.bairro?`Bairro: ${p.bairro} (taxa já no total)`:""} ${p.precisa_retorno?"+ retorno":""} ${p.precisa_dinamica?"+ dinâmica":""} | ${p.status}</div>
+    </div>`;
   });
+  extratoLojista.innerHTML=html||"Sem pedidos";
 }
-window.mexerSaldo = async ()=>{
-  if(userRoleReal!=="ADMIN"){ alert("Só ADMIN edita saldo!"); return; }
-  const uid=document.getElementById("userSaldo").value.trim();
-  const val=Number(document.getElementById("valorSaldo").value);
-  const mot=document.getElementById("motivoSaldo").value;
-  if(!uid||!val){ alert("Preencha ID e valor"); return; }
-  await addDoc(collection(db, "transacoes"), {userId:uid, valor:val, motivo:mot, criado_por:userRoleReal, criado_em:Timestamp.now()});
-  alert("Saldo lançado! Só ADMIN pode");
-};
-window.cadastrarMotoboy = async ()=>{
-  if(!userLogado) return;
-  const nome=document.getElementById("cadNome").value;
-  const fileCNH=document.getElementById("fileCNH").files[0];
-  const fileSelfie=document.getElementById("fileSelfie").files[0];
-  const fileComp=document.getElementById("fileComp").files[0];
-  const fileCRLV=document.getElementById("fileCRLV").files[0];
-  if(!nome||!fileCNH||!fileSelfie||!fileComp||!fileCRLV){ alert("Nome + 4 arquivos"); return; }
-  async function up(file, tipo){
-    const r=ref(storage, `motoristas/${userLogado.uid}/${tipo}_${Date.now()}_${file.name}`);
-    await uploadBytes(r, file); return await getDownloadURL(r);
-  }
-  const urlCNH=await up(fileCNH,"CNH"); const urlSelfie=await up(fileSelfie,"SELFIE");
-  const urlComp=await up(fileComp,"COMP"); const urlCRLV=await up(fileCRLV,"CRLV");
-  await setDoc(doc(db, "motoristas", userLogado.uid), {
-    userId:userLogado.uid, nome, email:userLogado.email, role:"MOTOBOY_MOTORISTA", status:"PENDENTE_APROVACAO", foto_url:urlSelfie,
-    documentos:{cnh:urlCNH, selfie:urlSelfie, comprovante:urlComp, crlv:urlCRLV}, criado_em: Timestamp.now()
-  }, {merge:true});
-  alert("Enviado!");
-};
+async function carregarMinhasLojas(){ try{ const s=await getDocs(query(collection(db,"lojas"), where("owner_id","==",userLogado.uid))); let h="",o=""; s.forEach(d=>{ h+=`<div class="border p-2 rounded bg-white">${d.data().nome}</div>`; o+=`<option value="${d.id}">${d.data().nome}</option>`; }); listaMinhasLojas.innerHTML=h; lojaSelecionadaSuper.innerHTML=o; }catch(e){} }
+window.adicionarLoja = async ()=>{ await addDoc(collection(db,"lojas"),{owner_id:userLogado.uid,nome:nomeNovaLoja.value,endereco:endNovaLoja.value,criado_em:Timestamp.now()}); nomeNovaLoja.value=""; endNovaLoja.value=""; carregarMinhasLojas(); };
+async function carregarAbertas(){ onSnapshot(query(collection(db,"pedidos"), where("status","==","AGUARDANDO")), s=>{ let h=""; s.forEach(d=>{ const p=d.data(); if(!p.motorista_id) h+=`<div class="border p-2 rounded bg-white mb-1">#${d.id.slice(0,4)} ${p.bairro||""} R$${p.valor_lojista?.toFixed(2)} Cod:${p.codigo_secreto} <a href="https://www.google.com/maps/search/?api=1&query=${p.bairro}" target="_blank" class="bg-blue-500 text-white px-2 rounded">MAPS</a></div>`; }); corridasAbertas.innerHTML=h||"Nenhuma"; }); }
+window.confirmarEntrega = async ()=>{ const cod=codigoEntregaInput.value.trim(); const q=await getDocs(query(collection(db,"pedidos"), where("codigo_secreto","==",cod))); if(q.empty){ alert("Código errado"); return; } await setDoc(doc(db,"pedidos",q.docs[0].id),{status:"ENTREGUE", entregue_em:Timestamp.now(), motorista_id:userLogado.uid},{merge:true}); alert("✅ Entregue! Código "+cod+" confirmado"); codigoEntregaInput.value=""; carregarExtratos(); };
+window.mexerSaldo = async ()=>{ if(userRoleReal!=="ADMIN") return; await addDoc(collection(db,"transacoes"),{userId:userSaldo.value, valor:Number(valorSaldo.value), motivo:motivoSaldo.value, criado_em:Timestamp.now()}); alert("Lançado"); };
 </script>
 </body>
 </html>
