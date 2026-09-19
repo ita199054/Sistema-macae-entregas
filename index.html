@@ -21,14 +21,14 @@
     </div>
     <div id="abaCadastrar" class="hidden">
       <select id="tipoCadastro" class="w-full border p-3 rounded mb-2 text-sm">
-        <option value="LOJISTA">SOU LOJISTA (1 loja)</option>
-        <option value="SUPER_LOJISTA">SOU SUPER LOJISTA (várias lojas)</option>
-        <option value="MOTOBOY_MOTORISTA">SOU MOTOBOY / MOTORISTA</option>
-        <option value="FRANQUEADO">SOU FRANQUEADO</option>
+        <option value="LOJISTA">SOU LOJISTA</option>
+        <option value="SUPER_LOJISTA">SOU SUPER LOJISTA</option>
+        <option value="MOTOBOY_MOTORISTA">SOU MOTOBOY</option>
+        <option value="ADMIN">SOU ADMIN</option>
       </select>
       <input id="cadEmailLogin" placeholder="Email" class="w-full border p-3 rounded mb-2 text-sm">
       <input id="cadSenhaLogin" type="password" placeholder="Senha" class="w-full border p-3 rounded mb-2 text-sm">
-      <input id="cadNomeLogin" placeholder="Nome da Loja / Seu Nome" class="w-full border p-3 rounded mb-2 text-sm">
+      <input id="cadNomeLogin" placeholder="Nome" class="w-full border p-3 rounded mb-2 text-sm">
       <button onclick="fazerCadastro()" class="w-full bg-black text-white p-3 rounded font-bold">CRIAR CONTA</button>
     </div>
   </div>
@@ -38,114 +38,81 @@
 <div class="bg-white p-4 flex justify-between items-center border-b sticky top-0 z-10">
   <div class="flex items-center gap-2"><span class="text-2xl">🏍️</span><b class="text-xl">Anjos <span class="text-orange-500">Flash</span></b></div>
   <div class="flex items-center gap-2">
-    <span id="roleRealBadge" class="bg-black text-white text-[10px] px-3 py-2 rounded font-bold">LOJISTA</span>
+    <span id="roleRealBadge" class="bg-black text-white text-[10px] px-3 py-2 rounded font-bold">...</span>
     <button onclick="fazerLogout()" class="text-[10px] border px-2 py-1 rounded">SAIR</button>
   </div>
 </div>
+<div class="flex gap-2 p-2 text-xs items-center"><span class="px-2 py-1 bg-black text-white rounded">PT</span><span id="userLogadoInfo" class="ml-auto text-[10px] text-gray-500"></span></div>
 
-<div class="flex gap-2 p-2 text-xs items-center">
-  <button class="px-2 py-1 bg-black text-white rounded">PT</button>
-  <span id="userLogadoInfo" class="ml-auto text-[10px] text-gray-500"></span>
-</div>
-
-<!-- TELA SUPER LOJISTA - ADICIONAR LOJAS -->
-<div id="telaSuperLojista" class="p-4 hidden">
-  <div class="bg-orange-50 border border-orange-300 p-3 rounded-xl mb-4">
-    <h2 class="font-bold text-sm">🏪 SUPER LOJISTA - Minhas Lojas</h2>
-    <p class="text-[11px]">Você pode adicionar várias filiais e pedir entrega de qualquer uma</p>
-    <div class="flex gap-2 mt-2">
-      <input id="nomeNovaLoja" placeholder="Nome da filial ex: Matriz Centro" class="flex-1 border p-2 rounded text-xs">
-      <input id="endNovaLoja" placeholder="Endereço" class="flex-1 border p-2 rounded text-xs">
-      <button onclick="adicionarLoja()" class="bg-black text-white px-3 rounded text-xs">+ ADICIONAR LOJA</button>
-    </div>
-    <div id="listaMinhasLojas" class="mt-3 space-y-1 text-xs"></div>
-  </div>
-</div>
-
+<!-- PAINEL MOTOBOY -->
 <div id="telaMotoboy" class="p-4 hidden">
   <div class="flex items-center gap-3 mb-4">
-    <img id="fotoMotoboy" src="https://i.pravatar.cc/100" class="w-14 h-14 rounded-full object-cover border-2 border-orange-500">
-    <div><b id="nomeMotoboy">Motoboy</b><br><span class="bg-black text-white text-xs px-2 py-1 rounded" id="codigoMotoboy">#0001</span></div>
+    <img id="fotoMotoboy" src="https://i.pravatar.cc/100" class="w-14 h-14 rounded-full border-2 border-orange-500">
+    <div><b id="nomeMotoboy">Motoboy</b><br><span id="codigoMotoboy" class="bg-black text-white text-xs px-2 py-1 rounded">#0001</span></div>
   </div>
-  <div class="bg-orange-100 p-4 rounded-xl mb-4">
-    <p class="text-sm text-orange-800">Ganhos hoje - SÓ A RECEBER</p>
-    <h1 class="text-3xl font-bold">R$ <span id="ganhoMotoboy">0,00</span></h1>
-  </div>
-  <div id="alertaMaquininha" class="hidden bg-orange-500 text-white p-3 rounded-xl mb-4"><b>🏧 Devolução Maquininha pendente</b></div>
+  <div class="bg-orange-100 p-4 rounded-xl mb-4"><p class="text-sm">Ganhos hoje - SÓ A RECEBER</p><h1 class="text-3xl font-bold">R$ <span id="ganhoMotoboy">0,00</span></h1></div>
   <div id="listaEntregasMotoboy" class="space-y-2 text-xs"></div>
-  <div class="mt-4 p-3 bg-gray-50 rounded"><h4 class="font-bold text-sm">📊 EXTRATO 90 DIAS - SÓ A RECEBER</h4><div id="extratoMotoboy" class="text-xs mt-2"></div></div>
+  <div class="mt-4 p-3 bg-gray-50 rounded"><h4 class="font-bold text-sm">📊 EXTRATO - SÓ A RECEBER</h4><div id="extratoMotoboy" class="text-xs mt-2"></div></div>
 </div>
 
+<!-- PAINEL LOJISTA -->
 <div id="telaLojista" class="p-4 hidden">
   <h2 class="font-bold text-lg mb-3">📦 Pedir Entrega</h2>
-  <div id="divSelecaoLojaSuper" class="hidden mb-2">
-    <label class="text-xs font-bold">Pedir como qual loja?</label>
-    <select id="lojaSelecionadaSuper" class="w-full border p-3 rounded mb-2 text-sm bg-orange-50"></select>
-  </div>
   <label class="text-xs">Veículo</label>
   <select id="veiculo" class="w-full border p-3 rounded mb-2 text-sm">
-    <option value="MOTO">MOTO - R$ 8 fixo + R$ 1,50/km</option>
+    <option value="MOTO">MOTO</option>
     <option value="UTILITARIO">UTILITÁRIO</option>
     <option value="CAMINHAO_3_4">CAMINHÃO 3/4</option>
     <option value="CAMINHAO_TRUCK">TRUCK</option>
     <option value="CARRETA">CARRETA</option>
   </select>
-  <input id="km" type="number" value="5" class="w-full border p-3 rounded mb-2 text-sm">
-  <label class="flex items-center gap-2 text-sm mb-2"><input type="checkbox" id="precisaRetorno"> Retorno com maquininha?</label>
+  <input id="km" type="number" value="5" class="w-full border p-3 rounded mb-2 text-sm" placeholder="km">
+  <label class="flex items-center gap-2 text-sm mb-2"><input type="checkbox" id="precisaRetorno"> Retorno maquininha?</label>
   <div id="divRetorno" class="hidden"><select id="tipoRetorno" class="w-full border p-3 rounded mb-2 text-sm"><option value="MAQUININHA_CARTAO">Máquina</option><option value="DINHEIRO">Dinheiro</option></select></div>
   <div class="border border-orange-300 p-3 rounded mb-3 bg-orange-50">
     <label class="flex items-center gap-2 text-sm font-bold"><input type="checkbox" id="usarFavorito"> Chamar motoboy #</label>
     <div id="divFavorito" class="hidden mt-2 flex gap-2"><input id="codigoFav" placeholder="#0001" class="border p-2 rounded flex-1 text-sm"><button onclick="buscarMotoboy()" class="bg-orange-500 text-white px-3 rounded text-sm">Buscar</button></div>
-    <div id="cardFav" class="hidden mt-2 flex items-center gap-3 p-2 bg-white rounded text-sm"></div>
+    <div id="cardFav" class="hidden mt-2 p-2 bg-white rounded text-sm"></div>
   </div>
   <h3 class="font-bold text-sm">Total a PAGAR: R$ <span id="totalLojista">0.00</span></h3>
   <button onclick="criarPedido()" class="w-full bg-black text-white p-4 rounded-xl mt-3 font-bold text-sm">CRIAR PEDIDO</button>
   <div class="mt-4 p-3 bg-gray-50 rounded"><h4 class="font-bold text-sm">📊 EXTRATO 90 DIAS - SÓ O QUE PAGOU</h4><div id="extratoLojista" class="text-xs mt-2"></div></div>
+  <div id="telaSuperLojista" class="mt-4 hidden">
+    <div class="bg-orange-50 border border-orange-300 p-3 rounded-xl">
+      <h2 class="font-bold text-sm">🏪 Minhas Lojas</h2>
+      <div class="flex gap-2 mt-2"><input id="nomeNovaLoja" placeholder="Nome filial" class="flex-1 border p-2 rounded text-xs"><input id="endNovaLoja" placeholder="Endereço" class="flex-1 border p-2 rounded text-xs"><button onclick="adicionarLoja()" class="bg-black text-white px-3 rounded text-xs">+</button></div>
+      <div id="listaMinhasLojas" class="mt-2 text-xs"></div>
+      <select id="lojaSelecionadaSuper" class="w-full border p-2 rounded mt-2 text-xs bg-white"></select>
+    </div>
+  </div>
 </div>
 
+<!-- PAINEL ADMIN -->
 <div id="telaAdmin" class="p-4 hidden">
   <div class="bg-black text-white p-4 rounded-xl mb-4">
-    <h2 class="font-bold">👮 ADMIN - Preço e Dinâmica</h2>
+    <h2 class="font-bold">👮 ADMIN - Painel</h2>
     <div class="mt-3 space-y-2 text-[11px]">
       <div class="flex gap-1 items-center"><span class="w-16">MOTO</span> fixo <input id="editFixoMoto" type="number" value="8" class="text-black p-1 rounded w-12"> km <input id="editKmMoto" type="number" value="1.5" step="0.1" class="text-black p-1 rounded w-12"> rep <input id="editRepMoto" type="number" value="1.1" step="0.1" class="text-black p-1 rounded w-12"></div>
       <div class="flex gap-1 items-center"><span class="w-16">UTIL</span> fixo <input id="editFixoUtil" type="number" value="15" class="text-black p-1 rounded w-12"> km <input id="editKmUtil" type="number" value="2.5" step="0.1" class="text-black p-1 rounded w-12"> rep <input id="editRepUtil" type="number" value="1.9" step="0.1" class="text-black p-1 rounded w-12"></div>
     </div>
-    <div class="mt-3 flex gap-2 items-center">
-      <span class="text-xs">Dinâmica:</span><input id="inputDinamica" type="number" value="1.5" step="0.1" class="text-black p-1 rounded w-14 text-xs">
-      <button id="btnDinamica" onclick="toggleDinamica()" class="bg-green-500 px-3 py-1 rounded text-xs">DESLIGADA</button>
-      <button onclick="salvarPrecos()" class="bg-orange-500 px-3 py-1 rounded text-xs">SALVAR</button>
-    </div>
+    <div class="mt-3 flex gap-2 items-center"><span class="text-xs">Dinâmica:</span><input id="inputDinamica" type="number" value="1.5" step="0.1" class="text-black p-1 rounded w-14 text-xs"><button id="btnDinamica" onclick="toggleDinamica()" class="bg-green-500 px-3 py-1 rounded text-xs">DESLIGADA</button><button onclick="salvarPrecos()" class="bg-orange-500 px-3 py-1 rounded text-xs">SALVAR</button></div>
   </div>
-  <div class="border-2 border-red-500 p-3 rounded-xl mb-4">
-    <h3 class="font-bold text-red-600 text-sm">🚨 Corridas em Aberto - Sem Motoboy</h3>
-    <div id="corridasAbertas" class="mt-2 space-y-2 text-xs"></div>
-  </div>
-  <div class="bg-gray-900 text-white p-3 rounded-xl">
-    <h3 class="font-bold text-sm">💰 Saldo - Só Admin</h3>
-    <input id="userSaldo" placeholder="ID usuário" class="w-full p-2 rounded text-black mt-2 text-xs">
-    <input id="valorSaldo" type="number" placeholder="+50 ou -20" class="w-full p-2 rounded text-black mt-1 text-xs">
-    <input id="motivoSaldo" placeholder="Motivo" class="w-full p-2 rounded text-black mt-1 text-xs">
-    <button onclick="mexerSaldo()" class="w-full bg-orange-500 p-2 rounded mt-2 font-bold text-sm">Lançar Saldo</button>
-  </div>
+  <div class="border-2 border-red-500 p-3 rounded-xl mb-4"><h3 class="font-bold text-red-600 text-sm">🚨 Corridas em Aberto</h3><div id="corridasAbertas" class="mt-2 text-xs"></div></div>
+  <div class="bg-gray-900 text-white p-3 rounded-xl"><h3 class="font-bold text-sm">💰 Saldo - Só Admin</h3><input id="userSaldo" placeholder="ID" class="w-full p-2 rounded text-black mt-2 text-xs"><input id="valorSaldo" type="number" placeholder="+50" class="w-full p-2 rounded text-black mt-1 text-xs"><input id="motivoSaldo" placeholder="Motivo" class="w-full p-2 rounded text-black mt-1 text-xs"><button onclick="mexerSaldo()" class="w-full bg-orange-500 p-2 rounded mt-2 font-bold text-sm">Lançar</button></div>
+  <div id="listaTodosPedidos" class="mt-4 text-xs"></div>
 </div>
 
 <div id="telaCadastroDocs" class="p-4 border-t mt-4 hidden">
-  <h3 class="font-bold text-sm">🏍️ Enviar Documentos para gerar #0001</h3>
-  <input id="cadNome" placeholder="Nome completo" class="w-full border p-2 rounded mt-2 text-sm">
-  <input id="cadCpf" placeholder="CPF" class="w-full border p-2 rounded mt-1 text-sm">
-  <input id="cadPlaca" placeholder="Placa" class="w-full border p-2 rounded mt-1 text-sm">
-  <p class="text-xs mt-2">CNH: <input type="file" id="fileCNH" class="text-xs"></p>
-  <p class="text-xs">Selfie: <input type="file" id="fileSelfie" class="text-xs"></p>
-  <p class="text-xs">Comprovante: <input type="file" id="fileComp" class="text-xs"></p>
-  <p class="text-xs">CRLV: <input type="file" id="fileCRLV" class="text-xs"></p>
+  <h3 class="font-bold text-sm">🏍️ Enviar Documentos #0001</h3>
+  <input id="cadNome" placeholder="Nome" class="w-full border p-2 rounded mt-2 text-sm"><input id="cadPlaca" placeholder="Placa" class="w-full border p-2 rounded mt-1 text-sm">
+  <p class="text-xs mt-2">CNH: <input type="file" id="fileCNH" class="text-xs"></p><p class="text-xs">Selfie: <input type="file" id="fileSelfie" class="text-xs"></p><p class="text-xs">Comp: <input type="file" id="fileComp" class="text-xs"></p><p class="text-xs">CRLV: <input type="file" id="fileCRLV" class="text-xs"></p>
   <button onclick="cadastrarMotoboy()" class="w-full bg-black text-white p-3 rounded mt-2 text-sm">ENVIAR</button>
 </div>
-
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, doc, setDoc, Timestamp, getCountFromServer } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, doc, setDoc, getDoc, Timestamp, getCountFromServer } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
@@ -162,14 +129,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
 
-let role = null;
-let userLogado = null;
-let userRoleReal = null;
-let dinamica = 1;
-let dinamicaLigada = false;
-let motoboyFavData = null;
-let minhasLojas = [];
-
+let userLogado=null, userRoleReal=null, dinamica=1, dinamicaLigada=false, motoboyFavData=null;
 const precos = { MOTO:{fixo:8, km:1.5, repasse:1.1}, UTILITARIO:{fixo:15, km:2.5, repasse:1.9}, CAMINHAO_3_4:{fixo:25, km:4, repasse:3}, CAMINHAO_TRUCK:{fixo:50, km:6, repasse:4.5}, CARRETA:{fixo:100, km:8.5, repasse:6.5} };
 
 window.setAba = (aba)=>{
@@ -177,243 +137,191 @@ window.setAba = (aba)=>{
   document.getElementById("abaCadastrar").classList.toggle("hidden", aba!=="cadastrar");
 };
 
+async function buscarRoleReal(user){
+  try{
+    // Tenta por UID
+    let snap = await getDoc(doc(db, "usuarios", user.uid));
+    if(snap.exists()) return (snap.data().role || snap.data().tipo || "LOJISTA");
+    // Tenta por email como ID (seu caso super@macae.com)
+    snap = await getDoc(doc(db, "usuarios", user.email));
+    if(snap.exists()) return (snap.data().role || snap.data().tipo || "LOJISTA");
+    // Query por email
+    let q = await getDocs(query(collection(db, "usuarios"), where("email","==",user.email)));
+    if(!q.empty) return (q.docs[0].data().role || q.docs[0].data().tipo || "LOJISTA");
+    q = await getDocs(query(collection(db, "motoristas"), where("userId","==",user.uid)));
+    if(!q.empty) return (q.docs[0].data().role || "MOTOBOY_MOTORISTA");
+    q = await getDocs(query(collection(db, "motoristas"), where("email","==",user.email)));
+    if(!q.empty) return (q.docs[0].data().role || "MOTOBOY_MOTORISTA");
+  }catch(e){ console.log("erro buscar role", e); }
+  return "LOJISTA";
+}
+function normalizaRole(r){
+  r=(r||"").toString().toLowerCase();
+  if(r.includes("admin")) return "ADMIN";
+  if(r.includes("super")) return "SUPER_LOJISTA";
+  if(r.includes("moto")) return "MOTOBOY_MOTORISTA";
+  if(r.includes("franque")) return "FRANQUEADO";
+  if(r.includes("suporte")) return "SUPORTE";
+  return "LOJISTA";
+}
+
 onAuthStateChanged(auth, async (user)=>{
   if(user){
-    userLogado = user;
-    // BUSCA ROLE REAL NO FIRESTORE - TRAVA DE SEGURANÇA
-    const q1 = await getDocs(query(collection(db, "usuarios"), where("userId","==",user.uid)));
-    const q2 = await getDocs(query(collection(db, "motoristas"), where("userId","==",user.uid)));
-    if(!q1.empty){ userRoleReal = q1.docs[0].data().role; }
-    else if(!q2.empty){ userRoleReal = q2.docs[0].data().role; }
-    else { userRoleReal = "LOJISTA"; }
-
-    role = userRoleReal; // FORÇA ROLE REAL, NÃO DEIXA TROCAR
+    userLogado=user;
+    let cru = await buscarRoleReal(user);
+    userRoleReal = normalizaRole(cru);
     document.getElementById("roleRealBadge").innerText = userRoleReal;
     document.getElementById("userLogadoInfo").innerText = "Logado: "+user.email+" | Role: "+userRoleReal;
     document.getElementById("telaLogin").classList.add("hidden");
     mostrarTelaPorRole();
     carregarExtratos();
     if(userRoleReal==="SUPER_LOJISTA") carregarMinhasLojas();
-    if(userRoleReal==="ADMIN"||userRoleReal==="SUPORTE") carregarAbertas();
+    if(userRoleReal==="ADMIN"||userRoleReal==="SUPORTE"||userRoleReal==="FRANQUEADO") carregarAbertas();
     if(userRoleReal==="MOTOBOY_MOTORISTA") document.getElementById("telaCadastroDocs").classList.remove("hidden");
   } else {
-    userLogado = null;
-    userRoleReal = null;
     document.getElementById("telaLogin").classList.remove("hidden");
   }
 });
 
-window.fazerLogin = async ()=>{
-  const email = document.getElementById("loginEmail").value.trim();
-  const senha = document.getElementById("loginSenha").value.trim();
-  try{ await signInWithEmailAndPassword(auth, email, senha); }catch(e){ alert(e.message); }
-};
-
+window.fazerLogin = async ()=>{ try{ await signInWithEmailAndPassword(auth, document.getElementById("loginEmail").value.trim(), document.getElementById("loginSenha").value.trim()); }catch(e){ alert(e.message); } };
 window.fazerCadastro = async ()=>{
-  const email = document.getElementById("cadEmailLogin").value.trim();
-  const senha = document.getElementById("cadSenhaLogin").value.trim();
-  const nome = document.getElementById("cadNomeLogin").value.trim();
-  const tipo = document.getElementById("tipoCadastro").value;
-  if(!email||!senha||!nome){ alert("Preencha tudo"); return; }
+  const email=document.getElementById("cadEmailLogin").value.trim();
+  const senha=document.getElementById("cadSenhaLogin").value.trim();
+  const nome=document.getElementById("cadNomeLogin").value.trim();
+  const tipo=document.getElementById("tipoCadastro").value;
   try{
-    const cred = await createUserWithEmailAndPassword(auth, email, senha);
-    const uid = cred.user.uid;
-    if(tipo==="MOTOBOY_MOTORISTA"){
-      const countSnap = await getCountFromServer(collection(db, "motoristas"));
-      const codigo = "#"+String(countSnap.data().count+1).padStart(4,'0');
-      await setDoc(doc(db, "motoristas", uid), {userId:uid, nome, email, codigo, role:tipo, status:"PENDENTE_DOCS", saldo:0, veiculo:"MOTO", criado_em: Timestamp.now()});
-    } else {
-      await setDoc(doc(db, "usuarios", uid), {userId:uid, nome, email, role:tipo, criado_em: Timestamp.now()});
-      if(tipo==="SUPER_LOJISTA"||tipo==="LOJISTA"){
-        await setDoc(doc(db, "lojas", uid+"_matriz"), {owner_id:uid, nome: nome+" - Matriz", endereco:"Endereço matriz", criado_em: Timestamp.now()});
-      }
-    }
-    alert("Conta criada como "+tipo);
+    const cred=await createUserWithEmailAndPassword(auth, email, senha);
+    await setDoc(doc(db, "usuarios", cred.user.uid), {userId:cred.user.uid, nome, email, role:tipo, tipo:tipo, criadoEm: Timestamp.now()});
+    await setDoc(doc(db, "usuarios", email), {userId:cred.user.uid, nome, email, role:tipo, tipo:tipo, criadoEm: Timestamp.now()});
+    alert("Criado como "+tipo);
   }catch(e){ alert(e.message); }
 };
-
 window.fazerLogout = async ()=>{ await signOut(auth); location.reload(); };
 
+// CORREÇÃO PRINCIPAL - CADA ROLE NO SEU PAINEL
 function mostrarTelaPorRole(){
   if(!userRoleReal) return;
-  document.getElementById("telaMotoboy").classList.toggle("hidden", userRoleReal!=="MOTOBOY_MOTORISTA");
-  document.getElementById("telaLojista").classList.toggle("hidden",!(userRoleReal==="LOJISTA"||userRoleReal==="SUPER_LOJISTA"));
-  document.getElementById("telaSuperLojista").classList.toggle("hidden", userRoleReal!=="SUPER_LOJISTA");
-  document.getElementById("divSelecaoLojaSuper").classList.toggle("hidden", userRoleReal!=="SUPER_LOJISTA");
-  document.getElementById("telaAdmin").classList.toggle("hidden",!(userRoleReal==="ADMIN"||userRoleReal==="SUPORTE"||userRoleReal==="FRANQUEADO"));
+  document.getElementById("telaMotoboy").classList.add("hidden");
+  document.getElementById("telaLojista").classList.add("hidden");
+  document.getElementById("telaAdmin").classList.add("hidden");
+  document.getElementById("telaSuperLojista").classList.add("hidden");
+
+  if(userRoleReal==="MOTOBOY_MOTORISTA"){
+    document.getElementById("telaMotoboy").classList.remove("hidden");
+  } else if(userRoleReal==="ADMIN"||userRoleReal==="SUPORTE"||userRoleReal==="FRANQUEADO"){
+    document.getElementById("telaAdmin").classList.remove("hidden");
+  } else if(userRoleReal==="SUPER_LOJISTA"){
+    document.getElementById("telaLojista").classList.remove("hidden");
+    document.getElementById("telaSuperLojista").classList.remove("hidden");
+    document.getElementById("divSelecaoLojaSuper")?.classList?.remove("hidden");
+  } else { // LOJISTA
+    document.getElementById("telaLojista").classList.remove("hidden");
+  }
 }
 
 window.adicionarLoja = async ()=>{
-  const nome = document.getElementById("nomeNovaLoja").value.trim();
-  const end = document.getElementById("endNovaLoja").value.trim();
-  if(!nome){ alert("Nome da loja"); return; }
+  const nome=document.getElementById("nomeNovaLoja").value.trim();
+  const end=document.getElementById("endNovaLoja").value.trim();
+  if(!nome) return;
   await addDoc(collection(db, "lojas"), {owner_id:userLogado.uid, nome, endereco:end, criado_em: Timestamp.now()});
   document.getElementById("nomeNovaLoja").value=""; document.getElementById("endNovaLoja").value="";
   carregarMinhasLojas();
 };
-
 async function carregarMinhasLojas(){
-  const q = query(collection(db, "lojas"), where("owner_id","==",userLogado.uid));
-  const snap = await getDocs(q);
-  minhasLojas = [];
-  let html="", options="";
-  snap.forEach(d=>{
-    const l = d.data();
-    minhasLojas.push({id:d.id,...l});
-    html += `<div class="border p-2 rounded bg-white flex justify-between"><span><b>${l.nome}</b> - ${l.endereco||""}</span></div>`;
-    options += `<option value="${d.id}">${l.nome}</option>`;
-  });
-  document.getElementById("listaMinhasLojas").innerHTML = html || "Nenhuma loja - adicione sua matriz";
-  document.getElementById("lojaSelecionadaSuper").innerHTML = options;
+  try{
+    const snap=await getDocs(query(collection(db, "lojas"), where("owner_id","==",userLogado.uid)));
+    let html="", options="";
+    snap.forEach(d=>{ const l=d.data(); html+=`<div class="border p-2 rounded bg-white"><b>${l.nome}</b> ${l.endereco||""}</div>`; options+=`<option value="${d.id}">${l.nome}</option>`; });
+    document.getElementById("listaMinhasLojas").innerHTML=html||"Nenhuma loja";
+    const sel=document.getElementById("lojaSelecionadaSuper"); if(sel) sel.innerHTML=options;
+  }catch(e){}
 }
-
-document.getElementById("precisaRetorno").addEventListener("change", e=>{
-  document.getElementById("divRetorno").classList.toggle("hidden",!e.target.checked);
-  document.getElementById("alertaMaquininha").classList.toggle("hidden",!e.target.checked);
-});
-document.getElementById("usarFavorito").addEventListener("change", e=>{
-  document.getElementById("divFavorito").classList.toggle("hidden",!e.target.checked);
-});
-
+document.getElementById("precisaRetorno")?.addEventListener("change", e=>{ document.getElementById("divRetorno").classList.toggle("hidden",!e.target.checked); });
+document.getElementById("usarFavorito")?.addEventListener("change", e=>{ document.getElementById("divFavorito").classList.toggle("hidden",!e.target.checked); });
 function calc(){
-  const v = document.getElementById("veiculo").value;
-  const km = Number(document.getElementById("km").value||0);
-  const f = dinamicaLigada? dinamica : 1;
-  const p = precos[v];
-  const lojista = (p.fixo + km * p.km) * f;
-  const motoboy = (p.fixo*0.8 + km * p.repasse) * f;
-  document.getElementById("totalLojista").innerText = lojista.toFixed(2);
+  const v=document.getElementById("veiculo").value; const km=Number(document.getElementById("km").value||0);
+  const f=dinamicaLigada?dinamica:1; const p=precos[v];
+  const lojista=(p.fixo + km * p.km) * f; const motoboy=(p.fixo*0.8 + km * p.repasse) * f;
+  const el=document.getElementById("totalLojista"); if(el) el.innerText=lojista.toFixed(2);
   return {lojista, motoboy, margem: lojista-motoboy};
 }
-document.getElementById("veiculo").addEventListener("change", calc);
-document.getElementById("km").addEventListener("input", calc);
-calc();
-
+document.getElementById("veiculo")?.addEventListener("change", calc);
+document.getElementById("km")?.addEventListener("input", calc); calc();
 window.salvarPrecos = async ()=>{
-  if(userRoleReal!=="ADMIN" && userRoleReal!=="SUPORTE"){ alert("Só ADMIN/SUPORTE"); return; }
-  precos.MOTO.fixo = Number(document.getElementById("editFixoMoto").value);
-  precos.MOTO.km = Number(document.getElementById("editKmMoto").value);
-  precos.MOTO.repasse = Number(document.getElementById("editRepMoto").value);
-  precos.UTILITARIO.fixo = Number(document.getElementById("editFixoUtil").value);
-  precos.UTILITARIO.km = Number(document.getElementById("editKmUtil").value);
-  precos.UTILITARIO.repasse = Number(document.getElementById("editRepUtil").value);
-  await setDoc(doc(db, "pricing_config", "atual"), {precos, atualizado_em: Timestamp.now(), por: userRoleReal, dinamica});
-  alert("Preços salvos!");
-  calc();
+  if(userRoleReal!=="ADMIN" && userRoleReal!=="SUPORTE"){ alert("Só ADMIN"); return; }
+  precos.MOTO.fixo=Number(document.getElementById("editFixoMoto").value);
+  precos.MOTO.km=Number(document.getElementById("editKmMoto").value);
+  await setDoc(doc(db, "pricing_config", "atual"), {precos, atualizado_em: Timestamp.now(), por: userRoleReal});
+  alert("Salvo!"); calc();
 };
-
 window.toggleDinamica = ()=>{
-  if(userRoleReal!=="ADMIN" && userRoleReal!=="SUPORTE"){ alert("Só ADMIN/SUPORTE"); return; }
-  dinamicaLigada =!dinamicaLigada;
-  dinamica = Number(document.getElementById("inputDinamica").value) || 1.5;
-  document.getElementById("btnDinamica").innerText = (dinamicaLigada? `LIGADA x${dinamica}` : "DESLIGADA");
-  document.getElementById("btnDinamica").className = dinamicaLigada? "bg-red-500 px-3 py-1 rounded text-xs" : "bg-green-500 px-3 py-1 rounded text-xs";
+  if(userRoleReal!=="ADMIN" && userRoleReal!=="SUPORTE"){ alert("Só ADMIN"); return; }
+  dinamicaLigada=!dinamicaLigada; dinamica=Number(document.getElementById("inputDinamica").value)||1.5;
+  const b=document.getElementById("btnDinamica"); if(b) b.innerText=dinamicaLigada?`LIGADA x${dinamica}`:"DESLIGADA";
   calc();
 };
-
 window.buscarMotoboy = async ()=>{
-  const cod = document.getElementById("codigoFav").value.toUpperCase();
-  const q = query(collection(db, "motoristas"), where("codigo","==",cod));
-  const snap = await getDocs(q);
+  const cod=document.getElementById("codigoFav").value.toUpperCase();
+  const snap=await getDocs(query(collection(db, "motoristas"), where("codigo","==",cod)));
   if(snap.empty){ alert("Não achei "+cod); return; }
-  motoboyFavData = snap.docs[0].data();
+  motoboyFavData=snap.docs[0].data();
   document.getElementById("cardFav").classList.remove("hidden");
-  document.getElementById("cardFav").innerHTML = `<img src="${motoboyFavData.foto_url||""}" class="w-12 h-12 rounded-full"><div><b>${motoboyFavData.nome}</b><br><span class="bg-black text-white text-xs px-2 rounded">${motoboyFavData.codigo}</span></div>`;
+  document.getElementById("cardFav").innerHTML=`<b>${motoboyFavData.nome}</b> ${motoboyFavData.codigo}`;
 };
-
 window.criarPedido = async ()=>{
-  const {lojista, motoboy, margem} = calc();
-  const veic = document.getElementById("veiculo").value;
-  const km = Number(document.getElementById("km").value);
-  const precisaRet = document.getElementById("precisaRetorno").checked;
-  const tipoRet = document.getElementById("tipoRetorno").value;
-  const usarFav = document.getElementById("usarFavorito").checked;
-  let lojaId = userLogado.uid;
-  if(userRoleReal==="SUPER_LOJISTA"){
-    lojaId = document.getElementById("lojaSelecionadaSuper").value || userLogado.uid;
-  }
+  const {lojista, motoboy, margem}=calc();
+  const veic=document.getElementById("veiculo").value; const km=Number(document.getElementById("km").value);
+  let lojaId=userLogado.uid;
+  const sel=document.getElementById("lojaSelecionadaSuper");
+  if(userRoleReal==="SUPER_LOJISTA" && sel && sel.value) lojaId=sel.value;
   await addDoc(collection(db, "pedidos"), {
-    loja_id: lojaId, owner_id: userLogado.uid,
-    motorista_id: usarFav && motoboyFavData? motoboyFavData.userId : null,
-    motorista_codigo: usarFav? document.getElementById("codigoFav").value : null,
-    motorista_nome: motoboyFavData?.nome || null,
-    veiculo_solicitado: veic, distancia_km: km, precisa_retorno: precisaRet, tipo_retorno: precisaRet? tipoRet : null,
+    loja_id: lojaId, owner_id: userLogado.uid, veiculo_solicitado: veic, distancia_km: km,
+    precisa_retorno: document.getElementById("precisaRetorno").checked,
     valor_lojista: lojista, valor_motoboy: motoboy, margem_plataforma: margem,
-    tarifa_dinamica: dinamicaLigada? dinamica : 1,
-    status: usarFav? "AGUARDANDO_ACEITE_FAVORITO" : "AGUARDANDO",
-    cidade: "Macaé, RJ", criado_em: Timestamp.now()
+    status: "AGUARDANDO", criado_em: Timestamp.now()
   });
-  alert(`Criado! Paga R$ ${lojista.toFixed(2)}`);
-  carregarExtratos();
+  alert("Criado! R$ "+lojista.toFixed(2)); carregarExtratos();
 };
-
 async function carregarExtratos(){
   if(!userLogado) return;
-  const q = query(collection(db, "pedidos"), where("owner_id","==",userLogado.uid));
-  const snap = await getDocs(q);
-  let htmlLoj = "", htmlMoto = "";
-  snap.forEach(d=>{
-    const p = d.data();
-    const vLoj = p.valor_lojista?? 0;
-    const vMot = p.valor_motoboy?? 0;
-    htmlLoj += `<div class="border-b py-1">#${d.id.slice(0,4)} ${p.veiculo_solicitado||""} ${p.distancia_km||0}km - PAGO R$ ${Number(vLoj).toFixed(2)}</div>`;
-    htmlMoto += `<div class="border-b py-1">#${d.id.slice(0,4)} - A RECEBER R$ ${Number(vMot).toFixed(2)}</div>`;
-  });
-  document.getElementById("extratoLojista").innerHTML = htmlLoj || "Sem pedidos ainda";
-  document.getElementById("extratoMotoboy").innerHTML = htmlMoto || "Sem entregas";
-  document.getElementById("listaEntregasMotoboy").innerHTML = htmlMoto || "Sem entregas";
+  try{
+    const snap=await getDocs(query(collection(db, "pedidos"), where("owner_id","==",userLogado.uid)));
+    let htmlLoj=""; snap.forEach(d=>{ const p=d.data(); htmlLoj+=`<div class="border-b py-1">#${d.id.slice(0,4)} ${p.veiculo_solicitado} - PAGO R$ ${Number(p.valor_lojista||0).toFixed(2)}</div>`; });
+    const e1=document.getElementById("extratoLojista"); if(e1) e1.innerHTML=htmlLoj||"Sem pedidos";
+    const e2=document.getElementById("extratoMotoboy"); if(e2) e2.innerHTML=htmlLoj||"Sem";
+    const e3=document.getElementById("listaEntregasMotoboy"); if(e3) e3.innerHTML=htmlLoj||"Sem";
+  }catch(e){}
 }
-
 async function carregarAbertas(){
-  const q = query(collection(db, "pedidos"), where("status","in",["AGUARDANDO","AGUARDANDO_ACEITE_FAVORITO"]));
-  onSnapshot(q, snap=>{
-    let html = "";
-    snap.forEach(d=>{
-      const p = d.data();
-      if(!p.motorista_id){
-        const tempo = Math.floor((Date.now()/1000 - (p.criado_em?.seconds||0))/60);
-        html += `<div class="border p-2 rounded ${tempo>5? "border-red-500 bg-red-50":"bg-white"}">#${d.id.slice(0,4)} ${p.veiculo_solicitado} ${tempo}min R$${(p.valor_lojista||0).toFixed(2)}</div>`;
-      }
-    });
-    document.getElementById("corridasAbertas").innerHTML = html || "Nenhuma aberta";
+  onSnapshot(query(collection(db, "pedidos"), where("status","==","AGUARDANDO")), snap=>{
+    let html=""; snap.forEach(d=>{ const p=d.data(); if(!p.motorista_id){ html+=`<div class="border p-2 rounded">#${d.id.slice(0,4)} ${p.veiculo_solicitado} R$${(p.valor_lojista||0).toFixed(2)}</div>`; } });
+    const el=document.getElementById("corridasAbertas"); if(el) el.innerHTML=html||"Nenhuma aberta";
   });
 }
-
 window.mexerSaldo = async ()=>{
   if(userRoleReal!=="ADMIN" && userRoleReal!=="SUPORTE"){ alert("Só ADMIN"); return; }
-  const uid = document.getElementById("userSaldo").value;
-  const val = Number(document.getElementById("valorSaldo").value);
-  const mot = document.getElementById("motivoSaldo").value;
-  await addDoc(collection(db, "transacoes"), {userId:uid, valor:val, motivo:mot, criado_por:userRoleReal, criado_em:Timestamp.now()});
+  await addDoc(collection(db, "transacoes"), {userId:document.getElementById("userSaldo").value, valor:Number(document.getElementById("valorSaldo").value), motivo:document.getElementById("motivoSaldo").value, criado_por:userRoleReal, criado_em:Timestamp.now()});
   alert("Saldo lançado!");
 };
-
 window.cadastrarMotoboy = async ()=>{
-  if(!userLogado){ alert("Faça login"); return; }
-  const nome = document.getElementById("cadNome").value;
-  const placa = document.getElementById("cadPlaca").value;
-  const fileCNH = document.getElementById("fileCNH").files[0];
-  const fileSelfie = document.getElementById("fileSelfie").files[0];
-  const fileComp = document.getElementById("fileComp").files[0];
-  const fileCRLV = document.getElementById("fileCRLV").files[0];
-  if(!nome||!fileCNH||!fileSelfie||!fileComp||!fileCRLV){ alert("Preencha nome e 4 arquivos"); return; }
-  const uid = userLogado.uid;
+  if(!userLogado){ alert("Login"); return; }
+  const nome=document.getElementById("cadNome").value;
+  const fileCNH=document.getElementById("fileCNH").files[0];
+  const fileSelfie=document.getElementById("fileSelfie").files[0];
+  const fileComp=document.getElementById("fileComp").files[0];
+  const fileCRLV=document.getElementById("fileCRLV").files[0];
+  if(!nome||!fileCNH||!fileSelfie||!fileComp||!fileCRLV){ alert("Preencha e 4 arquivos"); return; }
   async function up(file, tipo){
-    const r = ref(storage, `motoristas/${uid}/${tipo}_${Date.now()}_${file.name}`);
-    await uploadBytes(r, file);
-    return await getDownloadURL(r);
+    const r=ref(storage, `motoristas/${userLogado.uid}/${tipo}_${Date.now()}_${file.name}`);
+    await uploadBytes(r, file); return await getDownloadURL(r);
   }
-  const urlCNH = await up(fileCNH, "CNH");
-  const urlSelfie = await up(fileSelfie, "SELFIE");
-  const urlComp = await up(fileComp, "COMP");
-  const urlCRLV = await up(fileCRLV, "CRLV");
-  await setDoc(doc(db, "motoristas", uid), {
-    userId:uid, nome, email:userLogado.email, placa, role:"MOTOBOY_MOTORISTA", status:"PENDENTE_APROVACAO", saldo:0, veiculo:"MOTO", foto_url:urlSelfie,
-    documentos:{cnh:urlCNH, selfie:urlSelfie, comprovante:urlComp, crlv:urlCRLV},
-    criado_em: Timestamp.now()
+  const urlCNH=await up(fileCNH,"CNH"); const urlSelfie=await up(fileSelfie,"SELFIE");
+  const urlComp=await up(fileComp,"COMP"); const urlCRLV=await up(fileCRLV,"CRLV");
+  await setDoc(doc(db, "motoristas", userLogado.uid), {
+    userId:userLogado.uid, nome, email:userLogado.email, role:"MOTOBOY_MOTORISTA", status:"PENDENTE_APROVACAO", foto_url:urlSelfie,
+    documentos:{cnh:urlCNH, selfie:urlSelfie, comprovante:urlComp, crlv:urlCRLV}, criado_em: Timestamp.now()
   }, {merge:true});
-  alert("Documentos enviados!");
-  document.getElementById("fotoMotoboy").src = urlSelfie;
+  alert("Enviado!");
 };
 </script>
 </body>
