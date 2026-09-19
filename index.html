@@ -1,143 +1,685 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Sistema Mundial - Anjos Flash V6</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>body{background:#000}</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ANJOS EM DUAS RODAS</title>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#090909;color:#fff}
+header{background:#111;border-bottom:2px solid #ffd400;padding:18px 12px;text-align:center}
+.logo{display:inline-block;background:#ffd400;color:#000;font-weight:900;padding:7px 14px;border-radius:8px;margin-bottom:8px}
+h1{margin:4px 0;font-size:23px}
+header p{margin:6px 0;color:#ccc;font-size:13px}
+.container{width:min(1100px,94%);margin:20px auto}
+.card{background:#151515;border:1px solid #333;border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 4px 18px #0008}
+h2,h3{color:#ffd400;margin-top:0}
+input,select,textarea{width:100%;padding:13px;margin:6px 0 10px;border-radius:8px;border:1px solid #444;background:#0e0e0e;color:#fff;outline:none}
+input:focus,select:focus,textarea:focus{border-color:#ffd400}
+button{border:0;border-radius:8px;padding:12px 16px;margin:4px;background:#ffd400;color:#000;font-weight:800;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+.btn-sec{background:#292929;color:#fff;border:1px solid #555}
+.btn-danger{background:#d90000;color:#fff}
+.btn-green{background:#00a63c;color:#fff}
+.hidden{display:none!important}
+.msg{padding:10px;border-radius:8px;background:#222;margin:8px 0;white-space:pre-wrap}
+.erro{border:1px solid #d00;color:#ff7777}
+.ok{border:1px solid #087c36;color:#69ff9a}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.stat{background:#101010;border:1px solid #333;border-radius:10px;padding:14px}
+.stat strong{display:block;color:#ffd400;font-size:20px;margin-top:5px}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border-bottom:1px solid #333;padding:9px 6px;text-align:left;font-size:13px}
+th{color:#ffd400}
+.order{border:1px solid #444;border-radius:10px;padding:13px;margin:9px 0;background:#101010}
+.badge{display:inline-block;padding:5px 8px;border-radius:15px;background:#333;font-size:11px;font-weight:bold}
+.online{background:#008f38}
+.offline{background:#555}
+.price-hidden{color:#ffd400;font-weight:bold}
+.small{font-size:12px;color:#aaa}
+.center{text-align:center}
+.tabs{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.tabs button{font-size:12px}
+hr{border:0;border-top:1px solid #333;margin:18px 0}
+#telaLogin{max-width:480px;margin:35px auto}
+#app{display:none}
+.file{background:#0e0e0e;padding:10px;border-radius:8px;border:1px solid #333}
+label{display:block;font-size:12px;color:#ccc;margin-top:5px}
+@media(max-width:600px){h1{font-size:19px}.container{width:96%}.card{padding:13px}button{width:auto;max-width:100%}table{font-size:11px}th,td{padding:7px 3px}}
+</style>
 </head>
-<body class="text-white min-h-screen">
-
-<!-- LOGIN COM SENHA -->
-<div id="telaLogin" class="min-h-screen flex items-center justify-center p-4">
-<div class="bg-[#111] border-2 border-yellow-400 rounded-2xl p-6 w-full max-w-sm">
-<h1 class="font-black text-center text-yellow-400 text-xl">🪽 ANJOS FLASH V6</h1>
-<p class="text-xs text-center text-gray-400 mb-4">Login Obrigatório - Mundial</p>
-
-<div class="grid grid-cols-2 gap-2 mb-3">
-<button onclick="setCargo('admin')" class="cargoBtn p-3 rounded-xl bg-red-900/40 border border-zinc-700 text-xs font-bold">👑 ADMIN</button>
-<button onclick="setCargo('franqueado')" class="cargoBtn p-3 rounded-xl bg-purple-900/30 border border-zinc-700 text-xs font-bold">🏢 FRANQUEADO</button>
-<button onclick="setCargo('suporte')" class="cargoBtn p-3 rounded-xl bg-blue-900/30 border border-zinc-700 text-xs font-bold">🎧 SUPORTE</button>
-<button onclick="setCargo('superlojista')" class="cargoBtn p-3 rounded-xl bg-yellow-900/30 border border-zinc-700 text-xs font-bold">⭐ SUPER LOJISTA</button>
-<button onclick="setCargo('lojista')" class="cargoBtn p-3 rounded-xl bg-zinc-800 border border-zinc-700 text-xs">🏪 LOJISTA</button>
-<button onclick="setCargo('motoboy')" class="cargoBtn p-3 rounded-xl bg-zinc-800 border border-zinc-700 text-xs">🏍️ MOTOBOY</button>
-<button onclick="setCargo('motorista')" class="cargoBtn p-3 rounded-xl bg-zinc-800 border border-zinc-700 text-xs col-span-2">🚛 MOTORISTA - MOTO/CARRO/CAMINHÃO</button>
+<body>
+<header>
+ <div class="logo">ANJOS</div>
+ <h1>ANJOS EM DUAS RODAS</h1>
+ <p>Entregas • Motoboy • Utilitário • Caminhão • Carreta</p>
+</header>
+<div class="container">
+<section id="telaLogin" class="card">
+ <h2 class="center">Entrar</h2>
+ <label>E-mail</label>
+ <input id="loginEmail" type="email" autocomplete="username">
+ <label>Senha</label>
+ <input id="loginSenha" type="password" autocomplete="current-password">
+ <button id="btnLogin" onclick="entrar()">ENTRAR</button>
+ <div id="mensagemLogin" class="msg"></div>
+ <hr>
+ <h3>Primeiro acesso?</h3>
+ <label>Nome</label>
+ <input id="cadNome">
+ <label>E-mail</label>
+ <input id="cadEmail" type="email">
+ <label>Telefone</label>
+ <input id="cadTelefone">
+ <label>Senha</label>
+ <input id="cadSenha" type="password">
+ <label>Tipo de cadastro</label>
+ <select id="cadTipo">
+  <option value="lojista">Lojista</option>
+  <option value="super_lojista">Super Lojista</option>
+  <option value="motoboy">Motoboy/Motorista</option>
+  <option value="franqueado">Franqueado</option>
+ </select>
+ <label>Endereço</label>
+ <input id="cadEndereco">
+ <div id="documentosCadastro" class="hidden">
+  <h3>Documentos do motorista</h3>
+  <label>Selfie</label>
+  <input id="cadSelfie" type="file" accept="image/*">
+  <label>CNH - foto ou PDF</label>
+  <input id="cadCNH" type="file" accept="image/*,.pdf">
+  <label>CRLV - foto ou PDF</label>
+  <input id="cadCRLV" type="file" accept="image/*,.pdf">
+  <label>Veículo</label>
+  <select id="cadVeiculo">
+   <option value="moto">Moto</option>
+   <option value="utilitario">Utilitário</option>
+   <option value="caminhao">Caminhão</option>
+   <option value="carreta">Carreta</option>
+  </select>
+ </div>
+ <button onclick="registrarUser()">CRIAR CADASTRO</button>
+ <div id="mensagemCadastro" class="msg"></div>
+</section>
+<section id="app">
+ <div id="painelTopo" class="card">
+  <div class="grid">
+   <div><span class="small">Usuário</span><strong id="nomeUsuario">-</strong></div>
+   <div><span class="small">Tipo</span><strong id="tipoUsuario">-</strong></div>
+   <div><span class="small">Código</span><strong id="codigoUsuario">-</strong></div>
+  </div>
+  <button class="btn-danger" onclick="sair()">SAIR</button>
+ </div>
+ <section id="painelLojista" class="hidden">
+  <div class="card">
+   <h2>PAINEL LOJISTA</h2>
+   <div id="saldoLojista" class="stat">Saldo disponível<strong>R$ 0,00</strong></div>
+   <div id="seletorLojaBox" class="hidden"><h3>Selecionar loja</h3><select id="pedidoLojaSelecionada"></select></div>
+  </div>
+  <div class="card">
+   <h2>NOVA ENTREGA</h2>
+   <label>Tipo</label><select id="pedidoTipo"><option value="normal">Normal</option><option value="express">Express</option><option value="super">Super</option></select>
+   <label>Cliente</label><input id="pedidoCliente">
+   <label>Telefone do cliente</label><input id="pedidoTelefone">
+   <label>Endereço de destino</label><input id="pedidoEndereco">
+   <label>Veículo</label><select id="pedidoVeiculo"><option value="moto">Moto</option><option value="utilitario">Utilitário</option><option value="caminhao">Caminhão</option><option value="carreta">Carreta</option></select>
+   <label>Motoboy/motorista específico (opcional)</label><input id="pedidoMotoboyCodigo" placeholder="#0001">
+   <label>Observação</label><textarea id="pedidoObs"></textarea>
+   <div class="msg"><b>Valor travado por região - calculado automaticamente</b></div>
+   <button onclick="criarPedido()">SOLICITAR ENTREGA</button>
+   <div id="mensagemPedido" class="msg"></div>
+  </div>
+  <div class="card"><h2>MEUS PEDIDOS</h2><div id="listaPedidosLojista"></div></div>
+  <div class="card"><h2>EXTRATO — ÚLTIMOS 90 DIAS</h2><button onclick="imprimirExtrato('lojista')">IMPRIMIR EXTRATO</button><div id="extratoLojista"></div></div>
+ </section>
+ <section id="painelMotoboy" class="hidden">
+  <div class="card">
+   <h2>PAINEL MOTOBOY / MOTORISTA</h2>
+   <div class="stat">Código<strong id="codigoMotoboy">#----</strong></div>
+   <div class="stat">Saldo<strong id="saldoMotoboy">R$ 0,00</strong></div>
+   <button id="btnOnline" onclick="alternarOnline()">FICAR ONLINE</button><span id="statusMotoboy" class="badge offline">OFFLINE</span>
+   <hr><h3>MINHA CHAVE PIX</h3><input id="pixMotoboy" placeholder="Sua chave PIX"><button onclick="salvarPix()">SALVAR PIX</button>
+   <div class="msg">Chave PIX da operação: <b>22997450131</b></div>
+  </div>
+  <div class="card"><h2>ENTREGAS DISPONÍVEIS</h2><div id="listaPedidosMotoboy"></div></div>
+  <div class="card"><h2>MINHAS ENTREGAS</h2><div id="listaAceitasMotoboy"></div></div>
+  <div class="card"><h2>EXTRATO — ÚLTIMOS 90 DIAS</h2><button onclick="imprimirExtrato('motoboy')">IMPRIMIR EXTRATO</button><div id="extratoMotoboy"></div></div>
+ </section>
+ <section id="painelAdmin" class="hidden">
+  <div class="card"><h2>PAINEL ADMINISTRADOR</h2><div class="grid"><div class="stat">Receitas<strong id="adminReceitas">R$ 0,00</strong></div><div class="stat">Pagamentos<strong id="adminPagamentos">R$ 0,00</strong></div><div class="stat">Resultado<strong id="adminLucro">R$ 0,00</strong></div><div class="stat">Recargas pendentes<strong id="adminRecargas">0</strong></div></div></div>
+  <div class="card">
+   <div class="tabs"><button onclick="mostrarAdminAba('taxas')">TAXAS</button><button onclick="mostrarAdminAba('super')">SUPER</button><button onclick="mostrarAdminAba('retorno')">RETORNO</button><button onclick="mostrarAdminAba('usuarios')">USUÁRIOS</button><button onclick="mostrarAdminAba('pedidos')">ENTREGAS</button><button onclick="mostrarAdminAba('aprovacoes')">APROVAÇÕES</button><button onclick="mostrarAdminAba('financeiro')">FINANCEIRO</button><button onclick="mostrarAdminAba('extrato')">EXTRATOS</button></div>
+   <div id="adminAbaTaxas"><h3>TAXAS</h3><label>KM base</label><input id="taxaKmBase" type="number" step="0.1"><label>Valor base</label><input id="taxaValorBase" type="number" step="0.01"><label>Valor adicional por KM</label><input id="taxaAdicionalKm" type="number" step="0.01"><label>Taxa do aplicativo</label><input id="taxaApp" type="number" step="0.01"><button onclick="salvarTaxas()">SALVAR TAXAS</button></div>
+   <div id="adminAbaSuper" class="hidden"><h3>SUPER</h3><label>Percentual SUPER para o admin</label><input id="superPct" type="number" step="0.01"><button onclick="salvarSuper()">SALVAR SUPER</button></div>
+   <div id="adminAbaRetorno" class="hidden"><h3>RETORNO</h3><label>Percentual de retorno para o motoboy</label><input id="retornoPct" type="number" step="0.01"><button onclick="salvarRetorno()">SALVAR RETORNO</button></div>
+   <div id="adminAbaUsuarios" class="hidden"><h3>USUÁRIOS</h3><div id="adminUsuarios"></div></div>
+   <div id="adminAbaPedidos" class="hidden"><h3>ENTREGAS</h3><div id="adminPedidos"></div></div>
+   <div id="adminAbaAprovacoes" class="hidden"><h3>APROVAÇÃO DE MOTORISTAS</h3><div id="adminAprovacoes"></div></div>
+   <div id="adminAbaFinanceiro" class="hidden"><h3>FINANCEIRO</h3><div id="adminFinanceiro"></div><hr><h3>PAGAR MOTOBOY / MOTORISTA</h3><input id="pagamentoMotoboyUid" placeholder="UID do motorista"><input id="pagamentoMotoboyValor" type="number" step="0.01" placeholder="Valor"><input id="pagamentoMotoboyPix" placeholder="Chave PIX"><button onclick="pagarMotoboy()">REGISTRAR PAGAMENTO</button></div>
+   <div id="adminAbaExtrato" class="hidden"><h3>EXTRATOS</h3><div id="adminExtrato"></div></div>
+  </div>
+ </section>
+ <section id="painelFranqueado" class="hidden"><div class="card"><h2>PAINEL FRANQUEADO</h2><p>Cadastro e acompanhamento da operação da cidade.</p><div id="dadosFranqueado"></div></div></section>
+</section>
 </div>
-
-<p id="cargoSel" class="text-center text-yellow-400 text-xs font-bold mb-3 animate-pulse">👆 SELECIONE SEU CARGO ACIMA</p>
-
-<input id="inpEmail" type="email" placeholder="Seu email" class="w-full p-3.5 rounded-xl bg-black border border-zinc-700 mb-2 outline-none">
-<input id="inpSenha" type="password" placeholder="Sua senha (6+ dígitos)" class="w-full p-3.5 rounded-xl bg-black border border-zinc-700 mb-2 outline-none">
-<input id="inpRegiao" type="text" placeholder="Sua região - ex: Macaé" value="Macaé" class="w-full p-3.5 rounded-xl bg-black border border-zinc-700 mb-3 outline-none">
-
-<button onclick="fazerCadastro()" class="w-full bg-zinc-800 border border-zinc-600 p-3.5 rounded-xl font-bold text-sm mb-2">📝 CRIAR CADASTRO</button>
-<button onclick="fazerLogin()" class="w-full bg-yellow-400 text-black p-4 rounded-xl font-black text-lg">🔓 ENTRAR COM SENHA</button>
-
-<p id="msgErro" class="hidden text-xs text-center mt-3 p-2 bg-red-900/50 border border-red-600 rounded"></p>
-
-<p class="text-[10px] text-center text-gray-500 mt-3">Primeiro acesso? Clique em CRIAR CADASTRO<br>Teste ADMIN: super@macar.com / 123456</p>
-</div>
-</div>
-
-<!-- SISTEMA -->
-<div id="telaSistema" class="hidden">
-<div class="bg-yellow-400 text-black p-3 flex justify-between items-center sticky top-0 z-50">
-<div><b id="logNome" class="font-black text-sm"></b><br><span id="logPerfil" class="text-[11px] bg-black text-yellow-400 px-2 py-1 rounded-full font-bold"></span></div>
-<button onclick="sair()" class="bg-black text-yellow-400 px-4 py-2 rounded-full font-black text-xs">SAIR</button>
-</div>
-
-<div class="p-4 max-w-md mx-auto space-y-4">
-
-<div id="boxAdmin" class="hidden bg-[#111] border-2 border-yellow-400 p-4 rounded-xl">
-<h2 class="font-black text-yellow-400">PAINEL ADMIN - VÊ TUDO</h2>
-<div class="grid grid-cols-3 gap-2 mt-3 text-center">
-<div class="bg-black p-3 rounded-xl border border-zinc-800"><b id="totalU" class="text-xl">0</b><br><span class="text-[10px] text-gray-400">Usuários</span></div>
-<div class="bg-black p-3 rounded-xl border border-zinc-800"><b id="totalE" class="text-xl">0</b><br><span class="text-[10px] text-gray-400">Entregas</span></div>
-<div class="bg-black p-3 rounded-xl border border-yellow-400"><b class="text-sm">LAYOUT<br>3</b><br><span class="text-[9px]">Amarelo/Preto</span></div>
-</div>
-<div id="listaUsuarios" class="mt-3 space-y-1 max-h-60 overflow-auto"></div>
-<button onclick="atualizarAdmin()" class="w-full mt-3 bg-yellow-400 text-black p-2 rounded font-black text-xs">ATUALIZAR DADOS</button>
-</div>
-
-<div class="bg-[#111] border border-zinc-800 p-5 rounded-2xl">
-<h2 class="font-bold mb-3 flex items-center gap-2">🌍 Nova Entrega Mundial</h2>
-<input id="nPedido" placeholder="Nº Pedido" class="w-full p-3.5 rounded-xl bg-black border border-zinc-700 mb-2 outline-none">
-<input id="rua" placeholder="Rua, Número, Bairro" class="w-full p-3.5 rounded-xl bg-black border border-zinc-700 mb-2 outline-none">
-<div class="grid grid-cols-2 gap-2 mb-2">
-<input id="cidade" placeholder="Cidade / Região" class="w-full p-3.5 rounded-xl bg-black border border-zinc-700 outline-none">
-<input id="pais" placeholder="País / Estado" class="w-full p-3.5 rounded-xl bg-black border border-zinc-700 outline-none">
-</div>
-<input id="obs" placeholder="Observação" class="w-full p-3.5 rounded-xl bg-black border border-zinc-700 mb-2 outline-none">
-<div class="grid grid-cols-2 gap-2 mb-3">
-<select id="pag" class="w-full p-3.5 rounded-xl bg-black border border-zinc-700"><option>PAGO - PIX</option><option>PAGO - DINHEIRO</option><option>PAGO - CARTÃO</option><option>A PAGAR</option></select>
-<input id="troco" placeholder="Troco p/ R$" class="w-full p-3.5 rounded-xl bg-black border border-zinc-700 outline-none">
-</div>
-<button onclick="gerarMsg()" class="w-full bg-white text-black p-4 rounded-xl font-black">GERAR MENSAGEM</button>
-<div id="boxMsg" class="hidden mt-3 bg-black p-3 rounded-xl border border-green-600"><pre id="txtMsg" class="whitespace-pre-wrap text-sm"></pre><button onclick="copiar()" class="w-full mt-2 bg-green-600 p-2 rounded font-bold text-sm">COPIAR MENSAGEM</button></div>
-</div>
-
-</div>
-</div>
-
 <script>
-let cargoSel = null;
-function setCargo(c){
-  cargoSel=c; localStorage.setItem('cargoSel',c);
-  document.getElementById('cargoSel').innerText='✓ '+c.toUpperCase()+' SELECIONADO';
-  document.querySelectorAll('.cargoBtn').forEach(b=>{b.style.borderColor='#3f3f46';b.style.opacity='0.6'});
-  event.currentTarget.style.borderColor='#facc15';event.currentTarget.style.opacity='1';event.currentTarget.style.borderWidth='2px';
+/* =========================================================
+   FIREBASE
+   ========================================================= */
+const firebaseConfig = {
+ apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
+ authDomain: "anjos-flash.firebaseapp.com",
+ projectId: "anjos-flash",
+ storageBucket: "anjos-flash.firebasestorage.app",
+ messagingSenderId: "725133182752",
+ appId: "1:725133182752:web:5f9a98fa97269dcdcab945",
+ measurementId: "G-9CSJXXNR0C"
+};
+let appFirebase;
+let auth;
+let db;
+let storage;
+let usuarioAtual = null;
+let perfilAtual = null;
+let taxas = {kmBase:3,valorBase:8,valorAdicionalKm:2,taxaApp:10,retornoPct:50,superPct:0};
+try{
+ if(!firebase.apps.length){appFirebase=firebase.initializeApp(firebaseConfig);}else{appFirebase=firebase.app();}
+ auth=firebase.auth();db=firebase.firestore();storage=firebase.storage();
+ console.log("Firebase inicializado.");
+}catch(e){
+ console.error(e);
+ const el=document.getElementById("mensagemLogin");
+ if(el){el.className="msg erro";el.textContent="Erro ao iniciar Firebase:\n"+e.message;}
 }
-function mostrarErro(t){let m=document.getElementById('msgErro');m.innerText='⚠️ '+t;m.classList.remove('hidden');}
-function fazerCadastro(){
-  const email=document.getElementById('inpEmail').value.trim();
-  const senha=document.getElementById('inpSenha').value.trim();
-  const regiao=document.getElementById('inpRegiao').value.trim()||'Mundial';
-  if(!cargoSel) return mostrarErro('Selecione um cargo em cima!');
-  if(!email.includes('@')) return mostrarErro('Digite um email válido!');
-  if(senha.length<6) return mostrarErro('Senha precisa ter 6 dígitos ou mais!');
-  let users=JSON.parse(localStorage.getItem('usuariosDB')||'[]');
-  if(users.find(u=>u.email===email)) return mostrarErro('Email já cadastrado! Clique em ENTRAR COM SENHA');
-  users.push({email,senha,perfil:cargoSel,regiao,criado:new Date().toLocaleString()});
-  localStorage.setItem('usuariosDB',JSON.stringify(users));
-  alert('✅ CADASTRO CRIADO!\nEmail: '+email+'\nAgora clique em ENTRAR COM SENHA');
-  document.getElementById('msgErro').classList.add('hidden');
+/* =========================================================
+   UTILITÁRIOS
+   ========================================================= */
+function $(id){return document.getElementById(id);}
+function dinheiro(v){return "R$ "+Number(v||0).toFixed(2).replace(".",",");}
+function agora(){return firebase.firestore.FieldValue.serverTimestamp();}
+function data90(){const d=new Date();d.setDate(d.getDate()-90);return d;}
+function escapeHtml(text){return String(text??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");}
+function mostrarMsg(id,text,ok=false){const el=$(id);if(!el)return;el.className="msg "+(ok?"ok":"erro");el.textContent=text;}
+function limparPaineis(){["painelLojista","painelMotoboy","painelAdmin","painelFranqueado"].forEach(id=>{const e=$(id);if(e)e.classList.add("hidden");});}
+function tipoTexto(t){return ({lojista:"Lojista",super_lojista:"Super Lojista",motoboy:"Motoboy/Motorista",franqueado:"Franqueado",admin:"Administrador"})[t]||t;}
+/* =========================================================
+   LOGIN
+   ========================================================= */
+async function entrar(){
+ const email=$("loginEmail").value.trim().toLowerCase();
+ const senha=$("loginSenha").value;
+ if(!email||!senha){mostrarMsg("mensagemLogin","Informe e-mail e senha.");return;}
+ const btn=$("btnLogin");btn.disabled=true;btn.textContent="ENTRANDO...";
+ try{
+  await auth.signInWithEmailAndPassword(email,senha);
+  mostrarMsg("mensagemLogin","Login realizado.",true);
+ }catch(e){
+  console.error("LOGIN:",e);
+  let msg="Não foi possível entrar.";
+  if(e.code==="auth/invalid-credential"||e.code==="auth/wrong-password"||e.code==="auth/user-not-found"){msg="E-mail ou senha incorretos.";}
+  else if(e.code==="auth/invalid-email"){msg="E-mail inválido.";}
+  else if(e.code==="auth/too-many-requests"){msg="Muitas tentativas. Aguarde alguns minutos.";}
+  else if(e.code==="auth/network-request-failed"){msg="Sem conexão com a internet.";}
+  else if(e.message){msg=e.message;}
+  mostrarMsg("mensagemLogin",msg);
+ }finally{btn.disabled=false;btn.textContent="ENTRAR";}
 }
-function fazerLogin(){
-  const email=document.getElementById('inpEmail').value.trim();
-  const senha=document.getElementById('inpSenha').value.trim();
-  if(!cargoSel) return mostrarErro('Selecione o cargo!');
-  if(!email ||!senha) return mostrarErro('Digite email e senha!');
-  let users=JSON.parse(localStorage.getItem('usuariosDB')||'[]');
-  // Admin mestre para teste
-  if(email==='super@macar.com' && senha==='123456'){ users.push({email,senha,perfil:'admin',regiao:'Mundial'}); localStorage.setItem('usuariosDB',JSON.stringify(users)); }
-  let u=users.find(x=>x.email===email && x.senha===senha);
-  if(!u) return mostrarErro('Email ou senha errada! Se é primeiro acesso, clique em CRIAR CADASTRO');
-  if(u.perfil!==cargoSel) return mostrarErro('Esse email foi cadastrado como '+u.perfil.toUpperCase()+'. Selecione '+u.perfil.toUpperCase()+' em cima!');
-  localStorage.setItem('logado',JSON.stringify(u));
-  entrarSistema(u);
+/* =========================================================
+   CADASTRO
+   ========================================================= */
+$("cadTipo").addEventListener("change",function(){$("documentosCadastro").classList.toggle("hidden",this.value!=="motoboy");});
+async function uploadArquivo(file,pasta,uid){
+ if(!file)return "";
+ const ref=storage.ref().child(pasta+"/"+uid+"/"+Date.now()+"_"+file.name);
+ await ref.put(file);return await ref.getDownloadURL();
 }
-function entrarSistema(u){
-  document.getElementById('telaLogin').classList.add('hidden');
-  document.getElementById('telaSistema').classList.remove('hidden');
-  document.getElementById('logNome').innerText=u.email;
-  document.getElementById('logPerfil').innerText=u.perfil.toUpperCase()+' - '+u.regiao;
-  if(u.perfil==='admin'){document.getElementById('boxAdmin').classList.remove('hidden'); atualizarAdmin();}
+async function registrarUser(){
+ const nome=$("cadNome").value.trim();
+ const email=$("cadEmail").value.trim().toLowerCase();
+ const telefone=$("cadTelefone").value.trim();
+ const senha=$("cadSenha").value;
+ const tipo=$("cadTipo").value;
+ const endereco=$("cadEndereco").value.trim();
+ if(!nome||!email||!telefone||!senha||!endereco){mostrarMsg("mensagemCadastro","Preencha nome, e-mail, telefone, senha e endereço.");return;}
+ const msg=$("mensagemCadastro");msg.className="msg";msg.textContent="Criando cadastro...";
+ try{
+  const cred=await auth.createUserWithEmailAndPassword(email,senha);
+  const uid=cred.user.uid;
+  let documentos={};
+  if(tipo==="motoboy"){
+   const selfie=$("cadSelfie").files[0];const cnh=$("cadCNH").files[0];const crlv=$("cadCRLV").files[0];const veiculo=$("cadVeiculo").value;
+   if(!selfie||!cnh||!crlv){await auth.signOut();throw new Error("Motoboy/motorista precisa enviar selfie, CNH e CRLV.");}
+   msg.textContent="Enviando documentos...";
+   documentos={selfie:await uploadArquivo(selfie,"documentos/selfie",uid),cnh:await uploadArquivo(cnh,"documentos/cnh",uid),crlv:await uploadArquivo(crlv,"documentos/crlv",uid),veiculo};
+  }
+  await db.collection("profiles").doc(uid).set({uid,nome,email,telefone,tipo,endereco,aprovado:tipo==="lojista"||tipo==="super_lojista",criadoEm:agora()});
+  await db.collection("wallets").doc(uid).set({uid,saldo:0,atualizadoEm:agora()},{merge:true});
+  if(tipo==="motoboy"){
+   const snap=await db.collection("motoboys").orderBy("numero","desc").limit(1).get();
+   let proximo=1;if(!snap.empty){proximo=Number(snap.docs[0].data().numero||0)+1;}
+   const codigo="#"+String(proximo).padStart(4,"0");
+   await db.collection("motoboys").doc(uid).set({uid,numero:proximo,codigo,aprovado:false,online:false,nome,email,telefone,endereco,veiculo:documentos.veiculo,documentos,criadoEm:agora()});
+   await db.collection("profiles").doc(uid).update({motoboyCodigo:codigo,aprovado:false});
+  }
+  if(tipo==="lojista"||tipo==="super_lojista"){
+   await db.collection("lojas").add({donoId:uid,nome,telefone,endereco,principal:true,criadoEm:agora()});
+  }
+  await auth.signOut();
+  mostrarMsg("mensagemCadastro",tipo==="motoboy"?"Cadastro enviado. Aguarde aprovação do administrador.":"Cadastro criado. Agora faça login.",true);
+ }catch(e){
+  console.error("CADASTRO:",e);
+  if(e.code==="auth/email-already-in-use"){mostrarMsg("mensagemCadastro","Este e-mail já está cadastrado.");}
+  else{mostrarMsg("mensagemCadastro",e.message||"Erro no cadastro.");}
+ }
 }
-function sair(){localStorage.removeItem('logado');location.reload();}
-function atualizarAdmin(){
-  let users=JSON.parse(localStorage.getItem('usuariosDB')||'[]');
-  document.getElementById('totalU').innerText=users.length;
-  document.getElementById('listaUsuarios').innerHTML=users.map(x=>`<div class="bg-black p-2 rounded text-[11px] border border-zinc-800 flex justify-between"><span><b>${x.email}</b><br><span class="text-gray-400">${x.perfil} - ${x.regiao}</span></span><span class="text-[10px] text-gray-600">${x.criado||''}</span></div>`).join('');
+/* =========================================================
+   OBSERVADOR DE LOGIN
+   ========================================================= */
+auth.onAuthStateChanged(async user=>{
+ if(user){
+  try{await carregarUsuario(user);}catch(e){console.error("CARREGAR USUÁRIO:",e);await auth.signOut();mostrarMsg("mensagemLogin","Erro ao carregar seu cadastro: "+e.message);}
+ }else{usuarioAtual=null;perfilAtual=null;$("telaLogin").style.display="block";$("app").style.display="none";}
+});
+/* =========================================================
+   CARREGAR PERFIL - FIX 1 APLICADO
+   ========================================================= */
+async function carregarUsuario(user){
+ usuarioAtual=user;
+ const snap=await db.collection("profiles").doc(user.uid).get();
+ if(!snap.exists){
+  if(user.email==="admin@anjos.com"||user.email==="super@macar.com"){
+   await db.collection("profiles").doc(user.uid).set({
+    uid:user.uid,
+    nome:"ADMIN MUNDIAL",
+    email:user.email,
+    telefone:"22997450131",
+    tipo:"admin",
+    endereco:"Mundial",
+    aprovado:true,
+    criadoEm:agora()
+   });
+   await db.collection("wallets").doc(user.uid).set({uid:user.uid,saldo:0,atualizadoEm:agora()},{merge:true});
+   location.reload();
+   return;
+  }
+  throw new Error("Perfil não encontrado no Firestore para este usuário. Crie o cadastro primeiro.");
+ }
+ perfilAtual=snap.data();
+ if(!["admin","lojista","super_lojista","motoboy","franqueado"].includes(perfilAtual.tipo)){throw new Error("Tipo de usuário inválido.");}
+ if(perfilAtual.tipo==="motoboy" && perfilAtual.aprovado===false){
+  $("telaLogin").style.display="block";$("app").style.display="none";
+  mostrarMsg("mensagemLogin","Seu cadastro de motorista ainda está aguardando aprovação do administrador.");
+  await auth.signOut();return;
+ }
+ $("telaLogin").style.display="none";$("app").style.display="block";
+ limparPaineis();
+ $("nomeUsuario").textContent=perfilAtual.nome||"-";
+ $("tipoUsuario").textContent=tipoTexto(perfilAtual.tipo);
+ $("codigoUsuario").textContent=perfilAtual.motoboyCodigo||perfilAtual.codigo||"-";
+ if(perfilAtual.tipo==="admin"){$("painelAdmin").classList.remove("hidden");await carregarAdmin();}
+ if(perfilAtual.tipo==="lojista"||perfilAtual.tipo==="super_lojista"){$("painelLojista").classList.remove("hidden");await carregarLojista();}
+ if(perfilAtual.tipo==="motoboy"){$("painelMotoboy").classList.remove("hidden");await carregarMotoboy();}
+ if(perfilAtual.tipo==="franqueado"){$("painelFranqueado").classList.remove("hidden");$("dadosFranqueado").innerHTML="<p>Franqueado: <b>"+escapeHtml(perfilAtual.nome||"")+"</b></p>";}
 }
-function gerarMsg(){
-  let n=document.getElementById('nPedido').value, r=document.getElementById('rua').value, c=document.getElementById('cidade').value, p=document.getElementById('pais').value, o=document.getElementById('obs').value, pg=document.getElementById('pag').value, tr=document.getElementById('troco').value;
-  if(!r) return alert('Digite a rua!');
-  let comp=r; if(c) comp+=', '+c; if(p) comp+=', '+p;
-  let msg=`[PEDIDO ${n||Math.floor(Math.random()*9000)}]\n📍 ${comp}\n${o?'📝 '+o+'\n':''}💰 ${pg} ${tr?'- Troco p/ '+tr:''}\n🗺️ https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(comp)}`;
-  document.getElementById('txtMsg').innerText=msg; document.getElementById('boxMsg').classList.remove('hidden');
+async function sair(){await auth.signOut();location.reload();}
+/* =========================================================
+   TAXAS
+   ========================================================= */
+async function carregarTaxas(){
+ try{
+  const snap=await db.collection("config_taxas").doc("valores").get();
+  if(snap.exists){taxas={...taxas,...snap.data()};}
+  if($("taxaKmBase"))$("taxaKmBase").value=taxas.kmBase;
+  if($("taxaValorBase"))$("taxaValorBase").value=taxas.valorBase;
+  if($("taxaAdicionalKm"))$("taxaAdicionalKm").value=taxas.valorAdicionalKm;
+  if($("taxaApp"))$("taxaApp").value=taxas.taxaApp;
+  if($("retornoPct"))$("retornoPct").value=taxas.retornoPct;
+  if($("superPct"))$("superPct").value=taxas.superPct;
+ }catch(e){console.error("TAXAS:",e);}
 }
-function copiar(){navigator.clipboard.writeText(document.getElementById('txtMsg').innerText); alert('Copiado!');}
-let logado=localStorage.getItem('logado'); if(logado) entrarSistema(JSON.parse(logado));
+async function calcularValorEntrega(km){
+ km=Number(km||0);
+ if(km<=taxas.kmBase){return Number(taxas.valorBase||0);}
+ return Number(taxas.valorBase||0)+(km-Number(taxas.kmBase||0))*Number(taxas.valorAdicionalKm||0);
+}
+function velocidadeVeiculo(veiculo){return ({moto:30,utilitario:25,caminhao:20,carreta:18})[veiculo]||25;}
+function estimarTempo(km,veiculo){const velocidade=velocidadeVeiculo(veiculo);return Math.max(1,Math.ceil((Number(km||0)/velocidade)*60));}
+/* =========================================================
+   LOJISTA — LOJAS
+   ========================================================= */
+async function carregarLojasLojista(){
+ if(!usuarioAtual)return;
+ const snap=await db.collection("lojas").where("donoId","==",usuarioAtual.uid).get();
+ const select=$("pedidoLojaSelecionada");if(!select)return;
+ select.innerHTML="";
+ snap.forEach(doc=>{const d=doc.data();const op=document.createElement("option");op.value=doc.id;op.textContent=d.nome||d.endereco||"Loja";select.appendChild(op);});
+ if(perfilAtual.tipo==="super_lojista"){$("seletorLojaBox").classList.remove("hidden");}else{$("seletorLojaBox").classList.add("hidden");}
+}
+async function obterLojaPrincipal(){
+ const snap=await db.collection("lojas").where("donoId","==",usuarioAtual.uid).limit(10).get();
+ if(snap.empty){return {nome:perfilAtual.nome||"",telefone:perfilAtual.telefone||"",endereco:perfilAtual.endereco||""};}
+ if(perfilAtual.tipo==="super_lojista"){const id=$("pedidoLojaSelecionada").value;const doc=snap.docs.find(x=>x.id===id);if(doc)return {...doc.data(),id:doc.id};}
+ return {...snap.docs[0].data(),id:snap.docs[0].id};
+}
+/* =========================================================
+   GEOLOCALIZAÇÃO - FIX 3 APLICADO
+   ========================================================= */
+async function geocodificar(endereco){
+ const url="https://nominatim.openstreetmap.org/search?format=json&limit=1&q="+encodeURIComponent(endereco);
+ const res=await fetch(url,{headers:{"Accept":"application/json","User-Agent":"AnjosEmDuasRodas/1.0 (admin@anjos.com)"}});
+ if(!res.ok)throw new Error("Erro ao consultar endereço - tente novamente.");
+ const dados=await res.json();
+ if(!dados.length){throw new Error("Endereço não encontrado: "+endereco);}
+ return {lat:Number(dados[0].lat),lng:Number(dados[0].lon)};
+}
+function distanciaKm(lat1,lon1,lat2,lon2){
+ const R=6371;const dLat=(lat2-lat1)*Math.PI/180;const dLon=(lon2-lon1)*Math.PI/180;
+ const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+ return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+/* =========================================================
+   CRIAR PEDIDO
+   ========================================================= */
+function geraRastreio(){return String(Math.floor(1000+Math.random()*9000));}
+function geraCodigoFinalizacao(){return String(Math.floor(1000+Math.random()*9000));}
+async function criarPedido(){
+ const cliente=$("pedidoCliente").value.trim();const telefone=$("pedidoTelefone").value.trim();const endereco=$("pedidoEndereco").value.trim();const veiculo=$("pedidoVeiculo").value;const tipo=$("pedidoTipo").value;const obs=$("pedidoObs").value.trim();const codigoMotoboy=$("pedidoMotoboyCodigo").value.trim();
+ if(!cliente||!telefone||!endereco){mostrarMsg("mensagemPedido","Preencha cliente, telefone e endereço.");return;}
+ try{
+  mostrarMsg("mensagemPedido","Calculando distância e valor...");
+  const loja=await obterLojaPrincipal();
+  let origem=loja.lat&&loja.lng?{lat:Number(loja.lat),lng:Number(loja.lng)}:await geocodificar(loja.endereco);
+  const destino=await geocodificar(endereco);
+  const km=Number(distanciaKm(origem.lat,origem.lng,destino.lat,destino.lng).toFixed(2));
+  const valorEntrega=await calcularValorEntrega(km);const tempoMin=estimarTempo(km,veiculo);
+  const walletRef=db.collection("wallets").doc(usuarioAtual.uid);
+  const walletSnap=await walletRef.get();const saldo=Number(walletSnap.exists?walletSnap.data().saldo||0:0);
+  if(saldo<valorEntrega){mostrarMsg("mensagemPedido","Saldo insuficiente para solicitar a entrega.");return;}
+  const pedidoNumero=String(Date.now()).slice(-4);const rastreio=geraRastreio();const codigo4Digitos=geraCodigoFinalizacao();
+  const pedidoRef=db.collection("pedidos").doc();
+  await db.runTransaction(async transaction=>{
+   const w=await transaction.get(walletRef);const saldoAtual=Number(w.data().saldo||0);
+   if(saldoAtual<valorEntrega){throw new Error("Saldo insuficiente.");}
+   transaction.update(walletRef,{saldo:saldoAtual-valorEntrega,atualizadoEm:agora()});
+   transaction.set(pedidoRef,{id:pedidoRef.id,pedidoNumero,rastreio,codigo4Digitos,lojistaId:usuarioAtual.uid,lojaId:loja.id||null,lojaNome:loja.nome||perfilAtual.nome||"",lojaTelefone:loja.telefone||perfilAtual.telefone||"",lojaEndereco:loja.endereco||perfilAtual.endereco||"",cliente,telefone,endereco,tipo,veiculo,obs,motoboyCodigo:codigoMotoboy,motoboyId:null,origemLat:origem.lat,origemLng:origem.lng,destinoLat:destino.lat,destinoLng:destino.lng,distanciaKm:km,tempoMin,valorEntrega,taxaApp:Number(taxas.taxaApp||0),retornoPct:Number(taxas.retornoPct||0),retornoValor:0,superPct:Number(taxas.superPct||0),superValor:0,status:"aguardando",criadoEm:agora(),atualizadoEm:agora()});
+  });
+  $("pedidoCliente").value="";$("pedidoTelefone").value="";$("pedidoEndereco").value="";$("pedidoObs").value="";$("pedidoMotoboyCodigo").value="";
+  mostrarMsg("mensagemPedido","Pedido #"+pedidoNumero+" criado com sucesso.\nRastreio do cliente: "+rastreio+"\nValor calculado automaticamente.",true);
+  await carregarLojista();
+ }catch(e){console.error("PEDIDO:",e);mostrarMsg("mensagemPedido",e.message||"Erro ao criar pedido.");}
+}
+/* =========================================================
+   LOJISTA — CARREGAR
+   ========================================================= */
+async function carregarLojista(){await carregarTaxas();await carregarLojasLojista();await carregarSaldoLojista();await carregarPedidosLojista();await carregarExtratoLojista();}
+async function carregarSaldoLojista(){
+ const snap=await db.collection("wallets").doc(usuarioAtual.uid).get();
+ const saldo=snap.exists?Number(snap.data().saldo||0):0;
+ $("saldoLojista").innerHTML="Saldo disponível<strong>"+dinheiro(saldo)+"</strong>";
+}
+async function carregarPedidosLojista(){
+ const box=$("listaPedidosLojista");box.innerHTML="Carregando...";
+ const snap=await db.collection("pedidos").where("lojistaId","==",usuarioAtual.uid).get();
+ const docs=snap.docs.sort((a,b)=>{const ta=a.data().criadoEm?.seconds||0;const tb=b.data().criadoEm?.seconds||0;return tb-ta;});
+ if(!docs.length){box.innerHTML="<p>Nenhuma entrega encontrada.</p>";return;}
+ box.innerHTML="";
+ docs.forEach(doc=>{
+  const p=doc.data();
+  const div=document.createElement("div");div.className="order";
+  div.innerHTML=`<b>Pedido #${escapeHtml(p.pedidoNumero||doc.id.slice(-4))}</b><span class="badge">${escapeHtml(p.status||"")}</span><p>Tipo: ${escapeHtml(p.tipo||"normal")}</p><p>Cliente: ${escapeHtml(p.cliente||"")}</p><p>Telefone: ${escapeHtml(p.telefone||"")}</p><p>Destino: ${escapeHtml(p.endereco||"")}</p><p>Veículo: ${escapeHtml(p.veiculo||"")}</p><p>Rastreio: <b>${escapeHtml(p.rastreio||"-")}</b></p><p>Motoboy/motorista:<b>${escapeHtml(p.motoboyCodigo||"Aguardando")}</b></p><p class="price-hidden">Valor travado por região - calculado automaticamente</p>${p.status==="aguardando"?`<button onclick="cancelarPedido('${doc.id}')" class="btn-danger">CANCELAR</button>`:""}`;
+  box.appendChild(div);
+ });
+}
+async function cancelarPedido(id){
+ if(!confirm("Cancelar esta entrega?"))return;
+ try{
+  const ref=db.collection("pedidos").doc(id);
+  await db.runTransaction(async transaction=>{
+   const snap=await transaction.get(ref);if(!snap.exists)throw new Error("Pedido não encontrado.");const p=snap.data();
+   if(p.status!=="aguardando"){throw new Error("Esta entrega já foi aceita.");}
+   const walletRef=db.collection("wallets").doc(usuarioAtual.uid);const wallet=await transaction.get(walletRef);const saldo=Number(wallet.data()?.saldo||0);
+   transaction.update(walletRef,{saldo:saldo+Number(p.valorEntrega||0),atualizadoEm:agora()});
+   transaction.update(ref,{status:"cancelado",atualizadoEm:agora()});
+  });
+  await carregarLojista();
+ }catch(e){alert(e.message);}
+}
+/* =========================================================
+   MOTOBOY
+   ========================================================= */
+async function carregarMotoboy(){
+ await carregarTaxas();
+ const mot=await db.collection("motoboys").doc(usuarioAtual.uid).get();
+ if(mot.exists){const d=mot.data();$("codigoMotoboy").textContent=d.codigo||"-";$("pixMotoboy").value=d.pix||"";atualizarStatusOnline(!!d.online);}
+ await carregarSaldoMotoboy();await carregarPedidosMotoboy();await carregarAceitasMotoboy();await carregarExtratoMotoboy();
+}
+async function carregarSaldoMotoboy(){const snap=await db.collection("wallets").doc(usuarioAtual.uid).get();$("saldoMotoboy").textContent=dinheiro(snap.exists?snap.data().saldo:0);}
+async function atualizarStatusOnline(online){
+ const btn=$("btnOnline");const status=$("statusMotoboy");
+ if(online){btn.textContent="FICAR OFFLINE";btn.className="btn-danger";status.textContent="ONLINE";status.className="badge online";}
+ else{btn.textContent="FICAR ONLINE";btn.className="";status.textContent="OFFLINE";status.className="badge offline";}
+}
+async function alternarOnline(){
+ try{
+  const ref=db.collection("motoboys").doc(usuarioAtual.uid);const snap=await ref.get();
+  if(!snap.exists){alert("Cadastro de motorista não encontrado.");return;}
+  const d=snap.data();if(!d.aprovado){alert("Seu cadastro ainda não foi aprovado pelo administrador.");return;}
+  const novo=!d.online;await ref.update({online:novo,atualizadoEm:agora()});await atualizarStatusOnline(novo);await carregarPedidosMotoboy();
+ }catch(e){alert(e.message);}
+}
+async function salvarPix(){
+ try{const pix=$("pixMotoboy").value.trim();await db.collection("motoboys").doc(usuarioAtual.uid).update({pix,atualizadoEm:agora()});alert("PIX salvo.");}catch(e){alert(e.message);}
+}
+/* =========================================================
+   PEDIDOS DISPONÍVEIS
+   ========================================================= */
+async function carregarPedidosMotoboy(){
+ const box=$("listaPedidosMotoboy");box.innerHTML="Carregando...";
+ const mot=await db.collection("motoboys").doc(usuarioAtual.uid).get();
+ if(!mot.exists){box.innerHTML="Cadastro não encontrado.";return;}
+ const m=mot.data();if(!m.aprovado){box.innerHTML="Cadastro aguardando aprovação.";return;}
+ if(!m.online){box.innerHTML="Fique ONLINE para receber entregas.";return;}
+ const snap=await db.collection("pedidos").where("status","==","aguardando").get();
+ const disponiveis=snap.docs.filter(doc=>{const p=doc.data();return!p.motoboyCodigo||p.motoboyCodigo===m.codigo;});
+ if(!disponiveis.length){box.innerHTML="Nenhuma entrega disponível no momento.";return;}
+ box.innerHTML="";
+ disponiveis.forEach(doc=>{
+  const p=doc.data();const div=document.createElement("div");div.className="order";
+  div.innerHTML=`<b>Pedido #${escapeHtml(p.pedidoNumero||"")}</b><p>Loja: ${escapeHtml(p.lojaNome||"")}</p><p>Endereço da loja: ${escapeHtml(p.lojaEndereco||"")}</p><p>Cliente: ${escapeHtml(p.cliente||"")}</p><p>Destino: ${escapeHtml(p.endereco||"")}</p><p>Veículo: ${escapeHtml(p.veiculo||"")}</p><p>Distância: ${escapeHtml(p.distanciaKm||0)} km</p><button class="btn-green" onclick="aceitarPedido('${doc.id}')">ACEITAR ENTREGA</button><button class="btn-danger" onclick="recusarPedido('${doc.id}')">RECUSAR</button>`;
+  box.appendChild(div);
+ });
+}
+async function recusarPedido(id){await db.collection("pedidos").doc(id).set({recusas:{[usuarioAtual.uid]:true}},{merge:true});await carregarPedidosMotoboy();}
+async function aceitarPedido(id){
+ try{
+  const mot=await db.collection("motoboys").doc(usuarioAtual.uid).get();
+  if(!mot.exists||!mot.data().aprovado){throw new Error("Motorista não aprovado.");}
+  if(!mot.data().online){throw new Error("Você está OFFLINE.");}
+  const ref=db.collection("pedidos").doc(id);
+  await db.runTransaction(async transaction=>{
+   const snap=await transaction.get(ref);if(!snap.exists)throw new Error("Pedido não encontrado.");const p=snap.data();
+   if(p.status!=="aguardando"){throw new Error("Esta entrega já foi aceita por outro motorista.");}
+   transaction.update(ref,{motoboyId:usuarioAtual.uid,motoboyCodigo:mot.data().codigo,status:"em_rota",aceitoEm:agora(),atualizadoEm:agora()});
+  });
+  await carregarMotoboy();
+ }catch(e){alert(e.message);}
+}
+/* =========================================================
+   MINHAS ENTREGAS
+   ========================================================= */
+async function carregarAceitasMotoboy(){
+ const box=$("listaAceitasMotoboy");box.innerHTML="Carregando...";
+ const snap=await db.collection("pedidos").where("motoboyId","==",usuarioAtual.uid).get();
+ const docs=snap.docs.sort((a,b)=>(b.data().criadoEm?.seconds||0)-(a.data().criadoEm?.seconds||0));
+ if(!docs.length){box.innerHTML="Nenhuma entrega aceita.";return;}
+ box.innerHTML="";
+ docs.forEach(doc=>{
+  const p=doc.data();const div=document.createElement("div");div.className="order";
+  div.innerHTML=`<b>Pedido #${escapeHtml(p.pedidoNumero||"")}</b><span class="badge">${escapeHtml(p.status||"")}</span><p>Loja: ${escapeHtml(p.lojaNome||"")}</p><p>Telefone da loja: ${escapeHtml(p.lojaTelefone||"")}</p><p>Endereço da loja: ${escapeHtml(p.lojaEndereco||"")}</p><p>Cliente: ${escapeHtml(p.cliente||"")}</p><p>Telefone: ${escapeHtml(p.telefone||"")}</p><p>Destino: ${escapeHtml(p.endereco||"")}</p>${p.status==="em_rota"?`<button onclick="chegueiLoja('${doc.id}')">CHEGUEI NA LOJA</button><button onclick="sairLoja('${doc.id}')">SAÍ DA LOJA</button><button onclick="chegueiCliente('${doc.id}')">CHEGUEI NO CLIENTE</button><input id="codigo_${doc.id}" placeholder="Código de finalização"><button class="btn-green" onclick="finalizarPedido('${doc.id}')">FINALIZAR</button><button class="btn-danger" onclick="cancelarMotoboy('${doc.id}')">CANCELAR CORRIDA</button>`:""}${p.status==="retorno"?`<p><b>RETORNO À LOJA</b></p><button onclick="finalizarRetorno('${doc.id}')">FINALIZEI NA LOJA</button>`:""}`;
+  box.appendChild(div);
+ });
+}
+async function atualizarStatusPedido(id,status){await db.collection("pedidos").doc(id).update({status,atualizadoEm:agora()});await carregarAceitasMotoboy();}
+async function chegueiLoja(id){await atualizarStatusPedido(id,"na_loja");}
+async function sairLoja(id){await atualizarStatusPedido(id,"saiu_da_loja");}
+async function chegueiCliente(id){await atualizarStatusPedido(id,"no_cliente");}
+async function cancelarMotoboy(id){if(!confirm("Cancelar esta corrida?"))return;try{await db.collection("pedidos").doc(id).update({status:"cancelado_motoboy",atualizadoEm:agora()});await carregarMotoboy();}catch(e){alert(e.message);}}
+/* =========================================================
+   FINALIZAÇÃO
+   ========================================================= */
+async function finalizarPedido(id){
+ const input=$("codigo_"+id);const codigo=input?input.value.trim():"";
+ if(!codigo){alert("Digite o código de finalização.");return;}
+ try{
+  const ref=db.collection("pedidos").doc(id);
+  await db.runTransaction(async transaction=>{
+   const snap=await transaction.get(ref);if(!snap.exists)throw new Error("Pedido não encontrado.");const p=snap.data();
+   if(p.motoboyId!==usuarioAtual.uid){throw new Error("Esta entrega não pertence a você.");}
+   if(p.codigo4Digitos!==codigo){throw new Error("Código de finalização incorreto.");}
+   const valorEntrega=Number(p.valorEntrega||0);const retornoPct=Number(p.retornoPct||0);const superPct=Number(p.superPct||0);
+   const retornoValor=valorEntrega*retornoPct/100;const superValor=valorEntrega*superPct/100;
+   const walletRef=db.collection("wallets").doc(usuarioAtual.uid);const wallet=await transaction.get(walletRef);const saldoAtual=Number(wallet.data()?.saldo||0);
+   transaction.set(walletRef,{uid:usuarioAtual.uid,saldo:saldoAtual+retornoValor,atualizadoEm:agora()},{merge:true});
+   const txMot=db.collection("transacoes").doc();transaction.set(txMot,{uid:usuarioAtual.uid,tipo:"retorno_motoboy",pedidoId:id,valor:retornoValor,criadoEm:agora()});
+   if(superValor>0){
+    const adminSnap=await db.collection("profiles").where("tipo","==","admin").limit(1).get();
+    if(!adminSnap.empty){
+     const adminUid=adminSnap.docs[0].id;const adminWalletRef=db.collection("wallets").doc(adminUid);const adminWallet=await transaction.get(adminWalletRef);const adminSaldo=Number(adminWallet.data()?.saldo||0);
+     transaction.set(adminWalletRef,{uid:adminUid,saldo:adminSaldo+superValor,atualizadoEm:agora()},{merge:true});
+     transaction.set(db.collection("transacoes").doc(),{uid:adminUid,tipo:"super_admin",pedidoId:id,valor:superValor,criadoEm:agora()});
+    }
+   }
+   transaction.update(ref,{status:"finalizado",retornoValor,superValor,finalizadoEm:agora(),atualizadoEm:agora()});
+  });
+  alert("Entrega finalizada.");await carregarMotoboy();
+ }catch(e){console.error(e);alert(e.message);}
+}
+async function finalizarRetorno(id){await db.collection("pedidos").doc(id).update({status:"finalizado",retornoFinalizadoEm:agora(),atualizadoEm:agora()});await carregarMotoboy();}
+/* =========================================================
+   ADMIN
+   ========================================================= */
+async function verificarAdmin(){if(!usuarioAtual||!perfilAtual||perfilAtual.tipo!=="admin"){throw new Error("Acesso administrativo não autorizado.");}}
+async function carregarAdmin(){await verificarAdmin();await carregarTaxas();await carregarAdminResumo();await carregarAdminUsuarios();await carregarAdminPedidos();await carregarAdminAprovacoes();await carregarAdminFinanceiro();await carregarAdminExtrato();}
+async function carregarAdminResumo(){
+ let receitas=0;let pagamentos=0;
+ const trans=await db.collection("transacoes").where("criadoEm",">=",firebase.firestore.Timestamp.fromDate(data90())).get();
+ trans.forEach(doc=>{const t=doc.data();if(t.tipo==="recarga"||t.tipo==="super_admin"){receitas+=Number(t.valor||0);}if(t.tipo==="pagamento_motoboy"){pagamentos+=Number(t.valor||0);}});
+ $("adminReceitas").textContent=dinheiro(receitas);$("adminPagamentos").textContent=dinheiro(pagamentos);$("adminLucro").textContent=dinheiro(receitas-pagamentos);
+ const rec=await db.collection("recargas").where("status","==","pendente").get();$("adminRecargas").textContent=rec.size;
+}
+function mostrarAdminAba(nome){
+ const abas=["taxas","super","retorno","usuarios","pedidos","aprovacoes","financeiro","extrato"];
+ abas.forEach(a=>{const el=$("adminAba"+a.charAt(0).toUpperCase()+a.slice(1));if(el)el.classList.add("hidden");});
+ const alvo=$("adminAba"+nome.charAt(0).toUpperCase()+nome.slice(1));if(alvo)alvo.classList.remove("hidden");
+}
+async function salvarTaxas(){await verificarAdmin();taxas.kmBase=Number($("taxaKmBase").value);taxas.valorBase=Number($("taxaValorBase").value);taxas.valorAdicionalKm=Number($("taxaAdicionalKm").value);taxas.taxaApp=Number($("taxaApp").value);await db.collection("config_taxas").doc("valores").set(taxas,{merge:true});alert("Taxas salvas.");}
+async function salvarSuper(){await verificarAdmin();taxas.superPct=Number($("superPct").value);await db.collection("config_taxas").doc("valores").set({superPct:taxas.superPct},{merge:true});alert("SUPER salvo.");}
+async function salvarRetorno(){await verificarAdmin();taxas.retornoPct=Number($("retornoPct").value);await db.collection("config_taxas").doc("valores").set({retornoPct:taxas.retornoPct},{merge:true});alert("Retorno salvo.");}
+/* =========================================================
+   ADMIN — USUÁRIOS
+   ========================================================= */
+async function carregarAdminUsuarios(){
+ const box=$("adminUsuarios");box.innerHTML="Carregando...";
+ const snap=await db.collection("profiles").get();
+ let html=`<table><tr><th>Nome</th><th>Tipo</th><th>Telefone</th><th>Aprovado</th><th>UID</th></tr>`;
+ snap.forEach(doc=>{const u=doc.data();html+=`<tr><td>${escapeHtml(u.nome||"")}</td><td>${escapeHtml(tipoTexto(u.tipo||""))}</td><td>${escapeHtml(u.telefone||"")}</td><td>${u.aprovado?"SIM":"NÃO"}</td><td>${escapeHtml(doc.id)}</td></tr>`;});
+ html+="</table>";box.innerHTML=html;
+}
+/* =========================================================
+   ADMIN — APROVAÇÕES
+   ========================================================= */
+async function carregarAdminAprovacoes(){
+ const box=$("adminAprovacoes");box.innerHTML="Carregando...";
+ const snap=await db.collection("motoboys").where("aprovado","==",false).get();
+ if(snap.empty){box.innerHTML="<p>Nenhuma aprovação pendente.</p>";return;}
+ box.innerHTML="";
+ snap.forEach(doc=>{
+  const m=doc.data();const div=document.createElement("div");div.className="order";
+  div.innerHTML=`<b>${escapeHtml(m.codigo||"")}</b><p>Nome: ${escapeHtml(m.nome||"")}</p><p>Telefone: ${escapeHtml(m.telefone||"")}</p><p>Veículo: ${escapeHtml(m.veiculo||"")}</p><p>Endereço: ${escapeHtml(m.endereco||"")}</p><p>Selfie:${m.documentos?.selfie?`<a href="${m.documentos.selfie}" target="_blank">VER</a>`:"não enviada"}</p><p>CNH:${m.documentos?.cnh?`<a href="${m.documentos.cnh}" target="_blank">VER</a>`:"não enviada"}</p><p>CRLV:${m.documentos?.crlv?`<a href="${m.documentos.crlv}" target="_blank">VER</a>`:"não enviada"}</p><button class="btn-green" onclick="aprovarMotoboy('${doc.id}')">APROVAR</button><button class="btn-danger" onclick="reprovarMotoboy('${doc.id}')">RECUSAR</button>`;
+  box.appendChild(div);
+ });
+}
+async function aprovarMotoboy(uid){await verificarAdmin();await db.collection("motoboys").doc(uid).update({aprovado:true,atualizadoEm:agora()});await db.collection("profiles").doc(uid).update({aprovado:true,atualizadoEm:agora()});alert("Motorista aprovado.");await carregarAdminAprovacoes();}
+async function reprovarMotoboy(uid){await verificarAdmin();await db.collection("motoboys").doc(uid).update({aprovado:false,online:false,atualizadoEm:agora()});alert("Cadastro mantido como não aprovado.");}
+/* =========================================================
+   ADMIN — PEDIDOS
+   ========================================================= */
+async function carregarAdminPedidos(){
+ const box=$("adminPedidos");box.innerHTML="Carregando...";
+ const snap=await db.collection("pedidos").orderBy("criadoEm","desc").limit(100).get();
+ if(snap.empty){box.innerHTML="Nenhum pedido.";return;}
+ let html=`<table><tr><th>Pedido</th><th>Status</th><th>Lojista</th><th>Motorista</th><th>KM</th><th>Interno</th></tr>`;
+ snap.forEach(doc=>{const p=doc.data();html+=`<tr><td>#${escapeHtml(p.pedidoNumero||"")}</td><td>${escapeHtml(p.status||"")}</td><td>${escapeHtml(p.lojaNome||"")}</td><td>${escapeHtml(p.motoboyCodigo||"-")}</td><td>${escapeHtml(p.distanciaKm||0)}</td><td>${dinheiro(p.valorEntrega||0)}</td></tr>`;});
+ html+="</table>";box.innerHTML=html;
+}
+/* =========================================================
+   ADMIN — FINANCEIRO
+   ========================================================= */
+async function carregarAdminFinanceiro(){
+ const box=$("adminFinanceiro");
+ const wallets=await db.collection("wallets").get();
+ let html=`<table><tr><th>UID</th><th>Saldo</th><th>Ação</th></tr>`;
+ wallets.forEach(doc=>{const w=doc.data();html+=`<tr><td>${escapeHtml(doc.id)}</td><td>${dinheiro(w.saldo||0)}</td><td><button onclick="editarSaldo('${doc.id}')">EDITAR</button></td></tr>`;});
+ html+="</table>";box.innerHTML=html;
+}
+async function editarSaldo(uid){
+ await verificarAdmin();const valor=prompt("Novo saldo:");if(valor===null)return;
+ const numero=Number(String(valor).replace(",","."));if(!Number.isFinite(numero)){alert("Valor inválido.");return;}
+ await db.collection("wallets").doc(uid).set({uid,saldo:numero,atualizadoEm:agora()},{merge:true});
+ await db.collection("transacoes").add({uid,tipo:"ajuste_admin",valor:numero,adminId:usuarioAtual.uid,criadoEm:agora()});
+ await carregarAdminFinanceiro();
+}
+async function pagarMotoboy(){
+ await verificarAdmin();const uid=$("pagamentoMotoboyUid").value.trim();const valor=Number($("pagamentoMotoboyValor").value);const pix=$("pagamentoMotoboyPix").value.trim();
+ if(!uid||!valor||!pix){alert("Informe UID, valor e PIX.");return;}
+ await db.collection("transacoes").add({uid,tipo:"pagamento_motoboy",valor,pix,adminId:usuarioAtual.uid,criadoEm:agora()});
+ alert("Pagamento registrado.");$("pagamentoMotoboyUid").value="";$("pagamentoMotoboyValor").value="";$("pagamentoMotoboyPix").value="";
+ await carregarAdminResumo();
+}
+/* =========================================================
+   EXTRATOS 90 DIAS - FIX 2 APLICADO (SEM ÍNDICE)
+   ========================================================= */
+async function montarExtrato(uid,elemento,mostrarValores=true){
+ const box=$(elemento);
+ try{
+  const snap=await db.collection("transacoes").where("uid","==",uid).limit(100).get();
+  const limite = data90();
+  const docs = snap.docs.filter(d=>{
+   const data=d.data().criadoEm;
+   if(!data ||!data.toDate) return false;
+   return data.toDate() >= limite;
+  }).sort((a,b)=>(b.data().criadoEm?.seconds||0)-(a.data().criadoEm?.seconds||0));
+  if(!docs.length){box.innerHTML="<p>Nenhuma movimentação nos últimos 90 dias.</p>";return;}
+  let html=`<table><tr><th>Data</th><th>Tipo</th>${mostrarValores?"<th>Valor</th>":""}</tr>`;
+  docs.forEach(doc=>{
+   const t=doc.data();
+   const data=t.criadoEm?.toDate?t.criadoEm.toDate().toLocaleString("pt-BR"):"-";
+   html+=`<tr><td>${escapeHtml(data)}</td><td>${escapeHtml(t.tipo||"")}</td>${mostrarValores?`<td>${dinheiro(t.valor||0)}</td>`:""}</tr>`;
+  });
+  html+="</table>";box.innerHTML=html;
+ }catch(e){box.innerHTML="<p>Erro ao carregar extrato: "+escapeHtml(e.message)+"</p>";}
+}
+async function carregarExtratoLojista(){await montarExtrato(usuarioAtual.uid,"extratoLojista",true);}
+async function carregarExtratoMotoboy(){await montarExtrato(usuarioAtual.uid,"extratoMotoboy",true);}
+async function carregarAdminExtrato(){await montarExtrato(usuarioAtual.uid,"adminExtrato",true);}
+/* =========================================================
+   IMPRESSÃO
+   ========================================================= */
+async function imprimirExtrato(tipo){
+ const div=tipo==="lojista"?$("extratoLojista"):$("extratoMotoboy");
+ if(!div)return;
+ const janela=window.open("","_blank");
+ janela.document.write(`<!DOCTYPE html><html><head><title>Extrato Anjos</title><style>body{font-family:Arial;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:8px}th{background:#eee}</style></head><body><h1>ANJOS EM DUAS RODAS</h1><h2>Extrato dos últimos 90 dias</h2>${div.innerHTML}</body></html>`);
+ janela.document.close();janela.focus();setTimeout(()=>{janela.print();},500);
+}
+/* =========================================================
+   INICIALIZAÇÃO
+   ========================================================= */
+window.addEventListener("load",()=>{console.log("ANJOS EM DUAS RODAS carregado.");if($("mensagemLogin")){$("mensagemLogin").textContent="";}if($("cadTipo")){$("cadTipo").dispatchEvent(new Event("change"));}});
 </script>
 </body>
 </html>
