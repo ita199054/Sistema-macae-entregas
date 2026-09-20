@@ -1,23 +1,33 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Anjos Flash - Saldo Real Time</title><script src="https://cdn.tailwindcss.com"></script></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Anjos Flash - Rastreio</title><script src="https://cdn.tailwindcss.com"></script></head>
 <body class="bg-gray-100">
 <div id="telaLogin" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"><div class="bg-white p-6 rounded-xl w-full max-w-sm"><h2 class="font-bold text-xl">🏍️ Anjos <span class="text-orange-500">Flash</span></h2><div class="flex gap-2 my-3"><button onclick="setAba('entrar')" class="flex-1 bg-black text-white py-2 rounded text-sm">ENTRAR</button><button onclick="setAba('cadastrar')" class="flex-1 border py-2 rounded text-sm">CRIAR</button></div><div id="abaEntrar"><input id="loginEmail" placeholder="Email" class="w-full border p-3 rounded mb-2 text-sm"><input id="loginSenha" type="password" placeholder="Senha" class="w-full border p-3 rounded mb-2 text-sm"><button onclick="fazerLogin()" class="w-full bg-orange-500 text-white p-3 rounded font-bold">ENTRAR</button></div><div id="abaCadastrar" class="hidden"><select id="tipoCadastro" class="w-full border p-3 rounded mb-2 text-sm font-bold"><option value="LOJISTA">SOU LOJISTA</option><option value="SUPER_LOJISTA">SOU SUPER LOJISTA</option><option value="SUBIR_LOJISTA">SUBIR LOJISTA</option><option value="MOTOBOY_MOTORISTA">SOU MOTOBOY #0001</option><option value="ADMIN">SOU ADMIN</option></select><input id="cadEmailLogin" placeholder="Email" class="w-full border p-3 rounded mb-2 text-sm"><input id="cadSenhaLogin" type="password" placeholder="Senha" class="w-full border p-3 rounded mb-2 text-sm"><input id="cadNomeLogin" placeholder="Nome" class="w-full border p-3 rounded mb-2 text-sm"><div id="boxDocsMotoboy" class="hidden bg-yellow-50 p-2 rounded border"><input type="file" id="cadFileCNH" class="w-full text-[11px] mb-1 border p-1 bg-white rounded"><input type="file" id="cadFileCRLV" class="w-full text-[11px] mb-1 border p-1 bg-white rounded"><input type="file" id="cadFileSelfie" class="w-full text-[11px] border p-1 bg-white rounded"></div><button onclick="fazerCadastro()" class="w-full bg-black text-white p-3 rounded font-bold mt-3">CRIAR SALDO 0,00</button></div></div></div>
 <div id="app" class="max-w-[420px] mx-auto bg-white min-h-screen shadow-xl"><div class="p-4 flex justify-between items-center border-b sticky top-0 bg-white z-20"><div><b>🏍️ Anjos <span class="text-orange-500">Flash</span></b><br><span id="nomeLojaTopo" class="text-[11px] font-bold text-orange-600"></span> <span id="saldoTopo" class="text-[11px] font-bold">R$0,00</span></div><div class="flex gap-2 items-center"><span id="roleRealBadge" class="bg-black text-white text-[10px] px-2 py-1 rounded">...</span><button onclick="fazerLogout()" class="text-[10px] border px-2 py-1 rounded">SAIR</button></div></div>
 
 <div id="telaMotoboy" class="p-4 hidden">
 <div class="flex gap-3 items-center mb-3"><img id="fotoMotoboyLogado" src="https://i.pravatar.cc/100" class="w-14 h-14 rounded-full border-2 border-orange-500"><div><b id="nomeMotoboyLogado">Motoboy</b><br><span id="codigoMotoboyLogado" class="bg-black text-white text-xs px-2 py-1 rounded">#0001</span></div></div>
-<div class="bg-orange-100 p-3 rounded-xl mb-3"><h1 class="text-2xl font-bold">R$ <span id="ganhoMotoboy">0,00</span></h1><p class="text-[10px]">Código: <b id="meuCodigoTxt">#0001</b></p></div>
+<div class="bg-orange-100 p-3 rounded-xl mb-3"><h1 class="text-2xl font-bold">R$ <span id="ganhoMotoboy">0,00</span></h1><p class="text-[10px]">Código: <b id="meuCodigoTxt">#0001</b></p><p id="statusRastreioMoto" class="text-[10px] font-bold text-green-600 hidden">📍 Rastreio ATIVO</p></div>
 <div class="border-2 border-blue-500 p-3 rounded-xl mb-3"><h4 class="font-bold text-sm">💬 Chat Lojas / Admin</h4><div id="chatMotoboy" class="h-32 overflow-y-auto bg-gray-50 p-2 rounded mt-2 text-[11px] border"></div><div class="flex gap-1 mt-2"><input id="msgMotoboy" placeholder="Digite mensagem" class="flex-1 border p-2 rounded text-xs"><button onclick="enviarMsg('motoboy')" class="bg-blue-600 text-white px-3 rounded text-xs font-bold">Enviar</button></div></div>
 <div class="border-2 border-green-500 p-3 rounded-xl mb-3"><h4 class="font-bold text-sm">🔑 Código cliente</h4><div class="flex gap-2 mt-2"><input id="codigoEntregaInput" placeholder="4 dígitos" class="border p-2 rounded flex-1 text-sm"><button onclick="confirmarEntrega()" class="bg-green-600 text-white px-4 rounded font-bold">OK</button></div></div>
 <div id="listaEntregasMotoboy" class="space-y-2 text-xs"></div>
 </div>
 
 <div id="telaLojista" class="p-4 hidden">
+<!-- RASTREIO ACEITO - SÓ APARECE QUANDO MOTOBOY ACEITA -->
+<div id="boxRastreioAceito" class="hidden bg-green-600 text-white p-3 rounded-xl mb-3 border-2 border-black">
+<h4 class="font-bold text-sm">🏍️ MOTOBOY A CAMINHO DA LOJA</h4>
+<div class="flex gap-3 items-center mt-2 bg-white text-black p-2 rounded">
+<img id="fotoRastreio" src="https://i.pravatar.cc/100" class="w-12 h-12 rounded-full border-2 border-green-500">
+<div class="flex-1"><b id="nomeRastreio" class="text-sm">Nome</b><br><span id="codigoRastreio" class="bg-black text-white text-[10px] px-2 rounded">#0001</span><br><span id="distRastreio" class="text-[11px] font-bold">Calculando...</span><br><span id="tempoRastreio" class="text-[11px] font-bold text-orange-600">...</span></div>
+</div>
+<a id="linkMapsRastreio" href="#" target="_blank" class="bg-black text-white block text-center py-2 rounded mt-2 text-xs font-bold">🗺️ VER NO MAPS AO VIVO</a>
+</div>
+
 <div class="bg-black text-white p-3 rounded-xl mb-3 border-2 border-green-500">
 <input id="nomeSalaoLojista" placeholder="Nome da sua loja" class="w-full p-2 rounded text-black text-sm mb-2" oninput="salvarNomeLoja()">
 <input id="enderecoSalaoLojista" value="Av Atlantica 2720, Cavaleiros" class="w-full p-2 rounded text-black text-sm font-bold" oninput="salvarNomeLoja()">
-<button onclick="salvarEnderecoFirestore()" class="w-full bg-green-500 text-black py-1 rounded font-bold text-xs mt-2">SALVAR ENDEREÇO LOJA</button>
+<button onclick="salvarEnderecoFirestore()" class="w-full bg-green-500 text-black py-1 rounded font-bold text-xs mt-2">SALVAR ENDEREÇO LOJA + GPS</button>
 <div class="bg-yellow-400 text-black p-2 rounded mt-3 text-center border-2 border-white">
 <p class="text-[11px] font-bold">💰 PIX RECARGA - SÓ AQUI NO LOJISTA</p>
 <p class="text-[16px] font-black tracking-widest">22997450131</p>
@@ -61,9 +71,8 @@ document.getElementById("tipoCadastro").addEventListener("change", e=>{ document
 window.setVeiculo = (v)=>{ veiculoSelecionado=v; document.getElementById("veiculo").value=v; ["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].forEach(id=>{ const b=document.getElementById("btn"+id); if(b){ b.classList.remove("bg-black","text-white"); if(id===v) b.classList.add("bg-black","text-white"); } }); calc(); };
 async function buscarRoleReal(user){ try{ const qMoto = await getDocs(query(collection(db,"motoristas"), where("userId","==",user.uid))); if(!qMoto.empty) return "MOTOBOY_MOTORISTA"; const snap = await getDoc(doc(db,"usuarios",user.uid)); if(snap.exists() && snap.data().role) return snap.data().role; }catch(e){} return "LOJISTA"; }
 function normalizaRole(r){ r=(r||"").toLowerCase(); if(r.includes("moto")) return "MOTOBOY_MOTORISTA"; if(r.includes("admin")) return "ADMIN"; if(r.includes("super")) return "SUPER_LOJISTA"; if(r.includes("subir")) return "SUBIR_LOJISTA"; return "LOJISTA"; }
-onAuthStateChanged(auth, async (user)=>{ if(user){ userLogado=user; userRoleReal=normalizaRole(await buscarRoleReal(user)); roleRealBadge.innerText=userRoleReal; telaLogin.classList.add("hidden"); await carregarPrecos(); mostrarTelaPorRole(); carregarExtratos(); carregarChat(); escutarSaldoTempoReal(); escutarPrecosTempoReal(); if(["ADMIN"].includes(userRoleReal)) carregarAbertas(); if(userRoleReal==="MOTOBOY_MOTORISTA"){ carregarMeuCodigo(); carregarAbertasMotoboy(); } const nomeSalvo=localStorage.getItem("nomeLoja_"+user.uid); const endSalvo=localStorage.getItem("endLoja_"+user.uid); if(nomeSalvo){ nomeSalaoLojista.value=nomeSalvo; nomeLojaTopo.innerText=nomeSalvo; } if(endSalvo) enderecoSalaoLojista.value=endSalvo; } else telaLogin.classList.remove("hidden"); });
+onAuthStateChanged(auth, async (user)=>{ if(user){ userLogado=user; userRoleReal=normalizaRole(await buscarRoleReal(user)); roleRealBadge.innerText=userRoleReal; telaLogin.classList.add("hidden"); await carregarPrecos(); mostrarTelaPorRole(); carregarExtratos(); carregarChat(); escutarSaldoTempoReal(); escutarPrecosTempoReal(); escutarPedidosAceitosLojista(); if(["ADMIN"].includes(userRoleReal)) carregarAbertas(); if(userRoleReal==="MOTOBOY_MOTORISTA"){ carregarMeuCodigo(); carregarAbertasMotoboy(); } const nomeSalvo=localStorage.getItem("nomeLoja_"+user.uid); const endSalvo=localStorage.getItem("endLoja_"+user.uid); if(nomeSalvo){ nomeSalaoLojista.value=nomeSalvo; nomeLojaTopo.innerText=nomeSalvo; } if(endSalvo) enderecoSalaoLojista.value=endSalvo; } else telaLogin.classList.remove("hidden"); });
 
-// CORREÇÃO 1: SALDO TEMPO REAL LOJISTA E MOTOBOY
 function escutarSaldoTempoReal(){
   if(!userLogado) return;
   onSnapshot(doc(db,"usuarios",userLogado.uid), (snap)=>{
@@ -83,8 +92,6 @@ function escutarSaldoTempoReal(){
     }
   });
 }
-
-// CORREÇÃO 2: BAIRRO KM TEMPO REAL
 function escutarPrecosTempoReal(){
   onSnapshot(doc(db,"pricing_config","atual"), (s)=>{
     if(s.exists()){
@@ -110,7 +117,18 @@ function escutarPrecosTempoReal(){
 }
 
 window.salvarNomeLoja=()=>{ if(!userLogado) return; localStorage.setItem("nomeLoja_"+userLogado.uid, nomeSalaoLojista.value); localStorage.setItem("endLoja_"+userLogado.uid, enderecoSalaoLojista.value); nomeLojaTopo.innerText=nomeSalaoLojista.value; };
-window.salvarEnderecoFirestore = async ()=>{ if(!userLogado) return; await setDoc(doc(db,"usuarios",userLogado.uid),{endereco:enderecoSalaoLojista.value},{merge:true}); alert("Salvo!"); };
+window.salvarEnderecoFirestore = async ()=>{
+  if(!userLogado) return;
+  let lat=null,lng=null;
+  if(navigator.geolocation){
+    try{
+      const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{enableHighAccuracy:true}));
+      lat=pos.coords.latitude; lng=pos.coords.longitude;
+    }catch(e){}
+  }
+  await setDoc(doc(db,"usuarios",userLogado.uid),{endereco:enderecoSalaoLojista.value, lat, lng},{merge:true});
+  alert("Endereço + GPS da loja salvo! Agora rastreio calcula KM real");
+};
 window.fazerLogin = async ()=>{ await signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginSenha.value.trim()); };
 window.fazerCadastro = async ()=>{ const email=cadEmailLogin.value.trim(), senha=cadSenhaLogin.value.trim(), nome=cadNomeLogin.value.trim(), tipo=tipoCadastro.value; if(!email||!senha||!nome){ alert("Preencha"); return; } const cred=await createUserWithEmailAndPassword(auth,email,senha); async function up(f,t){ if(!f) return null; const r=ref(storage, `usuarios/${cred.user.uid}/${t}_${Date.now()}_${f.name}`); await uploadBytes(r,f); return await getDownloadURL(r); } const docs={ cnh: await up(cadFileCNH.files[0],"CNH"), crlv: await up(cadFileCRLV.files[0],"CRLV"), selfie: await up(cadFileSelfie.files[0],"SELFIE") }; let codigoMotoboy=null; if(tipo==="MOTOBOY_MOTORISTA"){ const todos=await getDocs(collection(db,"motoristas")); codigoMotoboy="#"+String(todos.size+1).padStart(4,'0'); } await setDoc(doc(db,"usuarios",cred.user.uid),{userId:cred.user.uid,nome,email,role:tipo,codigo:codigoMotoboy,docs,saldo:0,endereco:"Av Atlantica 2720, Cavaleiros",criadoEm:Timestamp.now()}); if(tipo==="MOTOBOY_MOTORISTA"){ await setDoc(doc(db,"motoristas",cred.user.uid),{userId:cred.user.uid,nome,email,role:tipo,codigo:codigoMotoboy,docs,saldo:0,foto_url:docs.selfie,status:"PENDENTE",criado_em:Timestamp.now()},{merge:true}); } alert("Criado "+tipo+" SALDO 0,00"); };
 window.fazerLogout = async ()=>{ await signOut(auth); location.reload(); };
@@ -166,7 +184,7 @@ async function carregarExtratos(){
     filtroEl.innerHTML = `<option value="MINHA">SÓ MINHA LOJA</option>`;
     const q = query(collection(db,"pedidos"), where("owner_id","==",userLogado.uid), where("criado_em", ">=", timestamp90));
     const snap = await getDocs(q);
-    let html=""; snap.forEach(docSnap=>{ const p=docSnap.data(); const data = p.criado_em?.toDate()?.toLocaleDateString() || ""; const origem=encodeURIComponent(p.endereco_loja||"Macaé"); const destino=encodeURIComponent(p.endereco_completo||"Macaé"); const maps=`https://www.google.com/maps/dir/?api=1&origin=${origem}&destination=${destino}`; html+=`<div class="border p-2 rounded bg-white mb-3 shadow"><div class="flex justify-between"><b>${p.nome_loja||""} ${p.veiculo||""} ${p.precisa_subir?"SUBIR":""}</b><b>R$ ${Number(p.valor_lojista||0).toFixed(2)}</b></div><div class="text-[9px]">${data}</div><div class="text-[10px] font-bold">Cliente: ${p.endereco_completo||""}</div><div class="bg-black text-white p-2 rounded text-center mt-2">🔑 CÓDIGO: <b>${p.codigo_secreto}</b></div><a href="${maps}" target="_blank" class="bg-blue-600 text-white text-center py-2 rounded text-xs font-bold block mt-2">🗺️ MAPS</a></div>`; });
+    let html=""; snap.forEach(docSnap=>{ const p=docSnap.data(); const data = p.criado_em?.toDate()?.toLocaleDateString() || ""; const origem=encodeURIComponent(p.endereco_loja||"Macaé"); const destino=encodeURIComponent(p.endereco_completo||"Macaé"); const maps=`https://www.google.com/maps/dir/?api=1&origin=${origem}&destination=${destino}`; html+=`<div class="border p-2 rounded bg-white mb-3 shadow"><div class="flex justify-between"><b>${p.nome_loja||""} ${p.veiculo||""} ${p.precisa_subir?"SUBIR":""}</b><b>R$ ${Number(p.valor_lojista||0).toFixed(2)}</b></div><div class="text-[9px]">${data} ${p.status||""}</div><div class="text-[10px] font-bold">Cliente: ${p.endereco_completo||""}</div><div class="bg-black text-white p-2 rounded text-center mt-2">🔑 CÓDIGO: <b>${p.codigo_secreto}</b></div><a href="${maps}" target="_blank" class="bg-blue-600 text-white text-center py-2 rounded text-xs font-bold block mt-2">🗺️ MAPS</a></div>`; });
     extratoLojista.innerHTML=html||"Sem pedidos 90 dias"; return;
   }
   if(userRoleReal === "SUPER_LOJISTA"){
@@ -182,11 +200,111 @@ async function carregarExtratos(){
   const q = query(collection(db,"pedidos"), where("criado_em", ">=", timestamp90)); const snap = await getDocs(q); let lojasSet = new Set(); snap.forEach(d=> lojasSet.add(d.data().nome_loja||"Sem nome")); const atualAdmin = filtroEl.value; filtroEl.innerHTML = `<option value="GERAL">GERAL - Todas (${snap.size})</option>`; lojasSet.forEach(loja=>{ if(loja) filtroEl.innerHTML += `<option value="${loja}">${loja}</option>`; }); if(atualAdmin) filtroEl.value = atualAdmin; let html=""; snap.forEach(docSnap=>{ const p=docSnap.data(); if(filtro!=="GERAL" && p.nome_loja!==filtro) return; const data = p.criado_em?.toDate()?.toLocaleDateString() || ""; const origem=encodeURIComponent(p.endereco_loja||"Macaé"); const destino=encodeURIComponent(p.endereco_completo||"Macaé"); const maps=`https://www.google.com/maps/dir/?api=1&origin=${origem}&destination=${destino}`; html+=`<div class="border p-2 rounded bg-white mb-3 shadow"><div class="flex justify-between"><b>${p.nome_loja||""}</b><b>R$ ${Number(p.valor_lojista||0).toFixed(2)}</b></div><div class="text-[9px]">${data}</div><div class="text-[10px]">Cliente: ${p.endereco_completo||""}</div><div class="bg-black text-white p-2 rounded text-center mt-2">🔑 CÓDIGO: <b>${p.codigo_secreto}</b></div><a href="${maps}" target="_blank" class="bg-blue-600 text-white text-center py-2 rounded text-xs font-bold block mt-2">🗺️ MAPS</a></div>`; }); extratoLojista.innerHTML=html||"Sem pedidos";
 }
 async function carregarAbertas(){ onSnapshot(collection(db,"pedidos"), s=>{ let h=""; s.forEach(d=>{ const p=d.data(); if(p.status==="AGUARDANDO" || p.status.startsWith("DIRETO")){ const origem=encodeURIComponent(p.endereco_loja||"Macaé"); const destino=encodeURIComponent(p.endereco_completo||""); const maps=`https://www.google.com/maps/dir/?api=1&origin=${origem}&destination=${destino}`; h+=`<div class="border p-2 rounded bg-white mb-1"><b>${p.nome_loja||""} ${p.veiculo||""} ${p.precisa_subir?"SUBIR":""}</b> ${p.endereco_completo||""} <a href="${maps}" target="_blank" class="bg-blue-500 text-white px-2 rounded">MAPS</a></div>`; } }); corridasAbertas.innerHTML=h||"Nenhuma"; }); }
-async function carregarAbertasMotoboy(){ onSnapshot(collection(db,"pedidos"), s=>{ let h=""; s.forEach(d=>{ const p=d.data(); if(p.status==="AGUARDANDO"){ const origem=encodeURIComponent(p.endereco_loja||""); const destino=encodeURIComponent(p.endereco_completo||""); const maps=`https://www.google.com/maps/dir/?api=1&origin=${origem}&destination=${destino}`; h+=`<div class="border p-3 rounded mb-2 bg-white ${p.precisa_subir?"border-yellow-400":""}"><div><b>${p.nome_loja||""}</b> ${p.veiculo||""} ${p.precisa_subir?"SUBIR +":""} R$ ${p.valor_motoboy?.toFixed(2)}</div><div class="text-xs">Cliente: ${p.endereco_completo||""}</div><a href="${maps}" target="_blank" class="bg-blue-600 text-white px-3 py-2 rounded text-xs mt-1 inline-block">🗺️ MAPS FIX</a></div>`; } }); listaEntregasMotoboy.innerHTML=h||"Nenhuma"; }); }
-window.buscarMotoboyPorCodigo = async ()=>{ const cod=codigoMotoboyDireto.value.trim(); if(!cod){ previewMotoboyDireto.classList.add("hidden"); return; } const q=await getDocs(query(collection(db,"motoristas"), where("codigo","==",cod))); if(q.empty){ alert("Não existe"); return; } const m=q.docs[0].data(); previewMotoboyDireto.classList.remove("hidden"); fotoPreviewDireto.src=m.docs?.selfie||m.foto_url||'https://i.pravatar.cc/100'; nomePreviewDireto.innerHTML=`<b>${m.nome}</b> ${m.codigo}`; };
-window.confirmarEntrega = async ()=>{ const cod=codigoEntregaInput.value.trim(); const q=await getDocs(query(collection(db,"pedidos"), where("codigo_secreto","==",cod))); if(q.empty){ alert("Código errado"); return; } await setDoc(doc(db,"pedidos",q.docs[0].id),{status:"ENTREGUE"},{merge:true}); alert("Entregue "+cod); };
 
-// SALDO + E - CORRIGIDO
+// --- APENAS RASTREIO ADICIONADO AQUI ---
+let watchIdRastreio=null;
+async function carregarAbertasMotoboy(){
+  onSnapshot(collection(db,"pedidos"), s=>{
+    let h="";
+    s.forEach(d=>{
+      const p=d.data();
+      const id=d.id;
+      if(p.status==="AGUARDANDO" || p.status.startsWith("DIRETO")){
+        if(p.status.startsWith("DIRETO") && p.motorista_id && p.motorista_id!==userLogado.uid) return;
+        const origem=encodeURIComponent(p.endereco_loja||"");
+        const destino=encodeURIComponent(p.endereco_completo||"");
+        const maps=`https://www.google.com/maps/dir/?api=1&origin=${origem}&destination=${destino}`;
+        h+=`<div class="border p-3 rounded mb-2 bg-white ${p.precisa_subir?"border-yellow-400 border-2":""}"><div><b>${p.nome_loja||""}</b> ${p.veiculo||""} ${p.precisa_subir?"SUBIR":""} R$ ${p.valor_motoboy?.toFixed(2)}</div><div class="text-xs">Loja: ${p.endereco_loja||""}<br>Cliente: ${p.endereco_completo||""}</div><button onclick="aceitarCorrida('${id}')" class="bg-black text-white w-full py-3 rounded mt-2 font-bold">✅ ACEITAR E IR PRA LOJA</button><a href="${maps}" target="_blank" class="bg-blue-600 text-white px-3 py-2 rounded text-xs mt-1 inline-block">🗺️ MAPS</a></div>`;
+      }
+      if(p.status==="ACEITA" && p.motorista_id===userLogado.uid){
+        const origem=encodeURIComponent(p.endereco_loja||"");
+        const destino=encodeURIComponent(p.endereco_completo||"");
+        const maps=`https://www.google.com/maps/dir/?api=1&origin=${origem}&destination=${destino}`;
+        h+=`<div class="border-2 border-green-500 p-3 rounded bg-green-50 mb-2"><b>🏍️ CORRIDA ACEITA - INDO PRA LOJA</b><br>${p.nome_loja} - ${p.endereco_loja}<br><a href="${maps}" target="_blank" class="bg-black text-white px-3 py-2 rounded text-xs mt-2 inline-block">🗺️ MAPS LOJA</a><br><span class="text-[10px] text-green-700">Rastreio enviando sua localização pra loja</span></div>`;
+        iniciarRastreioMotoboy();
+      }
+    });
+    listaEntregasMotoboy.innerHTML=h||"Nenhuma";
+  });
+}
+window.aceitarCorrida = async (pedidoId)=>{
+  const snapMoto = await getDoc(doc(db,"motoristas",userLogado.uid));
+  const dadosMoto = snapMoto.exists()? snapMoto.data() : {nome: nomeMotoboyLogado.innerText, foto_url: fotoMotoboyLogado.src, codigo: codigoMotoboyLogado.innerText};
+  await setDoc(doc(db,"pedidos",pedidoId),{status:"ACEITA", motorista_id:userLogado.uid, motorista_nome: dadosMoto.nome, motorista_foto: dadosMoto.foto_url || dadosMoto.docs?.selfie, motorista_codigo: dadosMoto.codigo, aceito_em:Timestamp.now()},{merge:true});
+  iniciarRastreioMotoboy();
+};
+function iniciarRastreioMotoboy(){
+  if(watchIdRastreio) return;
+  if(!navigator.geolocation) return;
+  document.getElementById("statusRastreioMoto")?.classList.remove("hidden");
+  watchIdRastreio=navigator.geolocation.watchPosition(async (pos)=>{
+    const lat=pos.coords.latitude, lng=pos.coords.longitude;
+    try{
+      await setDoc(doc(db,"motoristas",userLogado.uid),{lat, lng, ultima_local: Timestamp.now()},{merge:true});
+      // atualiza todos pedidos ACEITA dele com lat/lng
+      const q=await getDocs(query(collection(db,"pedidos"), where("motorista_id","==",userLogado.uid), where("status","==","ACEITA")));
+      q.forEach(async (d)=>{ await setDoc(doc(db,"pedidos",d.id),{moto_lat:lat, moto_lng:lng},{merge:true}); });
+    }catch(e){}
+  }, (e)=>{}, {enableHighAccuracy:true, maximumAge:5000, timeout:10000});
+}
+
+function calcDistanciaKm(lat1, lon1, lat2, lon2){
+  const R=6371; const dLat=(lat2-lat1)*Math.PI/180; const dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+  const c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); return R*c;
+}
+function escutarPedidosAceitosLojista(){
+  if(!userLogado) return;
+  onSnapshot(query(collection(db,"pedidos"), where("owner_id","==",userLogado.uid), where("status","==","ACEITA")), async (snap)=>{
+    const box=document.getElementById("boxRastreioAceito");
+    if(snap.empty){ box.classList.add("hidden"); return; }
+    const docPedido=snap.docs[0]; const p=docPedido.data();
+    const motoId=p.motorista_id;
+    if(!motoId) return;
+    box.classList.remove("hidden");
+    document.getElementById("nomeRastreio").innerText=p.motorista_nome||"Motoboy";
+    document.getElementById("codigoRastreio").innerText=p.motorista_codigo||"#0001";
+    document.getElementById("fotoRastreio").src=p.motorista_foto||"https://i.pravatar.cc/100";
+
+    // escuta localização do motoboy em tempo real
+    onSnapshot(doc(db,"motoristas",motoId), async (snapMoto)=>{
+      if(!snapMoto.exists()) return;
+      const m=snapMoto.data();
+      if(m.lat && m.lng){
+        // pega lat/lng da loja
+        const lojaSnap=await getDoc(doc(db,"usuarios",userLogado.uid));
+        const loja=lojaSnap.data();
+        let distTxt="A caminho da loja", tempoTxt="Calculando rota...";
+        if(loja?.lat && loja?.lng){
+          const dist=calcDistanciaKm(m.lat, m.lng, loja.lat, loja.lng);
+          const tempoMin=Math.round((dist/30)*60); // 30km/h media
+          distTxt=`📍 ${dist.toFixed(2)} KM da sua loja`;
+          tempoTxt=`⏱️ ${tempoMin} min para chegar`;
+        } else {
+          distTxt=`📍 Motoboy em movimento - GPS ativo`;
+          tempoTxt=`⏱️ Aguardando GPS da loja - Salve endereço com GPS`;
+        }
+        document.getElementById("distRastreio").innerText=distTxt;
+        document.getElementById("tempoRastreio").innerText=tempoTxt;
+        const mapsLink=`https://www.google.com/maps/dir/?api=1&origin=${m.lat},${m.lng}&destination=${encodeURIComponent(loja?.endereco||enderecoSalaoLojista.value)}`;
+        document.getElementById("linkMapsRastreio").href=mapsLink;
+      }
+    });
+  });
+}
+// --- FIM RASTREIO ---
+
+window.buscarMotoboyPorCodigo = async ()=>{ const cod=codigoMotoboyDireto.value.trim(); if(!cod){ previewMotoboyDireto.classList.add("hidden"); return; } const q=await getDocs(query(collection(db,"motoristas"), where("codigo","==",cod))); if(q.empty){ alert("Não existe"); return; } const m=q.docs[0].data(); previewMotoboyDireto.classList.remove("hidden"); fotoPreviewDireto.src=m.docs?.selfie||m.foto_url||'https://i.pravatar.cc/100'; nomePreviewDireto.innerHTML=`<b>${m.nome}</b> ${m.codigo}`; };
+window.confirmarEntrega = async ()=>{
+  const cod=codigoEntregaInput.value.trim();
+  const q=await getDocs(query(collection(db,"pedidos"), where("codigo_secreto","==",cod)));
+  if(q.empty){ alert("Código errado"); return; }
+  await setDoc(doc(db,"pedidos",q.docs[0].id),{status:"ENTREGUE"},{merge:true});
+  if(watchIdRastreio){ navigator.geolocation.clearWatch(watchIdRastreio); watchIdRastreio=null; }
+  document.getElementById("statusRastreioMoto")?.classList.add("hidden");
+  alert("Entregue "+cod);
+};
+
 window.mexerSaldo = async ()=>{
   if(userRoleReal!=="ADMIN"){ alert("Só ADMIN"); return; }
   const id=userSaldo.value.trim(); if(!id){ alert("ID"); return; }
@@ -204,7 +322,6 @@ window.mexerSaldo = async ()=>{
       const novoM=saldoAtualM+delta;
       await setDoc(refM,{saldo:novoM},{merge:true});
     } else {
-      // se for lojista, cria espelho
       await setDoc(refM,{saldo:novoU},{merge:true});
     }
     alert(`Saldo ${delta>0?"+":""}${delta} - Novo: R$${novoU.toFixed(2)} - Aparece instantâneo`);
