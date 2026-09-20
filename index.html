@@ -65,6 +65,8 @@
     <p class="text-[11px] opacity-70">MEU SALDO REAL</p>
     <p class="font-bold text-2xl text-green-400">R$ <span id="saldoMotoboyValor">0.00</span></p>
   </div>
+  <!-- CHAT MOTOBOY ADICIONADO -->
+  <div class="border-2 border-blue-500 p-3 rounded-xl mb-3"><h4 class="font-bold text-sm">💬 Chat Lojas / Admin</h4><div id="chatMotoboy" class="h-24 overflow-y-auto bg-gray-50 p-2 rounded mt-2 text-[11px] border"></div><div class="flex gap-1 mt-2"><input id="msgMotoboy" placeholder="Digite" class="flex-1 border p-2 rounded text-xs"><button onclick="enviarMsg('motoboy')" class="bg-blue-600 text-white px-3 rounded text-xs">Enviar</button></div></div>
   <div id="listaEntregasMotoboy" class="space-y-2 text-xs"></div>
   <div class="border-2 border-green-500 p-3 rounded-xl mt-3"><h4 class="font-bold text-sm">🔑 Código cliente</h4><div class="flex gap-2 mt-2"><input id="codigoEntregaInput" placeholder="4 dígitos" class="border p-2 rounded flex-1"><button onclick="confirmarEntrega()" class="bg-green-600 text-white px-4 rounded font-bold">OK</button></div></div>
 </div>
@@ -75,10 +77,26 @@
     <p class="text-[11px] opacity-70">MEU SALDO REAL - Só cria se tiver saldo</p>
     <p class="font-bold text-2xl text-yellow-400">R$ <span id="saldoLojistaValor">0.00</span></p>
   </div>
-  <div class="bg-black text-white p-3 rounded-xl mb-3">
-    <input id="nomeSalaoLojista" placeholder="Nome da loja" class="w-full p-2 rounded text-black text-sm mb-2" oninput="salvarNomeLoja()">
-    <input id="enderecoSalaoLojista" placeholder="Endereço do salão" class="w-full p-2 rounded text-black text-sm" oninput="salvarNomeLoja()">
+  <!-- NOME + ENDERECO LOJA + PIX + CHAT ADICIONADOS -->
+  <div class="bg-black text-white p-3 rounded-xl mb-3 border-2 border-green-500">
+    <input id="nomeSalaoLojista" placeholder="Nome da sua loja" class="w-full p-2 rounded text-black text-sm mb-2" oninput="salvarNomeLoja()">
+    <input id="enderecoSalaoLojista" placeholder="Av Atlantica 2720, Cavaleiros - Endereço da LOJA" value="Av Atlantica 2720, Cavaleiros" class="w-full p-2 rounded text-black text-sm font-bold" oninput="salvarNomeLoja()">
+    <div class="bg-yellow-400 text-black p-2 rounded mt-3 text-center border-2 border-white">
+      <p class="text-[11px] font-bold">💰 PIX RECARGA - SÓ AQUI NO LOJISTA</p>
+      <p class="text-[16px] font-black tracking-widest">22997450131</p>
+      <p class="text-[9px] font-bold">Copia e cola - Envie comprovante no chat</p>
+    </div>
   </div>
+  <div class="border-2 border-blue-500 p-3 rounded-xl mb-3"><h4 class="font-bold text-sm">💬 Chat com Motoboy / Admin</h4><div id="chatLojista" class="h-24 overflow-y-auto bg-gray-50 p-2 rounded mt-2 text-[11px] border"></div><div class="flex gap-1 mt-2"><input id="msgLojista" placeholder="Digite" class="flex-1 border p-2 rounded text-xs"><button onclick="enviarMsg('lojista')" class="bg-blue-600 text-white px-3 rounded text-xs">Enviar</button></div></div>
+  <!-- VEICULOS ADICIONADOS -->
+  <h2 class="font-bold mb-2 text-sm">🚚 Escolha o veículo</h2>
+  <div class="grid grid-cols-2 gap-2 mb-3">
+    <button onclick="setVeiculo('MOTO')" id="btnMOTO" class="border-2 p-3 rounded-xl text-xs font-bold bg-black text-white">🏍️ MOTOBOY</button>
+    <button onclick="setVeiculo('UTILITARIO')" id="btnUTILITARIO" class="border-2 p-3 rounded-xl text-xs font-bold">🚐 UTILITÁRIO</button>
+    <button onclick="setVeiculo('CAMINHAO_3_4')" id="btnCAMINHAO_3_4" class="border-2 p-3 rounded-xl text-xs font-bold">🚚 3/4</button>
+    <button onclick="setVeiculo('CARRETA')" id="btnCARRETA" class="border-2 p-3 rounded-xl text-xs font-bold">🚛 CARRETA</button>
+  </div>
+  <input type="hidden" id="veiculo" value="MOTO">
   <input id="enderecoCompletoLojista" placeholder="Endereço entrega - Rua, nº, bairro" class="w-full border p-3 rounded mb-1 text-sm bg-yellow-50 font-bold">
   <div class="grid grid-cols-2 gap-2 mb-3">
     <label class="flex gap-2 text-sm border-2 p-3 rounded"><input type="checkbox" id="precisaRetorno"> 🔄 Retorno</label>
@@ -103,7 +121,10 @@
     <div id="boxEditarSaldo" class="hidden mt-3 bg-gray-100 p-3 rounded border-2">
       <p id="nomeSaldo" class="text-xs font-bold"></p><p id="codigoSaldo" class="text-[10px]"></p>
       <div class="grid grid-cols-2 gap-2 mt-2"><div><label class="text-[10px] font-bold">💰 Saldo LOJISTA</label><input id="inputSaldoLojista" type="number" step="0.01" class="w-full border p-2 rounded text-xs bg-yellow-50"></div><div><label class="text-[10px] font-bold">🏍️ Saldo MOTOBOY</label><input id="inputSaldoMoto" type="number" step="0.01" class="w-full border p-2 rounded text-xs bg-green-50"></div></div>
-      <button onclick="salvarSaldo()" class="bg-green-600 text-white w-full py-3 rounded mt-3 font-bold text-xs">💾 SALVAR</button>
+      <div class="flex gap-2 mt-3">
+        <button onclick="adicionarSaldo()" class="flex-1 bg-green-500 text-white py-3 rounded font-bold text-xs">+ ADICIONAR</button>
+        <button onclick="removerSaldo()" class="flex-1 bg-red-600 text-white py-3 rounded font-bold text-xs">- REMOVER</button>
+      </div>
     </div>
   </div>
   <div class="bg-black text-white p-3 rounded-xl mb-4">
@@ -120,6 +141,8 @@
     </div>
   </div>
   <div class="border-4 border-yellow-500 p-3 rounded-xl mb-4 bg-yellow-50"><h3 class="font-bold text-sm">🚨 PENDENTES</h3><div id="listaPendentesAprovacao" class="mt-2 space-y-2"></div></div>
+  <!-- CHAT ADMIN ADICIONADO -->
+  <div class="border-2 border-blue-500 p-3 rounded-xl mb-3 bg-white text-black"><h4 class="font-bold text-sm">💬 Chat Admin</h4><div id="chatAdmin" class="h-24 overflow-y-auto bg-gray-50 p-2 rounded mt-2 text-[11px] border"></div><div class="flex gap-1 mt-2"><input id="msgAdmin" placeholder="Mensagem" class="flex-1 border p-2 rounded text-xs text-black"><button onclick="enviarMsg('admin')" class="bg-blue-600 text-white px-3 rounded text-xs">Enviar</button></div></div>
   <div id="corridasAbertas" class="text-xs"></div><div id="listaMotoboysCodigos" class="text-xs mt-3"></div>
 </div>
 </div>
@@ -137,9 +160,13 @@ const storage = getStorage(app);
 let userLogado=null, userRoleReal=null, userStatus=null;
 let regraAtual = { baseLoj:10, extraLoj:2, baseMoto:7.5, extraMoto:1.5, baseSuper:15, extraSuper:3, baseSuperMoto:9.5, extraSuperMoto:2, retPerc:50, retMoto:2, dinLoj:4.5, dinMoto:3, bairros: {"Lagomar":{"loj":5,"moto":2.5},"Cavaleiros":{"loj":3,"moto":1.5},"Granja":{"loj":7,"moto":3.5},"Centro":{"loj":0,"moto":0}} };
 let docSaldoId=null, emailSaldoDoc=null;
+let veiculoSelecionado="MOTO";
 
 window.setAba = (aba)=>{ document.getElementById("abaEntrar").classList.toggle("hidden", aba!=="entrar"); document.getElementById("abaCadastrar").classList.toggle("hidden", aba!=="cadastrar"); };
 document.getElementById("tipoCadastro").addEventListener("change", e=>{ document.getElementById("boxDocsMotoboy").classList.toggle("hidden", e.target.value!=="MOTOBOY_MOTORISTA"); });
+window.setVeiculo = (v)=>{ veiculoSelecionado=v; document.getElementById("veiculo").value=v; ["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].forEach(id=>{ const b=document.getElementById("btn"+id); if(b){ b.classList.remove("bg-black","text-white"); if(id===v) b.classList.add("bg-black","text-white"); } }); calc(); };
+window.salvarNomeLoja=()=>{ if(!userLogado) return; localStorage.setItem("nomeLoja_"+userLogado.uid, document.getElementById("nomeSalaoLojista").value); localStorage.setItem("endLoja_"+userLogado.uid, document.getElementById("enderecoSalaoLojista").value); document.getElementById("nomeLojaTopo").innerText=document.getElementById("nomeSalaoLojista").value; };
+
 async function buscarRoleReal(user){
   try{ const d=await getDoc(doc(db,"motoristas", user.uid)); if(d.exists()){ return {role:"MOTOBOY_MOTORISTA", status:d.data().status||"PENDENTE"}; } }catch(e){}
   try{ const d=await getDoc(doc(db,"usuarios", user.uid)); if(d.exists()){ return {role:d.data().role||"LOJISTA", status:d.data().status||"PENDENTE"}; } }catch(e){}
@@ -161,12 +188,32 @@ onAuthStateChanged(auth, async (user)=>{
       return;
     }
     telaLogin.classList.add("hidden"); telaPendente.classList.add("hidden");
-    await carregarPrecos(); mostrarTelaPorRole(); carregarExtratos();
+    await carregarPrecos(); mostrarTelaPorRole(); carregarExtratos(); carregarChat(); escutarSaldoTempoReal();
+    const nomeSalvo=localStorage.getItem("nomeLoja_"+userLogado.uid); const endSalvo=localStorage.getItem("endLoja_"+userLogado.uid); if(nomeSalvo){ document.getElementById("nomeSalaoLojista").value=nomeSalvo; document.getElementById("nomeLojaTopo").innerText=nomeSalvo; } if(endSalvo) document.getElementById("enderecoSalaoLojista").value=endSalvo;
     if(["ADMIN","SUPORTE","FRANQUEADO"].includes(userRoleReal)){ carregarAbertas(); carregarPendentes(); carregarMotoboys(); }
     if(userRoleReal==="MOTOBOY_MOTORISTA") carregarEntregasMotoboy();
     if(userRoleReal==="SUPER_LOJISTA"){ tituloLojista.innerText="SUPER LOJISTA Divina"; document.getElementById("precisaSuper").checked=true; calc(); }
   } else { telaLogin.classList.remove("hidden"); telaPendente.classList.add("hidden"); }
 });
+
+function escutarSaldoTempoReal(){
+  if(!userLogado) return;
+  onSnapshot(doc(db,"usuarios",userLogado.uid), snap=>{
+    if(snap.exists()){
+      const d=snap.data();
+      const sLoj=(d.saldo_lojista||0).toFixed(2);
+      const sMoto=(d.saldo_motoboy||0).toFixed(2);
+      const elL=document.getElementById("saldoLojistaValor"); if(elL) elL.innerText=sLoj;
+      const elM=document.getElementById("saldoMotoboyValor"); if(elM) elM.innerText=sMoto;
+    }
+  });
+  onSnapshot(doc(db,"motoristas",userLogado.uid), snap=>{
+    if(snap.exists()){
+      const sMoto=(snap.data().saldo_motoboy||0).toFixed(2);
+      const elM=document.getElementById("saldoMotoboyValor"); if(elM) elM.innerText=sMoto;
+    }
+  });
+}
 
 window.fazerLogin = async ()=>{
   try{
@@ -265,12 +312,12 @@ window.calc = function(){
   if(ret){ lojista+=lojista*regraAtual.retPerc/100; moto+=regraAtual.retMoto; }
   if(din){ lojista+=regraAtual.dinLoj; moto+=regraAtual.dinMoto; }
   const el=document.getElementById("totalLojista"); if(el) el.innerText=lojista.toFixed(2);
-  return {lojista, moto, bairro, endereco: document.getElementById("enderecoCompletoLojista")?.value||"", ret, sup, din, taxaLoj, taxaMoto};
+  return {lojista, moto, bairro, endereco: document.getElementById("enderecoCompletoLojista")?.value||"", ret, sup, din, taxaLoj, taxaMoto, veiculo: veiculoSelecionado};
 };
 document.getElementById("enderecoCompletoLojista")?.addEventListener("input", calc);
 document.getElementById("precisaRetorno")?.addEventListener("change", calc);
 document.getElementById("precisaSuper")?.addEventListener("change", calc);
-window.salvarNomeLoja=()=>{ localStorage.setItem("nomeLoja_"+userLogado.uid, nomeSalaoLojista.value); nomeLojaTopo.innerText=nomeSalaoLojista.value; };
+window.salvarNomeLoja=()=>{ localStorage.setItem("nomeLoja_"+userLogado.uid, nomeSalaoLojista.value); nomeLojaTopo.innerText=nomeSalaoLojista.value; localStorage.setItem("endLoja_"+userLogado.uid, enderecoSalaoLojista.value); };
 window.buscarMotoboyPorCodigo = async ()=>{ const cod=codigoMotoboyDireto.value.trim().toUpperCase(); if(!cod) return; const q=await getDocs(query(collection(db,"motoristas"), where("codigo","==",cod))); if(q.empty){ alert("Não achou "+cod+" vai pra GERAL"); return; } const m=q.docs[0].data(); previewMotoboyDireto.classList.remove("hidden"); fotoPreviewDireto.src=m.foto_url||'https://i.pravatar.cc/100'; nomePreviewDireto.innerText=m.nome+" "+m.codigo; };
 
 window.buscarSaldo = async ()=>{
@@ -283,21 +330,41 @@ window.buscarSaldo = async ()=>{
   document.getElementById("boxEditarSaldo").classList.remove("hidden");
   document.getElementById("nomeSaldo").innerText=`${u.nome} - ${u.role} - ${u.codigo||''} - ${u.email}`;
   document.getElementById("codigoSaldo").innerText=`#0001 nunca repete | PIX 22997450131 | Loj R$${(u.saldo_lojista||0).toFixed(2)} Moto R$${(u.saldo_motoboy||0).toFixed(2)}`;
-  document.getElementById("inputSaldoLojista").value=u.saldo_lojista||0;
-  document.getElementById("inputSaldoMoto").value=u.saldo_motoboy||0;
+  document.getElementById("inputSaldoLojista").value=0;
+  document.getElementById("inputSaldoMoto").value=0;
 };
-window.salvarSaldo = async ()=>{
+window.adicionarSaldo = async ()=>{
   if(!docSaldoId){ alert("Busca primeiro"); return; }
-  const sLoj=Number(document.getElementById("inputSaldoLojista").value||0);
-  const sMoto=Number(document.getElementById("inputSaldoMoto").value||0);
-  await updateDoc(doc(db,"usuarios",docSaldoId),{saldo_lojista:sLoj, saldo_motoboy:sMoto});
-  try{ await updateDoc(doc(db,"usuarios",emailSaldoDoc),{saldo_lojista:sLoj, saldo_motoboy:sMoto}); }catch(e){}
-  try{ await updateDoc(doc(db,"motoristas",docSaldoId),{saldo_motoboy:sMoto, saldo_lojista:sLoj}); }catch(e){}
-  alert(`✅ Saldo real salvo! Loj R$ ${sLoj.toFixed(2)} Moto R$ ${sMoto.toFixed(2)}`);
+  const sLoj=Math.abs(Number(document.getElementById("inputSaldoLojista").value||0));
+  const sMoto=Math.abs(Number(document.getElementById("inputSaldoMoto").value||0));
+  if(!sLoj &&!sMoto){ alert("Digite valor"); return; }
+  const snap=await getDoc(doc(db,"usuarios",docSaldoId));
+  const atual=snap.data();
+  const novoLoj=(atual.saldo_lojista||0)+sLoj;
+  const novoMoto=(atual.saldo_motoboy||0)+sMoto;
+  await updateDoc(doc(db,"usuarios",docSaldoId),{saldo_lojista:novoLoj, saldo_motoboy:novoMoto});
+  try{ await updateDoc(doc(db,"usuarios",emailSaldoDoc),{saldo_lojista:novoLoj, saldo_motoboy:novoMoto}); }catch(e){}
+  try{ await updateDoc(doc(db,"motoristas",docSaldoId),{saldo_motoboy:novoMoto, saldo_lojista:novoLoj}); }catch(e){}
+  alert(`+ Loj R$${sLoj} Moto R$${sMoto} - Novo Loj R$${novoLoj.toFixed(2)} Moto R$${novoMoto.toFixed(2)} - Atualiza na hora`);
 };
+window.removerSaldo = async ()=>{
+  if(!docSaldoId){ alert("Busca primeiro"); return; }
+  const sLoj=Math.abs(Number(document.getElementById("inputSaldoLojista").value||0));
+  const sMoto=Math.abs(Number(document.getElementById("inputSaldoMoto").value||0));
+  if(!sLoj &&!sMoto){ alert("Digite valor"); return; }
+  const snap=await getDoc(doc(db,"usuarios",docSaldoId));
+  const atual=snap.data();
+  const novoLoj=(atual.saldo_lojista||0)-sLoj;
+  const novoMoto=(atual.saldo_motoboy||0)-sMoto;
+  await updateDoc(doc(db,"usuarios",docSaldoId),{saldo_lojista:novoLoj, saldo_motoboy:novoMoto});
+  try{ await updateDoc(doc(db,"usuarios",emailSaldoDoc),{saldo_lojista:novoLoj, saldo_motoboy:novoMoto}); }catch(e){}
+  try{ await updateDoc(doc(db,"motoristas",docSaldoId),{saldo_motoboy:novoMoto, saldo_lojista:novoLoj}); }catch(e){}
+  alert(`- Loj R$${sLoj} Moto R$${sMoto} - Novo Loj R$${novoLoj.toFixed(2)}`);
+};
+window.salvarSaldo = window.adicionarSaldo;
 
 window.criarPedido = async ()=>{
-  const {lojista, moto, bairro, endereco, ret, sup, din, taxaLoj, taxaMoto}=calc();
+  const {lojista, moto, bairro, endereco, ret, sup, din, taxaLoj, taxaMoto, veiculo}=calc();
   if(!endereco){ alert("Endereço"); return; }
   const userSnap=await getDoc(doc(db,"usuarios",userLogado.uid));
   const saldoAtual=userSnap.data()?.saldo_lojista?? 0;
@@ -309,18 +376,18 @@ window.criarPedido = async ()=>{
     const q=await getDocs(query(collection(db,"motoristas"), where("codigo","==",codDir)));
     if(!q.empty){ motId=q.docs[0].id; st="DIRETO_"+codDir; tipo="DIRETO"; } else { alert(`Motoboy ${codDir} não achado, vai pra GERAL`); }
   }
-  await addDoc(collection(db,"pedidos"),{owner_id:userLogado.uid,nome_loja:nomeSalaoLojista.value||"Mara/Divina",endereco_completo:endereco,bairro:bairro||"Centro",taxa_loja:taxaLoj,taxa_moto:taxaMoto,precisa_retorno:ret,precisa_super:sup,precisa_dinamica:din,valor_lojista:lojista,valor_motoboy:moto,margem:lojista-moto,codigo_secreto:cod,motorista_id:motId,codigo_motoboy_solicitado:codDir||"GERAL",tipo_envio:tipo,tipo_lojista:userRoleReal,pix_oficial:"22997450131",status:st,criado_em:Timestamp.now()});
+  await addDoc(collection(db,"pedidos"),{owner_id:userLogado.uid,nome_loja:nomeSalaoLojista.value||"Mara/Divina",endereco_completo:endereco,endereco_loja:enderecoSalaoLojista.value,bairro:bairro||"Centro",taxa_loja:taxaLoj,taxa_moto:taxaMoto,precisa_retorno:ret,precisa_super:sup,precisa_dinamica:din,valor_lojista:lojista,valor_motoboy:moto,margem:lojista-moto,codigo_secreto:cod,motorista_id:motId,codigo_motoboy_solicitado:codDir||"GERAL",tipo_envio:tipo,tipo_lojista:userRoleReal,veiculo:veiculo,pix_oficial:"22997450131",status:st,criado_em:Timestamp.now()});
   const novoSaldo = saldoAtual - lojista;
   try{ await updateDoc(doc(db,"usuarios",userLogado.uid),{saldo_lojista: novoSaldo}); await updateDoc(doc(db,"usuarios",userLogado.email),{saldo_lojista: novoSaldo}); }catch(e){}
   document.getElementById("saldoLojistaValor").innerText = novoSaldo.toFixed(2);
-  alert(`✅ ${tipo} criado! Cód ${cod} Disparou ${tipo==="DIRETO"?"sozinho pro "+codDir:"pra GERAL sozinho"} Descontou R$ ${lojista.toFixed(2)} Saldo agora R$ ${novoSaldo.toFixed(2)}`);
+  alert(`✅ ${tipo} ${veiculo} criado! Cód ${cod} Descontou R$ ${lojista.toFixed(2)} Saldo agora R$ ${novoSaldo.toFixed(2)}`);
   codigoMotoboyDireto.value=""; previewMotoboyDireto.classList.add("hidden");
 };
 
 async function carregarPendentes(){ onSnapshot(collection(db,"usuarios"), snap=>{ let h=""; snap.forEach(d=>{ const u=d.data(); if(u.status==="PENDENTE"){ h+=`<div class="border-2 border-yellow-500 bg-white p-2 rounded"><div class="flex justify-between"><b>${u.nome} ${u.codigo||''}</b><span class="text-[10px]">${u.role}</span></div><div class="text-[10px]">${u.email} - Loj R$${(u.saldo_lojista||0).toFixed(2)} Moto R$${(u.saldo_motoboy||0).toFixed(2)}</div><div class="flex gap-1 mt-2"><button onclick="aprovarUsuario('${d.id}')" class="flex-1 bg-green-600 text-white py-2 rounded font-bold text-xs">✅ APROVAR</button><button onclick="reprovarUsuario('${d.id}')" class="bg-red-600 text-white px-3 py-2 rounded text-xs">❌</button></div></div>`; } }); document.getElementById("listaPendentesAprovacao").innerHTML=h||"Nenhum"; }); }
 window.aprovarUsuario = async (id)=>{ await updateDoc(doc(db,"usuarios", id), {status:"APROVADO"}); try{ await updateDoc(doc(db,"motoristas", id), {status:"APROVADO"}); }catch(e){} };
 window.reprovarUsuario = async (id)=>{ if(!confirm("Reprovar?")) return; await setDoc(doc(db,"usuarios", id), {status:"REPROVADO"}, {merge:true}); };
-async function carregarAbertas(){ onSnapshot(collection(db,"pedidos"), s=>{ let h=""; s.forEach(d=>{ const p=d.data(); if(p.status==="AGUARDANDO" || p.status.startsWith("DIRETO")){ h+=`<div class="border p-2 rounded bg-white mb-2"><b>${p.nome_loja||""}</b> ${p.endereco_completo} LOJA R$${p.valor_lojista?.toFixed(2)} MOTO R$${p.valor_motoboy?.toFixed(2)} CÓD:${p.codigo_secreto} ${p.tipo_envio}<br><button onclick="aceitarCorrida('${d.id}')" class="bg-green-500 text-white px-2 py-1 rounded text-xs">ACEITAR</button></div>`; } }); document.getElementById("corridasAbertas").innerHTML=h; }); }
+async function carregarAbertas(){ onSnapshot(collection(db,"pedidos"), s=>{ let h=""; s.forEach(d=>{ const p=d.data(); if(p.status==="AGUARDANDO" || p.status.startsWith("DIRETO")){ h+=`<div class="border p-2 rounded bg-white mb-2"><b>${p.nome_loja||""} ${p.veiculo||""}</b> ${p.endereco_completo} LOJA R$${p.valor_lojista?.toFixed(2)} MOTO R$${p.valor_motoboy?.toFixed(2)} CÓD:${p.codigo_secreto} ${p.tipo_envio}<br><button onclick="aceitarCorrida('${d.id}')" class="bg-green-500 text-white px-2 py-1 rounded text-xs">ACEITAR</button></div>`; } }); document.getElementById("corridasAbertas").innerHTML=h; }); }
 async function carregarMotoboys(){ const s=await getDocs(collection(db,"motoristas")); let h=""; s.forEach(d=>{ const m=d.data(); h+=`<div class="border p-1 rounded bg-white mb-1 text-[11px]"><b>${m.codigo}</b> ${m.nome} ${m.status} Saldo R$${(m.saldo_motoboy||0).toFixed(2)}</div>`; }); document.getElementById("listaMotoboysCodigos").innerHTML=h; }
 
 async function carregarEntregasMotoboy(){
@@ -335,7 +402,7 @@ async function carregarEntregasMotoboy(){
       const isGeral=p.codigo_motoboy_solicitado==="GERAL" && p.status==="AGUARDANDO";
       const isMeu=p.motorista_id===userLogado.uid && p.status!=="ENTREGUE";
       if(isGeral||isMeu){
-        h+=`<div class="border p-2 rounded bg-white mb-2">📍 ${p.endereco_completo} <br><b>R$ ${p.valor_motoboy?.toFixed(2)}</b> CÓD ${p.codigo_secreto} ${p.tipo_envio}<br><button onclick="aceitarCorrida('${d.id}')" class="w-full bg-black text-white py-2 rounded mt-2">ACEITAR</button></div>`;
+        h+=`<div class="border p-2 rounded bg-white mb-2">📍 ${p.endereco_completo} ${p.veiculo||""}<br><b>R$ ${p.valor_motoboy?.toFixed(2)}</b> CÓD ${p.codigo_secreto} ${p.tipo_envio}<br><button onclick="aceitarCorrida('${d.id}')" class="w-full bg-black text-white py-2 rounded mt-2">ACEITAR</button></div>`;
       }
     });
     document.getElementById("listaEntregasMotoboy").innerHTML=h||"Nenhuma";
@@ -376,6 +443,28 @@ window.confirmarEntrega = async ()=>{
   }catch(e){ alert("Entregue! Erro saldo: "+e.message); }
 };
 
+window.enviarMsg = async (quem)=>{
+  const idInput = quem==="motoboy"? "msgMotoboy" : quem==="admin"? "msgAdmin" : "msgLojista";
+  const input=document.getElementById(idInput);
+  const texto=input.value.trim(); if(!texto) return;
+  await addDoc(collection(db,"chat_geral"),{texto, quem, nome:userLogado.email, role:userRoleReal, uid:userLogado.uid, criado_em:Timestamp.now()});
+  input.value="";
+};
+function carregarChat(){
+  onSnapshot(query(collection(db,"pedidos"), where("owner_id","==",userLogado?.uid||"x")), ()=>{}); // dummy to keep same
+  import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(m=>{
+    onSnapshot(query(collection(db,"chat_geral")), snap=>{
+      let html=""; snap.forEach(d=>{ const c=d.data(); html+=`<div class="mb-1"><b class="${c.role==="ADMIN"?"text-red-600":"text-blue-600"}">${c.nome?.split('@')[0]}:</b> ${c.texto}</div>`; });
+      ["chatLojista","chatMotoboy","chatAdmin"].forEach(id=>{ const el=document.getElementById(id); if(el){ el.innerHTML=html; el.scrollTop=el.scrollHeight; } });
+    });
+  });
+  // fallback chat listener
+  onSnapshot(collection(db,"chat_geral"), snap=>{
+    let html=""; snap.forEach(d=>{ const c=d.data(); html+=`<div class="mb-1"><b>${c.nome?.split('@')[0]}:</b> ${c.texto}</div>`; });
+    ["chatLojista","chatMotoboy","chatAdmin"].forEach(id=>{ const el=document.getElementById(id); if(el){ el.innerHTML=html; } });
+  });
+}
+
 function calcKm(lat1, lon1, lat2, lon2){
   const R=6371; const dLat=(lat2-lat1)*Math.PI/180; const dLon=(lon2-lon1)*Math.PI/180;
   const a=Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
@@ -401,15 +490,11 @@ async function carregarExtratos(){
           let taxa = typeof v==='number'? v : (v.loj||0);
           kmEst = taxa>0? taxa/2 + 1.5 : 2.5;
         }
-        if(p.moto_lat && p.moto_lng){
-          // Se tiver GPS real, calcula, senão usa estimativa por bairro
-          kmEst = kmEst;
-        }
         let minEst = Math.ceil(kmEst * 3);
         extraInfo = `<div class="bg-green-50 border-2 border-green-600 p-2 rounded mt-2">
-          <b class="text-green-700 text-sm">✅ ${p.motorista_codigo||'#0001'} ACEITOU!</b><br>
+          <b class="text-green-700 text-sm">✅ ${p.motorista_codigo||'#0001'} ACEITOU! ${p.veiculo||""}</b><br>
           <span class="font-bold">🏍️ ${p.motorista_nome||'Motoboy'}</span><br>
-          📍 Está a <b>${kmEst.toFixed(1)} km</b> - <b>${minEst} min</b> até sua loja<br>
+          📍 Está a <b>${kmEst.toFixed(1)} km</b> - <b>${minEst} min</b> até sua loja ${p.endereco_loja||""}<br>
           <span class="text-[9px] bg-black text-white px-1 rounded">CÓD CLIENTE: ${p.codigo_secreto} | ${p.bairro}</span>
         </div>`;
       }
@@ -417,7 +502,7 @@ async function carregarExtratos(){
         extraInfo = `<div class="bg-blue-50 p-1 rounded text-[10px] mt-1">✅ ENTREGUE - R$ ${p.valor_motoboy?.toFixed(2)} foi pro saldo do motoboy</div>`;
       }
       html+=`<div class="border p-2 rounded bg-white mb-2 text-xs">
-        <b>${p.endereco_completo}</b> - ${p.bairro} - ${p.tipo_envio}<br>
+        <b>${p.endereco_completo}</b> - ${p.bairro} - ${p.tipo_envio} - ${p.veiculo||"MOTO"}<br>
         <b>R$ ${Number(p.valor_lojista||0).toFixed(2)}</b> | Cód: <b>${p.codigo_secreto}</b> | Status: ${p.status}
         ${extraInfo}
       </div>`;
