@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anjos Flash - KM MINUTOS</title>
+<title>Anjos Flash - PIX Lojista + Chat</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
 <div id="telaLogin" class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
   <div class="bg-white p-6 rounded-xl w-full max-w-sm">
     <h2 class="font-bold text-xl text-center">🏍️ Anjos <span class="text-orange-500">Flash</span></h2>
-    <p class="text-[10px] text-center bg-black text-white p-1 rounded mt-2">PIX: 22997450131 | #0001 nunca repete | 4 docs</p>
+    <p class="text-[10px] text-center bg-black text-white p-1 rounded mt-2">#0001 nunca repete | 4 docs</p>
     <div class="flex gap-2 my-3">
       <button onclick="setAba('entrar')" class="flex-1 bg-black text-white py-2 rounded text-sm">ENTRAR</button>
       <button onclick="setAba('cadastrar')" class="flex-1 border py-2 rounded text-sm">CRIAR</button>
@@ -71,9 +71,13 @@
 
 <div id="telaLojista" class="p-4 hidden">
   <div class="bg-blue-600 text-white p-2 rounded text-center mb-3 text-sm font-bold">🏪 <span id="tituloLojista">LOJISTA Mara</span></div>
+  <div class="bg-yellow-400 text-black p-2 rounded text-center mb-3 font-bold text-xs border-2 border-black">
+    💳 PIX RECARGA: 22997459131
+  </div>
   <div class="bg-black text-white p-4 rounded-xl mb-3 text-center border-2 border-blue-500">
     <p class="text-[11px] opacity-70">MEU SALDO REAL - Só cria se tiver saldo</p>
     <p class="font-bold text-2xl text-yellow-400">R$ <span id="saldoLojistaValor">0.00</span></p>
+    <p class="text-[9px] mt-1">Recarga PIX 22997459131 - Envie comprovante no WhatsApp</p>
   </div>
   <div class="bg-black text-white p-3 rounded-xl mb-3">
     <input id="nomeSalaoLojista" placeholder="Nome da loja" class="w-full p-2 rounded text-black text-sm mb-2" oninput="salvarNomeLoja()">
@@ -126,7 +130,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, doc, setDoc, getDoc, Timestamp, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, doc, setDoc, getDoc, Timestamp, updateDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 const firebaseConfig = { apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44", authDomain: "anjos-flash.firebaseapp.com", projectId: "anjos-flash", storageBucket: "anjos-flash.firebasestorage.app", messagingSenderId: "725133182752", appId: "1:725133182752:web:5f9a98fa97269dcdcab945" };
@@ -140,40 +144,65 @@ let docSaldoId=null, emailSaldoDoc=null;
 
 window.setAba = (aba)=>{ document.getElementById("abaEntrar").classList.toggle("hidden", aba!=="entrar"); document.getElementById("abaCadastrar").classList.toggle("hidden", aba!=="cadastrar"); };
 document.getElementById("tipoCadastro").addEventListener("change", e=>{ document.getElementById("boxDocsMotoboy").classList.toggle("hidden", e.target.value!=="MOTOBOY_MOTORISTA"); });
+
 async function buscarRoleReal(user){
-  try{ const d=await getDoc(doc(db,"motoristas", user.uid)); if(d.exists()){ return {role:"MOTOBOY_MOTORISTA", status:d.data().status||"PENDENTE"}; } }catch(e){}
-  try{ const d=await getDoc(doc(db,"usuarios", user.uid)); if(d.exists()){ return {role:d.data().role||"LOJISTA", status:d.data().status||"PENDENTE"}; } }catch(e){}
-  try{ const d=await getDoc(doc(db,"usuarios", user.email)); if(d.exists()){ return {role:d.data().role||"LOJISTA", status:d.data().status||"PENDENTE"}; } }catch(e){}
+  try{
+    const d=await getDoc(doc(db,"usuarios", user.email));
+    if(d.exists()){ return {role:d.data().role, status:d.data().status||"PENDENTE"}; }
+  }catch(e){}
+  try{
+    const d=await getDoc(doc(db,"usuarios", user.uid));
+    if(d.exists()){ return {role:d.data().role, status:d.data().status||"PENDENTE"}; }
+  }catch(e){}
+  try{
+    const d=await getDoc(doc(db,"motoristas", user.uid));
+    if(d.exists()){ return {role:"MOTOBOY_MOTORISTA", status:d.data().status||"PENDENTE"}; }
+  }catch(e){}
   return {role:"LOJISTA", status:"PENDENTE"};
 }
-function normalizaRole(r){ r=(r||"").toLowerCase(); if(r.includes("moto")) return "MOTOBOY_MOTORISTA"; if(r.includes("admin")) return "ADMIN"; if(r.includes("super")) return "SUPER_LOJISTA"; if(r.includes("franque")) return "FRANQUEADO"; if(r.includes("suporte")) return "SUPORTE"; return "LOJISTA"; }
+function normalizaRole(r){
+  r=(r||"").toLowerCase();
+  if(r.includes("moto")) return "MOTOBOY_MOTORISTA";
+  if(r.includes("admin")) return "ADMIN";
+  if(r.includes("super")) return "SUPER_LOJISTA";
+  if(r.includes("franque")) return "FRANQUEADO";
+  if(r.includes("suporte")) return "SUPORTE";
+  return "LOJISTA";
+}
 
 onAuthStateChanged(auth, async (user)=>{
   if(user){
     userLogado=user;
     const res = await buscarRoleReal(user);
     userRoleReal=normalizaRole(res.role);
-    userStatus=res.status||"PENDENTE";
+    userStatus=(res.status||"PENDENTE").toUpperCase();
     roleRealBadge.innerText=userRoleReal+" - "+userStatus;
-    if(userStatus!=="APROVADO" && userRoleReal!=="ADMIN"){
+    if(userRoleReal==="ADMIN"){
+      telaLogin.classList.add("hidden"); telaPendente.classList.add("hidden");
+      await carregarPrecos(); mostrarTelaPorRole(); carregarExtratos();
+      carregarAbertas(); carregarPendentes(); carregarMotoboys();
+      return;
+    }
+    if(userStatus!=="APROVADO"){
       telaLogin.classList.add("hidden"); telaPendente.classList.remove("hidden");
-      pendenteRole.innerText="Role: "+userRoleReal+" Status: "+userStatus+" PIX 22997450131";
+      pendenteRole.innerText=`Role: ${userRoleReal} Status: ${userStatus} | ${user.email} - Aguarde admin aprovar`;
       return;
     }
     telaLogin.classList.add("hidden"); telaPendente.classList.add("hidden");
     await carregarPrecos(); mostrarTelaPorRole(); carregarExtratos();
     if(["ADMIN","SUPORTE","FRANQUEADO"].includes(userRoleReal)){ carregarAbertas(); carregarPendentes(); carregarMotoboys(); }
     if(userRoleReal==="MOTOBOY_MOTORISTA") carregarEntregasMotoboy();
-    if(userRoleReal==="SUPER_LOJISTA"){ tituloLojista.innerText="SUPER LOJISTA Divina"; document.getElementById("precisaSuper").checked=true; calc(); }
+    if(userRoleReal==="SUPER_LOJISTA"){
+      const t=document.getElementById("tituloLojista"); if(t) t.innerText="SUPER LOJISTA Divina";
+      const cb=document.getElementById("precisaSuper"); if(cb){ cb.checked=true; } calc();
+    }
   } else { telaLogin.classList.remove("hidden"); telaPendente.classList.add("hidden"); }
 });
 
 window.fazerLogin = async ()=>{
-  try{
-    const cred=await signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginSenha.value.trim());
-    const res=await buscarRoleReal(cred.user);
-    if(res.status!=="APROVADO" && normalizaRole(res.role)!=="ADMIN"){ msgLogin.innerText="⏳ Pendente!"; await signOut(auth); return; }
-  }catch(e){ msgLogin.innerText="Erro: "+e.message; }
+  const email = loginEmail.value.trim(); const senha = loginSenha.value.trim();
+  if(!email||!senha){ msgLogin.innerText="Digite email e senha"; return; }
+  try{ await signInWithEmailAndPassword(auth, email, senha); msgLogin.innerText=""; }catch(e){ msgLogin.innerText="Erro: "+e.message; }
 };
 
 window.fazerCadastro = async ()=>{
@@ -189,15 +218,13 @@ window.fazerCadastro = async ()=>{
     const docs={ cnh: await up(cadFileCNH.files[0],"CNH"), crlv: await up(cadFileCRLV.files[0],"CRLV"), antt: await up(cadFileANTT.files[0],"ANTT"), selfie: await up(cadFileSelfie.files[0],"SELFIE") };
     let codigoMotoboy=null;
     if(tipo==="MOTOBOY_MOTORISTA"){
-      const todos=await getDocs(collection(db,"motoristas"));
-      let maxNum=0; todos.forEach(d=>{ const num=parseInt((d.data().codigo||"#0000").replace("#",""))||0; if(num>maxNum) maxNum=num; });
+      const todos=await getDocs(collection(db,"motoristas")); let maxNum=0; todos.forEach(d=>{ const num=parseInt((d.data().codigo||"#0000").replace("#",""))||0; if(num>maxNum) maxNum=num; });
       codigoMotoboy="#"+String(maxNum+1).padStart(4,'0');
     }
     const dados={userId:cred.user.uid,nome,email,role:tipo,codigo:codigoMotoboy,docs,status:"PENDENTE",saldo_lojista:0,saldo_motoboy:0,criadoEm:Timestamp.now()};
-    await setDoc(doc(db,"usuarios",cred.user.uid),dados);
-    await setDoc(doc(db,"usuarios",email),dados);
+    await setDoc(doc(db,"usuarios",cred.user.uid),dados); await setDoc(doc(db,"usuarios",email),dados);
     if(tipo==="MOTOBOY_MOTORISTA") await setDoc(doc(db,"motoristas",cred.user.uid),{...dados,foto_url:docs.selfie,criado_em:Timestamp.now()},{merge:true});
-    await signOut(auth); alert("Enviado! Saldo R$ 0.00 - PIX 22997450131"); location.reload();
+    await signOut(auth); alert("Enviado! Saldo R$ 0.00"); location.reload();
   }catch(e){ alert("Erro: "+e.message); }
 };
 
@@ -226,12 +253,10 @@ async function carregarPrecos(){
   }catch(e){} renderBairros(); calc();
 }
 function renderBairros(){
-  let h="";
-  Object.entries(regraAtual.bairros||{}).forEach(([n,v])=>{
+  let h=""; Object.entries(regraAtual.bairros||{}).forEach(([n,v])=>{
     let loj=0,moto=0; if(typeof v==='number'){ loj=v; moto=v*0.5; } else { loj=v.loj||0; moto=v.moto||0; }
     h+=`<div class="bg-white/90 p-2 rounded mb-1 border"><div class="flex justify-between"><b class="text-black">${n}</b><button onclick="delBairro('${n}')" class="bg-red-500 text-white px-2 py-1 rounded text-[10px]">X</button></div><div class="grid grid-cols-2 gap-2 mt-1"><div><label class="text-[9px]">Cobrar LOJA</label><input type="number" step="0.5" value="${loj}" onchange="updateBairroValor('${n}','loj',this.value)" class="border p-1 rounded w-full text-xs text-black"></div><div><label class="text-[9px]">Pagar MOTO</label><input type="number" step="0.5" value="${moto}" onchange="updateBairroValor('${n}','moto',this.value)" class="border p-1 rounded w-full text-xs text-black"></div></div></div>`;
-  });
-  document.getElementById("listaBairrosAdmin").innerHTML=h;
+  }); document.getElementById("listaBairrosAdmin").innerHTML=h;
 }
 window.updateBairroValor = async (nome, tipo, valor)=>{
   if(!regraAtual.bairros[nome]) regraAtual.bairros[nome]={loj:0,moto:0};
@@ -241,11 +266,9 @@ window.updateBairroValor = async (nome, tipo, valor)=>{
 };
 window.addBairroDuplo = async ()=>{
   const n=nomeBairroNovo.value.trim(); const vLoj=Number(valorBairroNovoLojista.value||0); const vMoto=Number(valorBairroNovoMotoboy.value||0);
-  if(!n){ alert("Nome bairro"); return; }
-  regraAtual.bairros[n]={loj:vLoj, moto:vMoto};
+  if(!n){ alert("Nome bairro"); return; } regraAtual.bairros[n]={loj:vLoj, moto:vMoto};
   await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true});
-  nomeBairroNovo.value=""; valorBairroNovoLojista.value=""; valorBairroNovoMotoboy.value="";
-  renderBairros(); calc();
+  nomeBairroNovo.value=""; valorBairroNovoLojista.value=""; valorBairroNovoMotoboy.value=""; renderBairros(); calc();
 };
 window.delBairro = async (n)=>{ if(!confirm("Apagar "+n+"?")) return; delete regraAtual.bairros[n]; await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true}); renderBairros(); calc(); };
 window.salvarPrecosNovo = async ()=>{
@@ -274,22 +297,17 @@ window.salvarNomeLoja=()=>{ localStorage.setItem("nomeLoja_"+userLogado.uid, nom
 window.buscarMotoboyPorCodigo = async ()=>{ const cod=codigoMotoboyDireto.value.trim().toUpperCase(); if(!cod) return; const q=await getDocs(query(collection(db,"motoristas"), where("codigo","==",cod))); if(q.empty){ alert("Não achou "+cod+" vai pra GERAL"); return; } const m=q.docs[0].data(); previewMotoboyDireto.classList.remove("hidden"); fotoPreviewDireto.src=m.foto_url||'https://i.pravatar.cc/100'; nomePreviewDireto.innerText=m.nome+" "+m.codigo; };
 
 window.buscarSaldo = async ()=>{
-  const email=emailSaldo.value.trim();
-  if(!email){ alert("Digite email"); return; }
-  const q=await getDocs(query(collection(db,"usuarios"), where("email","==",email)));
-  if(q.empty){ alert("Não achou"); return; }
-  const d=q.docs[0]; docSaldoId=d.id; emailSaldoDoc=d.data().email;
-  const u=d.data();
+  const email=emailSaldo.value.trim(); if(!email){ alert("Digite email"); return; }
+  const q=await getDocs(query(collection(db,"usuarios"), where("email","==",email))); if(q.empty){ alert("Não achou"); return; }
+  const d=q.docs[0]; docSaldoId=d.id; emailSaldoDoc=d.data().email; const u=d.data();
   document.getElementById("boxEditarSaldo").classList.remove("hidden");
   document.getElementById("nomeSaldo").innerText=`${u.nome} - ${u.role} - ${u.codigo||''} - ${u.email}`;
-  document.getElementById("codigoSaldo").innerText=`#0001 nunca repete | PIX 22997450131 | Loj R$${(u.saldo_lojista||0).toFixed(2)} Moto R$${(u.saldo_motoboy||0).toFixed(2)}`;
-  document.getElementById("inputSaldoLojista").value=u.saldo_lojista||0;
-  document.getElementById("inputSaldoMoto").value=u.saldo_motoboy||0;
+  document.getElementById("codigoSaldo").innerText=`#0001 nunca repete | Loj R$${(u.saldo_lojista||0).toFixed(2)} Moto R$${(u.saldo_motoboy||0).toFixed(2)}`;
+  document.getElementById("inputSaldoLojista").value=u.saldo_lojista||0; document.getElementById("inputSaldoMoto").value=u.saldo_motoboy||0;
 };
 window.salvarSaldo = async ()=>{
   if(!docSaldoId){ alert("Busca primeiro"); return; }
-  const sLoj=Number(document.getElementById("inputSaldoLojista").value||0);
-  const sMoto=Number(document.getElementById("inputSaldoMoto").value||0);
+  const sLoj=Number(document.getElementById("inputSaldoLojista").value||0); const sMoto=Number(document.getElementById("inputSaldoMoto").value||0);
   await updateDoc(doc(db,"usuarios",docSaldoId),{saldo_lojista:sLoj, saldo_motoboy:sMoto});
   try{ await updateDoc(doc(db,"usuarios",emailSaldoDoc),{saldo_lojista:sLoj, saldo_motoboy:sMoto}); }catch(e){}
   try{ await updateDoc(doc(db,"motoristas",docSaldoId),{saldo_motoboy:sMoto, saldo_lojista:sLoj}); }catch(e){}
@@ -299,43 +317,52 @@ window.salvarSaldo = async ()=>{
 window.criarPedido = async ()=>{
   const {lojista, moto, bairro, endereco, ret, sup, din, taxaLoj, taxaMoto}=calc();
   if(!endereco){ alert("Endereço"); return; }
-  const userSnap=await getDoc(doc(db,"usuarios",userLogado.uid));
-  const saldoAtual=userSnap.data()?.saldo_lojista?? 0;
-  if(saldoAtual < lojista){ alert(`❌ SALDO INSUFICIENTE! Seu saldo real: R$ ${saldoAtual.toFixed(2)} Pedido: R$ ${lojista.toFixed(2)} Recarrega PIX 22997450131`); return; }
-  const cod=Math.floor(1000+Math.random()*9000).toString();
-  const codDir=codigoMotoboyDireto.value.trim().toUpperCase();
+  const userSnap=await getDoc(doc(db,"usuarios",userLogado.uid)); const saldoAtual=userSnap.data()?.saldo_lojista?? 0;
+  if(saldoAtual < lojista){ alert(`❌ SALDO INSUFICIENTE! Seu saldo: R$ ${saldoAtual.toFixed(2)} Pedido: R$ ${lojista.toFixed(2)} Recarrega PIX 22997459131`); return; }
+  const cod=Math.floor(1000+Math.random()*9000).toString(); const codDir=codigoMotoboyDireto.value.trim().toUpperCase();
   let motId=null, st="AGUARDANDO", tipo="GERAL";
   if(codDir){
     const q=await getDocs(query(collection(db,"motoristas"), where("codigo","==",codDir)));
     if(!q.empty){ motId=q.docs[0].id; st="DIRETO_"+codDir; tipo="DIRETO"; } else { alert(`Motoboy ${codDir} não achado, vai pra GERAL`); }
   }
-  await addDoc(collection(db,"pedidos"),{owner_id:userLogado.uid,nome_loja:nomeSalaoLojista.value||"Mara/Divina",endereco_completo:endereco,bairro:bairro||"Centro",taxa_loja:taxaLoj,taxa_moto:taxaMoto,precisa_retorno:ret,precisa_super:sup,precisa_dinamica:din,valor_lojista:lojista,valor_motoboy:moto,margem:lojista-moto,codigo_secreto:cod,motorista_id:motId,codigo_motoboy_solicitado:codDir||"GERAL",tipo_envio:tipo,tipo_lojista:userRoleReal,pix_oficial:"22997450131",status:st,criado_em:Timestamp.now()});
+  await addDoc(collection(db,"pedidos"),{owner_id:userLogado.uid,nome_loja:nomeSalaoLojista.value||"Mara/Divina",endereco_completo:endereco,bairro:bairro||"Centro",taxa_loja:taxaLoj,taxa_moto:taxaMoto,precisa_retorno:ret,precisa_super:sup,precisa_dinamica:din,valor_lojista:lojista,valor_motoboy:moto,margem:lojista-moto,codigo_secreto:cod,motorista_id:motId,codigo_motoboy_solicitado:codDir||"GERAL",tipo_envio:tipo,tipo_lojista:userRoleReal,pix_oficial:"22997459131",status:st,criado_em:Timestamp.now()});
   const novoSaldo = saldoAtual - lojista;
   try{ await updateDoc(doc(db,"usuarios",userLogado.uid),{saldo_lojista: novoSaldo}); await updateDoc(doc(db,"usuarios",userLogado.email),{saldo_lojista: novoSaldo}); }catch(e){}
   document.getElementById("saldoLojistaValor").innerText = novoSaldo.toFixed(2);
-  alert(`✅ ${tipo} criado! Cód ${cod} Disparou ${tipo==="DIRETO"?"sozinho pro "+codDir:"pra GERAL sozinho"} Descontou R$ ${lojista.toFixed(2)} Saldo agora R$ ${novoSaldo.toFixed(2)}`);
+  alert(`✅ ${tipo} criado! Cód ${cod} Saldo agora R$ ${novoSaldo.toFixed(2)} | PIX 22997459131`);
   codigoMotoboyDireto.value=""; previewMotoboyDireto.classList.add("hidden");
 };
 
 async function carregarPendentes(){ onSnapshot(collection(db,"usuarios"), snap=>{ let h=""; snap.forEach(d=>{ const u=d.data(); if(u.status==="PENDENTE"){ h+=`<div class="border-2 border-yellow-500 bg-white p-2 rounded"><div class="flex justify-between"><b>${u.nome} ${u.codigo||''}</b><span class="text-[10px]">${u.role}</span></div><div class="text-[10px]">${u.email} - Loj R$${(u.saldo_lojista||0).toFixed(2)} Moto R$${(u.saldo_motoboy||0).toFixed(2)}</div><div class="flex gap-1 mt-2"><button onclick="aprovarUsuario('${d.id}')" class="flex-1 bg-green-600 text-white py-2 rounded font-bold text-xs">✅ APROVAR</button><button onclick="reprovarUsuario('${d.id}')" class="bg-red-600 text-white px-3 py-2 rounded text-xs">❌</button></div></div>`; } }); document.getElementById("listaPendentesAprovacao").innerHTML=h||"Nenhum"; }); }
-window.aprovarUsuario = async (id)=>{ await updateDoc(doc(db,"usuarios", id), {status:"APROVADO"}); try{ await updateDoc(doc(db,"motoristas", id), {status:"APROVADO"}); }catch(e){} };
+window.aprovarUsuario = async (id)=>{
+  try{
+    const snap = await getDoc(doc(db,"usuarios", id)); if(!snap.exists()) return;
+    const u = snap.data(); const uid = u.userId || id; const email = u.email;
+    await updateDoc(doc(db,"usuarios", id), {status:"APROVADO"});
+    if(uid && uid!==id) try{ await setDoc(doc(db,"usuarios", uid), {status:"APROVADO"}, {merge:true}); }catch(e){}
+    if(email && email!==id) try{ await setDoc(doc(db,"usuarios", email), {status:"APROVADO"}, {merge:true}); }catch(e){}
+    if(uid) try{ await setDoc(doc(db,"motoristas", uid), {status:"APROVADO"}, {merge:true}); }catch(e){}
+    alert(`✅ ${u.nome} ${u.codigo||''} APROVADO! Agora ${email} loga`);
+  }catch(e){ alert("Erro aprovar: "+e.message); }
+};
 window.reprovarUsuario = async (id)=>{ if(!confirm("Reprovar?")) return; await setDoc(doc(db,"usuarios", id), {status:"REPROVADO"}, {merge:true}); };
 async function carregarAbertas(){ onSnapshot(collection(db,"pedidos"), s=>{ let h=""; s.forEach(d=>{ const p=d.data(); if(p.status==="AGUARDANDO" || p.status.startsWith("DIRETO")){ h+=`<div class="border p-2 rounded bg-white mb-2"><b>${p.nome_loja||""}</b> ${p.endereco_completo} LOJA R$${p.valor_lojista?.toFixed(2)} MOTO R$${p.valor_motoboy?.toFixed(2)} CÓD:${p.codigo_secreto} ${p.tipo_envio}<br><button onclick="aceitarCorrida('${d.id}')" class="bg-green-500 text-white px-2 py-1 rounded text-xs">ACEITAR</button></div>`; } }); document.getElementById("corridasAbertas").innerHTML=h; }); }
 async function carregarMotoboys(){ const s=await getDocs(collection(db,"motoristas")); let h=""; s.forEach(d=>{ const m=d.data(); h+=`<div class="border p-1 rounded bg-white mb-1 text-[11px]"><b>${m.codigo}</b> ${m.nome} ${m.status} Saldo R$${(m.saldo_motoboy||0).toFixed(2)}</div>`; }); document.getElementById("listaMotoboysCodigos").innerHTML=h; }
 
 async function carregarEntregasMotoboy(){
   onSnapshot(collection(db,"pedidos"), async s=>{
-    let h="";
-    try{
+    let h=""; try{
       const me=await getDoc(doc(db,"usuarios",userLogado.uid));
       if(me.exists()){ document.getElementById("saldoMotoboyValor").innerText=(me.data().saldo_motoboy||0).toFixed(2); document.getElementById("codigoMotoboyTopo").innerText=me.data().codigo||""; }
     }catch(e){}
     s.forEach(d=>{
       const p=d.data();
       const isGeral=p.codigo_motoboy_solicitado==="GERAL" && p.status==="AGUARDANDO";
-      const isMeu=p.motorista_id===userLogado.uid && p.status!=="ENTREGUE";
+      const isMeu=p.motorista_id===userLogado.uid && (p.status==="ACEITA" || p.status==="AGUARDANDO" || p.status.startsWith("DIRETO"));
       if(isGeral||isMeu){
-        h+=`<div class="border p-2 rounded bg-white mb-2">📍 ${p.endereco_completo} <br><b>R$ ${p.valor_motoboy?.toFixed(2)}</b> CÓD ${p.codigo_secreto} ${p.tipo_envio}<br><button onclick="aceitarCorrida('${d.id}')" class="w-full bg-black text-white py-2 rounded mt-2">ACEITAR</button></div>`;
+        const chatBox = p.status==="ACEITA"? `<div class="mt-2 border-2 border-blue-400 rounded p-2 bg-blue-50"><p class="font-bold text-[10px]">💬 CHAT com ${p.nome_loja||'Loja'}</p><div id="msgsMoto-${d.id}" class="max-h-20 overflow-y-auto text-[10px] bg-white p-1 rounded my-1"></div><div class="flex gap-1"><input id="inputMoto-${d.id}" placeholder="To na portaria" class="flex-1 border p-1 rounded text-xs"><button onclick="enviarChat('${d.id}','inputMoto-${d.id}')" class="bg-blue-600 text-white px-2 rounded text-xs">Enviar</button></div></div>` : "";
+        h+=`<div class="border p-2 rounded bg-white mb-2">📍 ${p.endereco_completo} <br><b>R$ ${p.valor_motoboy?.toFixed(2)}</b> CÓD ${p.codigo_secreto} ${p.tipo_envio}<br><button onclick="aceitarCorrida('${d.id}')" class="w-full bg-black text-white py-2 rounded mt-2">ACEITAR</button>${chatBox}</div>`;
+        if(p.status==="ACEITA") setTimeout(()=>escutarChat(d.id), 500);
       }
     });
     document.getElementById("listaEntregasMotoboy").innerHTML=h||"Nenhuma";
@@ -344,29 +371,22 @@ async function carregarEntregasMotoboy(){
 
 window.aceitarCorrida = async (id)=>{
   try{
-    const me=await getDoc(doc(db,"usuarios",userLogado.uid));
-    const nomeMoto=me.data()?.nome||"Motoboy";
-    const codMoto=me.data()?.codigo||"#0001";
+    const me=await getDoc(doc(db,"usuarios",userLogado.uid)); const nomeMoto=me.data()?.nome||"Motoboy"; const codMoto=me.data()?.codigo||"#0001";
     navigator.geolocation.getCurrentPosition(async (pos)=>{
       await setDoc(doc(db,"pedidos",id),{motorista_id:userLogado.uid, motorista_nome:nomeMoto, motorista_codigo:codMoto, status:"ACEITA", moto_lat:pos.coords.latitude, moto_lng:pos.coords.longitude, aceita_em:Timestamp.now()},{merge:true});
     }, async ()=>{
       await setDoc(doc(db,"pedidos",id),{motorista_id:userLogado.uid, motorista_nome:nomeMoto, motorista_codigo:codMoto, status:"ACEITA", aceita_em:Timestamp.now()},{merge:true});
     });
-  }catch(e){
-    await setDoc(doc(db,"pedidos",id),{motorista_id:userLogado.uid, status:"ACEITA", aceita_em:Timestamp.now()},{merge:true});
-  }
+  }catch(e){ await setDoc(doc(db,"pedidos",id),{motorista_id:userLogado.uid, status:"ACEITA", aceita_em:Timestamp.now()},{merge:true}); }
 };
 
 window.confirmarEntrega = async ()=>{
-  const cod=document.getElementById("codigoEntregaInput").value.trim();
-  if(!cod) return alert("Digite código");
-  const q=await getDocs(query(collection(db,"pedidos"), where("codigo_secreto","==",cod)));
-  if(q.empty) return alert("Código errado");
+  const cod=document.getElementById("codigoEntregaInput").value.trim(); if(!cod) return alert("Digite código");
+  const q=await getDocs(query(collection(db,"pedidos"), where("codigo_secreto","==",cod))); if(q.empty) return alert("Código errado");
   const docId=q.docs[0].id; const p=q.docs[0].data();
   await setDoc(doc(db,"pedidos",docId),{status:"ENTREGUE", entregue_em:Timestamp.now()},{merge:true});
   try{
-    const motoSnap=await getDoc(doc(db,"usuarios",userLogado.uid));
-    const saldoMotoAtual=motoSnap.data()?.saldo_motoboy || 0;
+    const motoSnap=await getDoc(doc(db,"usuarios",userLogado.uid)); const saldoMotoAtual=motoSnap.data()?.saldo_motoboy || 0;
     const novoSaldoMoto = saldoMotoAtual + Number(p.valor_motoboy||0);
     await updateDoc(doc(db,"usuarios",userLogado.uid),{saldo_motoboy: novoSaldoMoto});
     try{ await updateDoc(doc(db,"usuarios",userLogado.email),{saldo_motoboy: novoSaldoMoto}); }catch(e){}
@@ -376,51 +396,45 @@ window.confirmarEntrega = async ()=>{
   }catch(e){ alert("Entregue! Erro saldo: "+e.message); }
 };
 
-function calcKm(lat1, lon1, lat2, lon2){
-  const R=6371; const dLat=(lat2-lat1)*Math.PI/180; const dLon=(lon2-lon1)*Math.PI/180;
-  const a=Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-  return R*2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
+// CHAT
+window.enviarChat = async (pedidoId, inputId)=>{
+  const input = document.getElementById(inputId || `inputChat-${pedidoId}`);
+  if(!input) return; const txt=input.value.trim(); if(!txt) return;
+  await addDoc(collection(db,"pedidos",pedidoId,"chat"),{texto:txt, de:userLogado.email, de_nome:userRoleReal, em:Timestamp.now()});
+  input.value="";
+};
+window.escutarChat = (pedidoId)=>{
+  onSnapshot(query(collection(db,"pedidos",pedidoId,"chat"), orderBy("em","asc")), snap=>{
+    let h=""; snap.forEach(d=>{ const c=d.data(); const quem=c.de_nome==="MOTOBOY_MOTORISTA"?"🏍️ Moto":"🏪 Loja"; h+=`<div class="border-b py-0.5"><b>${quem}:</b> ${c.texto}</div>`; });
+    const el1=document.getElementById(`msgs-${pedidoId}`); const el2=document.getElementById(`msgsMoto-${pedidoId}`);
+    if(el1) el1.innerHTML=h; if(el2) el2.innerHTML=h;
+  });
+};
 
 async function carregarExtratos(){
   if(!userLogado) return;
-  try{
-    const me=await getDoc(doc(db,"usuarios",userLogado.uid));
-    if(me.exists()) document.getElementById("saldoLojistaValor").innerText=(me.data().saldo_lojista||0).toFixed(2);
-  }catch(e){}
-
+  try{ const me=await getDoc(doc(db,"usuarios",userLogado.uid)); if(me.exists()) document.getElementById("saldoLojistaValor").innerText=(me.data().saldo_lojista||0).toFixed(2); }catch(e){}
   onSnapshot(query(collection(db,"pedidos"), where("owner_id","==",userLogado.uid)), snap=>{
-    let html="";
-    snap.forEach(d=>{
-      const p=d.data();
-      let extraInfo="";
+    let html=""; snap.forEach(d=>{
+      const p=d.data(); let extraInfo="";
       if(p.status==="ACEITA"){
-        let kmEst = 2.5;
-        if(p.bairro && regraAtual.bairros[p.bairro]){
-          let v=regraAtual.bairros[p.bairro];
-          let taxa = typeof v==='number'? v : (v.loj||0);
-          kmEst = taxa>0? taxa/2 + 1.5 : 2.5;
-        }
-        if(p.moto_lat && p.moto_lng){
-          // Se tiver GPS real, calcula, senão usa estimativa por bairro
-          kmEst = kmEst;
-        }
+        let kmEst = 2.5; if(p.bairro && regraAtual.bairros[p.bairro]){ let v=regraAtual.bairros[p.bairro]; let taxa = typeof v==='number'? v : (v.loj||0); kmEst = taxa>0? taxa/2 + 1.5 : 2.5; }
         let minEst = Math.ceil(kmEst * 3);
         extraInfo = `<div class="bg-green-50 border-2 border-green-600 p-2 rounded mt-2">
           <b class="text-green-700 text-sm">✅ ${p.motorista_codigo||'#0001'} ACEITOU!</b><br>
           <span class="font-bold">🏍️ ${p.motorista_nome||'Motoboy'}</span><br>
           📍 Está a <b>${kmEst.toFixed(1)} km</b> - <b>${minEst} min</b> até sua loja<br>
           <span class="text-[9px] bg-black text-white px-1 rounded">CÓD CLIENTE: ${p.codigo_secreto} | ${p.bairro}</span>
+          <div class="mt-2 border-2 border-blue-500 rounded p-2 bg-white">
+            <p class="font-bold text-[10px]">💬 CHAT com ${p.motorista_nome||'motoboy'}</p>
+            <div id="msgs-${d.id}" class="max-h-20 overflow-y-auto text-[10px] bg-gray-50 p-1 rounded my-1"></div>
+            <div class="flex gap-1"><input id="inputChat-${d.id}" placeholder="Sobe apto 201" class="flex-1 border p-1 rounded text-xs"><button onclick="enviarChat('${d.id}','inputChat-${d.id}')" class="bg-blue-600 text-white px-2 rounded text-xs">Enviar</button></div>
+          </div>
         </div>`;
+        setTimeout(()=>escutarChat(d.id), 500);
       }
-      if(p.status==="ENTREGUE"){
-        extraInfo = `<div class="bg-blue-50 p-1 rounded text-[10px] mt-1">✅ ENTREGUE - R$ ${p.valor_motoboy?.toFixed(2)} foi pro saldo do motoboy</div>`;
-      }
-      html+=`<div class="border p-2 rounded bg-white mb-2 text-xs">
-        <b>${p.endereco_completo}</b> - ${p.bairro} - ${p.tipo_envio}<br>
-        <b>R$ ${Number(p.valor_lojista||0).toFixed(2)}</b> | Cód: <b>${p.codigo_secreto}</b> | Status: ${p.status}
-        ${extraInfo}
-      </div>`;
+      if(p.status==="ENTREGUE"){ extraInfo = `<div class="bg-blue-50 p-1 rounded text-[10px] mt-1">✅ ENTREGUE - R$ ${p.valor_motoboy?.toFixed(2)} foi pro saldo do motoboy</div>`; }
+      html+=`<div class="border p-2 rounded bg-white mb-2 text-xs"><b>${p.endereco_completo}</b> - ${p.bairro} - ${p.tipo_envio}<br><b>R$ ${Number(p.valor_lojista||0).toFixed(2)}</b> | Cód: <b>${p.codigo_secreto}</b> | Status: ${p.status}${extraInfo}</div>`;
     });
     document.getElementById("extratoLojista").innerHTML=html||"<p class='text-xs text-gray-400'>Nenhum pedido</p>";
   });
