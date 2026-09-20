@@ -1,136 +1,212 @@
-<!-- ADICIONA ISSO NO HTML DO PAINEL ADMIN / SUPORTE / FRANQUEADO -->
-<!-- Onde fica o campo de recarga -->
-<div id="boxDinamica" class="hidden border-2 border-yellow-400 bg-yellow-50 p-3 rounded-xl mb-3">
-  <div class="flex justify-between items-center">
-    <div>
-      <b class="text-sm">⚡ TARIFA DINÂMICA</b>
-      <p id="statusDinamicaTxt" class="text-[11px]">Carregando...</p>
-    </div>
-    <button id="btnDinamica" onclick="toggleDinamica()" class="px-4 py-2 rounded-full font-bold text-sm text-white">LIGAR</button>
-  </div>
-  <div class="mt-2 flex gap-2">
-    <input id="valorDinamicaInput" type="number" placeholder="Ex: 5.00 valor extra" class="border p-2 rounded w-full text-sm">
-    <button onclick="salvarValorDinamica()" class="bg-black text-white px-3 rounded text-xs">SALVAR</button>
-  </div>
-</div>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anjos Flash - Entregas Macaé</title>
+<meta property="og:title" content="Anjos Flash - Entregas Macaé">
+<script src="https://cdn.tailwindcss.com"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, onSnapshot, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-<script>
-// --- FIX RECARGA COM E-MAIL (NÃO DÁ MAIS ERRO) ---
-window.recarregarLojista = async () => {
-  let emailDigitado = document.getElementById("emailRecarga").value.trim().toLowerCase();
-  let valor = parseFloat(document.getElementById("valorRecarga").value);
-  if(!emailDigitado ||!valor) return alert("Digite e-mail e valor");
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_DOMINIO",
+  projectId: "SEU_PROJECT_ID",
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-  try {
-    let refEmail = doc(db, "usuarios", emailDigitado);
-    let snapEmail = await getDoc(refEmail);
-    let dados = null;
-    let uidReal = null;
+// --- NORMALIZA ROLE ---
+function normalizaRole(r){
+  r=(r||"").toLowerCase();
+  if(r.includes("moto") || r.includes("motorista")) return "MOTOBOY_MOTORISTA";
+  if(r.includes("franque")) return "FRANQUEADO";
+  if(r.includes("super")) return "SUPER_LOJISTA";
+  if(r.includes("admin")) return "ADMIN";
+  if(r.includes("suporte")) return "SUPORTE";
+  return "LOJISTA";
+}
 
-    if (snapEmail.exists()) {
-      dados = snapEmail.data();
-      uidReal = dados.userId;
-    } else {
-      const q = query(collection(db, "usuarios"), where("email", "==", emailDigitado));
-      const res = await getDocs(q);
-      if (res.empty) return alert("❌ E-mail não encontrado: " + emailDigitado + "\nDigite igual tá no Firebase em minúsculo");
-      dados = res.docs[0].data();
-      uidReal = dados.userId || res.docs[0].id;
-    }
+let roleAtual = "";
+let dinamicaLigada = false;
+let valorDinamica = 0;
 
-    const novoSaldo = (dados.saldo || 0) + valor;
-
-    // Atualiza nos 2 lugares pra não voltar pra 00,00
-    await setDoc(doc(db, "usuarios", emailDigitado), { saldo: novoSaldo }, { merge: true });
-    if (uidReal) await setDoc(doc(db, "usuarios", uidReal), { saldo: novoSaldo }, { merge: true });
-    try { await setDoc(doc(db, "lojas", uidReal), { saldo: novoSaldo }, { merge: true }); } catch(e){}
-
-    alert(`✅ R$ ${valor.toFixed(2)} para ${dados.nome || emailDigitado}\nSaldo: R$ ${novoSaldo.toFixed(2)}`);
-    document.getElementById("emailRecarga").value = "";
-    document.getElementById("valorRecarga").value = "";
-  } catch (e) {
-    alert("Erro recarga: " + e.message);
-  }
+// --- CADASTRO COM 6 OPÇÕES ---
+window.cadastrar = async ()=>{
+  const nome = document.getElementById("nomeCad").value.trim();
+  const email = document.getElementById("emailCad").value.trim().toLowerCase();
+  const senha = document.getElementById("senhaCad").value;
+  const tipo = document.getElementById("tipoCadastro").value;
+  if(!nome ||!email ||!senha) return alert("Preencha tudo");
+  try{
+    const cred = await createUserWithEmailAndPassword(auth, email, senha);
+    const uid = cred.user.uid;
+    const role = normalizaRole(tipo);
+    const status = role==="ADMIN"? "APROVADO" : "PENDENTE";
+    const dados = { userId: uid, nome, email, role, status, saldo:0, codigo:"MOT"+Math.floor(1000+Math.random()*9000), criadoEm: new Date() };
+    // SALVA NOS 2 LUGARES PRA NÃO DAR 00,00
+    await setDoc(doc(db,"usuarios", uid), dados, {merge:true});
+    await setDoc(doc(db,"usuarios", email), dados, {merge:true});
+    alert(role==="ADMIN"? "Admin criado!" : "Cadastro enviado! Aguarde aprovação");
+    location.reload();
+  }catch(e){ alert(e.message); }
 };
 
-// --- FIX LISTA PENDENTES NÃO DUPLICAR MAIS ---
+window.logar = async ()=>{
+  const email = document.getElementById("emailLogin").value.trim().toLowerCase();
+  const senha = document.getElementById("senhaLogin").value;
+  await signInWithEmailAndPassword(auth, email, senha);
+};
+
+// --- LOGIN E MOSTRA PAINEL CERTO ---
+onAuthStateChanged(auth, async (user)=>{
+  if(!user) return;
+  const snap = await getDoc(doc(db,"usuarios", user.uid));
+  if(!snap.exists()) return;
+  const u = snap.data();
+  if(u.status==="PENDENTE") { document.getElementById("msgPendente").classList.remove("hidden"); return; }
+  roleAtual = u.role;
+  document.getElementById("telaLogin").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  document.getElementById("nomeTopo").innerText = u.nome + " - " + u.role;
+  document.getElementById("saldoTopo").innerText = "R$ " + (u.saldo||0).toFixed(2);
+
+  if(["ADMIN","SUPORTE","FRANQUEADO"].includes(roleAtual)){
+    document.getElementById("painelAdmin").classList.remove("hidden");
+    document.getElementById("boxDinamica").classList.remove("hidden");
+    carregarPendentes(); carregarDinamica(); carregarRecargas();
+  }
+  if(["LOJISTA","SUPER_LOJISTA"].includes(roleAtual)){
+    document.getElementById("painelLoja").classList.remove("hidden");
+  }
+  if(roleAtual==="MOTOBOY_MOTORISTA"){
+    document.getElementById("painelMoto").classList.remove("hidden");
+  }
+});
+
+// --- PENDENTES SEM DUPLICAR ---
 async function carregarPendentes(){
   onSnapshot(collection(db,"usuarios"), snap=>{
-    let vistos = new Map();
-    let h = "";
+    let vistos = new Map(); let h="";
     snap.forEach(d=>{
-      const u = d.data();
-      if(u.status!=="PENDENTE") return;
-      const chave = u.userId || u.email;
-      if(vistos.has(chave)) return;
-      vistos.set(chave, true);
-      h+=`<div class="border-2 bg-white p-2 rounded mb-2">
-        <b>${u.nome} ${u.codigo||''}</b> - ${u.role}<br>
-        <span class="text-[11px]">${u.email}</span><br>
-        <button onclick="aprovarUsuario('${d.id}')" class="bg-green-600 text-white px-3 py-1 rounded text-xs mt-1 font-bold">✅ APROVAR</button>
-        <button onclick="reprovarUsuario('${d.id}')" class="bg-red-600 text-white px-3 py-1 rounded text-xs mt-1">❌</button>
-      </div>`;
+      const u = d.data(); if(u.status!=="PENDENTE") return;
+      const chave = u.userId || u.email; if(vistos.has(chave)) return; vistos.set(chave,true);
+      h+=`<div class="border-2 border-black p-2 rounded bg-white mb-2 text-sm"><b>${u.nome}</b> - ${u.role} - ${u.email}<br><button onclick="aprovarUsuario('${d.id}')" class="bg-green-600 text-white px-3 py-1 rounded font-bold">APROVAR</button> <button onclick="reprovarUsuario('${d.id}')" class="bg-red-600 text-white px-2 py-1 rounded">X</button></div>`;
     });
     document.getElementById("listaPendentesAprovacao").innerHTML = h || "Nenhum pendente";
   });
 }
+window.aprovarUsuario = async (id)=>{
+  const s = await getDoc(doc(db,"usuarios", id)); const u = s.data(); const uid = u.userId; const email = u.email;
+  await setDoc(doc(db,"usuarios", id), {status:"APROVADO"}, {merge:true});
+  await setDoc(doc(db,"usuarios", uid), {status:"APROVADO"}, {merge:true});
+  await setDoc(doc(db,"usuarios", email), {status:"APROVADO"}, {merge:true});
+};
+window.reprovarUsuario = async (id)=>{ await setDoc(doc(db,"usuarios", id), {status:"REPROVADO"}, {merge:true}); };
 
-// --- NOVO: BOTÃO LIGA / DESLIGA DINÂMICA (SÓ ADMIN / SUPORTE / FRANQUEADO) ---
-let dinamicaLigada = false;
-
-async function carregarDinamica(){
-  onSnapshot(doc(db,"config","sistema"), (snap)=>{
-    if(!snap.exists()){
-      dinamicaLigada = false;
-      atualizarBotaoDinamica();
-      return;
+// --- RECARGA CORRIGIDA (NÃO DÁ ERRO DE E-MAIL) ---
+window.recarregarLojista = async ()=>{
+  let emailDigitado = document.getElementById("emailRecarga").value.trim().toLowerCase();
+  let valor = parseFloat(document.getElementById("valorRecarga").value);
+  if(!emailDigitado ||!valor) return alert("Digite e-mail e valor");
+  try{
+    let refEmail = doc(db,"usuarios", emailDigitado); let snapEmail = await getDoc(refEmail);
+    let dados=null; let uidReal=null;
+    if(snapEmail.exists()){ dados=snapEmail.data(); uidReal=dados.userId; }
+    else{
+      const q = query(collection(db,"usuarios"), where("email","==", emailDigitado));
+      const res = await getDocs(q);
+      if(res.empty) return alert("E-mail não encontrado: "+emailDigitado);
+      dados=res.docs[0].data(); uidReal=dados.userId || res.docs[0].id;
     }
-    const c = snap.data();
-    dinamicaLigada = c.dinamicaLigada || false;
-    if(document.getElementById("valorDinamicaInput")) document.getElementById("valorDinamicaInput").value = c.valorDinamica || "";
+    const novoSaldo = (dados.saldo||0)+valor;
+    await setDoc(doc(db,"usuarios", emailDigitado), {saldo:novoSaldo}, {merge:true});
+    if(uidReal) await setDoc(doc(db,"usuarios", uidReal), {saldo:novoSaldo}, {merge:true});
+    alert(`✅ R$ ${valor.toFixed(2)} para ${dados.nome}\nNovo saldo: R$ ${novoSaldo.toFixed(2)}`);
+    document.getElementById("emailRecarga").value=""; document.getElementById("valorRecarga").value="";
+  }catch(e){ alert("Erro: "+e.message); }
+};
+
+// --- DINÂMICA LIGA/DESLIGA CORRIGIDA ---
+function carregarDinamica(){
+  onSnapshot(doc(db,"config","sistema"), (snap)=>{
+    if(!snap.exists()){ dinamicaLigada=false; valorDinamica=0; }
+    else{ dinamicaLigada=snap.data().dinamicaLigada===true; valorDinamica=snap.data().valorDinamica||0; document.getElementById("valorDinamicaInput").value=valorDinamica; }
     atualizarBotaoDinamica();
   });
 }
-
 function atualizarBotaoDinamica(){
-  const btn = document.getElementById("btnDinamica");
-  const txt = document.getElementById("statusDinamicaTxt");
+  const btn=document.getElementById("btnDinamica"); const txt=document.getElementById("statusDinamicaTxt");
   if(!btn) return;
   if(dinamicaLigada){
-    btn.textContent = "🟢 LIGADA - CLIQUE P/ DESLIGAR";
-    btn.className = "px-4 py-2 rounded-full font-bold text-sm text-white bg-green-600";
-    txt.textContent = "Dinâmica LIGADA: Lojista paga taxa extra";
-    txt.className = "text-[11px] text-green-700 font-bold";
-  } else {
-    btn.textContent = "🔴 DESLIGADA - CLIQUE P/ LIGAR";
-    btn.className = "px-4 py-2 rounded-full font-bold text-sm text-white bg-red-600";
-    txt.textContent = "Dinâmica DESLIGADA: Preço normal";
-    txt.className = "text-[11px] text-red-700 font-bold";
+    btn.textContent="🟢 DINÂMICA LIGADA - CLIQUE P/ DESLIGAR"; btn.className="w-full bg-green-600 text-white font-black py-3 rounded-xl border-2 border-black";
+    txt.textContent=`LIGADA (+R$ ${valorDinamica.toFixed(2)})`; txt.className="text-[10px] font-black bg-green-200 text-green-800 px-2 py-1 rounded";
+  }else{
+    btn.textContent="🔴 DINÂMICA DESLIGADA - CLIQUE P/ LIGAR"; btn.className="w-full bg-red-600 text-white font-black py-3 rounded-xl border-2 border-black";
+    txt.textContent="DESLIGADA"; txt.className="text-[10px] font-black bg-red-200 text-red-800 px-2 py-1 rounded";
   }
 }
-
-window.toggleDinamica = async ()=>{
-  const novo =!dinamicaLigada;
-  await setDoc(doc(db,"config","sistema"), { dinamicaLigada: novo }, { merge:true });
-};
-
+window.toggleDinamica = async ()=>{ await setDoc(doc(db,"config","sistema"), {dinamicaLigada:!dinamicaLigada}, {merge:true}); };
 window.salvarValorDinamica = async ()=>{
-  const v = parseFloat(document.getElementById("valorDinamicaInput").value);
-  if(isNaN(v)) return alert("Digite valor");
-  await setDoc(doc(db,"config","sistema"), { valorDinamica: v }, { merge:true });
-  alert("Valor dinâmica salvo: R$ " + v.toFixed(2));
+  const v=parseFloat(document.getElementById("valorDinamicaInput").value); if(isNaN(v)) return alert("Digite valor");
+  await setDoc(doc(db,"config","sistema"), {valorDinamica:v}, {merge:true}); alert("Salvo R$ "+v.toFixed(2));
 };
 
-// CHAMA ISSO DENTRO DO onAuthStateChanged QUANDO LOGAR
-// Mostra o box só pra quem pode
-function mostrarBoxDinamicaPorRole(role){
-  const box = document.getElementById("boxDinamica");
-  if(!box) return;
-  if(["ADMIN","SUPORTE","FRANQUEADO"].includes(role)){
-    box.classList.remove("hidden");
-    carregarDinamica();
-  } else {
-    box.classList.add("hidden");
-  }
-}
+function carregarRecargas(){ /* sua lista de lojas pra recarga */ }
+
+window.sair = ()=> signOut(auth).then(()=>location.reload());
+
 </script>
+</head>
+<body class="bg-gray-100 p-2">
+
+<!-- LOGIN -->
+<div id="telaLogin" class="max-w-md mx-auto bg-white p-4 rounded-xl border-2 border-black mt-10">
+  <h1 class="font-black text-xl text-center">ANJOS FLASH</h1>
+  <input id="emailLogin" placeholder="E-mail" class="w-full border-2 border-black p-3 rounded mt-3">
+  <input id="senhaLogin" type="password" placeholder="Senha" class="w-full border-2 border-black p-3 rounded mt-2">
+  <button onclick="logar()" class="w-full bg-black text-white p-3 rounded font-black mt-3">ENTRAR</button>
+  <hr class="my-4">
+  <input id="nomeCad" placeholder="Nome completo" class="w-full border-2 p-2 rounded">
+  <input id="emailCad" placeholder="E-mail cadastro" class="w-full border-2 p-2 rounded mt-2">
+  <input id="senhaCad" type="password" placeholder="Senha" class="w-full border-2 p-2 rounded mt-2">
+  <select id="tipoCadastro" class="w-full border-2 p-3 rounded mt-2 font-bold bg-white">
+    <option value="LOJISTA">🏪 SOU LOJISTA - Mara</option>
+    <option value="SUPER_LOJISTA">🏢 SOU SUPER LOJISTA - Divina</option>
+    <option value="MOTOBOY_MOTORISTA">🏍️ SOU MOTOBOY / MOTORISTA</option>
+    <option value="FRANQUEADO">💼 SOU FRANQUEADO</option>
+    <option value="SUPORTE">🎧 SOU SUPORTE</option>
+    <option value="ADMIN">👮 SOU ADMIN</option>
+  </select>
+  <button onclick="cadastrar()" class="w-full bg-yellow-400 border-2 border-black p-3 rounded font-black mt-2">CADASTRAR</button>
+  <div id="msgPendente" class="hidden bg-yellow-200 p-2 mt-3 text-sm font-bold">⏳ Aguardando aprovação do admin</div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden max-w-5xl mx-auto">
+  <div class="bg-black text-white p-3 rounded-xl flex justify-between"><span id="nomeTopo"></span><span id="saldoTopo"></span><button onclick="sair()" class="bg-white text-black px-2 rounded text-xs">SAIR</button></div>
+
+  <!-- PAINEL ADMIN / SUPORTE / FRANQUEADO -->
+  <div id="painelAdmin" class="hidden mt-3">
+    <div id="boxDinamica" class="hidden bg-white border-2 border-black p-3 rounded-xl mb-3 shadow-[4px_4px_0px_0px_black]">
+      <div class="flex justify-between items-center"><h2 class="font-black text-sm">⚡ TARIFA DINÂMICA</h2><span id="statusDinamicaTxt" class="text-[10px] font-black px-2 py-1 rounded bg-gray-200">DESLIGADA</span></div>
+      <button id="btnDinamica" onclick="toggleDinamica()" class="w-full bg-red-600 text-white font-black py-3 rounded-xl border-2 border-black mt-3">🔴 LIGAR DINÂMICA</button>
+      <div class="flex gap-2 mt-2"><input id="valorDinamicaInput" type="number" step="0.01" placeholder="Ex: 5.00 valor extra" class="flex-1 border-2 border-black p-2 rounded-lg font-bold"><button onclick="salvarValorDinamica()" class="bg-black text-white px-4 rounded-lg font-bold">SALVAR</button></div>
+    </div>
+    <div class="bg-white border-2 border-black p-3 rounded-xl">
+      <h3 class="font-black">💰 RECARGA LOJISTA - PIX 22997450131 só Lojista vê</h3>
+      <div class="flex gap-2 mt-2"><input id="emailRecarga" placeholder="e-mail do lojista (minúsculo)" class="flex-1 border-2 border-black p-2 rounded"><input id="valorRecarga" type="number" placeholder="Valor" class="w-24 border-2 border-black p-2 rounded"><button onclick="recarregarLojista()" class="bg-green-600 text-white px-4 rounded font-black">RECARREGAR</button></div>
+    </div>
+    <div class="bg-white border-2 border-black p-3 rounded-xl mt-3"><h3 class="font-black">Pendentes para aprovar</h3><div id="listaPendentesAprovacao" class="mt-2"></div></div>
+  </div>
+
+  <div id="painelLoja" class="hidden mt-3 bg-white border-2 border-black p-3 rounded-xl"><h2 class="font-black">🏪 PAINEL LOJA - Saldo total (sem detalhes)</h2><p class="text-xs mt-2">PIX para recarga: <b>22997450131</b> - Envie comprovante no chat</p><div id="listaCorridasLoja"></div></div>
+  <div id="painelMoto" class="hidden mt-3 bg-white border-2 border-black p-3 rounded-xl"><h2 class="font-black">🏍️ PAINEL MOTOBOY - Foto / KM / Min / Chat</h2><div id="listaCorridasMoto"></div></div>
+</div>
+
+</body>
+</html>
