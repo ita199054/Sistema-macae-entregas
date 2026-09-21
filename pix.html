@@ -1,23 +1,30 @@
 <!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PIX - Anjos Flash</title><script src="https://cdn.tailwindcss.com"></script></head>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PIX ADMIN</title><script src="https://cdn.tailwindcss.com"></script></head>
 <body class="bg-black p-4">
-<div class="max-w-[420px] mx-auto bg-white p-6 rounded-xl">
-<h2 class="font-black text-xl">💳 EDITAR PIX</h2>
-<p class="text-[10px] mt-2">Esse PIX aparece para Lojista e Super Lojista</p>
+<div id="telaBloqueada" class="max-w-[420px] mx-auto bg-red-100 border-4 border-red-600 p-6 rounded-xl text-center hidden"><h2 class="font-black text-red-700">⛔ SÓ ADMIN</h2><p class="text-xs mt-2">Lojista e Super Lojista NÃO podem editar PIX</p><a href="index.html" class="block bg-black text-white p-3 rounded mt-4">VOLTAR</a></div>
+<div id="telaPix" class="max-w-[420px] mx-auto bg-white p-6 rounded-xl hidden">
+<h2 class="font-black text-xl">💳 EDITAR PIX - ADMIN</h2>
 <input id="pixInput" placeholder="22997450131" class="w-full border-2 border-black p-4 rounded-xl mt-4 font-bold text-lg">
-<input id="nomePixInput" placeholder="Nome do recebedor ex: Anjos Flash" class="w-full border-2 border-gray-400 p-3 rounded-xl mt-2 text-sm">
-<button onclick="salvarPix()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold mt-4">💾 SALVAR PIX</button>
+<input id="nomePixInput" placeholder="Nome recebedor" class="w-full border-2 border-gray-400 p-3 rounded-xl mt-2 text-sm">
+<button onclick="salvarPix()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold mt-4">💾 SALVAR</button>
 <p id="statusPix" class="text-xs mt-3 bg-gray-100 p-2 rounded"></p>
 <a href="index.html" class="block text-center mt-4 text-xs underline">Voltar</a>
 </div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 const firebaseConfig = { apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44", authDomain: "anjos-flash.firebaseapp.com", projectId: "anjos-flash", storageBucket: "anjos-flash.firebasestorage.app", messagingSenderId: "725133182752", appId: "1:725133182752:web:5f9a98fa97269dcdcab945" };
-const app = initializeApp(firebaseConfig); const db = getFirestore(app);
-async function carregar(){ const s=await getDoc(doc(db,"pricing_config","pix")); if(s.exists()){ document.getElementById("pixInput").value=s.data().pix||""; document.getElementById("nomePixInput").value=s.data().nome||""; document.getElementById("statusPix").innerText="Atual: "+(s.data().pix||"vazio"); } }
-carregar();
-window.salvarPix=async()=>{ const pix=document.getElementById("pixInput").value.trim(); const nome=document.getElementById("nomePixInput").value.trim(); if(!pix){ alert("Digite PIX"); return; } await setDoc(doc(db,"pricing_config","pix"),{pix, nome, atualizado_em:Timestamp.now()},{merge:true}); document.getElementById("statusPix").innerText="✅ Salvo: "+pix; alert("PIX salvo! Já aparece no painel do lojista"); }
+const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
+onAuthStateChanged(auth, async(user)=>{
+  if(!user){ location.href="index.html"; return; }
+  const d=await getDoc(doc(db,"usuarios",user.uid));
+  const role=(d.data()?.role||"").toUpperCase();
+  if(role!=="ADMIN"){ document.getElementById("telaBloqueada").classList.remove("hidden"); return; }
+  document.getElementById("telaPix").classList.remove("hidden");
+  const s=await getDoc(doc(db,"pricing_config","pix")); if(s.exists()){ document.getElementById("pixInput").value=s.data().pix||""; document.getElementById("nomePixInput").value=s.data().nome||""; document.getElementById("statusPix").innerText="Atual: "+(s.data().pix||"vazio"); }
+});
+window.salvarPix=async()=>{ const pix=document.getElementById("pixInput").value.trim(); const nome=document.getElementById("nomePixInput").value.trim(); if(!pix) return; await setDoc(doc(db,"pricing_config","pix"),{pix, nome, atualizado_em:Timestamp.now()},{merge:true}); alert("PIX SALVO ADMIN!"); }
 </script>
 </body>
 </html>
