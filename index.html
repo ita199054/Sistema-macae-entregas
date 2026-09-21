@@ -33,15 +33,15 @@ window.salvarNomeLoja=()=>{ if(!userLogado) return; localStorage.setItem("nomeLo
 async function buscarRoleReal(user){
   try{
     const d=await getDoc(doc(db,"motoristas",user.uid));
-    if(d.exists() && d.data().role) return {role:d.data().role,status:d.data().status||"PENDENTE"};
+    if(d.exists() && d.data().role) return {role:d.data().role,status:d.data().status};
   }catch(e){}
   try{
     const d=await getDoc(doc(db,"usuarios",user.uid));
-    if(d.exists() && d.data().role) return {role:d.data().role,status:d.data().status||"PENDENTE"};
+    if(d.exists() && d.data().role) return {role:d.data().role,status:d.data().status};
   }catch(e){}
   try{
     const d=await getDoc(doc(db,"usuarios",user.email.toLowerCase()));
-    if(d.exists() && d.data().role) return {role:d.data().role,status:d.data().status||"PENDENTE"};
+    if(d.exists() && d.data().role) return {role:d.data().role,status:d.data().status};
   }catch(e){}
   return {role:"LOJISTA",status:"PENDENTE"};
 }
@@ -51,7 +51,7 @@ function normalizaRole(r){
   if(r.includes("CARRETA")) return "MOTOBOY_CARRETA";
   if(r.includes("3_4")||r.includes("3/4")) return "MOTOBOY_CAMINHAO_3_4";
   if(r.includes("UTILITARIO")||r.includes("UTILIT")) return "MOTOBOY_UTILITARIO";
-  if(r.startsWith("MOTOBOY")) return r.includes("UTIL")?"MOTOBOY_UTILITARIO":r.includes("CARRETA")?"MOTOBOY_CARRETA":r.includes("3_4")?"MOTOBOY_CAMINHAO_3_4":"MOTOBOY_MOTO";
+  if(r.startsWith("MOTOBOY")) return "MOTOBOY_MOTO";
   if(r.includes("SUPER")) return "SUPER_LOJISTA";
   if(r==="ADMIN") return "ADMIN";
   if(r==="FRANQUEADO") return "FRANQUEADO";
@@ -154,7 +154,7 @@ async function carregarPendentes(){
           <button type="button" onclick="aprovarUsuario('${d.id}')" class="bg-green-600 text-white px-2 py-3 rounded w-full mt-3 font-black">✅ APROVAR ${u.nome.toUpperCase()}</button>
         </div>`;
     });
-    $("listaPendentesAprovacao").innerHTML=h||"Nenhum pendente (total: "+snap.size+")";
+    $("listaPendentesAprovacao").innerHTML=h||"Nenhum pendente - total lidos: "+snap.size;
   });
 }
 window.aprovarUsuario=async(id)=>{ await setDoc(doc(db,"usuarios",id),{status:"APROVADO"},{merge:true}); try{ const u=await getDoc(doc(db,"usuarios",id)); const email=u.data()?.email; if(email) await setDoc(doc(db,"usuarios",email),{status:"APROVADO"},{merge:true}); }catch(e){} try{ await setDoc(doc(db,"motoristas",id),{status:"APROVADO"},{merge:true}); }catch(e){} };
