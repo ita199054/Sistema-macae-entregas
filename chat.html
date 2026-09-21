@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Chat Anjos Flash</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-gray-100">
+<div class="max-w-[420px] mx-auto bg-white min-h-screen flex flex-col">
+<div class="p-3 bg-black text-white flex justify-between items-center"><b>💬 CHAT ANJOS</b><a href="index.html" class="text-xs border px-2 py-1 rounded">VOLTAR</a></div>
+<div id="listaChats" class="p-2 space-y-1 flex-1 overflow-y-auto"></div>
+<div class="p-3 border-t bg-white sticky bottom-0">
+<div class="flex gap-2 mb-2">
+<input id="emailDestino" placeholder="Email da pessoa" class="flex-1 border p-2 rounded text-xs">
+<button onclick="abrirChat()" class="bg-black text-white px-3 rounded text-xs">ABRIR</button>
+</div>
+<div id="areaChat" class="hidden">
+<p id="chatCom" class="text-xs font-bold bg-yellow-100 p-2 rounded mb-2"></p>
+<div id="mensagens" class="h-[300px] overflow-y-auto border p-2 rounded bg-gray-50 space-y-1 text-xs mb-2"></div>
+<div class="flex gap-2">
+<input id="msgInput" placeholder="Digite..." class="flex-1 border p-3 rounded text-sm">
+<button onclick="enviarMsg()" class="bg-orange-500 text-white px-5 rounded font-bold">></button>
+</div>
+</div>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, query, where, onSnapshot, orderBy, Timestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const firebaseConfig = { apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44", authDomain: "anjos-flash.firebaseapp.com", projectId: "anjos-flash", storageBucket: "anjos-flash.firebasestorage.app", messagingSenderId: "725133182752", appId: "1:725133182752:web:5f9a98fa97269dcdcab945" };
+const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
+let userLogado=null, chatIdAtual=null, emailDestinoAtual=null;
+
+onAuthStateChanged(auth, async(u)=>{
+  if(!u){ location.href="index.html"; return; }
+  userLogado=u;
+  carregarMeusChats();
+});
+
+function gerarChatId(a,b){ return [a.toLowerCase(), b.toLowerCase()].sort().join("_VS_"); }
+
+window.abrirChat=async()=>{
+  emailDestinoAtual=document.getElementById("emailDestino").value.trim().toLowerCase();
+  if(!emailDestinoAtual){ alert("Digite email"); return; }
+  chatIdAtual=gerarChatId(userLogado.email, emailDestinoAtual);
+  document.getElementById("areaChat").classList.remove("hidden");
+  document.getElementById("chatCom").innerText="Conversando com: "+emailDestinoAtual;
+  escutarMensagens();
+};
+
+function escutarMensagens(){
+  const q=query(collection(db,"chats",chatIdAtual,"mensagens"), orderBy("criado_em","asc"));
+  onSnapshot(q, snap=>{
+    let html="";
+    snap.forEach(d=>{
+      const m=d.data();
+      const souEu=m.de===userLogado.email;
+      html+=`<div class="${souEu?'text-right':''}"><span class="${souEu?'bg-black text-white':'bg-white border'} inline-block p-2 rounded-xl max-w-[80%]">${m.texto}</span><p class="text-[8px] opacity-50">${m.de}</p></div>`;
+    });
+    document.getElementById("mensagens").innerHTML=html;
+    document.getElementById("mensagens").scrollTop=99999;
+  });
+}
+
+window.enviarMsg=async()=>{
+  const txt=document.getElementById("msgInput").value.trim();
+  if(!txt||!chatIdAtual) return;
+  await addDoc(collection(db,"chats",chatIdAtual,"mensagens"),{
+    de:userLogado.email,
+    para:emailDestinoAtual,
+    texto:txt,
+    criado_em:Timestamp.now()
+  });
+  await addDoc(collection(db,"chats"),{}).catch(()=>{}); // garante coleção
+  // cria/atualiza resumo do chat
+  const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+  await setDoc(doc(db,"chats",chatIdAtual),{
+    participantes:[userLogado.email.toLowerCase(), emailDestinoAtual.toLowerCase()],
+    ultima_msg:txt,
+    atualizado_em:Timestamp.now()
+  },{merge:true});
+  document.getElementById("msgInput").value="";
+};
+
+function carregarMeusChats(){
+  const q=query(collection(db,"chats"), where("participantes","array-contains", userLogado.email.toLowerCase()));
+  onSnapshot(q, snap=>{
+    let h="";
+    snap.forEach(d=>{
+      const c=d.data();
+      const outro=c.participantes.find(e=>e!==userLogado.email.toLowerCase());
+      h+=`<div onclick="document.getElementById('emailDestino').value='${outro}';abrirChat()" class="border p-2 rounded bg-white flex justify-between cursor-pointer hover:bg-yellow-50"><span>${outro}</span><span class="text-[10px] truncate max-w-[120px]">${c.ultima_msg||''}</span></div>`;
+    });
+    document.getElementById("listaChats").innerHTML=h||"<p class='text-xs text-center opacity-50'>Nenhum chat</p>";
+  });
+}
+</script>
+</body>
+</html>
