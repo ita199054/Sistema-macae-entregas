@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anjos Flash - FINAL COMPLETO MIN 10 + ROTAS + CANCELAR</title>
+<title>Anjos Flash - FINAL COMPLETO MIN 10 + ROTAS + CANCELAR + DINAMICA FIX</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
@@ -359,6 +359,102 @@ if(role.includes("UTIL")) return "UTILITARIO";
 return "MOTO";
 }
 
+async function carregarDinamica(){
+try{
+const s = await getDoc(doc(db,"pricing_config","dinamica"));
+if(s.exists()){
+dinamicaAtiva = s.data().ativa||false;
+dinamicaExtraLoj = s.data().extraLoj??3;
+dinamicaExtraMoto = s.data().extraMoto??2;
+if($("editDinamicaLojista")) $("editDinamicaLojista").value = dinamicaExtraLoj;
+if($("editDinamicaMoto")) $("editDinamicaMoto").value = dinamicaExtraMoto;
+}
+}catch(e){}
+atualizarBtnDinamica();
+}
+
+function escutarDinamica(){
+try{
+onSnapshot(doc(db,"pricing_config","dinamica"), s=>{
+if(s.exists()){
+dinamicaAtiva = s.data().ativa||false;
+dinamicaExtraLoj = s.data().extraLoj??dinamicaExtraLoj;
+dinamicaExtraMoto = s.data().extraMoto??dinamicaExtraMoto;
+if($("editDinamicaLojista")) $("editDinamicaLojista").value = dinamicaExtraLoj;
+if($("editDinamicaMoto")) $("editDinamicaMoto").value = dinamicaExtraMoto;
+atualizarBtnDinamica();
+}
+});
+}catch(e){}
+}
+
+function atualizarBtnDinamica(){
+const btn = $("btnDinamica");
+const st = $("statusDinamica");
+const stL = $("statusDinamicaLojista");
+const stM = $("statusDinamicaMotoboy");
+if(dinamicaAtiva){
+if(btn){
+btn.innerText="ON";
+btn.className="bg-green-600 text-white px-6 py-3 rounded-full font-black text-sm border-2 border-white";
+}
+if(st) st.innerText=`LIGADA +R$${dinamicaExtraLoj.toFixed(2)} / +R$${dinamicaExtraMoto.toFixed(2)}`;
+if(stL){
+stL.innerText=`⚡ DINÂMICA LIGADA +R$${dinamicaExtraLoj.toFixed(2)}`;
+stL.className="p-2 rounded text-center text-xs font-bold mb-2 bg-yellow-400 text-black border-2 border-black";
+}
+if(stM){
+stM.innerText=`⚡ DINÂMICA +R$${dinamicaExtraMoto.toFixed(2)} EXTRA`;
+stM.className="p-2 rounded text-center text-xs font-bold mb-3 bg-yellow-400 text-black border-2 border-black";
+}
+if($("labelDinamicaTotal")) $("labelDinamicaTotal").innerText=`⚡ +R$${dinamicaExtraLoj.toFixed(2)}`;
+}else{
+if(btn){
+btn.innerText="OFF";
+btn.className="bg-red-600 text-white px-6 py-3 rounded-full font-black text-sm border-2 border-black";
+}
+if(st) st.innerText="DESLIGADA";
+if(stL){
+stL.innerText="⚡ DINÂMICA DESLIGADA";
+stL.className="p-2 rounded text-center text-xs font-bold mb-2 bg-gray-200";
+}
+if(stM){
+stM.innerText="⚡ DESLIGADA";
+stM.className="p-2 rounded text-center text-xs font-bold mb-3 bg-gray-200";
+}
+if($("labelDinamicaTotal")) $("labelDinamicaTotal").innerText="";
+}
+if(typeof calc === 'function') calc();
+}
+
+window.toggleDinamica = async()=>{
+if(!["ADMIN","SUPORTE","FRANQUEADO"].includes(userRoleReal)){
+alert("Só admin pode");
+return;
+}
+dinamicaAtiva =!dinamicaAtiva;
+await setDoc(doc(db,"pricing_config","dinamica"),{
+ativa:dinamicaAtiva,
+extraLoj:Number($("editDinamicaLojista").value||0),
+extraMoto:Number($("editDinamicaMoto").value||0),
+alterado_por:userLogado.email,
+alterado_em:Timestamp.now()
+},{merge:true});
+atualizarBtnDinamica();
+};
+
+window.salvarDinamicaValor = async()=>{
+dinamicaExtraLoj = Number($("editDinamicaLojista").value||0);
+dinamicaExtraMoto = Number($("editDinamicaMoto").value||0);
+await setDoc(doc(db,"pricing_config","dinamica"),{
+extraLoj:dinamicaExtraLoj,
+extraMoto:dinamicaExtraMoto,
+alterado_por:userLogado.email
+},{merge:true});
+alert(`✅ Dinâmica R$${dinamicaExtraLoj.toFixed(2)} / R$${dinamicaExtraMoto.toFixed(2)}`);
+atualizarBtnDinamica();
+};
+
 onAuthStateChanged(auth, async(user)=>{
 if(user){
 userLogado = user;
@@ -375,6 +471,8 @@ return;
 $("telaLogin").classList.add("hidden");
 $("telaPendente").classList.add("hidden");
 await carregarPrecos();
+await carregarDinamica();
+escutarDinamica();
 mostrarTelaPorRole();
 carregarExtratos();
 escutarSaldo();
@@ -569,7 +667,10 @@ if(ret){
 loj += loj * Number(cfg.retPerc||0)/100;
 moto += Number(cfg.retMoto||0);
 }
-// TRAVA MINIMO 10 - NAO DESTRAVA
+if(dinamicaAtiva){
+loj += Number(dinamicaExtraLoj||0);
+moto += Number(dinamicaExtraMoto||0);
+}
 if(loj < 10) loj = 10;
 if($("totalLojista")) $("totalLojista").innerText = loj.toFixed(2);
 return {lojista:loj,moto,origem:origemDetect,destino:destinoDetect,veiculo:v};
@@ -811,9 +912,6 @@ html += `<div class="border-2 border-black p-3 rounded-xl bg-white mb-2"><div cl
 $("extratoLojista").innerHTML = html || "Sem pedidos";
 });
 }
-
-window.toggleDinamica = async()=>{ dinamicaAtiva =!dinamicaAtiva; await setDoc(doc(db,"pricing_config","dinamica"),{ativa:dinamicaAtiva},{merge:true}); };
-window.salvarDinamicaValor = async()=>{ await setDoc(doc(db,"pricing_config","dinamica"),{extraLoj:Number($("editDinamicaLojista").value),extraMoto:Number($("editDinamicaMoto").value)},{merge:true}); };
 
 </script>
 </body>
