@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anjos Flash - FINAL COMPLETO MIN 10 + ROTAS + CANCELAR + DINAMICA FIX</title>
+<title>Anjos Flash - FINAL 5KM 10 + 2,00 KM + DINAMICA FIX</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
@@ -92,7 +92,7 @@
 <input id="enderecoSalaoLojista" placeholder="Endereço loja ex: Cavaleiros" value="Cavaleiros" class="w-full p-3 rounded border-2 border-green-600 text-sm font-bold bg-white" oninput="salvarNomeLoja();calc();">
 </div>
 <div class="bg-blue-50 border-2 border-blue-600 p-3 rounded-xl mb-3">
-<input id="enderecoCompletoLojista" placeholder="Endereço cliente ex: Aeroporto" class="w-full border-2 border-blue-600 p-3 rounded-xl text-sm bg-white font-bold">
+<input id="enderecoCompletoLojista" placeholder="Endereço cliente ex: Aeroporto 8km" class="w-full border-2 border-blue-600 p-3 rounded-xl text-sm bg-white font-bold">
 </div>
 <div class="grid grid-cols-2 gap-2 mb-3">
 <label class="flex items-center gap-2 text-sm border-2 border-yellow-500 p-3 rounded-xl bg-yellow-100 font-bold"><input type="checkbox" id="precisaRetorno" class="w-5 h-5"> RETORNO</label>
@@ -105,7 +105,7 @@
 <button type="button" onclick="setVeiculo('CARRETA')" id="btnCARRETA" class="border-2 p-3 rounded-xl text-xs font-bold">🚛 CARRETA</button>
 </div>
 <div class="bg-gray-100 p-3 rounded text-sm border">
-<div class="font-bold text-xl">Seu custo: R$ <span id="totalLojista">10.00</span> <span class="text-[10px]">(mín R$10,00 travado)</span> <span id="detalheRegiao" class="text-[10px] font-bold text-blue-600"></span> <span id="labelDinamicaTotal" class="text-[10px] font-bold text-red-600"></span></div>
+<div class="font-bold text-xl">Seu custo: R$ <span id="totalLojista">10.00</span> <span class="text-[10px]">(5km=R$10)</span> <span id="detalheRegiao" class="text-[10px] font-bold text-blue-600"></span> <span id="labelDinamicaTotal" class="text-[10px] font-bold text-red-600"></span></div>
 </div>
 <button type="button" onclick="criarPedido()" class="w-full bg-black text-white p-4 rounded-xl mt-3 font-bold">CRIAR CORRIDA</button>
 <div id="extratoLojista" class="mt-4 space-y-2"></div>
@@ -148,8 +148,8 @@
 </div>
 
 <div class="bg-yellow-100 border-4 border-black p-3 rounded-xl mb-4">
-<h3 class="font-black text-sm text-black">🔀 TAXA ORIGEM x DESTINO - MÍN 10 TRAVADO - BAIRROS ZERADOS</h3>
-<p class="text-[10px] font-bold">Ex: Cavaleiros->Aeroporto +10/+5 | Aeroporto->Aeroporto = R$10,00 mínimo</p>
+<h3 class="font-black text-sm text-black">🔀 TAXA ORIGEM x DESTINO - REGRA 5KM</h3>
+<p class="text-[10px] font-bold">Ex: Cavaleiros->Aeroporto +10/+5 em cima da regra de KM</p>
 <div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2 rounded border-2 border-black">
 <input id="origemRota" placeholder="Origem Cavaleiros" class="border-2 border-black p-2 rounded text-xs font-bold">
 <input id="destinoRota" placeholder="Destino Aeroporto" class="border-2 border-black p-2 rounded text-xs font-bold">
@@ -176,14 +176,14 @@
 </div>
 
 <div class="bg-black text-white p-3 rounded-xl mb-4 border-4 border-blue-500">
-<h3 class="font-bold text-sm mb-2">⚙️ VALORES BASE - MÍN 10</h3>
+<h3 class="font-bold text-sm mb-2">⚙️ VALORES BASE - REGRA 5KM</h3>
 <div class="grid grid-cols-4 gap-1 mb-2">
 <button type="button" onclick="setVeiculoAdmin('MOTO')" id="btnAdminMOTO" class="p-2 rounded text-[10px] font-bold bg-white text-black border-2 border-yellow-400">🏍️ MOTO</button>
 <button type="button" onclick="setVeiculoAdmin('UTILITARIO')" id="btnAdminUTILITARIO" class="p-2 rounded text-[10px] font-bold bg-gray-700 text-white">🚐 UTIL</button>
 <button type="button" onclick="setVeiculoAdmin('CAMINHAO_3_4')" id="btnAdminCAMINHAO_3_4" class="p-2 rounded text-[10px] font-bold bg-gray-700 text-white">🚚 3/4</button>
 <button type="button" onclick="setVeiculoAdmin('CARRETA')" id="btnAdminCARRETA" class="p-2 rounded text-[10px] font-bold bg-gray-700 text-white">🚛 CARRETA</button>
 </div>
-<p id="veiculoAdminAtual" class="text-[11px] bg-yellow-400 text-black p-1 rounded text-center font-bold mb-2">EDITANDO: MOTO - MÍN 10</p>
+<p id="veiculoAdminAtual" class="text-[11px] bg-yellow-400 text-black p-1 rounded text-center font-bold mb-2">EDITANDO: MOTO - 5KM=R$10 / R$7,50</p>
 <div class="grid grid-cols-2 gap-3 text-[11px]">
 <div class="bg-blue-900 p-2 rounded">
 <div>Base Loj<input id="editBaseLojista" type="number" value="10" class="text-black p-2 rounded w-full"></div>
@@ -200,7 +200,7 @@
 <div class="mt-1">Ret R$<input id="editRetMoto" type="number" value="2" class="text-black p-2 rounded w-full"></div>
 </div>
 </div>
-<button type="button" onclick="salvarPrecosVeiculo()" class="bg-orange-500 w-full py-3 rounded mt-3 font-bold">💾 SALVAR BASE MÍN 10</button>
+<button type="button" onclick="salvarPrecosVeiculo()" class="bg-orange-500 w-full py-3 rounded mt-3 font-bold">💾 SALVAR BASE</button>
 </div>
 
 <div class="border-4 border-yellow-500 p-3 rounded-xl mb-4 bg-yellow-50">
@@ -250,10 +250,15 @@ UTILITARIO: {baseLoj:30, extraLoj:0, baseMoto:20, extraMoto:0, baseSuper:0, extr
 CAMINHAO_3_4: {baseLoj:60, extraLoj:0, baseMoto:40, extraMoto:0, baseSuper:0, extraSuper:0, baseSuperMoto:0, extraSuperMoto:0, retPerc:50, retMoto:10},
 CARRETA: {baseLoj:120, extraLoj:0, baseMoto:80, extraMoto:0, baseSuper:0, extraSuper:0, baseSuperMoto:0, extraSuperMoto:0, retPerc:50, retMoto:20},
 bairros: {
-"Lagomar": {"MOTO": {"loj":0,"moto":0}},
-"Cavaleiros": {"MOTO": {"loj":0,"moto":0}},
-"Aeroporto": {"MOTO": {"loj":0,"moto":0}},
-"Centro": {"MOTO": {"loj":0,"moto":0}}
+"LAGOMAR": {"km":3},
+"CAVALEIROS": {"km":5},
+"AEROPORTO": {"km":8},
+"CENTRO": {"km":10},
+"IMBETIBA": {"km":4},
+"AJUDA": {"km":6},
+"RIVIERA": {"km":7},
+"JARDIM ESPERANCA": {"km":9},
+"PEC": {"km":12}
 },
 rotas: {
 "CAVALEIROS|AEROPORTO": {"MOTO": {"loj":10,"moto":5},"UTILITARIO": {"loj":10,"moto":5},"CAMINHAO_3_4": {"loj":10,"moto":5},"CARRETA": {"loj":10,"moto":5}},
@@ -262,16 +267,6 @@ rotas: {
 };
 
 const $ = id => document.getElementById(id);
-let ultimaQtdCorridas = 0;
-
-function tocarCorrida(){
-try{
-const audio = document.getElementById('somCorrida');
-audio.volume=1;
-audio.currentTime=0;
-audio.play().catch(()=>{});
-}catch(e){}
-}
 
 window.setAba = (a)=>{
 $("abaEntrar").classList.toggle("hidden",a!=="entrar");
@@ -297,7 +292,7 @@ window.veiculoSelecionado = "MOTO";
 
 window.setVeiculoAdmin = (v)=>{
 veiculoAdminAtual = v;
-$("veiculoAdminAtual").innerText = "EDITANDO: "+v+" - MÍN 10";
+$("veiculoAdminAtual").innerText = "EDITANDO: "+v+" - 5KM=R$10 / R$7,50";
 ["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].forEach(id=>{
 const b = $(`btnAdmin${id}`);
 if(b){
@@ -631,7 +626,7 @@ retPerc:Number($("editRetPerc").value),
 retMoto:Number($("editRetMoto").value)
 };
 await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true});
-alert("✅ Salvo MÍN 10");
+alert("✅ Salvo");
 };
 
 window.calc = function(){
@@ -639,13 +634,27 @@ const v = window.veiculoSelecionado || "MOTO";
 const cfg = regraAtual[v] || regraAtual.MOTO;
 const origemRaw = ($("enderecoSalaoLojista").value||"").toUpperCase();
 const destinoRaw = ($("enderecoCompletoLojista").value||"").toUpperCase();
+
 let origemDetect = "";
 let destinoDetect = "";
+let kmDestino = 0;
+
+Object.entries(regraAtual.bairros||{}).forEach(([bairro,dados])=>{
+if(destinoRaw.includes(bairro)){
+destinoDetect = bairro;
+kmDestino = Number(dados.km||0);
+}
+});
+if(kmDestino===0){
+const matchKm = destinoRaw.match(/(\d+)\s*KM/);
+if(matchKm) kmDestino = Number(matchKm[1]);
+}
 Object.keys(regraAtual.rotas||{}).forEach(k=>{
 const [o,d] = k.split("|");
 if(origemRaw.includes(o)) origemDetect = o;
 if(destinoRaw.includes(d)) destinoDetect = d;
 });
+
 let extraLoj = 0;
 let extraMoto = 0;
 const key = `${origemDetect}|${destinoDetect}`;
@@ -653,12 +662,23 @@ if(regraAtual.rotas && regraAtual.rotas[key] && regraAtual.rotas[key][v]){
 extraLoj += Number(regraAtual.rotas[key][v].loj||0);
 extraMoto += Number(regraAtual.rotas[key][v].moto||0);
 }
-if($("detalheRegiao")) $("detalheRegiao").innerText = (origemDetect||destinoDetect)? `(${origemDetect} -> ${destinoDetect} +${extraLoj}/+${extraMoto})` : "";
+
+// REGRA 5KM = 10 / 7.50 + 2.00 / 1.50
+let loj;
+let moto;
+if(kmDestino <= 5 || kmDestino === 0){
+loj = 10.00;
+moto = 7.50;
+}else{
+loj = 10.00 + ((kmDestino - 5) * 2.00);
+moto = 7.50 + ((kmDestino - 5) * 1.50);
+}
+loj += Number(cfg.extraLoj||0);
+moto += Number(cfg.extraMoto||0);
+
 let ret = $("precisaRetorno")?.checked || false;
 let sup = $("precisaSuper")?.checked || false;
 if(userRoleReal==="SUPER_LOJISTA") sup = true;
-let loj = Number(cfg.baseLoj||0) + Number(cfg.extraLoj||0) + extraLoj;
-let moto = Number(cfg.baseMoto||0) + Number(cfg.extraMoto||0) + extraMoto;
 if(sup){
 loj += Number(cfg.baseSuper||0) + Number(cfg.extraSuper||0);
 moto += Number(cfg.baseSuperMoto||0) + Number(cfg.extraSuperMoto||0);
@@ -671,9 +691,21 @@ if(dinamicaAtiva){
 loj += Number(dinamicaExtraLoj||0);
 moto += Number(dinamicaExtraMoto||0);
 }
+loj += extraLoj;
+moto += extraMoto;
+
 if(loj < 10) loj = 10;
+
+if($("detalheRegiao")){
+if(kmDestino>0){
+$("detalheRegiao").innerText = `(${kmDestino}km -> ${origemDetect} -> ${destinoDetect} +R$${extraLoj}/+R$${extraMoto})`;
+}else{
+$("detalheRegiao").innerText = (origemDetect||destinoDetect)? `(${origemDetect} -> ${destinoDetect} +${extraLoj}/+${extraMoto})` : "(5km = R$10)";
+}
+}
 if($("totalLojista")) $("totalLojista").innerText = loj.toFixed(2);
-return {lojista:loj,moto,origem:origemDetect,destino:destinoDetect,veiculo:v};
+
+return {lojista:loj,moto,km:kmDestino,origem:origemDetect,destino:destinoDetect,veiculo:v};
 };
 
 $("enderecoCompletoLojista").addEventListener("input",calc);
@@ -741,7 +773,7 @@ carregarSaldosAdmin();
 };
 
 window.criarPedido = async()=>{
-const {lojista,moto,origem,destino,veiculo} = calc();
+const {lojista,moto,origem,destino,veiculo,km} = calc();
 const endereco = $("enderecoCompletoLojista").value;
 if(!endereco){ alert("Endereço"); return; }
 const userSnap = await getDoc(doc(db,"usuarios",userLogado.uid));
@@ -755,6 +787,7 @@ endereco_completo:endereco,
 endereco_loja:$("enderecoSalaoLojista").value,
 bairro:destino||"Centro",
 origem:origem,
+km:km,
 valor_lojista:lojista,
 valor_motoboy:moto,
 codigo_secreto:cod,
@@ -764,7 +797,7 @@ criado_em:Timestamp.now()
 });
 const novo = saldoAtual - lojista;
 await setDoc(doc(db,"usuarios",userLogado.uid),{saldo_lojista:novo},{merge:true});
-alert(`Criado ${origem} -> ${destino} R$${lojista.toFixed(2)}`);
+alert(`Criado ${km||5}km R$${lojista.toFixed(2)}`);
 };
 
 async function carregarPendentes(){
@@ -816,7 +849,7 @@ s.forEach(d=>{
 const p = d.data();
 if(p.status==="ENTREGUE" || p.status==="CANCELADA") return;
 h += `<div class="border-2 border-black p-2 rounded bg-white mb-2">
-<b>${p.nome_loja} ${p.veiculo}</b> - ${p.endereco_completo}<br>
+<b>${p.nome_loja} ${p.veiculo} ${p.km||''}km</b> - ${p.endereco_completo}<br>
 <span class="text-[10px]">Loja: ${p.endereco_loja}</span><br>
 <span class="text-[10px] bg-black text-white px-1 rounded">Loj R$${p.valor_lojista?.toFixed(2)} | Moto R$${p.valor_motoboy?.toFixed(2)} - ${p.status}</span><br>
 <div class="bg-yellow-100 border p-1 rounded mt-1 text-center"><b class="text-sm">${p.codigo_secreto}</b></div>
@@ -850,12 +883,12 @@ botoes = `<button onclick="atualizarStatusCorrida('${p.id}','CHEGOU_CLIENTE')" c
 }else if(p.status==="CHEGOU_CLIENTE"){
 botoes = `<div class="bg-black text-white p-4 rounded-xl border-4 border-yellow-400 mb-2"><input id="codigoEntregaInput" type="tel" maxlength="4" placeholder="0000" class="border-2 border-yellow-400 p-4 rounded-xl w-full text-center font-black text-3xl tracking-[10px] text-black mt-2"><button onclick="confirmarEntrega()" class="w-full bg-green-600 text-white py-4 rounded-xl font-black text-lg mt-3 border-2 border-white">✅ FINALIZAR ENTREGA</button></div>`;
 }
-h = `<div class="bg-black text-white p-2 rounded-xl text-center font-black mb-2 text-xs">${p.status} - ${p.veiculo} R$${p.valor_motoboy?.toFixed(2)}</div><div class="bg-blue-100 border-2 border-blue-600 p-3 rounded-xl mb-2"><b>🏪 ${p.nome_loja}</b><br>${p.endereco_loja}</div><div class="bg-yellow-100 border-2 border-yellow-600 p-3 rounded-xl mb-3"><b>👤 ${p.bairro} - ${p.endereco_completo}</b></div>${botoes}`;
+h = `<div class="bg-black text-white p-2 rounded-xl text-center font-black mb-2 text-xs">${p.status} - ${p.veiculo} ${p.km||''}km R$${p.valor_motoboy?.toFixed(2)}</div><div class="bg-blue-100 border-2 border-blue-600 p-3 rounded-xl mb-2"><b>🏪 ${p.nome_loja}</b><br>${p.endereco_loja}</div><div class="bg-yellow-100 border-2 border-yellow-600 p-3 rounded-xl mb-3"><b>👤 ${p.bairro} - ${p.endereco_completo}</b></div>${botoes}`;
 }else{
 s.forEach(d=>{
 const p = d.data();
 if(p.status==="AGUARDANDO"){
-h += `<div class="border-2 p-2 rounded bg-white mb-2">📦 <b>${p.veiculo}</b> - ${p.nome_loja}<br><span class="text-[10px]">Loja: ${p.endereco_loja}</span><br><span class="text-[10px]">Cliente: ${p.endereco_completo}</span><br><b class="text-green-600">Ganha: R$${p.valor_motoboy?.toFixed(2)}</b><br><button onclick="aceitarCorrida('${d.id}')" class="w-full bg-black text-white py-2 rounded mt-1 font-bold">ACEITAR ${p.veiculo}</button></div>`;
+h += `<div class="border-2 p-2 rounded bg-white mb-2">📦 <b>${p.veiculo} ${p.km||''}km</b> - ${p.nome_loja}<br><span class="text-[10px]">Loja: ${p.endereco_loja}</span><br><span class="text-[10px]">Cliente: ${p.endereco_completo}</span><br><b class="text-green-600">Ganha: R$${p.valor_motoboy?.toFixed(2)}</b><br><button onclick="aceitarCorrida('${d.id}')" class="w-full bg-black text-white py-2 rounded mt-1 font-bold">ACEITAR ${p.veiculo}</button></div>`;
 }
 });
 if(!h) h = `Nenhuma corrida`;
@@ -907,7 +940,7 @@ btnCancelar = `<button onclick="cancelarCorridaLojista('${d.id}')" class="w-full
 }else if(p.status==="CANCELADA"){
 btnCancelar = `<div class="w-full bg-gray-300 text-black py-2 rounded-xl mt-2 font-bold text-xs text-center border-2 border-black">❌ CANCELADA</div>`;
 }
-html += `<div class="border-2 border-black p-3 rounded-xl bg-white mb-2"><div class="flex justify-between"><b class="text-xs">${p.origem||''} -> ${p.bairro||''} ${p.veiculo}</b><span class="text-[9px] bg-black text-white px-2 py-1 rounded">R$${p.valor_lojista?.toFixed(2)}</span></div><div class="bg-yellow-100 border-2 border-yellow-500 p-2 rounded-xl mt-2 text-center"><p class="font-black text-3xl tracking-widest">${p.codigo_secreto}</p></div><div class="flex justify-between mt-2 text-[10px]"><span>Mín R$10,00 travado</span><b>${p.status}</b></div>${btnCancelar}</div>`;
+html += `<div class="border-2 border-black p-3 rounded-xl bg-white mb-2"><div class="flex justify-between"><b class="text-xs">${p.km||5}km ${p.origem||''} -> ${p.bairro||''} ${p.veiculo}</b><span class="text-[9px] bg-black text-white px-2 py-1 rounded">R$${p.valor_lojista?.toFixed(2)}</span></div><div class="bg-yellow-100 border-2 border-yellow-500 p-2 rounded-xl mt-2 text-center"><p class="font-black text-3xl tracking-widest">${p.codigo_secreto}</p></div><div class="flex justify-between mt-2 text-[10px]"><span>${p.km||5}km = R$10 / R$7,50 + R$2/R$1,5</span><b>${p.status}</b></div>${btnCancelar}</div>`;
 });
 $("extratoLojista").innerHTML = html || "Sem pedidos";
 });
