@@ -3,19 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anjos Flash - FINAL 5KM 10 + 2,00 KM + DINAMICA FIX</title>
+<title>Anjos Flash - COMPLETO ORIGINAL + PIX + MAPA AUTO TRAVADO</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
 
-<audio id="somCorrida" preload="auto">
-<source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" type="audio/ogg">
-</audio>
-
 <div id="telaLogin" class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
 <div class="bg-white p-6 rounded-xl w-full max-w-sm max-h-[95vh] overflow-y-auto">
 <h2 class="font-bold text-xl text-center">🏍️ Anjos Flash</h2>
-<p id="pixLoginDisplay" class="text-[10px] text-center bg-black text-white p-1 rounded mt-2">PIX: 22997450131</p>
+<p id="pixLoginDisplay" class="text-[10px] text-center bg-black text-white p-1 rounded mt-2">PIX: carregando...</p>
 <div class="flex gap-2 my-3">
 <button type="button" onclick="setAba('entrar')" class="flex-1 bg-black text-white py-2 rounded">ENTRAR</button>
 <button type="button" onclick="setAba('cadastrar')" class="flex-1 border py-2 rounded">CRIAR</button>
@@ -79,8 +75,8 @@
 <p class="font-bold text-3xl text-yellow-400">R$ <span id="saldoLojistaValor">0.00</span></p>
 </div>
 <div id="boxPixLojista" class="bg-yellow-100 border-2 border-yellow-500 p-3 rounded-xl mb-3 text-center">
-<p class="text-[9px] font-bold">PIX PARA RECARGA</p>
-<p id="pixLojistaDisplay" class="font-black text-xl">22997450131</p>
+<p class="text-[9px] font-bold">PIX PARA RECARGA - pasta pix_config/atual</p>
+<p id="pixLojistaDisplay" class="font-black text-xl">carregando...</p>
 <p id="nomePixLojistaDisplay" class="text-[10px] font-bold"></p>
 <button type="button" onclick="navigator.clipboard.writeText(document.getElementById('pixLojistaDisplay').innerText)" class="bg-black text-white text-[10px] px-4 py-2 rounded-full mt-2 font-bold">COPIAR PIX</button>
 </div>
@@ -89,14 +85,15 @@
 <input id="nomeSalaoLojista" placeholder="Nome da loja" class="w-full p-3 rounded border-2 border-black text-sm font-bold" oninput="salvarNomeLoja()">
 </div>
 <div class="bg-green-50 border-2 border-green-600 p-3 rounded-xl mb-3">
-<input id="enderecoSalaoLojista" placeholder="Endereço loja ex: Cavaleiros" value="Cavaleiros" class="w-full p-3 rounded border-2 border-green-600 text-sm font-bold bg-white" oninput="salvarNomeLoja();calc();">
+<input id="enderecoSalaoLojista" placeholder="Endereço loja ex: Cavaleiros" value="Cavaleiros" class="w-full p-3 rounded border-2 border-green-600 text-sm font-bold bg-white" oninput="salvarNomeLoja();debounceKm();">
 </div>
 <div class="bg-blue-50 border-2 border-blue-600 p-3 rounded-xl mb-3">
-<input id="enderecoCompletoLojista" placeholder="Endereço cliente ex: Aeroporto 8km" class="w-full border-2 border-blue-600 p-3 rounded-xl text-sm bg-white font-bold">
+<input id="enderecoCompletoLojista" placeholder="Endereço cliente ex: Alphaville 1 Rio das Ostras" class="w-full border-2 border-blue-600 p-3 rounded-xl text-sm bg-white font-bold" oninput="debounceKm();">
+<input id="kmManualLojista" type="hidden">
 </div>
 <div class="grid grid-cols-2 gap-2 mb-3">
-<label class="flex items-center gap-2 text-sm border-2 border-yellow-500 p-3 rounded-xl bg-yellow-100 font-bold"><input type="checkbox" id="precisaRetorno" class="w-5 h-5"> RETORNO</label>
-<label class="flex items-center gap-2 text-sm border-2 border-orange-500 p-3 rounded-xl bg-orange-100 font-bold"><input type="checkbox" id="precisaSuper" class="w-5 h-5"> SUBIR +</label>
+<label class="flex items-center gap-2 text-sm border-2 border-yellow-500 p-3 rounded-xl bg-yellow-100 font-bold"><input type="checkbox" id="precisaRetorno" class="w-5 h-5" onchange="calc()"> RETORNO</label>
+<label class="flex items-center gap-2 text-sm border-2 border-orange-500 p-3 rounded-xl bg-orange-100 font-bold"><input type="checkbox" id="precisaSuper" class="w-5 h-5" onchange="calc()"> SUBIR +</label>
 </div>
 <div class="grid grid-cols-2 gap-2 mb-3">
 <button type="button" onclick="setVeiculo('MOTO')" id="btnMOTO" class="border-2 p-3 rounded-xl text-xs font-bold bg-black text-white">🏍️ MOTO</button>
@@ -105,7 +102,7 @@
 <button type="button" onclick="setVeiculo('CARRETA')" id="btnCARRETA" class="border-2 p-3 rounded-xl text-xs font-bold">🚛 CARRETA</button>
 </div>
 <div class="bg-gray-100 p-3 rounded text-sm border">
-<div class="font-bold text-xl">Seu custo: R$ <span id="totalLojista">10.00</span> <span class="text-[10px]">(5km=R$10)</span> <span id="detalheRegiao" class="text-[10px] font-bold text-blue-600"></span> <span id="labelDinamicaTotal" class="text-[10px] font-bold text-red-600"></span></div>
+<div class="font-bold text-xl">Seu custo: R$ <span id="totalLojista">10.00</span> <span id="detalheRegiao" class="text-[10px] font-bold text-blue-600 block mt-1">(KM automático)</span> <span id="labelDinamicaTotal" class="text-[10px] font-bold text-red-600"></span></div>
 </div>
 <button type="button" onclick="criarPedido()" class="w-full bg-black text-white p-4 rounded-xl mt-3 font-bold">CRIAR CORRIDA</button>
 <div id="extratoLojista" class="mt-4 space-y-2"></div>
@@ -125,6 +122,7 @@
 </div>
 
 <div id="telaAdmin" class="p-4 hidden">
+
 <div class="bg-black text-white p-4 rounded-xl mb-4 border-4 border-green-500 text-center">
 <p class="text-[10px] opacity-70">💰 LUCRO TOTAL</p>
 <p class="font-black text-3xl text-green-400">R$ <span id="lucroTotalAdmin">0.00</span></p>
@@ -133,6 +131,23 @@
 <div class="bg-white/10 p-2 rounded"><p>PAGO MOTO</p><b id="totalPagoAdmin">R$0.00</b></div>
 <div class="bg-yellow-500 text-black p-2 rounded font-black"><p>CORRIDAS</p><b id="totalCorridasAdmin">0</b></div>
 </div>
+</div>
+
+<div class="bg-black text-white p-4 rounded-xl mb-4 border-4 border-yellow-400">
+<h3 class="font-black text-sm text-yellow-400">💳 EDITAR PIX - PASTA pix_config/atual</h3>
+<p class="text-[9px] text-white/60 mb-2">Sua pasta já existe, só edita aqui</p>
+<div class="grid grid-cols-1 gap-2 bg-white p-3 rounded-xl">
+<div>
+<label class="text-[9px] font-black text-black">NÚMERO DO PIX</label>
+<input id="editPixNumero" placeholder="22997450131" class="w-full border-2 border-black p-3 rounded text-sm font-black text-black">
+</div>
+<div>
+<label class="text-[9px] font-black text-black">NOME QUE APARECE</label>
+<input id="editPixNome" placeholder="Seu nome" class="w-full border-2 border-black p-3 rounded text-sm font-bold text-black">
+</div>
+<button type="button" onclick="salvarPix()" class="bg-yellow-400 text-black w-full py-3 rounded-xl font-black border-2 border-black">💾 SALVAR PIX NA PASTA</button>
+</div>
+<p class="text-[10px] mt-2 text-center">Atual: <b id="pixAtualAdmin" class="text-yellow-400">carregando...</b></p>
 </div>
 
 <div class="bg-yellow-400 text-black p-3 rounded-xl mb-4 border-4 border-black">
@@ -148,8 +163,7 @@
 </div>
 
 <div class="bg-yellow-100 border-4 border-black p-3 rounded-xl mb-4">
-<h3 class="font-black text-sm text-black">🔀 TAXA ORIGEM x DESTINO - REGRA 5KM</h3>
-<p class="text-[10px] font-bold">Ex: Cavaleiros->Aeroporto +10/+5 em cima da regra de KM</p>
+<h3 class="font-black text-sm text-black">🔀 TAXA ORIGEM x DESTINO</h3>
 <div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2 rounded border-2 border-black">
 <input id="origemRota" placeholder="Origem Cavaleiros" class="border-2 border-black p-2 rounded text-xs font-bold">
 <input id="destinoRota" placeholder="Destino Aeroporto" class="border-2 border-black p-2 rounded text-xs font-bold">
@@ -176,14 +190,14 @@
 </div>
 
 <div class="bg-black text-white p-3 rounded-xl mb-4 border-4 border-blue-500">
-<h3 class="font-bold text-sm mb-2">⚙️ VALORES BASE - REGRA 5KM</h3>
+<h3 class="font-bold text-sm mb-2">⚙️ VALORES BASE</h3>
 <div class="grid grid-cols-4 gap-1 mb-2">
 <button type="button" onclick="setVeiculoAdmin('MOTO')" id="btnAdminMOTO" class="p-2 rounded text-[10px] font-bold bg-white text-black border-2 border-yellow-400">🏍️ MOTO</button>
 <button type="button" onclick="setVeiculoAdmin('UTILITARIO')" id="btnAdminUTILITARIO" class="p-2 rounded text-[10px] font-bold bg-gray-700 text-white">🚐 UTIL</button>
 <button type="button" onclick="setVeiculoAdmin('CAMINHAO_3_4')" id="btnAdminCAMINHAO_3_4" class="p-2 rounded text-[10px] font-bold bg-gray-700 text-white">🚚 3/4</button>
 <button type="button" onclick="setVeiculoAdmin('CARRETA')" id="btnAdminCARRETA" class="p-2 rounded text-[10px] font-bold bg-gray-700 text-white">🚛 CARRETA</button>
 </div>
-<p id="veiculoAdminAtual" class="text-[11px] bg-yellow-400 text-black p-1 rounded text-center font-bold mb-2">EDITANDO: MOTO - 5KM=R$10 / R$7,50</p>
+<p id="veiculoAdminAtual" class="text-[11px] bg-yellow-400 text-black p-1 rounded text-center font-bold mb-2">EDITANDO: MOTO - 5KM=R$10</p>
 <div class="grid grid-cols-2 gap-3 text-[11px]">
 <div class="bg-blue-900 p-2 rounded">
 <div>Base Loj<input id="editBaseLojista" type="number" value="10" class="text-black p-2 rounded w-full"></div>
@@ -209,7 +223,7 @@
 </div>
 
 <div class="bg-red-50 border-4 border-red-600 p-3 rounded-xl mb-4">
-<h3 class="font-black text-sm text-red-600">🚨 CORRIDAS ABERTAS - COM CANCELAR</h3>
+<h3 class="font-black text-sm text-red-600">🚨 CORRIDAS ABERTAS</h3>
 <div id="corridasAbertas" class="text-xs mt-2"></div>
 </div>
 
@@ -243,6 +257,9 @@ let veiculoAdminAtual = "MOTO";
 let dinamicaAtiva = false;
 let dinamicaExtraLoj = 3;
 let dinamicaExtraMoto = 2;
+let timeoutBuscaKm = null;
+window.kmCalculadoAutomatico = 0;
+window.corridaAtivaId = null;
 
 let regraAtual = {
 MOTO: {baseLoj:10, extraLoj:0, baseMoto:7.5, extraMoto:0, baseSuper:0, extraSuper:0, baseSuperMoto:0, extraSuperMoto:0, retPerc:50, retMoto:2},
@@ -255,10 +272,11 @@ bairros: {
 "AEROPORTO": {"km":8},
 "CENTRO": {"km":10},
 "IMBETIBA": {"km":4},
-"AJUDA": {"km":6},
-"RIVIERA": {"km":7},
+"ALPHAVILLE": {"km":7},
+"RIO DAS OSTRAS": {"km":15},
 "JARDIM ESPERANCA": {"km":9},
-"PEC": {"km":12}
+"RIVIERA": {"km":7},
+"AJUDA": {"km":6}
 },
 rotas: {
 "CAVALEIROS|AEROPORTO": {"MOTO": {"loj":10,"moto":5},"UTILITARIO": {"loj":10,"moto":5},"CAMINHAO_3_4": {"loj":10,"moto":5},"CARRETA": {"loj":10,"moto":5}},
@@ -352,6 +370,60 @@ if(role.includes("CARRETA")) return "CARRETA";
 if(role.includes("3_4")) return "CAMINHAO_3_4";
 if(role.includes("UTIL")) return "UTILITARIO";
 return "MOTO";
+}
+
+async function carregarPixConfig(){
+try{
+const s = await getDoc(doc(db,"pix_config","atual"));
+if(s.exists()){
+const pix = s.data().numero || s.data().pix || "22997450131";
+const nome = s.data().nome || s.data().nomePix || "";
+if($("pixLojistaDisplay")) $("pixLojistaDisplay").innerText = pix;
+if($("pixLoginDisplay")) $("pixLoginDisplay").innerText = "PIX: "+pix;
+if($("nomePixLojistaDisplay")) $("nomePixLojistaDisplay").innerText = nome;
+if($("pixAtualAdmin")) $("pixAtualAdmin").innerText = pix + (nome?" - "+nome:"");
+if($("editPixNumero")) $("editPixNumero").value = pix;
+if($("editPixNome")) $("editPixNome").value = nome;
+}else{
+if($("pixAtualAdmin")) $("pixAtualAdmin").innerText = "Nenhum - usando padrão 22997450131";
+}
+}catch(e){
+console.log("erro pix",e);
+}
+}
+
+window.salvarPix = async()=>{
+const numero = $("editPixNumero")?.value.trim();
+const nome = $("editPixNome")?.value.trim();
+if(!numero){ alert("Digite o número do Pix"); return; }
+await setDoc(doc(db,"pix_config","atual"),{
+numero:numero,
+nome:nome,
+pix:numero,
+nomePix:nome,
+atualizado_por:userLogado?.email||'admin',
+atualizado_em:Timestamp.now()
+},{merge:true});
+if($("pixLojistaDisplay")) $("pixLojistaDisplay").innerText = numero;
+if($("pixLoginDisplay")) $("pixLoginDisplay").innerText = "PIX: "+numero;
+if($("nomePixLojistaDisplay")) $("nomePixLojistaDisplay").innerText = nome;
+if($("pixAtualAdmin")) $("pixAtualAdmin").innerText = numero + (nome?" - "+nome:"");
+alert("✅ PIX salvo na sua pasta pix_config/atual: "+numero);
+};
+
+function escutarPixConfig(){
+try{
+onSnapshot(doc(db,"pix_config","atual"), s=>{
+if(s.exists()){
+const pix = s.data().numero || s.data().pix || "22997450131";
+const nome = s.data().nome || s.data().nomePix || "";
+if($("pixLojistaDisplay")) $("pixLojistaDisplay").innerText = pix;
+if($("pixLoginDisplay")) $("pixLoginDisplay").innerText = "PIX: "+pix;
+if($("nomePixLojistaDisplay")) $("nomePixLojistaDisplay").innerText = nome;
+if($("pixAtualAdmin")) $("pixAtualAdmin").innerText = pix + (nome?" - "+nome:"");
+}
+});
+}catch(e){}
 }
 
 async function carregarDinamica(){
@@ -450,22 +522,75 @@ alert(`✅ Dinâmica R$${dinamicaExtraLoj.toFixed(2)} / R$${dinamicaExtraMoto.to
 atualizarBtnDinamica();
 };
 
+async function getCoord(endereco){
+try{
+const q = encodeURIComponent(endereco + ", Macaé, RJ, Brasil");
+const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}&limit=1`);
+const j = await r.json();
+if(j && j[0]) return { lat: j[0].lat, lon: j[0].lon };
+}catch(e){}
+return null;
+}
+
+async function calcularKmAutomatico(){
+const origem = $("enderecoSalaoLojista")?.value.trim() || "Cavaleiros, Macaé";
+const destino = $("enderecoCompletoLojista")?.value.trim();
+if(!origem ||!destino || destino.length < 5) return;
+if($("detalheRegiao")) $("detalheRegiao").innerText = "🔍 Calculando KM automático no mapa...";
+const c1 = await getCoord(origem);
+const c2 = await getCoord(destino);
+if(!c1 ||!c2){
+let kmFallback = 0;
+Object.entries(regraAtual.bairros||{}).forEach(([b,d])=>{
+if(destino.toUpperCase().includes(b)) kmFallback = d.km||0;
+});
+if(kmFallback>0){
+window.kmCalculadoAutomatico = kmFallback;
+calc();
+}else{
+window.kmCalculadoAutomatico = 5;
+calc();
+}
+return;
+}
+try{
+const url = `https://router.project-osrm.org/route/v1/driving/${c1.lon},${c1.lat};${c2.lon},${c2.lat}?overview=false`;
+const r = await fetch(url);
+const j = await r.json();
+if(j.routes && j.routes[0]){
+const km = j.routes[0].distance / 1000;
+window.kmCalculadoAutomatico = Math.max(1, Math.ceil(km));
+calc();
+}
+}catch(e){
+if(!window.kmCalculadoAutomatico) window.kmCalculadoAutomatico = 5;
+calc();
+}
+}
+
+window.debounceKm = function(){
+clearTimeout(timeoutBuscaKm);
+timeoutBuscaKm = setTimeout(calcularKmAutomatico, 900);
+}
+
 onAuthStateChanged(auth, async(user)=>{
 if(user){
 userLogado = user;
 const res = await buscarRoleReal(user);
 userRoleReal = normalizaRole(res.role);
 userStatus = res.status || "PENDENTE";
-$("roleRealBadge").innerText = userRoleReal+" - "+userStatus;
+if($("roleRealBadge")) $("roleRealBadge").innerText = userRoleReal+" - "+userStatus;
 if(userStatus!=="APROVADO" && userRoleReal!=="ADMIN"){
 $("telaLogin").classList.add("hidden");
 $("telaPendente").classList.remove("hidden");
-$("pendenteRole").innerText = userRoleReal+" "+userStatus;
+if($("pendenteRole")) $("pendenteRole").innerText = userRoleReal+" "+userStatus;
 return;
 }
 $("telaLogin").classList.add("hidden");
 $("telaPendente").classList.add("hidden");
 await carregarPrecos();
+await carregarPixConfig();
+escutarPixConfig();
 await carregarDinamica();
 escutarDinamica();
 mostrarTelaPorRole();
@@ -478,7 +603,10 @@ carregarPendentes();
 carregarSaldosAdmin();
 escutarLucro();
 }
-if(userRoleReal.startsWith("MOTOBOY")) carregarEntregasMotoboy();
+if(userRoleReal.startsWith("MOTOBOY")){
+carregarEntregasMotoboy();
+if($("meuVeiculoDisplay")) $("meuVeiculoDisplay").innerText = getVeiculoDoRole(userRoleReal);
+}
 }else{
 $("telaLogin").classList.remove("hidden");
 $("telaPendente").classList.add("hidden");
@@ -496,12 +624,16 @@ if($("saldoMotoboyValor")) $("saldoMotoboyValor").innerText = (s.data().saldo_mo
 }
 
 function mostrarTelaPorRole(){
-$("telaMotoboy").classList.add("hidden");
-$("telaLojista").classList.add("hidden");
-$("telaAdmin").classList.add("hidden");
-if(userRoleReal.startsWith("MOTOBOY")) $("telaMotoboy").classList.remove("hidden");
-else if(userRoleReal==="LOJISTA" || userRoleReal==="SUPER_LOJISTA") $("telaLojista").classList.remove("hidden");
-else $("telaAdmin").classList.remove("hidden");
+if($("telaMotoboy")) $("telaMotoboy").classList.add("hidden");
+if($("telaLojista")) $("telaLojista").classList.add("hidden");
+if($("telaAdmin")) $("telaAdmin").classList.add("hidden");
+if(userRoleReal.startsWith("MOTOBOY")){
+if($("telaMotoboy")) $("telaMotoboy").classList.remove("hidden");
+}else if(userRoleReal==="LOJISTA" || userRoleReal==="SUPER_LOJISTA"){
+if($("telaLojista")) $("telaLojista").classList.remove("hidden");
+}else{
+if($("telaAdmin")) $("telaAdmin").classList.remove("hidden");
+}
 calc();
 }
 
@@ -509,7 +641,7 @@ window.fazerLogin = async()=>{
 try{
 await signInWithEmailAndPassword(auth,$("loginEmail").value.trim(),$("loginSenha").value.trim());
 }catch(e){
-$("msgLogin").innerText = e.message;
+if($("msgLogin")) $("msgLogin").innerText = e.message;
 }
 };
 
@@ -572,7 +704,7 @@ h += `<div class="bg-black text-white p-2 rounded border-2 border-yellow-400 mb-
 <button onclick="salvarRotaEdit('${key}')" class="bg-green-600 text-white w-full py-2 rounded mt-2 text-xs font-black">💾 SALVAR ROTA</button>
 </div>`;
 });
-$("listaRotasAdmin").innerHTML = h || "Nenhuma rota";
+if($("listaRotasAdmin")) $("listaRotasAdmin").innerHTML = h || "Nenhuma rota";
 }
 
 window.salvarRotaEdit = async(key)=>{
@@ -632,29 +764,27 @@ alert("✅ Salvo");
 window.calc = function(){
 const v = window.veiculoSelecionado || "MOTO";
 const cfg = regraAtual[v] || regraAtual.MOTO;
-const origemRaw = ($("enderecoSalaoLojista").value||"").toUpperCase();
-const destinoRaw = ($("enderecoCompletoLojista").value||"").toUpperCase();
-
+const origemRaw = ($("enderecoSalaoLojista")?.value||"").toUpperCase();
+const destinoRaw = ($("enderecoCompletoLojista")?.value||"").toUpperCase();
 let origemDetect = "";
 let destinoDetect = "";
 let kmDestino = 0;
-
+if(window.kmCalculadoAutomatico > 0){
+kmDestino = window.kmCalculadoAutomatico;
+}else{
 Object.entries(regraAtual.bairros||{}).forEach(([bairro,dados])=>{
 if(destinoRaw.includes(bairro)){
 destinoDetect = bairro;
 kmDestino = Number(dados.km||0);
 }
 });
-if(kmDestino===0){
-const matchKm = destinoRaw.match(/(\d+)\s*KM/);
-if(matchKm) kmDestino = Number(matchKm[1]);
+if(kmDestino===0) kmDestino = 5;
 }
 Object.keys(regraAtual.rotas||{}).forEach(k=>{
 const [o,d] = k.split("|");
 if(origemRaw.includes(o)) origemDetect = o;
 if(destinoRaw.includes(d)) destinoDetect = d;
 });
-
 let extraLoj = 0;
 let extraMoto = 0;
 const key = `${origemDetect}|${destinoDetect}`;
@@ -662,11 +792,9 @@ if(regraAtual.rotas && regraAtual.rotas[key] && regraAtual.rotas[key][v]){
 extraLoj += Number(regraAtual.rotas[key][v].loj||0);
 extraMoto += Number(regraAtual.rotas[key][v].moto||0);
 }
-
-// REGRA 5KM = 10 / 7.50 + 2.00 / 1.50
 let loj;
 let moto;
-if(kmDestino <= 5 || kmDestino === 0){
+if(kmDestino <= 5){
 loj = 10.00;
 moto = 7.50;
 }else{
@@ -675,7 +803,6 @@ moto = 7.50 + ((kmDestino - 5) * 1.50);
 }
 loj += Number(cfg.extraLoj||0);
 moto += Number(cfg.extraMoto||0);
-
 let ret = $("precisaRetorno")?.checked || false;
 let sup = $("precisaSuper")?.checked || false;
 if(userRoleReal==="SUPER_LOJISTA") sup = true;
@@ -693,23 +820,13 @@ moto += Number(dinamicaExtraMoto||0);
 }
 loj += extraLoj;
 moto += extraMoto;
-
 if(loj < 10) loj = 10;
-
 if($("detalheRegiao")){
-if(kmDestino>0){
-$("detalheRegiao").innerText = `(${kmDestino}km -> ${origemDetect} -> ${destinoDetect} +R$${extraLoj}/+R$${extraMoto})`;
-}else{
-$("detalheRegiao").innerText = (origemDetect||destinoDetect)? `(${origemDetect} -> ${destinoDetect} +${extraLoj}/+${extraMoto})` : "(5km = R$10)";
-}
+$("detalheRegiao").innerText = `📍 ${kmDestino}km automático (${origemDetect||'LOJA'} -> ${destinoDetect||'DESTINO'}) ${extraLoj?`+R$${extraLoj}/+R$${extraMoto} rota`:''}`;
 }
 if($("totalLojista")) $("totalLojista").innerText = loj.toFixed(2);
-
 return {lojista:loj,moto,km:kmDestino,origem:origemDetect,destino:destinoDetect,veiculo:v};
 };
-
-$("enderecoCompletoLojista").addEventListener("input",calc);
-$("enderecoSalaoLojista").addEventListener("input",calc);
 
 function escutarLucro(){
 onSnapshot(collection(db,"pedidos"), snap=>{
@@ -748,8 +865,8 @@ hM += `<div class="bg-white border-2 border-black p-2 rounded text-[10px]"><b>�
 hL += `<div class="bg-white border-2 border-black p-2 rounded text-[10px]"><b>🏪 ${u.nome||u.email}</b><br>R$${Number(u.saldo_lojista||0).toFixed(2)}<div class="flex gap-1 mt-1"><input id="addLoj_${u.userId}" type="text" placeholder="Ex: 120,00" class="w-full border-2 border-black p-2 rounded text-xs"><button onclick="addSaldoDireto('${u.userId}','${u.email}','lojista',1)" class="bg-green-600 text-white px-3 py-1 rounded">+ ADD</button><button onclick="addSaldoDireto('${u.userId}','${u.email}','lojista',-1)" class="bg-red-600 text-white px-3 py-1 rounded">- TIRAR</button></div></div>`;
 }
 }
-$("listaLojistasSaldos").innerHTML = hL;
-$("listaMotoboysSaldos").innerHTML = hM;
+if($("listaLojistasSaldos")) $("listaLojistasSaldos").innerHTML = hL;
+if($("listaMotoboysSaldos")) $("listaMotoboysSaldos").innerHTML = hM;
 };
 
 window.addSaldoDireto = async(uid,email,tipo,sinal)=>{
@@ -774,11 +891,16 @@ carregarSaldosAdmin();
 
 window.criarPedido = async()=>{
 const {lojista,moto,origem,destino,veiculo,km} = calc();
-const endereco = $("enderecoCompletoLojista").value;
-if(!endereco){ alert("Endereço"); return; }
+const endereco = $("enderecoCompletoLojista")?.value||"";
+if(!endereco){ alert("Endereço cliente"); return; }
+if(!window.kmCalculadoAutomatico || window.kmCalculadoAutomatico===0){
+alert("Aguarde calcular KM automático...");
+await calcularKmAutomatico();
+return;
+}
 const userSnap = await getDoc(doc(db,"usuarios",userLogado.uid));
 const saldoAtual = userSnap.data()?.saldo_lojista??0;
-if(saldoAtual < lojista){ alert(`Saldo ${saldoAtual.toFixed(2)}`); return; }
+if(saldoAtual < lojista){ alert(`Saldo insuficiente R$${saldoAtual.toFixed(2)} precisa R$${lojista.toFixed(2)}`); return; }
 const cod = Math.floor(1000+Math.random()*9000).toString();
 await addDoc(collection(db,"pedidos"),{
 owner_id:userLogado.uid,
@@ -797,7 +919,9 @@ criado_em:Timestamp.now()
 });
 const novo = saldoAtual - lojista;
 await setDoc(doc(db,"usuarios",userLogado.uid),{saldo_lojista:novo},{merge:true});
-alert(`Criado ${km||5}km R$${lojista.toFixed(2)}`);
+window.kmCalculadoAutomatico = 0;
+if($("enderecoCompletoLojista")) $("enderecoCompletoLojista").value = "";
+alert(`✅ Criado ${km}km R$${lojista.toFixed(2)} automático`);
 };
 
 async function carregarPendentes(){
@@ -808,7 +932,7 @@ const u = d.data();
 if((u.status||"").toUpperCase()!=="PENDENTE") return;
 h += `<div class="border-2 border-yellow-500 bg-white p-3 rounded-xl text-[11px]"><b>👤 ${u.nome}</b><br><b class="bg-red-600 text-white px-1 rounded">${u.role}</b><br>${u.email}<br><button onclick="aprovarUsuario('${d.id}')" class="bg-green-600 text-white px-2 py-3 rounded w-full mt-3 font-black">✅ APROVAR</button></div>`;
 });
-$("listaPendentesAprovacao").innerHTML = h || "Nenhum";
+if($("listaPendentesAprovacao")) $("listaPendentesAprovacao").innerHTML = h || "Nenhum pendente";
 });
 }
 
@@ -828,7 +952,7 @@ alert("✅ Cancelada R$"+Number(p.valor_lojista||0).toFixed(2)+" devolvido");
 };
 
 window.cancelarCorridaAdmin = async(id)=>{
-if(!confirm("Cancelar como ADMIN?")) return;
+if(!confirm("Cancelar como ADMIN? Saldo volta pro lojista.")) return;
 const snap = await getDoc(doc(db,"pedidos",id));
 const p = snap.data();
 await setDoc(doc(db,"pedidos",id),{status:"CANCELADA",cancelado_em:Timestamp.now()},{merge:true});
@@ -849,17 +973,17 @@ s.forEach(d=>{
 const p = d.data();
 if(p.status==="ENTREGUE" || p.status==="CANCELADA") return;
 h += `<div class="border-2 border-black p-2 rounded bg-white mb-2">
-<b>${p.nome_loja} ${p.veiculo} ${p.km||''}km</b> - ${p.endereco_completo}<br>
-<span class="text-[10px]">Loja: ${p.endereco_loja}</span><br>
-<span class="text-[10px] bg-black text-white px-1 rounded">Loj R$${p.valor_lojista?.toFixed(2)} | Moto R$${p.valor_motoboy?.toFixed(2)} - ${p.status}</span><br>
-<div class="bg-yellow-100 border p-1 rounded mt-1 text-center"><b class="text-sm">${p.codigo_secreto}</b></div>
+<b>${p.nome_loja||''} ${p.veiculo||''} ${p.km||''}km</b> - ${p.endereco_completo||''}<br>
+<span class="text-[10px]">Loja: ${p.endereco_loja||''}</span><br>
+<span class="text-[10px] bg-black text-white px-1 rounded">Loj R$${Number(p.valor_lojista||0).toFixed(2)} | Moto R$${Number(p.valor_motoboy||0).toFixed(2)} - ${p.status}</span><br>
+<div class="bg-yellow-100 border p-1 rounded mt-1 text-center"><b class="text-sm">COD: ${p.codigo_secreto||''}</b></div>
 <div class="grid grid-cols-2 gap-2 mt-2">
 <button onclick="aceitarCorrida('${d.id}')" class="bg-green-600 text-white px-3 py-2 rounded font-bold">ACEITAR</button>
-<button onclick="cancelarCorridaAdmin('${d.id}')" class="bg-red-600 text-white px-3 py-2 rounded font-bold">❌ CANCELAR ADMIN</button>
+<button onclick="cancelarCorridaAdmin('${d.id}')" class="bg-red-600 text-white px-3 py-2 rounded font-bold">❌ CANCELAR</button>
 </div>
 </div>`;
 });
-$("corridasAbertas").innerHTML = h || "Nenhuma";
+if($("corridasAbertas")) $("corridasAbertas").innerHTML = h || "Nenhuma aberta";
 });
 }
 
@@ -869,31 +993,34 @@ let h = "";
 let corridaAceita = null;
 s.forEach(d=>{
 const p = d.data();
-if(p.motorista_id===userLogado.uid && ["ACEITA","CHEGOU_LOJA","A_CAMINHO","CHEGOU_CLIENTE"].includes(p.status)) corridaAceita = {id:d.id,...p};
+if(p.motorista_id===userLogado.uid && ["ACEITA","CHEGOU_LOJA","A_CAMINHO","CHEGOU_CLIENTE"].includes(p.status)){
+corridaAceita = {id:d.id,...p};
+}
 });
+window.corridaAtivaId = corridaAceita? corridaAceita.id : null;
 if(corridaAceita){
 const p = corridaAceita;
 let botoes = "";
 if(p.status==="ACEITA"){
-botoes = `<button onclick="atualizarStatusCorrida('${p.id}','CHEGOU_LOJA')" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black mb-2">📍 CHEGUEI NA LOJA</button><button onclick="cancelarCorrida('${p.id}')" class="w-full bg-red-600 text-white py-2 rounded-xl font-bold text-xs">❌ CANCELAR</button>`;
+botoes = `<button onclick="atualizarStatusCorrida('${p.id}','CHEGOU_LOJA')" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black mb-2">📍 CHEGUEI NA LOJA</button><button onclick="cancelarCorrida('${p.id}')" class="w-full bg-red-600 text-white py-2 rounded-xl font-bold text-xs">❌ CANCELAR ENTREGA</button>`;
 }else if(p.status==="CHEGOU_LOJA"){
 botoes = `<button onclick="atualizarStatusCorrida('${p.id}','A_CAMINHO')" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black mb-2">🏍️ SAIR PARA ENTREGA</button>`;
 }else if(p.status==="A_CAMINHO"){
 botoes = `<button onclick="atualizarStatusCorrida('${p.id}','CHEGOU_CLIENTE')" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black mb-2">📍 CHEGUEI NO CLIENTE</button>`;
 }else if(p.status==="CHEGOU_CLIENTE"){
-botoes = `<div class="bg-black text-white p-4 rounded-xl border-4 border-yellow-400 mb-2"><input id="codigoEntregaInput" type="tel" maxlength="4" placeholder="0000" class="border-2 border-yellow-400 p-4 rounded-xl w-full text-center font-black text-3xl tracking-[10px] text-black mt-2"><button onclick="confirmarEntrega()" class="w-full bg-green-600 text-white py-4 rounded-xl font-black text-lg mt-3 border-2 border-white">✅ FINALIZAR ENTREGA</button></div>`;
+botoes = `<div class="bg-black text-white p-4 rounded-xl border-4 border-yellow-400 mb-2"><p class="text-center text-xs">CÓDIGO DO CLIENTE: <b class="text-yellow-400 text-lg">${p.codigo_secreto}</b></p><input id="codigoEntregaInput" type="tel" maxlength="4" placeholder="0000" class="border-2 border-yellow-400 p-4 rounded-xl w-full text-center font-black text-3xl tracking-[10px] text-black mt-2 bg-white"><button onclick="confirmarEntrega('${p.id}','${p.codigo_secreto}')" class="w-full bg-green-600 text-white py-4 rounded-xl font-black text-lg mt-3 border-2 border-white">✅ FINALIZAR ENTREGA</button></div>`;
 }
-h = `<div class="bg-black text-white p-2 rounded-xl text-center font-black mb-2 text-xs">${p.status} - ${p.veiculo} ${p.km||''}km R$${p.valor_motoboy?.toFixed(2)}</div><div class="bg-blue-100 border-2 border-blue-600 p-3 rounded-xl mb-2"><b>🏪 ${p.nome_loja}</b><br>${p.endereco_loja}</div><div class="bg-yellow-100 border-2 border-yellow-600 p-3 rounded-xl mb-3"><b>👤 ${p.bairro} - ${p.endereco_completo}</b></div>${botoes}`;
+h = `<div class="bg-black text-white p-2 rounded-xl text-center font-black mb-2 text-xs">📦 ${p.status} - ${p.veiculo} ${p.km||''}km R$${Number(p.valor_motoboy||0).toFixed(2)}</div><div class="bg-blue-100 border-2 border-blue-600 p-3 rounded-xl mb-2"><b>🏪 ${p.nome_loja}</b><br>${p.endereco_loja}</div><div class="bg-yellow-100 border-2 border-yellow-600 p-3 rounded-xl mb-3"><b>👤 ${p.bairro} - ${p.endereco_completo}</b></div>${botoes}`;
 }else{
 s.forEach(d=>{
 const p = d.data();
-if(p.status==="AGUARDANDO"){
-h += `<div class="border-2 p-2 rounded bg-white mb-2">📦 <b>${p.veiculo} ${p.km||''}km</b> - ${p.nome_loja}<br><span class="text-[10px]">Loja: ${p.endereco_loja}</span><br><span class="text-[10px]">Cliente: ${p.endereco_completo}</span><br><b class="text-green-600">Ganha: R$${p.valor_motoboy?.toFixed(2)}</b><br><button onclick="aceitarCorrida('${d.id}')" class="w-full bg-black text-white py-2 rounded mt-1 font-bold">ACEITAR ${p.veiculo}</button></div>`;
+if(p.status==="AGUARDANDO" &&!p.motorista_id){
+h += `<div class="border-2 p-2 rounded bg-white mb-2">📦 <b>${p.veiculo||'MOTO'} ${p.km||''}km</b> - ${p.nome_loja||''}<br><span class="text-[10px]">Loja: ${p.endereco_loja||''}</span><br><span class="text-[10px]">Cliente: ${p.endereco_completo||''}</span><br><b class="text-green-600">Ganha: R$${Number(p.valor_motoboy||0).toFixed(2)}</b><br><button onclick="aceitarCorrida('${d.id}')" class="w-full bg-black text-white py-2 rounded mt-1 font-bold">ACEITAR ${p.veiculo||'MOTO'}</button></div>`;
 }
 });
-if(!h) h = `Nenhuma corrida`;
+if(!h) h = `<div class="text-center p-4 bg-gray-100 rounded">Nenhuma corrida no momento</div>`;
 }
-$("listaEntregasMotoboy").innerHTML = h;
+if($("listaEntregasMotoboy")) $("listaEntregasMotoboy").innerHTML = h;
 });
 }
 
@@ -902,8 +1029,9 @@ await setDoc(doc(db,"pedidos",id),{status:novoStatus},{merge:true});
 };
 
 window.cancelarCorrida = async(id)=>{
-if(!confirm("Cancelar?")) return;
-await setDoc(doc(db,"pedidos",id),{status:"AGUARDANDO",motorista_id:null},{merge:true});
+if(!confirm("Cancelar essa entrega? Ela volta pra lista.")) return;
+await setDoc(doc(db,"pedidos",id),{status:"AGUARDANDO",motorista_id:null,motorista_nome:null},{merge:true});
+window.corridaAtivaId = null;
 };
 
 window.aceitarCorrida = async(id)=>{
@@ -915,17 +1043,28 @@ if(snap.exists()) nomeMoto = snap.data().nome || nomeMoto;
 await setDoc(doc(db,"pedidos",id),{motorista_id:userLogado.uid,motorista_nome:nomeMoto,status:"ACEITA",aceita_em:Timestamp.now()},{merge:true});
 };
 
-window.confirmarEntrega = async()=>{
-const cod = $("codigoEntregaInput").value.trim();
-const q = await getDocs(query(collection(db,"pedidos"), where("codigo_secreto","==",cod)));
-if(q.empty){ alert("Código errado"); return; }
-const docId = q.docs[0].id;
-const p = q.docs[0].data();
-await setDoc(doc(db,"pedidos",docId),{status:"ENTREGUE",entregue_em:Timestamp.now()},{merge:true});
+window.confirmarEntrega = async(id,codigoCorreto)=>{
+const input = $("codigoEntregaInput");
+const cod = input?.value.trim()||"";
+if(!cod){ alert("Digite o código de 4 dígitos"); return; }
+if(cod!== codigoCorreto){
+alert("❌ Código errado! Correto é "+codigoCorreto);
+return;
+}
+try{
+const pSnap = await getDoc(doc(db,"pedidos",id));
+if(!pSnap.exists()){ alert("Corrida não existe mais"); return; }
+const p = pSnap.data();
+await setDoc(doc(db,"pedidos",id),{status:"ENTREGUE",entregue_em:Timestamp.now()},{merge:true});
 const snap = await getDoc(doc(db,"usuarios",userLogado.uid));
 const novo = (snap.data()?.saldo_motoboy||0) + Number(p.valor_motoboy||0);
 await setDoc(doc(db,"usuarios",userLogado.uid),{saldo_motoboy:novo},{merge:true});
-alert("✅ FINALIZADO R$"+p.valor_motoboy?.toFixed(2));
+alert("✅ ENTREGA FINALIZADA R$"+Number(p.valor_motoboy||0).toFixed(2));
+window.corridaAtivaId = null;
+window.kmCalculadoAutomatico = 0;
+}catch(e){
+alert("Erro ao finalizar: "+e.message);
+}
 };
 
 async function carregarExtratos(){
@@ -938,11 +1077,11 @@ let btnCancelar = "";
 if(p.status==="AGUARDANDO"){
 btnCancelar = `<button onclick="cancelarCorridaLojista('${d.id}')" class="w-full bg-red-600 text-white py-3 rounded-xl mt-2 font-black text-xs border-2 border-black">❌ CANCELAR CORRIDA - DEVOLVE SALDO</button>`;
 }else if(p.status==="CANCELADA"){
-btnCancelar = `<div class="w-full bg-gray-300 text-black py-2 rounded-xl mt-2 font-bold text-xs text-center border-2 border-black">❌ CANCELADA</div>`;
+btnCancelar = `<div class="w-full bg-gray-300 text-black py-2 rounded-xl mt-2 font-bold text-xs text-center border-2 border-black">❌ CANCELADA - R$${Number(p.valor_lojista||0).toFixed(2)} devolvido</div>`;
 }
-html += `<div class="border-2 border-black p-3 rounded-xl bg-white mb-2"><div class="flex justify-between"><b class="text-xs">${p.km||5}km ${p.origem||''} -> ${p.bairro||''} ${p.veiculo}</b><span class="text-[9px] bg-black text-white px-2 py-1 rounded">R$${p.valor_lojista?.toFixed(2)}</span></div><div class="bg-yellow-100 border-2 border-yellow-500 p-2 rounded-xl mt-2 text-center"><p class="font-black text-3xl tracking-widest">${p.codigo_secreto}</p></div><div class="flex justify-between mt-2 text-[10px]"><span>${p.km||5}km = R$10 / R$7,50 + R$2/R$1,5</span><b>${p.status}</b></div>${btnCancelar}</div>`;
+html += `<div class="border-2 border-black p-3 rounded-xl bg-white mb-2"><div class="flex justify-between"><b class="text-xs">${p.km||5}km ${p.origem||''} -> ${p.bairro||''} ${p.veiculo}</b><span class="text-[9px] bg-black text-white px-2 py-1 rounded">R$${Number(p.valor_lojista||0).toFixed(2)}</span></div><div class="bg-yellow-100 border-2 border-yellow-500 p-2 rounded-xl mt-2 text-center"><p class="font-black text-3xl tracking-widest">${p.codigo_secreto}</p><p class="text-[10px]">${p.status}</p></div><div class="flex justify-between mt-2 text-[10px]"><span>${p.km||5}km auto</span><b>${p.status}</b></div>${btnCancelar}</div>`;
 });
-$("extratoLojista").innerHTML = html || "Sem pedidos";
+if($("extratoLojista")) $("extratoLojista").innerHTML = html || "Sem pedidos";
 });
 }
 
