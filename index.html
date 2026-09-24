@@ -7,6 +7,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
+
 <div id="telaLogin" class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
 <div class="bg-white p-6 rounded-xl w-full max-w-sm max-h-[95vh] overflow-y-auto">
 <h2 class="font-bold text-xl text-center">🏍️ Anjos Flash</h2>
@@ -49,6 +50,7 @@
 </div>
 </div>
 </div>
+
 <div id="telaPendente" class="fixed inset-0 bg-yellow-100 z-40 hidden flex items-center justify-center p-4">
 <div class="bg-white p-6 rounded-xl w-full max-w-sm text-center border-2 border-yellow-500">
 <h2 class="font-bold text-xl">⏳ Aguardando aprovação</h2>
@@ -56,6 +58,7 @@
 <button type="button" onclick="fazerLogout()" class="w-full bg-red-600 text-white p-3 rounded font-bold mt-4">SAIR</button>
 </div>
 </div>
+
 <div id="app" class="max-w-[420px] mx-auto bg-white min-h-screen shadow-xl relative">
 <div class="p-4 flex justify-between items-center border-b sticky top-0 bg-white z-20">
 <div><b>🏍️ Anjos Flash</b><br><span id="nomeLojaTopo" class="text-[11px] font-bold text-orange-600"></span></div>
@@ -65,6 +68,7 @@
 <button type="button" onclick="fazerLogout()" class="text-[10px] border px-2 py-1 rounded">SAIR</button>
 </div>
 </div>
+
 <div id="telaLojista" class="p-4 hidden">
 <div class="bg-black text-white p-4 rounded-xl mb-3 text-center border-2 border-blue-500">
 <p class="text-[11px] opacity-70">MEU SALDO</p>
@@ -103,6 +107,7 @@
 <button type="button" onclick="criarPedido()" class="w-full bg-black text-white p-4 rounded-xl mt-3 font-bold">CRIAR CORRIDA</button>
 <div id="extratoLojista" class="mt-4 space-y-2"></div>
 </div>
+
 <div id="telaMotoboy" class="p-4 hidden">
 <div class="bg-black text-white p-4 rounded-xl mb-3 text-center border-2 border-green-500">
 <p class="text-[11px] opacity-70">MEU SALDO</p>
@@ -115,7 +120,9 @@
 <div id="statusDinamicaMotoboy" class="p-2 rounded text-center text-xs font-bold mb-3 bg-gray-200">⚡ DESLIGADA</div>
 <div id="listaEntregasMotoboy" class="space-y-2 text-xs"></div>
 </div>
+
 <div id="telaAdmin" class="p-4 hidden">
+
 <div class="bg-black text-white p-4 rounded-xl mb-4 border-4 border-green-500 text-center">
 <p class="text-[10px] opacity-70">💰 LUCRO TOTAL</p>
 <p class="font-black text-3xl text-green-400">R$ <span id="lucroTotalAdmin">0.00</span></p>
@@ -125,6 +132,7 @@
 <div class="bg-yellow-500 text-black p-2 rounded font-black"><p>CORRIDAS</p><b id="totalCorridasAdmin">0</b></div>
 </div>
 </div>
+
 <div class="bg-black text-white p-4 rounded-xl mb-4 border-4 border-yellow-400">
 <h3 class="font-black text-sm text-yellow-400">💳 EDITAR PIX - PASTA pix_config/atual</h3>
 <p class="text-[9px] text-white/60 mb-2">Sua pasta já existe, só edita aqui</p>
@@ -141,6 +149,7 @@
 </div>
 <p class="text-[10px] mt-2 text-center">Atual: <b id="pixAtualAdmin" class="text-yellow-400">22997450131</b></p>
 </div>
+
 <div class="bg-yellow-400 text-black p-3 rounded-xl mb-4 border-4 border-black">
 <div class="flex items-center justify-between">
 <div><p class="font-black text-xs">⚡ DINÂMICA EM R$</p><p id="statusDinamica" class="text-[10px] font-bold">DESLIGADA</p></div>
@@ -152,6 +161,7 @@
 </div>
 <button type="button" onclick="salvarDinamicaValor()" class="bg-black text-white w-full py-2 rounded mt-2 text-xs font-bold">💾 SALVAR</button>
 </div>
+
 <div class="bg-yellow-100 border-4 border-black p-3 rounded-xl mb-4">
 <h3 class="font-black text-sm text-black">🔀 TAXA ORIGEM x DESTINO</h3>
 <div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2 rounded border-2 border-black">
@@ -163,6 +173,7 @@
 <button type="button" onclick="addRota()" class="bg-black text-white w-full py-2 rounded mt-2 text-xs font-black">💾 SALVAR ROTA</button>
 <div id="listaRotasAdmin" class="mt-3 space-y-2 text-[11px] max-h-[300px] overflow-y-auto"></div>
 </div>
+
 <div class="border-4 border-green-500 p-3 rounded-xl mb-4 bg-white">
 <h3 class="font-bold text-sm">💳 SALDOS</h3>
 <input id="buscaSaldoGeral" placeholder="Buscar nome ou email..." oninput="carregarSaldosAdmin()" class="w-full border-2 border-black p-2 rounded text-xs mt-2">
@@ -177,6 +188,7 @@
 </div>
 </div>
 </div>
+
 <div class="bg-black text-white p-3 rounded-xl mb-4 border-4 border-blue-500">
 <h3 class="font-bold text-sm mb-2">⚙️ VALORES BASE</h3>
 <div class="grid grid-cols-4 gap-1 mb-2">
@@ -204,21 +216,26 @@
 </div>
 <button type="button" onclick="salvarPrecosVeiculo()" class="bg-orange-500 w-full py-3 rounded mt-3 font-bold">💾 SALVAR BASE</button>
 </div>
+
 <div class="border-4 border-yellow-500 p-3 rounded-xl mb-4 bg-yellow-50">
 <h3 class="font-bold text-sm">⏳ PENDENTES</h3>
 <div id="listaPendentesAprovacao" class="mt-2 space-y-2"></div>
 </div>
+
 <div class="bg-red-50 border-4 border-red-600 p-3 rounded-xl mb-4">
 <h3 class="font-black text-sm text-red-600">🚨 CORRIDAS ABERTAS</h3>
 <div id="corridasAbertas" class="text-xs mt-2"></div>
 </div>
+
 </div>
 </div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, doc, setDoc, getDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
 const firebaseConfig = {
 apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
 authDomain: "anjos-flash.firebaseapp.com",
@@ -227,10 +244,12 @@ storageBucket: "anjos-flash.firebasestorage.app",
 messagingSenderId: "725133182752",
 appId: "1:725133182752:web:5f9a98fa97269dcdcab945"
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
+
 let userLogado = null;
 let userRoleReal = null;
 let userStatus = null;
@@ -241,6 +260,7 @@ let dinamicaExtraMoto = 2;
 let timeoutBuscaKm = null;
 window.kmCalculadoAutomatico = 0;
 window.corridaAtivaId = null;
+
 let regraAtual = {
 MOTO: {baseLoj:10, extraLoj:0, baseMoto:7.5, extraMoto:0, baseSuper:0, extraSuper:0, baseSuperMoto:0, extraSuperMoto:0, retPerc:50, retMoto:2},
 UTILITARIO: {baseLoj:30, extraLoj:0, baseMoto:20, extraMoto:0, baseSuper:0, extraSuper:0, baseSuperMoto:0, extraSuperMoto:0, retPerc:50, retMoto:5},
@@ -263,14 +283,18 @@ rotas: {
 "AEROPORTO|AEROPORTO": {"MOTO": {"loj":0,"moto":0},"UTILITARIO": {"loj":0,"moto":0},"CAMINHAO_3_4": {"loj":0,"moto":0},"CARRETA": {"loj":0,"moto":0}}
 }
 };
+
 const $ = id => document.getElementById(id);
+
 window.setAba = (a)=>{
 $("abaEntrar").classList.toggle("hidden",a!=="entrar");
 $("abaCadastrar").classList.toggle("hidden",a!=="cadastrar");
 };
+
 $("tipoCadastro").addEventListener("change",e=>{
 $("boxDocsMotoboy").classList.toggle("hidden",!e.target.value.includes("MOTOBOY"));
 });
+
 window.setVeiculo = (v)=>{
 window.veiculoSelecionado = v;
 ["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].forEach(id=>{
@@ -283,6 +307,7 @@ if(id===v) b.classList.add("bg-black","text-white");
 calc();
 };
 window.veiculoSelecionado = "MOTO";
+
 window.setVeiculoAdmin = (v)=>{
 veiculoAdminAtual = v;
 $("veiculoAdminAtual").innerText = "EDITANDO: "+v+" - 5KM=R$10 / R$7,50";
@@ -306,12 +331,14 @@ $("editExtraSuperMoto").value = r.extraSuperMoto;
 $("editRetMoto").value = r.retMoto;
 renderRotas();
 };
+
 window.salvarNomeLoja = ()=>{
 if(!userLogado) return;
 localStorage.setItem("nomeLoja_"+userLogado.uid,$("nomeSalaoLojista").value);
 localStorage.setItem("endLoja_"+userLogado.uid,$("enderecoSalaoLojista").value);
 $("nomeLojaTopo").innerText = $("nomeSalaoLojista").value;
 };
+
 async function buscarRoleReal(user){
 try{
 const d = await getDoc(doc(db,"motoristas",user.uid));
@@ -323,6 +350,7 @@ if(d.exists() && d.data().role) return {role:d.data().role,status:d.data().statu
 }catch(e){}
 return {role:"LOJISTA",status:"PENDENTE"};
 }
+
 function normalizaRole(r){
 r = (r||"").toUpperCase().trim();
 if(r.includes("CARRETA")) return "MOTOBOY_CARRETA";
@@ -335,6 +363,7 @@ if(r==="FRANQUEADO") return "FRANQUEADO";
 if(r==="SUPORTE") return "SUPORTE";
 return "LOJISTA";
 }
+
 function getVeiculoDoRole(role){
 role = (role||"").toUpperCase();
 if(role.includes("CARRETA")) return "CARRETA";
@@ -342,6 +371,7 @@ if(role.includes("3_4")) return "CAMINHAO_3_4";
 if(role.includes("UTIL")) return "UTILITARIO";
 return "MOTO";
 }
+
 async function carregarPixConfig(){
 try{
 const s = await getDoc(doc(db,"pix_config","atual"));
@@ -359,6 +389,7 @@ if($("editPixNome")) $("editPixNome").value = nome;
 console.log("erro pix",e);
 }
 }
+
 window.salvarPix = async()=>{
 const numero = $("editPixNumero")?.value.trim();
 const nome = $("editPixNome")?.value.trim();
@@ -377,6 +408,7 @@ if($("nomePixLojistaDisplay")) $("nomePixLojistaDisplay").innerText = nome;
 if($("pixAtualAdmin")) $("pixAtualAdmin").innerText = numero + (nome?" - "+nome:"");
 alert("✅ PIX salvo na sua pasta pix_config/atual: "+numero);
 };
+
 function escutarPixConfig(){
 try{
 onSnapshot(doc(db,"pix_config","atual"), s=>{
@@ -391,6 +423,7 @@ if($("pixAtualAdmin")) $("pixAtualAdmin").innerText = pix + (nome?" - "+nome:"")
 });
 }catch(e){}
 }
+
 async function carregarDinamica(){
 try{
 const s = await getDoc(doc(db,"pricing_config","dinamica"));
@@ -404,6 +437,7 @@ if($("editDinamicaMoto")) $("editDinamicaMoto").value = dinamicaExtraMoto;
 }catch(e){}
 atualizarBtnDinamica();
 }
+
 function escutarDinamica(){
 try{
 onSnapshot(doc(db,"pricing_config","dinamica"), s=>{
@@ -418,6 +452,7 @@ atualizarBtnDinamica();
 });
 }catch(e){}
 }
+
 function atualizarBtnDinamica(){
 const btn = $("btnDinamica");
 const st = $("statusDinamica");
@@ -456,6 +491,7 @@ if($("labelDinamicaTotal")) $("labelDinamicaTotal").innerText="";
 }
 if(typeof calc === 'function') calc();
 }
+
 window.toggleDinamica = async()=>{
 if(!["ADMIN","SUPORTE","FRANQUEADO"].includes(userRoleReal)){
 alert("Só admin pode");
@@ -471,6 +507,7 @@ alterado_em:Timestamp.now()
 },{merge:true});
 atualizarBtnDinamica();
 };
+
 window.salvarDinamicaValor = async()=>{
 dinamicaExtraLoj = Number($("editDinamicaLojista").value||0);
 dinamicaExtraMoto = Number($("editDinamicaMoto").value||0);
@@ -482,6 +519,7 @@ alterado_por:userLogado.email
 alert(`✅ Dinâmica R$${dinamicaExtraLoj.toFixed(2)} / R$${dinamicaExtraMoto.toFixed(2)}`);
 atualizarBtnDinamica();
 };
+
 async function getCoord(endereco){
 try{
 const q = encodeURIComponent(endereco + ", Macaé, RJ, Brasil");
@@ -491,6 +529,7 @@ if(j && j[0]) return { lat: j[0].lat, lon: j[0].lon };
 }catch(e){}
 return null;
 }
+
 async function calcularKmAutomatico(){
 const origem = $("enderecoSalaoLojista")?.value.trim() || "Cavaleiros, Macaé";
 const destino = $("enderecoCompletoLojista")?.value.trim();
@@ -526,10 +565,12 @@ if(!window.kmCalculadoAutomatico) window.kmCalculadoAutomatico = 5;
 calc();
 }
 }
+
 window.debounceKm = function(){
 clearTimeout(timeoutBuscaKm);
 timeoutBuscaKm = setTimeout(calcularKmAutomatico, 900);
 }
+
 onAuthStateChanged(auth, async(user)=>{
 if(user){
 userLogado = user;
@@ -569,6 +610,7 @@ $("telaLogin").classList.remove("hidden");
 $("telaPendente").classList.add("hidden");
 }
 });
+
 function escutarSaldo(){
 if(!userLogado) return;
 onSnapshot(doc(db,"usuarios",userLogado.uid),s=>{
@@ -578,6 +620,7 @@ if($("saldoMotoboyValor")) $("saldoMotoboyValor").innerText = (s.data().saldo_mo
 }
 });
 }
+
 function mostrarTelaPorRole(){
 if($("telaMotoboy")) $("telaMotoboy").classList.add("hidden");
 if($("telaLojista")) $("telaLojista").classList.add("hidden");
@@ -591,6 +634,7 @@ if($("telaAdmin")) $("telaAdmin").classList.remove("hidden");
 }
 calc();
 }
+
 window.fazerLogin = async()=>{
 try{
 await signInWithEmailAndPassword(auth,$("loginEmail").value.trim(),$("loginSenha").value.trim());
@@ -598,6 +642,7 @@ await signInWithEmailAndPassword(auth,$("loginEmail").value.trim(),$("loginSenha
 if($("msgLogin")) $("msgLogin").innerText = e.message;
 }
 };
+
 window.fazerCadastro = async()=>{
 const email = $("cadEmailLogin").value.trim().toLowerCase();
 const senha = $("cadSenhaLogin").value.trim();
@@ -617,10 +662,12 @@ location.reload();
 alert(e.message);
 }
 };
+
 window.fazerLogout = async()=>{
 await signOut(auth);
 location.reload();
 };
+
 async function carregarPrecos(){
 try{
 const s = await getDoc(doc(db,"pricing_config","atual"));
@@ -635,9 +682,11 @@ if(["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].includes(k)) regraAtual[k]=dat
 setVeiculoAdmin(veiculoAdminAtual);
 calc();
 }
+
 function parseValor(str){
 return Number(String(str).replace(",",".").replace(/[^0-9.\-]/g,"")||0);
 }
+
 function renderRotas(){
 let h = "";
 Object.entries(regraAtual.rotas||{}).forEach(([key,val])=>{
@@ -655,6 +704,7 @@ h += `<div class="bg-black text-white p-2 rounded border-2 border-yellow-400 mb-
 });
 if($("listaRotasAdmin")) $("listaRotasAdmin").innerHTML = h || "Nenhuma rota";
 }
+
 window.salvarRotaEdit = async(key)=>{
 const l = parseValor(document.getElementById(`editRotaLoj_${key}`)?.value||"0");
 const m = parseValor(document.getElementById(`editRotaMoto_${key}`)?.value||"0");
@@ -664,6 +714,7 @@ await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true});
 renderRotas();
 calc();
 };
+
 window.addRota = async()=>{
 const o = $("origemRota").value.trim().toUpperCase();
 const d = $("destinoRota").value.trim().toUpperCase();
@@ -682,6 +733,7 @@ renderRotas();
 calc();
 alert(`✅ Rota ${o} -> ${d} salva!`);
 };
+
 window.delRota = async(k)=>{
 if(!confirm("Apagar "+k+"?")) return;
 delete regraAtual.rotas[k];
@@ -689,6 +741,7 @@ await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true});
 renderRotas();
 calc();
 };
+
 window.salvarPrecosVeiculo = async()=>{
 regraAtual[veiculoAdminAtual] = {
 baseLoj:Number($("editBaseLojista").value),
@@ -705,6 +758,7 @@ retMoto:Number($("editRetMoto").value)
 await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true});
 alert("✅ Salvo");
 };
+
 window.calc = function(){
 const v = window.veiculoSelecionado || "MOTO";
 const cfg = regraAtual[v] || regraAtual.MOTO;
@@ -771,6 +825,7 @@ $("detalheRegiao").innerText = `📍 ${kmDestino}km automático (${origemDetect|
 if($("totalLojista")) $("totalLojista").innerText = loj.toFixed(2);
 return {lojista:loj,moto,km:kmDestino,origem:origemDetect,destino:destinoDetect,veiculo:v};
 };
+
 function escutarLucro(){
 onSnapshot(collection(db,"pedidos"), snap=>{
 let cobrado = 0;
@@ -790,6 +845,7 @@ if($("totalPagoAdmin")) $("totalPagoAdmin").innerText = "R$"+pago.toFixed(2);
 if($("totalCorridasAdmin")) $("totalCorridasAdmin").innerText = corridas;
 });
 }
+
 window.carregarSaldosAdmin = async()=>{
 const snap = await getDocs(collection(db,"usuarios"));
 const map = new Map();
@@ -810,6 +866,7 @@ hL += `<div class="bg-white border-2 border-black p-2 rounded text-[10px]"><b>�
 if($("listaLojistasSaldos")) $("listaLojistasSaldos").innerHTML = hL;
 if($("listaMotoboysSaldos")) $("listaMotoboysSaldos").innerHTML = hM;
 };
+
 window.addSaldoDireto = async(uid,email,tipo,sinal)=>{
 let raw = "";
 if(tipo==="lojista") raw = document.getElementById(`addLoj_${uid}`)?.value||"0";
@@ -829,6 +886,7 @@ await setDoc(doc(db,"usuarios",uid),{saldo_lojista:novoLoj,saldo_motoboy:novoMot
 try{ await setDoc(doc(db,"usuarios",email),{saldo_lojista:novoLoj,saldo_motoboy:novoMoto},{merge:true}); }catch(e){}
 carregarSaldosAdmin();
 };
+
 window.criarPedido = async()=>{
 const {lojista,moto,origem,destino,veiculo,km} = calc();
 const endereco = $("enderecoCompletoLojista")?.value||"";
@@ -863,6 +921,7 @@ window.kmCalculadoAutomatico = 0;
 if($("enderecoCompletoLojista")) $("enderecoCompletoLojista").value = "";
 alert(`✅ Criado ${km}km R$${lojista.toFixed(2)} automático`);
 };
+
 async function carregarPendentes(){
 onSnapshot(collection(db,"usuarios"),snap=>{
 let h = "";
@@ -874,9 +933,11 @@ h += `<div class="border-2 border-yellow-500 bg-white p-3 rounded-xl text-[11px]
 if($("listaPendentesAprovacao")) $("listaPendentesAprovacao").innerHTML = h || "Nenhum pendente";
 });
 }
+
 window.aprovarUsuario = async(id)=>{
 await setDoc(doc(db,"usuarios",id),{status:"APROVADO"},{merge:true});
 };
+
 window.cancelarCorridaLojista = async(id)=>{
 if(!confirm("Cancelar? Valor volta pro saldo.")) return;
 const snap = await getDoc(doc(db,"pedidos",id));
@@ -887,6 +948,7 @@ const novo = (userSnap.data()?.saldo_lojista||0) + Number(p.valor_lojista||0);
 await setDoc(doc(db,"usuarios",userLogado.uid),{saldo_lojista:novo},{merge:true});
 alert("✅ Cancelada R$"+Number(p.valor_lojista||0).toFixed(2)+" devolvido");
 };
+
 window.cancelarCorridaAdmin = async(id)=>{
 if(!confirm("Cancelar como ADMIN? Saldo volta pro lojista.")) return;
 const snap = await getDoc(doc(db,"pedidos",id));
@@ -901,6 +963,7 @@ await setDoc(doc(db,"usuarios",p.owner_id),{saldo_lojista:novo},{merge:true});
 }
 alert("✅ Cancelada admin");
 };
+
 async function carregarAbertas(){
 onSnapshot(collection(db,"pedidos"),s=>{
 let h = "";
@@ -913,7 +976,7 @@ h += `<div class="border-2 border-black p-2 rounded bg-white mb-2">
 <span class="text-[10px] bg-black text-white px-1 rounded">Loj R$${Number(p.valor_lojista||0).toFixed(2)} | Moto R$${Number(p.valor_motoboy||0).toFixed(2)} - ${p.status}</span><br>
 <div class="bg-yellow-100 border p-1 rounded mt-1 text-center"><b class="text-sm">COD: ${p.codigo_secreto||''}</b></div>
 <div class="grid grid-cols-2 gap-2 mt-2">
-<button type="button" onclick="aceitarCorrida('${d.id}')" class="bg-green-600 text-white px-3 py-3 rounded font-bold">✅ ACEITAR</button>
+<button type="button" onclick="window.aceitarCorrida('${d.id}')" class="bg-green-600 text-white px-3 py-3 rounded font-bold">✅ ACEITAR</button>
 <button type="button" onclick="cancelarCorridaAdmin('${d.id}')" class="bg-red-600 text-white px-3 py-2 rounded font-bold">❌ CANCELAR</button>
 </div>
 </div>`;
@@ -921,6 +984,7 @@ h += `<div class="border-2 border-black p-2 rounded bg-white mb-2">
 if($("corridasAbertas")) $("corridasAbertas").innerHTML = h || "Nenhuma aberta";
 });
 }
+
 async function carregarEntregasMotoboy(){
 onSnapshot(collection(db,"pedidos"),s=>{
 let h = "";
@@ -949,7 +1013,7 @@ h = `<div class="bg-black text-white p-2 rounded-xl text-center font-black mb-2 
 s.forEach(d=>{
 const p = d.data();
 if(p.status==="AGUARDANDO" &&!p.motorista_id){
-h += `<div class="border-2 p-2 rounded bg-white mb-2">📦 <b>${p.veiculo||'MOTO'} ${p.km||''}km</b> - ${p.nome_loja||''}<br><span class="text-[10px]">Loja: ${p.endereco_loja||''}</span><br><span class="text-[10px]">Cliente: ${p.endereco_completo||''}</span><br><b class="text-green-600">Ganha: R$${Number(p.valor_motoboy||0).toFixed(2)}</b><br><button type="button" onclick="aceitarCorrida('${d.id}')" class="w-full bg-black text-white py-2 rounded mt-1 font-bold">ACEITAR ${p.veiculo||'MOTO'}</button></div>`;
+h += `<div class="border-2 p-2 rounded bg-white mb-2">📦 <b>${p.veiculo||'MOTO'} ${p.km||''}km</b> - ${p.nome_loja||''}<br><span class="text-[10px]">Loja: ${p.endereco_loja||''}</span><br><span class="text-[10px]">Cliente: ${p.endereco_completo||''}</span><br><b class="text-green-600">Ganha: R$${Number(p.valor_motoboy||0).toFixed(2)}</b><br><button type="button" onclick="window.aceitarCorrida('${d.id}')" class="w-full bg-black text-white py-2 rounded mt-1 font-bold">ACEITAR ${p.veiculo||'MOTO'}</button></div>`;
 }
 });
 if(!h) h = `<div class="text-center p-4 bg-gray-100 rounded">Nenhuma corrida no momento</div>`;
@@ -957,27 +1021,40 @@ if(!h) h = `<div class="text-center p-4 bg-gray-100 rounded">Nenhuma corrida no 
 if($("listaEntregasMotoboy")) $("listaEntregasMotoboy").innerHTML = h;
 });
 }
+
 window.atualizarStatusCorrida = async(id,novoStatus)=>{
 await setDoc(doc(db,"pedidos",id),{status:novoStatus},{merge:true});
 };
+
 window.cancelarCorrida = async(id)=>{
 if(!confirm("Cancelar essa entrega? Ela volta pra lista.")) return;
 await setDoc(doc(db,"pedidos",id),{status:"AGUARDANDO",motorista_id:null,motorista_nome:null},{merge:true});
 window.corridaAtivaId = null;
 };
+
+// *** UNICA CORREÇÃO: FUNÇÃO ACEITAR QUE NÃO TRAVA NO ADMIN ***
 window.aceitarCorrida = async(id)=>{
-try{
-let nomeMoto = userLogado.email;
-try{
-const snap = await getDoc(doc(db,"usuarios",userLogado.uid));
-if(snap.exists()) nomeMoto = snap.data().nome || nomeMoto;
-}catch(e){}
-await setDoc(doc(db,"pedidos",id),{motorista_id:userLogado.uid,motorista_nome:nomeMoto,status:"ACEITA",aceita_em:Timestamp.now()},{merge:true});
-}catch(e){
-alert("Erro ao aceitar: "+e.message);
-console.error(e);
-}
+  console.log("ACEITAR CLICADO", id);
+  try{
+    const refPedido = doc(db,"pedidos",id);
+    const snap = await getDoc(refPedido);
+    if(!snap.exists()){
+      alert("Pedido não existe mais");
+      return;
+    }
+    await setDoc(refPedido,{
+      motorista_id: userLogado.uid,
+      motorista_nome: userLogado.email,
+      status: "ACEITA",
+      aceita_em: Timestamp.now()
+    },{merge:true});
+    alert("✅ CORRIDA ACEITA! ID "+id.substring(0,5));
+  }catch(e){
+    alert("ERRO AO ACEITAR: "+e.message);
+    console.error(e);
+  }
 };
+
 window.confirmarEntrega = async(id,codigoCorreto)=>{
 const input = $("codigoEntregaInput");
 const cod = input?.value.trim()||"";
@@ -1001,6 +1078,7 @@ window.kmCalculadoAutomatico = 0;
 alert("Erro ao finalizar: "+e.message);
 }
 };
+
 async function carregarExtratos(){
 if(!userLogado) return;
 onSnapshot(query(collection(db,"pedidos"), where("owner_id","==",userLogado.uid)),snap=>{
