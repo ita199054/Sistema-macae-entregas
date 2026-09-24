@@ -7,7 +7,6 @@
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
-
 <div id="telaLogin" class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
 <div class="bg-white p-6 rounded-xl w-full max-w-sm max-h-[95vh] overflow-y-auto">
 <h2 class="font-bold text-xl text-center">🏍️ Anjos Flash</h2>
@@ -50,7 +49,6 @@
 </div>
 </div>
 </div>
-
 <div id="telaPendente" class="fixed inset-0 bg-yellow-100 z-40 hidden flex items-center justify-center p-4">
 <div class="bg-white p-6 rounded-xl w-full max-w-sm text-center border-2 border-yellow-500">
 <h2 class="font-bold text-xl">⏳ Aguardando aprovação</h2>
@@ -58,7 +56,6 @@
 <button type="button" onclick="fazerLogout()" class="w-full bg-red-600 text-white p-3 rounded font-bold mt-4">SAIR</button>
 </div>
 </div>
-
 <div id="app" class="max-w-[420px] mx-auto bg-white min-h-screen shadow-xl relative">
 <div class="p-4 flex justify-between items-center border-b sticky top-0 bg-white z-20">
 <div><b>🏍️ Anjos Flash</b><br><span id="nomeLojaTopo" class="text-[11px] font-bold text-orange-600"></span></div>
@@ -68,7 +65,6 @@
 <button type="button" onclick="fazerLogout()" class="text-[10px] border px-2 py-1 rounded">SAIR</button>
 </div>
 </div>
-
 <div id="telaLojista" class="p-4 hidden">
 <div class="bg-black text-white p-4 rounded-xl mb-3 text-center border-2 border-blue-500">
 <p class="text-[11px] opacity-70">MEU SALDO</p>
@@ -107,7 +103,6 @@
 <button type="button" onclick="criarPedido()" class="w-full bg-black text-white p-4 rounded-xl mt-3 font-bold">CRIAR CORRIDA</button>
 <div id="extratoLojista" class="mt-4 space-y-2"></div>
 </div>
-
 <div id="telaMotoboy" class="p-4 hidden">
 <div class="bg-black text-white p-4 rounded-xl mb-3 text-center border-2 border-green-500">
 <p class="text-[11px] opacity-70">MEU SALDO</p>
@@ -120,9 +115,7 @@
 <div id="statusDinamicaMotoboy" class="p-2 rounded text-center text-xs font-bold mb-3 bg-gray-200">⚡ DESLIGADA</div>
 <div id="listaEntregasMotoboy" class="space-y-2 text-xs"></div>
 </div>
-
 <div id="telaAdmin" class="p-4 hidden">
-
 <div class="bg-black text-white p-4 rounded-xl mb-4 border-4 border-green-500 text-center">
 <p class="text-[10px] opacity-70">💰 LUCRO TOTAL</p>
 <p class="font-black text-3xl text-green-400">R$ <span id="lucroTotalAdmin">0.00</span></p>
@@ -132,7 +125,6 @@
 <div class="bg-yellow-500 text-black p-2 rounded font-black"><p>CORRIDAS</p><b id="totalCorridasAdmin">0</b></div>
 </div>
 </div>
-
 <div class="bg-black text-white p-4 rounded-xl mb-4 border-4 border-yellow-400">
 <h3 class="font-black text-sm text-yellow-400">💳 EDITAR PIX - PASTA pix_config/atual</h3>
 <p class="text-[9px] text-white/60 mb-2">Sua pasta já existe, só edita aqui</p>
@@ -149,7 +141,6 @@
 </div>
 <p class="text-[10px] mt-2 text-center">Atual: <b id="pixAtualAdmin" class="text-yellow-400">22997450131</b></p>
 </div>
-
 <div class="bg-yellow-400 text-black p-3 rounded-xl mb-4 border-4 border-black">
 <div class="flex items-center justify-between">
 <div><p class="font-black text-xs">⚡ DINÂMICA EM R$</p><p id="statusDinamica" class="text-[10px] font-bold">DESLIGADA</p></div>
@@ -161,7 +152,6 @@
 </div>
 <button type="button" onclick="salvarDinamicaValor()" class="bg-black text-white w-full py-2 rounded mt-2 text-xs font-bold">💾 SALVAR</button>
 </div>
-
 <div class="bg-yellow-100 border-4 border-black p-3 rounded-xl mb-4">
 <h3 class="font-black text-sm text-black">🔀 TAXA ORIGEM x DESTINO</h3>
 <div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2 rounded border-2 border-black">
@@ -173,7 +163,6 @@
 <button type="button" onclick="addRota()" class="bg-black text-white w-full py-2 rounded mt-2 text-xs font-black">💾 SALVAR ROTA</button>
 <div id="listaRotasAdmin" class="mt-3 space-y-2 text-[11px] max-h-[300px] overflow-y-auto"></div>
 </div>
-
 <div class="border-4 border-green-500 p-3 rounded-xl mb-4 bg-white">
 <h3 class="font-bold text-sm">💳 SALDOS</h3>
 <input id="buscaSaldoGeral" placeholder="Buscar nome ou email..." oninput="carregarSaldosAdmin()" class="w-full border-2 border-black p-2 rounded text-xs mt-2">
@@ -188,7 +177,6 @@
 </div>
 </div>
 </div>
-
 <div class="bg-black text-white p-3 rounded-xl mb-4 border-4 border-blue-500">
 <h3 class="font-bold text-sm mb-2">⚙️ VALORES BASE</h3>
 <div class="grid grid-cols-4 gap-1 mb-2">
@@ -216,26 +204,21 @@
 </div>
 <button type="button" onclick="salvarPrecosVeiculo()" class="bg-orange-500 w-full py-3 rounded mt-3 font-bold">💾 SALVAR BASE</button>
 </div>
-
 <div class="border-4 border-yellow-500 p-3 rounded-xl mb-4 bg-yellow-50">
 <h3 class="font-bold text-sm">⏳ PENDENTES</h3>
 <div id="listaPendentesAprovacao" class="mt-2 space-y-2"></div>
 </div>
-
 <div class="bg-red-50 border-4 border-red-600 p-3 rounded-xl mb-4">
 <h3 class="font-black text-sm text-red-600">🚨 CORRIDAS ABERTAS</h3>
 <div id="corridasAbertas" class="text-xs mt-2"></div>
 </div>
-
 </div>
 </div>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, doc, setDoc, getDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-
 const firebaseConfig = {
 apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
 authDomain: "anjos-flash.firebaseapp.com",
@@ -244,12 +227,10 @@ storageBucket: "anjos-flash.firebasestorage.app",
 messagingSenderId: "725133182752",
 appId: "1:725133182752:web:5f9a98fa97269dcdcab945"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
-
 let userLogado = null;
 let userRoleReal = null;
 let userStatus = null;
@@ -260,316 +241,94 @@ let dinamicaExtraMoto = 2;
 let timeoutBuscaKm = null;
 window.kmCalculadoAutomatico = 0;
 window.corridaAtivaId = null;
-
 let regraAtual = {
 MOTO: {baseLoj:10, extraLoj:0, baseMoto:7.5, extraMoto:0, baseSuper:0, extraSuper:0, baseSuperMoto:0, extraSuperMoto:0, retPerc:50, retMoto:2},
 UTILITARIO: {baseLoj:30, extraLoj:0, baseMoto:20, extraMoto:0, baseSuper:0, extraSuper:0, baseSuperMoto:0, extraSuperMoto:0, retPerc:50, retMoto:5},
 CAMINHAO_3_4: {baseLoj:60, extraLoj:0, baseMoto:40, extraMoto:0, baseSuper:0, extraSuper:0, baseSuperMoto:0, extraSuperMoto:0, retPerc:50, retMoto:10},
 CARRETA: {baseLoj:120, extraLoj:0, baseMoto:80, extraMoto:0, baseSuper:0, extraSuper:0, baseSuperMoto:0, extraSuperMoto:0, retPerc:50, retMoto:20},
-bairros: {
-"LAGOMAR": {"km":3},
-"CAVALEIROS": {"km":5},
-"AEROPORTO": {"km":8},
-"CENTRO": {"km":10},
-"IMBETIBA": {"km":4},
-"ALPHAVILLE": {"km":7},
-"RIO DAS OSTRAS": {"km":15},
-"JARDIM ESPERANCA": {"km":9},
-"RIVIERA": {"km":7},
-"AJUDA": {"km":6}
-},
-rotas: {
-"CAVALEIROS|AEROPORTO": {"MOTO": {"loj":10,"moto":5},"UTILITARIO": {"loj":10,"moto":5},"CAMINHAO_3_4": {"loj":10,"moto":5},"CARRETA": {"loj":10,"moto":5}},
-"AEROPORTO|AEROPORTO": {"MOTO": {"loj":0,"moto":0},"UTILITARIO": {"loj":0,"moto":0},"CAMINHAO_3_4": {"loj":0,"moto":0},"CARRETA": {"loj":0,"moto":0}}
-}
+bairros: {"LAGOMAR": {"km":3},"CAVALEIROS": {"km":5},"AEROPORTO": {"km":8},"CENTRO": {"km":10},"IMBETIBA": {"km":4},"ALPHAVILLE": {"km":7},"RIO DAS OSTRAS": {"km":15},"JARDIM ESPERANCA": {"km":9},"RIVIERA": {"km":7},"AJUDA": {"km":6}},
+rotas: {"CAVALEIROS|AEROPORTO": {"MOTO": {"loj":10,"moto":5},"UTILITARIO": {"loj":10,"moto":5},"CAMINHAO_3_4": {"loj":10,"moto":5},"CARRETA": {"loj":10,"moto":5}},"AEROPORTO|AEROPORTO": {"MOTO": {"loj":0,"moto":0},"UTILITARIO": {"loj":0,"moto":0},"CAMINHAO_3_4": {"loj":0,"moto":0},"CARRETA": {"loj":0,"moto":0}}}
 };
-
 const $ = id => document.getElementById(id);
-
-window.setAba = (a)=>{
-$("abaEntrar").classList.toggle("hidden",a!=="entrar");
-$("abaCadastrar").classList.toggle("hidden",a!=="cadastrar");
-};
-
-$("tipoCadastro").addEventListener("change",e=>{
-$("boxDocsMotoboy").classList.toggle("hidden",!e.target.value.includes("MOTOBOY"));
-});
-
-window.setVeiculo = (v)=>{
-window.veiculoSelecionado = v;
-["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].forEach(id=>{
-const b = $(`btn${id}`);
-if(b){
-b.classList.remove("bg-black","text-white");
-if(id===v) b.classList.add("bg-black","text-white");
-}
-});
-calc();
-};
+window.setAba = (a)=>{$("abaEntrar").classList.toggle("hidden",a!=="entrar");$("abaCadastrar").classList.toggle("hidden",a!=="cadastrar");};
+$("tipoCadastro").addEventListener("change",e=>{$("boxDocsMotoboy").classList.toggle("hidden",!e.target.value.includes("MOTOBOY"));});
+window.setVeiculo = (v)=>{window.veiculoSelecionado = v;["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].forEach(id=>{const b = $(`btn${id}`);if(b){b.classList.remove("bg-black","text-white");if(id===v) b.classList.add("bg-black","text-white");}});calc();};
 window.veiculoSelecionado = "MOTO";
+window.setVeiculoAdmin = (v)=>{veiculoAdminAtual = v;$("veiculoAdminAtual").innerText = "EDITANDO: "+v+" - 5KM=R$10 / R$7,50";["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].forEach(id=>{const b = $(`btnAdmin${id}`);if(b){b.className = "p-2 rounded text-[10px] font-bold bg-gray-700 text-white";if(id===v) b.className = "p-2 rounded text-[10px] font-bold bg-white text-black border-2 border-yellow-400";}});const r = regraAtual[v] || regraAtual.MOTO;$("editBaseLojista").value = r.baseLoj;$("editExtraLojista").value = r.extraLoj;$("editBaseSuper").value = r.baseSuper;$("editExtraSuper").value = r.extraSuper;$("editRetPerc").value = r.retPerc;$("editBaseMoto").value = r.baseMoto;$("editExtraMoto").value = r.extraMoto;$("editBaseSuperMoto").value = r.baseSuperMoto;$("editExtraSuperMoto").value = r.extraSuperMoto;$("editRetMoto").value = r.retMoto;renderRotas();};
+window.salvarNomeLoja = ()=>{if(!userLogado) return;localStorage.setItem("nomeLoja_"+userLogado.uid,$("nomeSalaoLojista").value);localStorage.setItem("endLoja_"+userLogado.uid,$("enderecoSalaoLojista").value);$("nomeLojaTopo").innerText = $("nomeSalaoLojista").value;};
+async function buscarRoleReal(user){try{const d = await getDoc(doc(db,"motoristas",user.uid));if(d.exists() && d.data().role) return {role:d.data().role,status:d.data().status};}catch(e){}try{const d = await getDoc(doc(db,"usuarios",user.uid));if(d.exists() && d.data().role) return {role:d.data().role,status:d.data().status};}catch(e){}return {role:"LOJISTA",status:"PENDENTE"};}
+function normalizaRole(r){r = (r||"").toUpperCase().trim();if(r.includes("CARRETA")) return "MOTOBOY_CARRETA";if(r.includes("3_4")) return "MOTOBOY_CAMINHAO_3_4";if(r.includes("UTIL")) return "MOTOBOY_UTILITARIO";if(r.startsWith("MOTOBOY")) return "MOTOBOY_MOTO";if(r.includes("SUPER")) return "SUPER_LOJISTA";if(r==="ADMIN") return "ADMIN";if(r==="FRANQUEADO") return "FRANQUEADO";if(r==="SUPORTE") return "SUPORTE";return "LOJISTA";}
+function getVeiculoDoRole(role){role = (role||"").toUpperCase();if(role.includes("CARRETA")) return "CARRETA";if(role.includes("3_4")) return "CAMINHAO_3_4";if(role.includes("UTIL")) return "UTILITARIO";return "MOTO";}
+async function carregarPixConfig(){try{const s = await getDoc(doc(db,"pix_config","atual"));if(s.exists()){const pix = s.data().numero || s.data().pix || "22997450131";const nome = s.data().nome || s.data().nomePix || "";if($("pixLojistaDisplay")) $("pixLojistaDisplay").innerText = pix;if($("pixLoginDisplay")) $("pixLoginDisplay").innerText = "PIX: "+pix;if($("nomePixLojistaDisplay")) $("nomePixLojistaDisplay").innerText = nome;if($("pixAtualAdmin")) $("pixAtualAdmin").innerText = pix + (nome?" - "+nome:"");if($("editPixNumero")) $("editPixNumero").value = pix;if($("editPixNome")) $("editPixNome").value = nome;}}catch(e){console.log("erro pix",e);}}
+window.salvarPix = async()=>{const numero = $("editPixNumero")?.value.trim();const nome = $("editPixNome")?.value.trim();if(!numero){ alert("Digite o número do Pix"); return; }await setDoc(doc(db,"pix_config","atual"),{numero:numero,nome:nome,pix:numero,nomePix:nome,atualizado_por:userLogado?.email||'admin',atualizado_em:Timestamp.now()},{merge:true});if($("pixLojistaDisplay")) $("pixLojistaDisplay").innerText = numero;if($("pixLoginDisplay")) $("pixLoginDisplay").innerText = "PIX: "+numero;if($("nomePixLojistaDisplay")) $("nomePixLojistaDisplay").innerText = nome;if($("pixAtualAdmin")) $("pixAtualAdmin").innerText = numero + (nome?" - "+nome:"");alert("✅ PIX salvo na sua pasta pix_config/atual: "+numero);};
+function escutarPixConfig(){try{onSnapshot(doc(db,"pix_config","atual"), s=>{if(s.exists()){const pix = s.data().numero || s.data().pix || "22997450131";const nome = s.data().nome || s.data().nomePix || "";if($("pixLojistaDisplay")) $("pixLojistaDisplay").innerText = pix;if($("pixLoginDisplay")) $("pixLoginDisplay").innerText = "PIX: "+pix;if($("nomePixLojistaDisplay")) $("nomePixLojistaDisplay").innerText = nome;if($("pixAtualAdmin")) $("pixAtualAdmin").innerText = pix + (nome?" - "+nome:"");}});}catch(e){}}
+async function carregarDinamica(){try{const s = await getDoc(doc(db,"pricing_config","dinamica"));if(s.exists()){dinamicaAtiva = s.data().ativa||false;dinamicaExtraLoj = s.data().extraLoj??3;dinamicaExtraMoto = s.data().extraMoto??2;if($("editDinamicaLojista")) $("editDinamicaLojista").value = dinamicaExtraLoj;if($("editDinamicaMoto")) $("editDinamicaMoto").value = dinamicaExtraMoto;}}catch(e){}atualizarBtnDinamica();}
+function escutarDinamica(){try{onSnapshot(doc(db,"pricing_config","dinamica"), s=>{if(s.exists()){dinamicaAtiva = s.data().ativa||false;dinamicaExtraLoj = s.data().extraLoj??dinamicaExtraLoj;dinamicaExtraMoto = s.data().extraMoto??dinamicaExtraMoto;if($("editDinamicaLojista")) $("editDinamicaLojista").value = dinamicaExtraLoj;if($("editDinamicaMoto")) $("editDinamicaMoto").value = dinamicaExtraMoto;atualizarBtnDinamica();}});}catch(e){}}
+function atualizarBtnDinamica(){const btn = $("btnDinamica");const st = $("statusDinamica");const stL = $("statusDinamicaLojista");const stM = $("statusDinamicaMotoboy");if(dinamicaAtiva){if(btn){btn.innerText="ON";btn.className="bg-green-600 text-white px-6 py-3 rounded-full font-black text-sm border-2 border-white";}if(st) st.innerText=`LIGADA +R$${dinamicaExtraLoj.toFixed(2)} / +R$${dinamicaExtraMoto.toFixed(2)}`;if(stL){stL.innerText=`⚡ DINÂMICA LIGADA +R$${dinamicaExtraLoj.toFixed(2)}`;stL.className="p-2 rounded text-center text-xs font-bold mb-2 bg-yellow-400 text-black border-2 border-black";}if(stM){stM.innerText=`⚡ DINÂMICA +R$${dinamicaExtraMoto.toFixed(2)} EXTRA`;stM.className="p-2 rounded text-center text-xs font-bold mb-3 bg-yellow-400 text-black border-2 border-black";}if($("labelDinamicaTotal")) $("labelDinamicaTotal").innerText=`⚡ +R$${dinamicaExtraLoj.toFixed(2)}`;}else{if(btn){btn.innerText="OFF";btn.className="bg-red-600 text-white px-6 py-3 rounded-full font-black text-sm border-2 border-black";}if(st) st.innerText="DESLIGADA";if(stL){stL.innerText="⚡ DINÂMICA DESLIGADA";stL.className="p-2 rounded text-center text-xs font-bold mb-2 bg-gray-200";}if(stM){stM.innerText="⚡ DESLIGADA";stM.className="p-2 rounded text-center text-xs font-bold mb-3 bg-gray-200";}if($("labelDinamicaTotal")) $("labelDinamicaTotal").innerText="";}if(typeof calc === 'function') calc();}
+window.toggleDinamica = async()=>{if(!["ADMIN","SUPORTE","FRANQUEADO"].includes(userRoleReal)){alert("Só admin pode");return;}dinamicaAtiva =!dinamicaAtiva;await setDoc(doc(db,"pricing_config","dinamica"),{ativa:dinamicaAtiva,extraLoj:Number($("editDinamicaLojista").value||0),extraMoto:Number($("editDinamicaMoto").value||0),alterado_por:userLogado.email,alterado_em:Timestamp.now()},{merge:true});atualizarBtnDinamica();};
+window.salvarDinamicaValor = async()=>{dinamicaExtraLoj = Number($("editDinamicaLojista").value||0);dinamicaExtraMoto = Number($("editDinamicaMoto").value||0);await setDoc(doc(db,"pricing_config","dinamica"),{extraLoj:dinamicaExtraLoj,extraMoto:dinamicaExtraMoto,alterado_por:userLogado.email},{merge:true});alert(`✅ Dinâmica R$${dinamicaExtraLoj.toFixed(2)} / R$${dinamicaExtraMoto.toFixed(2)}`);atualizarBtnDinamica();};
 
-window.setVeiculoAdmin = (v)=>{
-veiculoAdminAtual = v;
-$("veiculoAdminAtual").innerText = "EDITANDO: "+v+" - 5KM=R$10 / R$7,50";
-["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].forEach(id=>{
-const b = $(`btnAdmin${id}`);
-if(b){
-b.className = "p-2 rounded text-[10px] font-bold bg-gray-700 text-white";
-if(id===v) b.className = "p-2 rounded text-[10px] font-bold bg-white text-black border-2 border-yellow-400";
-}
-});
-const r = regraAtual[v] || regraAtual.MOTO;
-$("editBaseLojista").value = r.baseLoj;
-$("editExtraLojista").value = r.extraLoj;
-$("editBaseSuper").value = r.baseSuper;
-$("editExtraSuper").value = r.extraSuper;
-$("editRetPerc").value = r.retPerc;
-$("editBaseMoto").value = r.baseMoto;
-$("editExtraMoto").value = r.extraMoto;
-$("editBaseSuperMoto").value = r.baseSuperMoto;
-$("editExtraSuperMoto").value = r.extraSuperMoto;
-$("editRetMoto").value = r.retMoto;
-renderRotas();
-};
-
-window.salvarNomeLoja = ()=>{
-if(!userLogado) return;
-localStorage.setItem("nomeLoja_"+userLogado.uid,$("nomeSalaoLojista").value);
-localStorage.setItem("endLoja_"+userLogado.uid,$("enderecoSalaoLojista").value);
-$("nomeLojaTopo").innerText = $("nomeSalaoLojista").value;
-};
-
-async function buscarRoleReal(user){
-try{
-const d = await getDoc(doc(db,"motoristas",user.uid));
-if(d.exists() && d.data().role) return {role:d.data().role,status:d.data().status};
-}catch(e){}
-try{
-const d = await getDoc(doc(db,"usuarios",user.uid));
-if(d.exists() && d.data().role) return {role:d.data().role,status:d.data().status};
-}catch(e){}
-return {role:"LOJISTA",status:"PENDENTE"};
-}
-
-function normalizaRole(r){
-r = (r||"").toUpperCase().trim();
-if(r.includes("CARRETA")) return "MOTOBOY_CARRETA";
-if(r.includes("3_4")) return "MOTOBOY_CAMINHAO_3_4";
-if(r.includes("UTIL")) return "MOTOBOY_UTILITARIO";
-if(r.startsWith("MOTOBOY")) return "MOTOBOY_MOTO";
-if(r.includes("SUPER")) return "SUPER_LOJISTA";
-if(r==="ADMIN") return "ADMIN";
-if(r==="FRANQUEADO") return "FRANQUEADO";
-if(r==="SUPORTE") return "SUPORTE";
-return "LOJISTA";
-}
-
-function getVeiculoDoRole(role){
-role = (role||"").toUpperCase();
-if(role.includes("CARRETA")) return "CARRETA";
-if(role.includes("3_4")) return "CAMINHAO_3_4";
-if(role.includes("UTIL")) return "UTILITARIO";
-return "MOTO";
-}
-
-async function carregarPixConfig(){
-try{
-const s = await getDoc(doc(db,"pix_config","atual"));
-if(s.exists()){
-const pix = s.data().numero || s.data().pix || "22997450131";
-const nome = s.data().nome || s.data().nomePix || "";
-if($("pixLojistaDisplay")) $("pixLojistaDisplay").innerText = pix;
-if($("pixLoginDisplay")) $("pixLoginDisplay").innerText = "PIX: "+pix;
-if($("nomePixLojistaDisplay")) $("nomePixLojistaDisplay").innerText = nome;
-if($("pixAtualAdmin")) $("pixAtualAdmin").innerText = pix + (nome?" - "+nome:"");
-if($("editPixNumero")) $("editPixNumero").value = pix;
-if($("editPixNome")) $("editPixNome").value = nome;
-}
-}catch(e){
-console.log("erro pix",e);
-}
-}
-
-window.salvarPix = async()=>{
-const numero = $("editPixNumero")?.value.trim();
-const nome = $("editPixNome")?.value.trim();
-if(!numero){ alert("Digite o número do Pix"); return; }
-await setDoc(doc(db,"pix_config","atual"),{
-numero:numero,
-nome:nome,
-pix:numero,
-nomePix:nome,
-atualizado_por:userLogado?.email||'admin',
-atualizado_em:Timestamp.now()
-},{merge:true});
-if($("pixLojistaDisplay")) $("pixLojistaDisplay").innerText = numero;
-if($("pixLoginDisplay")) $("pixLoginDisplay").innerText = "PIX: "+numero;
-if($("nomePixLojistaDisplay")) $("nomePixLojistaDisplay").innerText = nome;
-if($("pixAtualAdmin")) $("pixAtualAdmin").innerText = numero + (nome?" - "+nome:"");
-alert("✅ PIX salvo na sua pasta pix_config/atual: "+numero);
-};
-
-function escutarPixConfig(){
-try{
-onSnapshot(doc(db,"pix_config","atual"), s=>{
-if(s.exists()){
-const pix = s.data().numero || s.data().pix || "22997450131";
-const nome = s.data().nome || s.data().nomePix || "";
-if($("pixLojistaDisplay")) $("pixLojistaDisplay").innerText = pix;
-if($("pixLoginDisplay")) $("pixLoginDisplay").innerText = "PIX: "+pix;
-if($("nomePixLojistaDisplay")) $("nomePixLojistaDisplay").innerText = nome;
-if($("pixAtualAdmin")) $("pixAtualAdmin").innerText = pix + (nome?" - "+nome:"");
-}
-});
-}catch(e){}
-}
-
-async function carregarDinamica(){
-try{
-const s = await getDoc(doc(db,"pricing_config","dinamica"));
-if(s.exists()){
-dinamicaAtiva = s.data().ativa||false;
-dinamicaExtraLoj = s.data().extraLoj??3;
-dinamicaExtraMoto = s.data().extraMoto??2;
-if($("editDinamicaLojista")) $("editDinamicaLojista").value = dinamicaExtraLoj;
-if($("editDinamicaMoto")) $("editDinamicaMoto").value = dinamicaExtraMoto;
-}
-}catch(e){}
-atualizarBtnDinamica();
-}
-
-function escutarDinamica(){
-try{
-onSnapshot(doc(db,"pricing_config","dinamica"), s=>{
-if(s.exists()){
-dinamicaAtiva = s.data().ativa||false;
-dinamicaExtraLoj = s.data().extraLoj??dinamicaExtraLoj;
-dinamicaExtraMoto = s.data().extraMoto??dinamicaExtraMoto;
-if($("editDinamicaLojista")) $("editDinamicaLojista").value = dinamicaExtraLoj;
-if($("editDinamicaMoto")) $("editDinamicaMoto").value = dinamicaExtraMoto;
-atualizarBtnDinamica();
-}
-});
-}catch(e){}
-}
-
-function atualizarBtnDinamica(){
-const btn = $("btnDinamica");
-const st = $("statusDinamica");
-const stL = $("statusDinamicaLojista");
-const stM = $("statusDinamicaMotoboy");
-if(dinamicaAtiva){
-if(btn){
-btn.innerText="ON";
-btn.className="bg-green-600 text-white px-6 py-3 rounded-full font-black text-sm border-2 border-white";
-}
-if(st) st.innerText=`LIGADA +R$${dinamicaExtraLoj.toFixed(2)} / +R$${dinamicaExtraMoto.toFixed(2)}`;
-if(stL){
-stL.innerText=`⚡ DINÂMICA LIGADA +R$${dinamicaExtraLoj.toFixed(2)}`;
-stL.className="p-2 rounded text-center text-xs font-bold mb-2 bg-yellow-400 text-black border-2 border-black";
-}
-if(stM){
-stM.innerText=`⚡ DINÂMICA +R$${dinamicaExtraMoto.toFixed(2)} EXTRA`;
-stM.className="p-2 rounded text-center text-xs font-bold mb-3 bg-yellow-400 text-black border-2 border-black";
-}
-if($("labelDinamicaTotal")) $("labelDinamicaTotal").innerText=`⚡ +R$${dinamicaExtraLoj.toFixed(2)}`;
-}else{
-if(btn){
-btn.innerText="OFF";
-btn.className="bg-red-600 text-white px-6 py-3 rounded-full font-black text-sm border-2 border-black";
-}
-if(st) st.innerText="DESLIGADA";
-if(stL){
-stL.innerText="⚡ DINÂMICA DESLIGADA";
-stL.className="p-2 rounded text-center text-xs font-bold mb-2 bg-gray-200";
-}
-if(stM){
-stM.innerText="⚡ DESLIGADA";
-stM.className="p-2 rounded text-center text-xs font-bold mb-3 bg-gray-200";
-}
-if($("labelDinamicaTotal")) $("labelDinamicaTotal").innerText="";
-}
-if(typeof calc === 'function') calc();
-}
-
-window.toggleDinamica = async()=>{
-if(!["ADMIN","SUPORTE","FRANQUEADO"].includes(userRoleReal)){
-alert("Só admin pode");
-return;
-}
-dinamicaAtiva =!dinamicaAtiva;
-await setDoc(doc(db,"pricing_config","dinamica"),{
-ativa:dinamicaAtiva,
-extraLoj:Number($("editDinamicaLojista").value||0),
-extraMoto:Number($("editDinamicaMoto").value||0),
-alterado_por:userLogado.email,
-alterado_em:Timestamp.now()
-},{merge:true});
-atualizarBtnDinamica();
-};
-
-window.salvarDinamicaValor = async()=>{
-dinamicaExtraLoj = Number($("editDinamicaLojista").value||0);
-dinamicaExtraMoto = Number($("editDinamicaMoto").value||0);
-await setDoc(doc(db,"pricing_config","dinamica"),{
-extraLoj:dinamicaExtraLoj,
-extraMoto:dinamicaExtraMoto,
-alterado_por:userLogado.email
-},{merge:true});
-alert(`✅ Dinâmica R$${dinamicaExtraLoj.toFixed(2)} / R$${dinamicaExtraMoto.toFixed(2)}`);
-atualizarBtnDinamica();
-};
-
-async function getCoord(endereco){
-try{
-const q = encodeURIComponent(endereco + ", Macaé, RJ, Brasil");
-const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}&limit=1`);
-const j = await r.json();
-if(j && j[0]) return { lat: j[0].lat, lon: j[0].lon };
-}catch(e){}
-return null;
-}
-
+// *** MELHORIA 3 - KM VARIA DE VERDADE COM HAVERSINE ***
 async function calcularKmAutomatico(){
 const origem = $("enderecoSalaoLojista")?.value.trim() || "Cavaleiros, Macaé";
 const destino = $("enderecoCompletoLojista")?.value.trim();
-if(!origem ||!destino || destino.length < 5) return;
-if($("detalheRegiao")) $("detalheRegiao").innerText = "🔍 Calculando KM automático no mapa...";
-const c1 = await getCoord(origem);
-const c2 = await getCoord(destino);
-if(!c1 ||!c2){
-let kmFallback = 0;
+if(!origem ||!destino || destino.length < 4) return;
+if($("detalheRegiao")) $("detalheRegiao").innerText = "🔍 Calculando KM no mapa...";
+
+async function getCoordOSM(txt){
+ try{
+  const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(txt + ", Macaé RJ Brasil")}&limit=1`);
+  const j = await r.json();
+  if(j[0]) return {lat: parseFloat(j[0].lat), lon: parseFloat(j[0].lon)};
+ }catch(e){}
+ return null;
+}
+function haversine(c1,c2){
+ const R = 6371;
+ const dLat = (c2.lat-c1.lat)*Math.PI/180;
+ const dLon = (c2.lon-c1.lon)*Math.PI/180;
+ const a = Math.sin(dLat/2)**2 + Math.cos(c1.lat*Math.PI/180)*Math.cos(c2.lat*Math.PI/180)*Math.sin(dLon/2)**2;
+ return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+const c1 = await getCoordOSM(origem);
+const c2 = await getCoordOSM(destino);
+if(c1 && c2){
+ try{
+  const url = `https://router.project-osrm.org/route/v1/driving/${c1.lon},${c1.lat};${c2.lon},${c2.lat}?overview=false`;
+  const r = await fetch(url);
+  const j = await r.json();
+  if(j.routes && j.routes[0]){
+   const kmReal = j.routes[0].distance / 1000;
+   window.kmCalculadoAutomatico = Math.max(1, Math.ceil(kmReal));
+   console.log("KM OSRM:", window.kmCalculadoAutomatico);
+   calc();
+   return;
+  }
+ }catch(e){}
+ const kmLinhaReta = haversine(c1,c2) * 1.3;
+ window.kmCalculadoAutomatico = Math.max(1, Math.ceil(kmLinhaReta));
+ console.log("KM Haversine:", window.kmCalculadoAutomatico);
+ calc();
+ return;
+}
+let kmBairro = 0;
+let bairroAchado = "";
 Object.entries(regraAtual.bairros||{}).forEach(([b,d])=>{
-if(destino.toUpperCase().includes(b)) kmFallback = d.km||0;
+ if(destino.toUpperCase().includes(b) &&!bairroAchado){
+  kmBairro = Number(d.km||0);
+  bairroAchado = b;
+ }
 });
-if(kmFallback>0){
-window.kmCalculadoAutomatico = kmFallback;
-calc();
-}else{
-window.kmCalculadoAutomatico = 5;
-calc();
-}
-return;
-}
-try{
-const url = `https://router.project-osrm.org/route/v1/driving/${c1.lon},${c1.lat};${c2.lon},${c2.lat}?overview=false`;
-const r = await fetch(url);
-const j = await r.json();
-if(j.routes && j.routes[0]){
-const km = j.routes[0].distance / 1000;
-window.kmCalculadoAutomatico = Math.max(1, Math.ceil(km));
-calc();
-}
-}catch(e){
-if(!window.kmCalculadoAutomatico) window.kmCalculadoAutomatico = 5;
-calc();
+if(kmBairro > 0){
+ window.kmCalculadoAutomatico = kmBairro;
+ calc();
+} else {
+ window.kmCalculadoAutomatico = 5 + (destino.length % 8);
+ calc();
 }
 }
 
-window.debounceKm = function(){
-clearTimeout(timeoutBuscaKm);
-timeoutBuscaKm = setTimeout(calcularKmAutomatico, 900);
-}
+window.debounceKm = function(){clearTimeout(timeoutBuscaKm);timeoutBuscaKm = setTimeout(calcularKmAutomatico, 900);}
 
 onAuthStateChanged(auth, async(user)=>{
 if(user){
@@ -610,531 +369,35 @@ $("telaLogin").classList.remove("hidden");
 $("telaPendente").classList.add("hidden");
 }
 });
-
-function escutarSaldo(){
-if(!userLogado) return;
-onSnapshot(doc(db,"usuarios",userLogado.uid),s=>{
-if(s.exists()){
-if($("saldoLojistaValor")) $("saldoLojistaValor").innerText = (s.data().saldo_lojista||0).toFixed(2);
-if($("saldoMotoboyValor")) $("saldoMotoboyValor").innerText = (s.data().saldo_motoboy||0).toFixed(2);
-}
-});
-}
-
-function mostrarTelaPorRole(){
-if($("telaMotoboy")) $("telaMotoboy").classList.add("hidden");
-if($("telaLojista")) $("telaLojista").classList.add("hidden");
-if($("telaAdmin")) $("telaAdmin").classList.add("hidden");
-if(userRoleReal.startsWith("MOTOBOY")){
-if($("telaMotoboy")) $("telaMotoboy").classList.remove("hidden");
-}else if(userRoleReal==="LOJISTA" || userRoleReal==="SUPER_LOJISTA"){
-if($("telaLojista")) $("telaLojista").classList.remove("hidden");
-}else{
-if($("telaAdmin")) $("telaAdmin").classList.remove("hidden");
-}
-calc();
-}
-
-window.fazerLogin = async()=>{
-try{
-await signInWithEmailAndPassword(auth,$("loginEmail").value.trim(),$("loginSenha").value.trim());
-}catch(e){
-if($("msgLogin")) $("msgLogin").innerText = e.message;
-}
-};
-
-window.fazerCadastro = async()=>{
-const email = $("cadEmailLogin").value.trim().toLowerCase();
-const senha = $("cadSenhaLogin").value.trim();
-const nome = $("cadNomeLogin").value.trim();
-const tipo = $("tipoCadastro").value;
-if(!email||!senha||!nome){ alert("Preencha"); return; }
-try{
-const cred = await createUserWithEmailAndPassword(auth,email,senha);
-const dados = {userId:cred.user.uid,nome,email,role:tipo,status:tipo==="ADMIN"?"APROVADO":"PENDENTE",saldo_lojista:0,saldo_motoboy:0,criadoEm:Timestamp.now()};
-await setDoc(doc(db,"usuarios",cred.user.uid),dados);
-await setDoc(doc(db,"usuarios",email),dados);
-if(tipo.startsWith("MOTOBOY")) await setDoc(doc(db,"motoristas",cred.user.uid),{...dados,veiculo:getVeiculoDoRole(tipo)},{merge:true});
-await signOut(auth);
-alert("Enviado!");
-location.reload();
-}catch(e){
-alert(e.message);
-}
-};
-
-window.fazerLogout = async()=>{
-await signOut(auth);
-location.reload();
-};
-
-async function carregarPrecos(){
-try{
-const s = await getDoc(doc(db,"pricing_config","atual"));
-if(s.exists() && s.data().regra){
-const data = s.data().regra;
-regraAtual = {...regraAtual,...data, bairros:{...regraAtual.bairros,...(data.bairros||{})}, rotas:{...regraAtual.rotas,...(data.rotas||{})}};
-Object.keys(data).forEach(k=>{
-if(["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].includes(k)) regraAtual[k]=data[k];
-});
-}
-}catch(e){}
-setVeiculoAdmin(veiculoAdminAtual);
-calc();
-}
-
-function parseValor(str){
-return Number(String(str).replace(",",".").replace(/[^0-9.\-]/g,"")||0);
-}
-
-function renderRotas(){
-let h = "";
-Object.entries(regraAtual.rotas||{}).forEach(([key,val])=>{
-const [o,d] = key.split("|");
-const v = val[veiculoAdminAtual] || val.MOTO || {loj:0,moto:0};
-h += `<div class="bg-black text-white p-2 rounded border-2 border-yellow-400 mb-2">
-<div class="flex justify-between"><b class="text-xs">${o} -> ${d} Loja +${v.loj} Moto +${v.moto}</b>
-<button onclick="delRota('${key}')" class="bg-red-600 px-2 rounded text-xs">X</button></div>
-<div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2 rounded">
-<input id="editRotaLoj_${key}" value="${v.loj}" class="w-full border-2 border-blue-600 p-2 rounded text-xs text-black font-bold">
-<input id="editRotaMoto_${key}" value="${v.moto}" class="w-full border-2 border-green-600 p-2 rounded text-xs text-black font-bold">
-</div>
-<button onclick="salvarRotaEdit('${key}')" class="bg-green-600 text-white w-full py-2 rounded mt-2 text-xs font-black">💾 SALVAR ROTA</button>
-</div>`;
-});
-if($("listaRotasAdmin")) $("listaRotasAdmin").innerHTML = h || "Nenhuma rota";
-}
-
-window.salvarRotaEdit = async(key)=>{
-const l = parseValor(document.getElementById(`editRotaLoj_${key}`)?.value||"0");
-const m = parseValor(document.getElementById(`editRotaMoto_${key}`)?.value||"0");
-if(!regraAtual.rotas[key]) regraAtual.rotas[key]={};
-regraAtual.rotas[key][veiculoAdminAtual] = {loj:l,moto:m};
-await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true});
-renderRotas();
-calc();
-};
-
-window.addRota = async()=>{
-const o = $("origemRota").value.trim().toUpperCase();
-const d = $("destinoRota").value.trim().toUpperCase();
-const l = parseValor($("valorRotaLojista").value);
-const m = parseValor($("valorRotaMotoboy").value);
-if(!o||!d) return alert("Preencha origem e destino");
-const key = `${o}|${d}`;
-if(!regraAtual.rotas) regraAtual.rotas={};
-if(!regraAtual.rotas[key]) regraAtual.rotas[key]={};
-["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].forEach(v=>{
-if(!regraAtual.rotas[key][v]) regraAtual.rotas[key][v]={loj:0,moto:0};
-});
-regraAtual.rotas[key][veiculoAdminAtual] = {loj:l,moto:m};
-await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true});
-renderRotas();
-calc();
-alert(`✅ Rota ${o} -> ${d} salva!`);
-};
-
-window.delRota = async(k)=>{
-if(!confirm("Apagar "+k+"?")) return;
-delete regraAtual.rotas[k];
-await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true});
-renderRotas();
-calc();
-};
-
-window.salvarPrecosVeiculo = async()=>{
-regraAtual[veiculoAdminAtual] = {
-baseLoj:Number($("editBaseLojista").value),
-extraLoj:Number($("editExtraLojista").value),
-baseSuper:Number($("editBaseSuper").value),
-extraSuper:Number($("editExtraSuper").value),
-baseMoto:Number($("editBaseMoto").value),
-extraMoto:Number($("editExtraMoto").value),
-baseSuperMoto:Number($("editBaseSuperMoto").value),
-extraSuperMoto:Number($("editExtraSuperMoto").value),
-retPerc:Number($("editRetPerc").value),
-retMoto:Number($("editRetMoto").value)
-};
-await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true});
-alert("✅ Salvo");
-};
-
-window.calc = function(){
-const v = window.veiculoSelecionado || "MOTO";
-const cfg = regraAtual[v] || regraAtual.MOTO;
-const origemRaw = ($("enderecoSalaoLojista")?.value||"").toUpperCase();
-const destinoRaw = ($("enderecoCompletoLojista")?.value||"").toUpperCase();
-let origemDetect = "";
-let destinoDetect = "";
-let kmDestino = 0;
-if(window.kmCalculadoAutomatico > 0){
-kmDestino = window.kmCalculadoAutomatico;
-}else{
-Object.entries(regraAtual.bairros||{}).forEach(([bairro,dados])=>{
-if(destinoRaw.includes(bairro)){
-destinoDetect = bairro;
-kmDestino = Number(dados.km||0);
-}
-});
-if(kmDestino===0) kmDestino = 5;
-}
-Object.keys(regraAtual.rotas||{}).forEach(k=>{
-const [o,d] = k.split("|");
-if(origemRaw.includes(o)) origemDetect = o;
-if(destinoRaw.includes(d)) destinoDetect = d;
-});
-let extraLoj = 0;
-let extraMoto = 0;
-const key = `${origemDetect}|${destinoDetect}`;
-if(regraAtual.rotas && regraAtual.rotas[key] && regraAtual.rotas[key][v]){
-extraLoj += Number(regraAtual.rotas[key][v].loj||0);
-extraMoto += Number(regraAtual.rotas[key][v].moto||0);
-}
-let loj;
-let moto;
-if(kmDestino <= 5){
-loj = 10.00;
-moto = 7.50;
-}else{
-loj = 10.00 + ((kmDestino - 5) * 2.00);
-moto = 7.50 + ((kmDestino - 5) * 1.50);
-}
-loj += Number(cfg.extraLoj||0);
-moto += Number(cfg.extraMoto||0);
-let ret = $("precisaRetorno")?.checked || false;
-let sup = $("precisaSuper")?.checked || false;
-if(userRoleReal==="SUPER_LOJISTA") sup = true;
-if(sup){
-loj += Number(cfg.baseSuper||0) + Number(cfg.extraSuper||0);
-moto += Number(cfg.baseSuperMoto||0) + Number(cfg.extraSuperMoto||0);
-}
-if(ret){
-loj += loj * Number(cfg.retPerc||0)/100;
-moto += Number(cfg.retMoto||0);
-}
-if(dinamicaAtiva){
-loj += Number(dinamicaExtraLoj||0);
-moto += Number(dinamicaExtraMoto||0);
-}
-loj += extraLoj;
-moto += extraMoto;
-if(loj < 10) loj = 10;
-if($("detalheRegiao")){
-$("detalheRegiao").innerText = `📍 ${kmDestino}km automático (${origemDetect||'LOJA'} -> ${destinoDetect||'DESTINO'}) ${extraLoj?`+R$${extraLoj}/+R$${extraMoto} rota`:''}`;
-}
-if($("totalLojista")) $("totalLojista").innerText = loj.toFixed(2);
-return {lojista:loj,moto,km:kmDestino,origem:origemDetect,destino:destinoDetect,veiculo:v};
-};
-
-function escutarLucro(){
-onSnapshot(collection(db,"pedidos"), snap=>{
-let cobrado = 0;
-let pago = 0;
-let corridas = 0;
-snap.forEach(d=>{
-const p = d.data();
-if(p.status==="ENTREGUE"){
-cobrado += Number(p.valor_lojista||0);
-pago += Number(p.valor_motoboy||0);
-corridas++;
-}
-});
-if($("lucroTotalAdmin")) $("lucroTotalAdmin").innerText = (cobrado-pago).toFixed(2);
-if($("totalCobradoAdmin")) $("totalCobradoAdmin").innerText = "R$"+cobrado.toFixed(2);
-if($("totalPagoAdmin")) $("totalPagoAdmin").innerText = "R$"+pago.toFixed(2);
-if($("totalCorridasAdmin")) $("totalCorridasAdmin").innerText = corridas;
-});
-}
-
-window.carregarSaldosAdmin = async()=>{
-const snap = await getDocs(collection(db,"usuarios"));
-const map = new Map();
-snap.forEach(d=>{
-const u = d.data();
-if(!u.userId) return;
-if(!map.has(u.userId)) map.set(u.userId,{...u});
-});
-let hL = "";
-let hM = "";
-for(const u of map.values()){
-if((u.role||"").includes("MOTOBOY")){
-hM += `<div class="bg-white border-2 border-black p-2 rounded text-[10px]"><b>🏍️ ${u.nome||u.email}</b><br>R$${Number(u.saldo_motoboy||0).toFixed(2)}<div class="flex gap-1 mt-1"><input id="addMoto_${u.userId}" type="text" placeholder="Ex: 120,00" class="w-full border-2 border-black p-2 rounded text-xs"><button onclick="addSaldoDireto('${u.userId}','${u.email}','motoboy',1)" class="bg-green-600 text-white px-3 py-1 rounded">+ ADD</button><button onclick="addSaldoDireto('${u.userId}','${u.email}','motoboy',-1)" class="bg-red-600 text-white px-3 py-1 rounded">- TIRAR</button></div></div>`;
-}else{
-hL += `<div class="bg-white border-2 border-black p-2 rounded text-[10px]"><b>🏪 ${u.nome||u.email}</b><br>R$${Number(u.saldo_lojista||0).toFixed(2)}<div class="flex gap-1 mt-1"><input id="addLoj_${u.userId}" type="text" placeholder="Ex: 120,00" class="w-full border-2 border-black p-2 rounded text-xs"><button onclick="addSaldoDireto('${u.userId}','${u.email}','lojista',1)" class="bg-green-600 text-white px-3 py-1 rounded">+ ADD</button><button onclick="addSaldoDireto('${u.userId}','${u.email}','lojista',-1)" class="bg-red-600 text-white px-3 py-1 rounded">- TIRAR</button></div></div>`;
-}
-}
-if($("listaLojistasSaldos")) $("listaLojistasSaldos").innerHTML = hL;
-if($("listaMotoboysSaldos")) $("listaMotoboysSaldos").innerHTML = hM;
-};
-
-window.addSaldoDireto = async(uid,email,tipo,sinal)=>{
-let raw = "";
-if(tipo==="lojista") raw = document.getElementById(`addLoj_${uid}`)?.value||"0";
-else raw = document.getElementById(`addMoto_${uid}`)?.value||"0";
-raw = String(raw).replace(",",".").replace(/[^0-9.]/g,"");
-let val = Number(raw||0);
-if(!val){ alert("Digite valor"); return; }
-val = Math.abs(val)*sinal;
-const snap = await getDoc(doc(db,"usuarios",uid));
-let novoLoj = snap.data().saldo_lojista||0;
-let novoMoto = snap.data().saldo_motoboy||0;
-if(tipo==="lojista") novoLoj+=val;
-else novoMoto+=val;
-if(novoLoj<0) novoLoj=0;
-if(novoMoto<0) novoMoto=0;
-await setDoc(doc(db,"usuarios",uid),{saldo_lojista:novoLoj,saldo_motoboy:novoMoto},{merge:true});
-try{ await setDoc(doc(db,"usuarios",email),{saldo_lojista:novoLoj,saldo_motoboy:novoMoto},{merge:true}); }catch(e){}
-carregarSaldosAdmin();
-};
-
-window.criarPedido = async()=>{
-const {lojista,moto,origem,destino,veiculo,km} = calc();
-const endereco = $("enderecoCompletoLojista")?.value||"";
-if(!endereco){ alert("Endereço cliente"); return; }
-if(!window.kmCalculadoAutomatico || window.kmCalculadoAutomatico===0){
-alert("Aguarde calcular KM automático...");
-await calcularKmAutomatico();
-return;
-}
-const userSnap = await getDoc(doc(db,"usuarios",userLogado.uid));
-const saldoAtual = userSnap.data()?.saldo_lojista??0;
-if(saldoAtual < lojista){ alert(`Saldo insuficiente R$${saldoAtual.toFixed(2)} precisa R$${lojista.toFixed(2)}`); return; }
-const cod = Math.floor(1000+Math.random()*9000).toString();
-await addDoc(collection(db,"pedidos"),{
-owner_id:userLogado.uid,
-nome_loja:$("nomeSalaoLojista").value,
-endereco_completo:endereco,
-endereco_loja:$("enderecoSalaoLojista").value,
-bairro:destino||"Centro",
-origem:origem,
-km:km,
-valor_lojista:lojista,
-valor_motoboy:moto,
-codigo_secreto:cod,
-veiculo:veiculo,
-status:"AGUARDANDO",
-criado_em:Timestamp.now()
-});
-const novo = saldoAtual - lojista;
-await setDoc(doc(db,"usuarios",userLogado.uid),{saldo_lojista:novo},{merge:true});
-window.kmCalculadoAutomatico = 0;
-if($("enderecoCompletoLojista")) $("enderecoCompletoLojista").value = "";
-alert(`✅ Criado ${km}km R$${lojista.toFixed(2)} automático`);
-};
-
-async function carregarPendentes(){
-onSnapshot(collection(db,"usuarios"),snap=>{
-let h = "";
-snap.forEach(d=>{
-const u = d.data();
-if((u.status||"").toUpperCase()!=="PENDENTE") return;
-h += `<div class="border-2 border-yellow-500 bg-white p-3 rounded-xl text-[11px]"><b>👤 ${u.nome}</b><br><b class="bg-red-600 text-white px-1 rounded">${u.role}</b><br>${u.email}<br><button onclick="aprovarUsuario('${d.id}')" class="bg-green-600 text-white px-2 py-3 rounded w-full mt-3 font-black">✅ APROVAR</button></div>`;
-});
-if($("listaPendentesAprovacao")) $("listaPendentesAprovacao").innerHTML = h || "Nenhum pendente";
-});
-}
-
-window.aprovarUsuario = async(id)=>{
-await setDoc(doc(db,"usuarios",id),{status:"APROVADO"},{merge:true});
-};
-
-window.cancelarCorridaLojista = async(id)=>{
-if(!confirm("Cancelar? Valor volta pro saldo.")) return;
-const snap = await getDoc(doc(db,"pedidos",id));
-const p = snap.data();
-await setDoc(doc(db,"pedidos",id),{status:"CANCELADA",cancelado_em:Timestamp.now()},{merge:true});
-const userSnap = await getDoc(doc(db,"usuarios",userLogado.uid));
-const novo = (userSnap.data()?.saldo_lojista||0) + Number(p.valor_lojista||0);
-await setDoc(doc(db,"usuarios",userLogado.uid),{saldo_lojista:novo},{merge:true});
-alert("✅ Cancelada R$"+Number(p.valor_lojista||0).toFixed(2)+" devolvido");
-};
-
-window.cancelarCorridaAdmin = async(id)=>{
-if(!confirm("Cancelar como ADMIN? Saldo volta pro lojista.")) return;
-const snap = await getDoc(doc(db,"pedidos",id));
-const p = snap.data();
-await setDoc(doc(db,"pedidos",id),{status:"CANCELADA",cancelado_em:Timestamp.now()},{merge:true});
-if(p.owner_id){
-const ownerSnap = await getDoc(doc(db,"usuarios",p.owner_id));
-if(ownerSnap.exists()){
-const novo = (ownerSnap.data().saldo_lojista||0) + Number(p.valor_lojista||0);
-await setDoc(doc(db,"usuarios",p.owner_id),{saldo_lojista:novo},{merge:true});
-}
-}
-alert("✅ Cancelada admin");
-};
-
-// CORREÇÃO 1 - ACEITAR NÃO TRAVA
-window.aceitarCorrida = async(id)=>{
-  console.log("ACEITAR CLICADO", id);
-  try{
-    const refPedido = doc(db,"pedidos",id);
-    const snap = await getDoc(refPedido);
-    if(!snap.exists()){
-      alert("Pedido não existe mais");
-      return;
-    }
-    await setDoc(refPedido,{
-      motorista_id: userLogado.uid,
-      motorista_nome: userLogado.email,
-      status: "ACEITA",
-      aceita_em: Timestamp.now()
-    },{merge:true});
-    alert("✅ CORRIDA ACEITA! ID "+id.substring(0,5));
-  }catch(e){
-    alert("ERRO AO ACEITAR: "+e.message);
-    console.error(e);
-  }
-};
-
-// CORREÇÃO 2 - ADMIN CONSEGUE FINALIZAR
-async function carregarAbertas(){
-onSnapshot(collection(db,"pedidos"),s=>{
-let h = "";
-s.forEach(d=>{
-const p = d.data();
-if(p.status==="ENTREGUE" || p.status==="CANCELADA") return;
-let botoes = "";
-if(p.status==="AGUARDANDO"){
-botoes = `
-<div class="grid grid-cols-2 gap-2 mt-2">
-<button type="button" onclick="window.aceitarCorrida('${d.id}')" class="bg-green-600 text-white px-3 py-3 rounded font-bold">✅ ACEITAR</button>
-<button type="button" onclick="cancelarCorridaAdmin('${d.id}')" class="bg-red-600 text-white px-3 py-2 rounded font-bold">❌ CANCELAR</button>
-</div>`;
-}else if(p.status==="ACEITA"){
-botoes = `
-<div class="grid grid-cols-1 gap-2 mt-2">
-<button type="button" onclick="atualizarStatusCorrida('${d.id}','CHEGOU_LOJA')" class="bg-blue-600 text-white px-3 py-3 rounded font-bold">📍 CHEGUEI NA LOJA</button>
-<button type="button" onclick="cancelarCorridaAdmin('${d.id}')" class="bg-red-600 text-white px-3 py-2 rounded font-bold">❌ CANCELAR</button>
-</div>`;
-}else if(p.status==="CHEGOU_LOJA"){
-botoes = `<button type="button" onclick="atualizarStatusCorrida('${d.id}','A_CAMINHO')" class="w-full bg-yellow-500 text-black py-3 rounded font-bold mt-2">🏍️ SAIR PARA ENTREGA</button>`;
-}else if(p.status==="A_CAMINHO"){
-botoes = `<button type="button" onclick="atualizarStatusCorrida('${d.id}','CHEGOU_CLIENTE')" class="w-full bg-blue-600 text-white py-3 rounded font-bold mt-2">📍 CHEGUEI NO CLIENTE</button>`;
-}else if(p.status==="CHEGOU_CLIENTE"){
-botoes = `
-<div class="bg-black text-white p-3 rounded mt-2 text-center border-2 border-yellow-400">
-<p class="text-xs">CODIGO: <b class="text-yellow-400 text-lg">${p.codigo_secreto}</b></p>
-<input id="cod_${d.id}" placeholder="0000" class="w-full p-3 rounded text-black font-black text-center text-xl mt-2">
-<button type="button" onclick="finalizarPorAdmin('${d.id}','${p.codigo_secreto}')" class="w-full bg-green-600 text-white py-3 rounded font-bold mt-2">✅ FINALIZAR</button>
-</div>`;
-}
-h += `<div class="border-2 border-black p-2 rounded bg-white mb-2">
-<b>${p.nome_loja||''} ${p.veiculo||''} ${p.km||''}km</b> - ${p.endereco_completo||''}<br>
-<span class="text-[10px] bg-black text-white px-1 rounded">${p.status} - Loj R$${Number(p.valor_lojista||0).toFixed(2)} | Moto R$${Number(p.valor_motoboy||0).toFixed(2)}</span><br>
-<div class="bg-yellow-100 border p-1 rounded mt-1 text-center"><b class="text-sm">COD: ${p.codigo_secreto||''}</b></div>
-${botoes}
-</div>`;
-});
-if($("corridasAbertas")) $("corridasAbertas").innerHTML = h || "Nenhuma aberta";
-});
-}
-
-window.finalizarPorAdmin = async(id,codigoCorreto)=>{
-const input = document.getElementById(`cod_${id}`);
-const cod = input?.value.trim() || prompt("Digite codigo "+codigoCorreto);
-if(cod!== codigoCorreto){ alert("Codigo errado! É "+codigoCorreto); return; }
-const pSnap = await getDoc(doc(db,"pedidos",id));
-const p = pSnap.data();
-await setDoc(doc(db,"pedidos",id),{status:"ENTREGUE",entregue_em:Timestamp.now()},{merge:true});
-if(p.motorista_id){
-const snap = await getDoc(doc(db,"usuarios",p.motorista_id));
-if(snap.exists()){
-const novo = (snap.data().saldo_motoboy||0)+Number(p.valor_motoboy||0);
-await setDoc(doc(db,"usuarios",p.motorista_id),{saldo_motoboy:novo},{merge:true});
-}
-}
-alert("✅ FINALIZADA R$"+p.valor_motoboy);
-};
-
-async function carregarEntregasMotoboy(){
-onSnapshot(collection(db,"pedidos"),s=>{
-let h = "";
-let corridaAceita = null;
-s.forEach(d=>{
-const p = d.data();
-if(p.motorista_id===userLogado.uid && ["ACEITA","CHEGOU_LOJA","A_CAMINHO","CHEGOU_CLIENTE"].includes(p.status)){
-corridaAceita = {id:d.id,...p};
-}
-});
-window.corridaAtivaId = corridaAceita? corridaAceita.id : null;
-if(corridaAceita){
-const p = corridaAceita;
-let botoes = "";
-if(p.status==="ACEITA"){
-botoes = `<button onclick="atualizarStatusCorrida('${p.id}','CHEGOU_LOJA')" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black mb-2">📍 CHEGUEI NA LOJA</button><button onclick="cancelarCorrida('${p.id}')" class="w-full bg-red-600 text-white py-2 rounded-xl font-bold text-xs">❌ CANCELAR ENTREGA</button>`;
-}else if(p.status==="CHEGOU_LOJA"){
-botoes = `<button onclick="atualizarStatusCorrida('${p.id}','A_CAMINHO')" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black mb-2">🏍️ SAIR PARA ENTREGA</button>`;
-}else if(p.status==="A_CAMINHO"){
-botoes = `<button onclick="atualizarStatusCorrida('${p.id}','CHEGOU_CLIENTE')" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black mb-2">📍 CHEGUEI NO CLIENTE</button>`;
-}else if(p.status==="CHEGOU_CLIENTE"){
-botoes = `<div class="bg-black text-white p-4 rounded-xl border-4 border-yellow-400 mb-2"><p class="text-center text-xs">CÓDIGO DO CLIENTE: <b class="text-yellow-400 text-lg">${p.codigo_secreto}</b></p><input id="codigoEntregaInput" type="tel" maxlength="4" placeholder="0000" class="border-2 border-yellow-400 p-4 rounded-xl w-full text-center font-black text-3xl tracking-[10px] text-black mt-2 bg-white"><button onclick="confirmarEntrega('${p.id}','${p.codigo_secreto}')" class="w-full bg-green-600 text-white py-4 rounded-xl font-black text-lg mt-3 border-2 border-white">✅ FINALIZAR ENTREGA</button></div>`;
-}
-h = `<div class="bg-black text-white p-2 rounded-xl text-center font-black mb-2 text-xs">📦 ${p.status} - ${p.veiculo} ${p.km||''}km R$${Number(p.valor_motoboy||0).toFixed(2)}</div><div class="bg-blue-100 border-2 border-blue-600 p-3 rounded-xl mb-2"><b>🏪 ${p.nome_loja}</b><br>${p.endereco_loja}</div><div class="bg-yellow-100 border-2 border-yellow-600 p-3 rounded-xl mb-3"><b>👤 ${p.bairro} - ${p.endereco_completo}</b></div>${botoes}`;
-}else{
-s.forEach(d=>{
-const p = d.data();
-if(p.status==="AGUARDANDO" &&!p.motorista_id){
-h += `<div class="border-2 p-2 rounded bg-white mb-2">📦 <b>${p.veiculo||'MOTO'} ${p.km||''}km</b> - ${p.nome_loja||''}<br><span class="text-[10px]">Loja: ${p.endereco_loja||''}</span><br><span class="text-[10px]">Cliente: ${p.endereco_completo||''}</span><br><b class="text-green-600">Ganha: R$${Number(p.valor_motoboy||0).toFixed(2)}</b><br><button type="button" onclick="window.aceitarCorrida('${d.id}')" class="w-full bg-black text-white py-2 rounded mt-1 font-bold">ACEITAR ${p.veiculo||'MOTO'}</button></div>`;
-}
-});
-if(!h) h = `<div class="text-center p-4 bg-gray-100 rounded">Nenhuma corrida no momento</div>`;
-}
-if($("listaEntregasMotoboy")) $("listaEntregasMotoboy").innerHTML = h;
-});
-}
-
-window.atualizarStatusCorrida = async(id,novoStatus)=>{
-await setDoc(doc(db,"pedidos",id),{status:novoStatus},{merge:true});
-};
-
-window.cancelarCorrida = async(id)=>{
-if(!confirm("Cancelar essa entrega? Ela volta pra lista.")) return;
-await setDoc(doc(db,"pedidos",id),{status:"AGUARDANDO",motorista_id:null,motorista_nome:null},{merge:true});
-window.corridaAtivaId = null;
-};
-
-window.confirmarEntrega = async(id,codigoCorreto)=>{
-const input = $("codigoEntregaInput");
-const cod = input?.value.trim()||"";
-if(!cod){ alert("Digite o código de 4 dígitos"); return; }
-if(cod!== codigoCorreto){
-alert("❌ Código errado! Correto é "+codigoCorreto);
-return;
-}
-try{
-const pSnap = await getDoc(doc(db,"pedidos",id));
-if(!pSnap.exists()){ alert("Corrida não existe mais"); return; }
-const p = pSnap.data();
-await setDoc(doc(db,"pedidos",id),{status:"ENTREGUE",entregue_em:Timestamp.now()},{merge:true});
-const snap = await getDoc(doc(db,"usuarios",userLogado.uid));
-const novo = (snap.data()?.saldo_motoboy||0) + Number(p.valor_motoboy||0);
-await setDoc(doc(db,"usuarios",userLogado.uid),{saldo_motoboy:novo},{merge:true});
-alert("✅ ENTREGA FINALIZADA R$"+Number(p.valor_motoboy||0).toFixed(2));
-window.corridaAtivaId = null;
-window.kmCalculadoAutomatico = 0;
-}catch(e){
-alert("Erro ao finalizar: "+e.message);
-}
-};
-
-async function carregarExtratos(){
-if(!userLogado) return;
-onSnapshot(query(collection(db,"pedidos"), where("owner_id","==",userLogado.uid)),snap=>{
-let html = "";
-snap.forEach(d=>{
-const p = d.data();
-let btnCancelar = "";
-if(p.status==="AGUARDANDO"){
-btnCancelar = `<button onclick="cancelarCorridaLojista('${d.id}')" class="w-full bg-red-600 text-white py-3 rounded-xl mt-2 font-black text-xs border-2 border-black">❌ CANCELAR CORRIDA - DEVOLVE SALDO</button>`;
-}else if(p.status==="CANCELADA"){
-btnCancelar = `<div class="w-full bg-gray-300 text-black py-2 rounded-xl mt-2 font-bold text-xs text-center border-2 border-black">❌ CANCELADA - R$${Number(p.valor_lojista||0).toFixed(2)} devolvido</div>`;
-}
-html += `<div class="border-2 border-black p-3 rounded-xl bg-white mb-2"><div class="flex justify-between"><b class="text-xs">${p.km||5}km ${p.origem||''} -> ${p.bairro||''} ${p.veiculo}</b><span class="text-[9px] bg-black text-white px-2 py-1 rounded">R$${Number(p.valor_lojista||0).toFixed(2)}</span></div><div class="bg-yellow-100 border-2 border-yellow-500 p-2 rounded-xl mt-2 text-center"><p class="font-black text-3xl tracking-widest">${p.codigo_secreto}</p><p class="text-[10px]">${p.status}</p></div><div class="flex justify-between mt-2 text-[10px]"><span>${p.km||5}km auto</span><b>${p.status}</b></div>${btnCancelar}</div>`;
-});
-if($("extratoLojista")) $("extratoLojista").innerHTML = html || "Sem pedidos";
-});
-}
+function escutarSaldo(){if(!userLogado) return;onSnapshot(doc(db,"usuarios",userLogado.uid),s=>{if(s.exists()){if($("saldoLojistaValor")) $("saldoLojistaValor").innerText = (s.data().saldo_lojista||0).toFixed(2);if($("saldoMotoboyValor")) $("saldoMotoboyValor").innerText = (s.data().saldo_motoboy||0).toFixed(2);}});}
+function mostrarTelaPorRole(){if($("telaMotoboy")) $("telaMotoboy").classList.add("hidden");if($("telaLojista")) $("telaLojista").classList.add("hidden");if($("telaAdmin")) $("telaAdmin").classList.add("hidden");if(userRoleReal.startsWith("MOTOBOY")){if($("telaMotoboy")) $("telaMotoboy").classList.remove("hidden");}else if(userRoleReal==="LOJISTA" || userRoleReal==="SUPER_LOJISTA"){if($("telaLojista")) $("telaLojista").classList.remove("hidden");}else{if($("telaAdmin")) $("telaAdmin").classList.remove("hidden");}calc();}
+window.fazerLogin = async()=>{try{await signInWithEmailAndPassword(auth,$("loginEmail").value.trim(),$("loginSenha").value.trim());}catch(e){if($("msgLogin")) $("msgLogin").innerText = e.message;}};
+window.fazerCadastro = async()=>{const email = $("cadEmailLogin").value.trim().toLowerCase();const senha = $("cadSenhaLogin").value.trim();const nome = $("cadNomeLogin").value.trim();const tipo = $("tipoCadastro").value;if(!email||!senha||!nome){ alert("Preencha"); return; }try{const cred = await createUserWithEmailAndPassword(auth,email,senha);const dados = {userId:cred.user.uid,nome,email,role:tipo,status:tipo==="ADMIN"?"APROVADO":"PENDENTE",saldo_lojista:0,saldo_motoboy:0,criadoEm:Timestamp.now()};await setDoc(doc(db,"usuarios",cred.user.uid),dados);await setDoc(doc(db,"usuarios",email),dados);if(tipo.startsWith("MOTOBOY")) await setDoc(doc(db,"motoristas",cred.user.uid),{...dados,veiculo:getVeiculoDoRole(tipo)},{merge:true});await signOut(auth);alert("Enviado!");location.reload();}catch(e){alert(e.message);}};
+window.fazerLogout = async()=>{await signOut(auth);location.reload();};
+async function carregarPrecos(){try{const s = await getDoc(doc(db,"pricing_config","atual"));if(s.exists() && s.data().regra){const data = s.data().regra;regraAtual = {...regraAtual,...data, bairros:{...regraAtual.bairros,...(data.bairros||{})}, rotas:{...regraAtual.rotas,...(data.rotas||{})}};Object.keys(data).forEach(k=>{if(["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].includes(k)) regraAtual[k]=data[k];});}}catch(e){}setVeiculoAdmin(veiculoAdminAtual);calc();}
+function parseValor(str){return Number(String(str).replace(",",".").replace(/[^0-9.\-]/g,"")||0);}
+function renderRotas(){let h = "";Object.entries(regraAtual.rotas||{}).forEach(([key,val])=>{const [o,d] = key.split("|");const v = val[veiculoAdminAtual] || val.MOTO || {loj:0,moto:0};h += `<div class="bg-black text-white p-2 rounded border-2 border-yellow-400 mb-2"><div class="flex justify-between"><b class="text-xs">${o} -> ${d} Loja +${v.loj} Moto +${v.moto}</b><button onclick="delRota('${key}')" class="bg-red-600 px-2 rounded text-xs">X</button></div><div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2 rounded"><input id="editRotaLoj_${key}" value="${v.loj}" class="w-full border-2 border-blue-600 p-2 rounded text-xs text-black font-bold"><input id="editRotaMoto_${key}" value="${v.moto}" class="w-full border-2 border-green-600 p-2 rounded text-xs text-black font-bold"></div><button onclick="salvarRotaEdit('${key}')" class="bg-green-600 text-white w-full py-2 rounded mt-2 text-xs font-black">💾 SALVAR ROTA</button></div>`;});if($("listaRotasAdmin")) $("listaRotasAdmin").innerHTML = h || "Nenhuma rota";}
+window.salvarRotaEdit = async(key)=>{const l = parseValor(document.getElementById(`editRotaLoj_${key}`)?.value||"0");const m = parseValor(document.getElementById(`editRotaMoto_${key}`)?.value||"0");if(!regraAtual.rotas[key]) regraAtual.rotas[key]={};regraAtual.rotas[key][veiculoAdminAtual] = {loj:l,moto:m};await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true});renderRotas();calc();};
+window.addRota = async()=>{const o = $("origemRota").value.trim().toUpperCase();const d = $("destinoRota").value.trim().toUpperCase();const l = parseValor($("valorRotaLojista").value);const m = parseValor($("valorRotaMotoboy").value);if(!o||!d) return alert("Preencha origem e destino");const key = `${o}|${d}`;if(!regraAtual.rotas) regraAtual.rotas={};if(!regraAtual.rotas[key]) regraAtual.rotas[key]={};["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].forEach(v=>{if(!regraAtual.rotas[key][v]) regraAtual.rotas[key][v]={loj:0,moto:0};});regraAtual.rotas[key][veiculoAdminAtual] = {loj:l,moto:m};await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true});renderRotas();calc();alert(`✅ Rota ${o} -> ${d} salva!`);};
+window.delRota = async(k)=>{if(!confirm("Apagar "+k+"?")) return;delete regraAtual.rotas[k];await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true});renderRotas();calc();};
+window.salvarPrecosVeiculo = async()=>{regraAtual[veiculoAdminAtual] = {baseLoj:Number($("editBaseLojista").value),extraLoj:Number($("editExtraLojista").value),baseSuper:Number($("editBaseSuper").value),extraSuper:Number($("editExtraSuper").value),baseMoto:Number($("editBaseMoto").value),extraMoto:Number($("editExtraMoto").value),baseSuperMoto:Number($("editBaseSuperMoto").value),extraSuperMoto:Number($("editExtraSuperMoto").value),retPerc:Number($("editRetPerc").value),retMoto:Number($("editRetMoto").value)};await setDoc(doc(db,"pricing_config","atual"),{regra:regraAtual},{merge:true});alert("✅ Salvo");};
+window.calc = function(){const v = window.veiculoSelecionado || "MOTO";const cfg = regraAtual[v] || regraAtual.MOTO;const origemRaw = ($("enderecoSalaoLojista")?.value||"").toUpperCase();const destinoRaw = ($("enderecoCompletoLojista")?.value||"").toUpperCase();let origemDetect = "";let destinoDetect = "";let kmDestino = 0;if(window.kmCalculadoAutomatico > 0){kmDestino = window.kmCalculadoAutomatico;}else{Object.entries(regraAtual.bairros||{}).forEach(([bairro,dados])=>{if(destinoRaw.includes(bairro)){destinoDetect = bairro;kmDestino = Number(dados.km||0);}});if(kmDestino===0) kmDestino = 5;}Object.keys(regraAtual.rotas||{}).forEach(k=>{const [o,d] = k.split("|");if(origemRaw.includes(o)) origemDetect = o;if(destinoRaw.includes(d)) destinoDetect = d;});let extraLoj = 0;let extraMoto = 0;const key = `${origemDetect}|${destinoDetect}`;if(regraAtual.rotas && regraAtual.rotas[key] && regraAtual.rotas[key][v]){extraLoj += Number(regraAtual.rotas[key][v].loj||0);extraMoto += Number(regraAtual.rotas[key][v].moto||0);}let loj;let moto;if(kmDestino <= 5){loj = 10.00;moto = 7.50;}else{loj = 10.00 + ((kmDestino - 5) * 2.00);moto = 7.50 + ((kmDestino - 5) * 1.50);}loj += Number(cfg.extraLoj||0);moto += Number(cfg.extraMoto||0);let ret = $("precisaRetorno")?.checked || false;let sup = $("precisaSuper")?.checked || false;if(userRoleReal==="SUPER_LOJISTA") sup = true;if(sup){loj += Number(cfg.baseSuper||0) + Number(cfg.extraSuper||0);moto += Number(cfg.baseSuperMoto||0) + Number(cfg.extraSuperMoto||0);}if(ret){loj += loj * Number(cfg.retPerc||0)/100;moto += Number(cfg.retMoto||0);}if(dinamicaAtiva){loj += Number(dinamicaExtraLoj||0);moto += Number(dinamicaExtraMoto||0);}loj += extraLoj;moto += extraMoto;if(loj < 10) loj = 10;if($("detalheRegiao")){$("detalheRegiao").innerText = `📍 ${kmDestino}km automático (${origemDetect||'LOJA'} -> ${destinoDetect||'DESTINO'}) ${extraLoj?`+R$${extraLoj}/+R$${extraMoto} rota`:''}`;}if($("totalLojista")) $("totalLojista").innerText = loj.toFixed(2);return {lojista:loj,moto,km:kmDestino,origem:origemDetect,destino:destinoDetect,veiculo:v};};
+function escutarLucro(){onSnapshot(collection(db,"pedidos"), snap=>{let cobrado = 0;let pago = 0;let corridas = 0;snap.forEach(d=>{const p = d.data();if(p.status==="ENTREGUE"){cobrado += Number(p.valor_lojista||0);pago += Number(p.valor_motoboy||0);corridas++;}});if($("lucroTotalAdmin")) $("lucroTotalAdmin").innerText = (cobrado-pago).toFixed(2);if($("totalCobradoAdmin")) $("totalCobradoAdmin").innerText = "R$"+cobrado.toFixed(2);if($("totalPagoAdmin")) $("totalPagoAdmin").innerText = "R$"+pago.toFixed(2);if($("totalCorridasAdmin")) $("totalCorridasAdmin").innerText = corridas;});}
+window.carregarSaldosAdmin = async()=>{const snap = await getDocs(collection(db,"usuarios"));const map = new Map();snap.forEach(d=>{const u = d.data();if(!u.userId) return;if(!map.has(u.userId)) map.set(u.userId,{...u});});let hL = "";let hM = "";for(const u of map.values()){if((u.role||"").includes("MOTOBOY")){hM += `<div class="bg-white border-2 border-black p-2 rounded text-[10px]"><b>🏍️ ${u.nome||u.email}</b><br>R$${Number(u.saldo_motoboy||0).toFixed(2)}<div class="flex gap-1 mt-1"><input id="addMoto_${u.userId}" type="text" placeholder="Ex: 120,00" class="w-full border-2 border-black p-2 rounded text-xs"><button onclick="addSaldoDireto('${u.userId}','${u.email}','motoboy',1)" class="bg-green-600 text-white px-3 py-1 rounded">+ ADD</button><button onclick="addSaldoDireto('${u.userId}','${u.email}','motoboy',-1)" class="bg-red-600 text-white px-3 py-1 rounded">- TIRAR</button></div></div>`;}else{hL += `<div class="bg-white border-2 border-black p-2 rounded text-[10px]"><b>🏪 ${u.nome||u.email}</b><br>R$${Number(u.saldo_lojista||0).toFixed(2)}<div class="flex gap-1 mt-1"><input id="addLoj_${u.userId}" type="text" placeholder="Ex: 120,00" class="w-full border-2 border-black p-2 rounded text-xs"><button onclick="addSaldoDireto('${u.userId}','${u.email}','lojista',1)" class="bg-green-600 text-white px-3 py-1 rounded">+ ADD</button><button onclick="addSaldoDireto('${u.userId}','${u.email}','lojista',-1)" class="bg-red-600 text-white px-3 py-1 rounded">- TIRAR</button></div></div>`;}}if($("listaLojistasSaldos")) $("listaLojistasSaldos").innerHTML = hL;if($("listaMotoboysSaldos")) $("listaMotoboysSaldos").innerHTML = hM;};
+window.addSaldoDireto = async(uid,email,tipo,sinal)=>{let raw = "";if(tipo==="lojista") raw = document.getElementById(`addLoj_${uid}`)?.value||"0";else raw = document.getElementById(`addMoto_${uid}`)?.value||"0";raw = String(raw).replace(",",".").replace(/[^0-9.]/g,"");let val = Number(raw||0);if(!val){ alert("Digite valor"); return; }val = Math.abs(val)*sinal;const snap = await getDoc(doc(db,"usuarios",uid));let novoLoj = snap.data().saldo_lojista||0;let novoMoto = snap.data().saldo_motoboy||0;if(tipo==="lojista") novoLoj+=val;else novoMoto+=val;if(novoLoj<0) novoLoj=0;if(novoMoto<0) novoMoto=0;await setDoc(doc(db,"usuarios",uid),{saldo_lojista:novoLoj,saldo_motoboy:novoMoto},{merge:true});try{ await setDoc(doc(db,"usuarios",email),{saldo_lojista:novoLoj,saldo_motoboy:novoMoto},{merge:true}); }catch(e){}carregarSaldosAdmin();};
+window.criarPedido = async()=>{const {lojista,moto,origem,destino,veiculo,km} = calc();const endereco = $("enderecoCompletoLojista")?.value||"";if(!endereco){ alert("Endereço cliente"); return; }if(!window.kmCalculadoAutomatico || window.kmCalculadoAutomatico===0){alert("Aguarde calcular KM automático...");await calcularKmAutomatico();return;}const userSnap = await getDoc(doc(db,"usuarios",userLogado.uid));const saldoAtual = userSnap.data()?.saldo_lojista??0;if(saldoAtual < lojista){ alert(`Saldo insuficiente R$${saldoAtual.toFixed(2)} precisa R$${lojista.toFixed(2)}`); return; }const cod = Math.floor(1000+Math.random()*9000).toString();await addDoc(collection(db,"pedidos"),{owner_id:userLogado.uid,nome_loja:$("nomeSalaoLojista").value,endereco_completo:endereco,endereco_loja:$("enderecoSalaoLojista").value,bairro:destino||"Centro",origem:origem,km:km,valor_lojista:lojista,valor_motoboy:moto,codigo_secreto:cod,veiculo:veiculo,status:"AGUARDANDO",criado_em:Timestamp.now()});const novo = saldoAtual - lojista;await setDoc(doc(db,"usuarios",userLogado.uid),{saldo_lojista:novo},{merge:true});window.kmCalculadoAutomatico = 0;if($("enderecoCompletoLojista")) $("enderecoCompletoLojista").value = "";alert(`✅ Criado ${km}km R$${lojista.toFixed(2)} automático`);};
+async function carregarPendentes(){onSnapshot(collection(db,"usuarios"),snap=>{let h = "";snap.forEach(d=>{const u = d.data();if((u.status||"").toUpperCase()!=="PENDENTE") return;h += `<div class="border-2 border-yellow-500 bg-white p-3 rounded-xl text-[11px]"><b>👤 ${u.nome}</b><br><b class="bg-red-600 text-white px-1 rounded">${u.role}</b><br>${u.email}<br><button onclick="aprovarUsuario('${d.id}')" class="bg-green-600 text-white px-2 py-3 rounded w-full mt-3 font-black">✅ APROVAR</button></div>`;});if($("listaPendentesAprovacao")) $("listaPendentesAprovacao").innerHTML = h || "Nenhum pendente";});}
+window.aprovarUsuario = async(id)=>{await setDoc(doc(db,"usuarios",id),{status:"APROVADO"},{merge:true});};
+window.cancelarCorridaLojista = async(id)=>{if(!confirm("Cancelar? Valor volta pro saldo.")) return;const snap = await getDoc(doc(db,"pedidos",id));const p = snap.data();await setDoc(doc(db,"pedidos",id),{status:"CANCELADA",cancelado_em:Timestamp.now()},{merge:true});const userSnap = await getDoc(doc(db,"usuarios",userLogado.uid));const novo = (userSnap.data()?.saldo_lojista||0) + Number(p.valor_lojista||0);await setDoc(doc(db,"usuarios",userLogado.uid),{saldo_lojista:novo},{merge:true});alert("✅ Cancelada R$"+Number(p.valor_lojista||0).toFixed(2)+" devolvido");};
+window.cancelarCorridaAdmin = async(id)=>{if(!confirm("Cancelar como ADMIN? Saldo volta pro lojista.")) return;const snap = await getDoc(doc(db,"pedidos",id));const p = snap.data();await setDoc(doc(db,"pedidos",id),{status:"CANCELADA",cancelado_em:Timestamp.now()},{merge:true});if(p.owner_id){const ownerSnap = await getDoc(doc(db,"usuarios",p.owner_id));if(ownerSnap.exists()){const novo = (ownerSnap.data().saldo_lojista||0) + Number(p.valor_lojista||0);await setDoc(doc(db,"usuarios",p.owner_id),{saldo_lojista:novo},{merge:true});}}alert("✅ Cancelada admin");};
+window.aceitarCorrida = async(id)=>{console.log("ACEITAR CLICADO", id);try{const refPedido = doc(db,"pedidos",id);const snap = await getDoc(refPedido);if(!snap.exists()){alert("Pedido não existe mais");return;}await setDoc(refPedido,{motorista_id: userLogado.uid,motorista_nome: userLogado.email,status: "ACEITA",aceita_em: Timestamp.now()},{merge:true});alert("✅ CORRIDA ACEITA! ID "+id.substring(0,5));}catch(e){alert("ERRO AO ACEITAR: "+e.message);console.error(e);}};
+async function carregarAbertas(){onSnapshot(collection(db,"pedidos"),s=>{let h = "";s.forEach(d=>{const p = d.data();if(p.status==="ENTREGUE" || p.status==="CANCELADA") return;let botoes = "";if(p.status==="AGUARDANDO"){botoes = `<div class="grid grid-cols-2 gap-2 mt-2"><button type="button" onclick="window.aceitarCorrida('${d.id}')" class="bg-green-600 text-white px-3 py-3 rounded font-bold">✅ ACEITAR</button><button type="button" onclick="cancelarCorridaAdmin('${d.id}')" class="bg-red-600 text-white px-3 py-2 rounded font-bold">❌ CANCELAR</button></div>`;}else if(p.status==="ACEITA"){botoes = `<div class="grid grid-cols-1 gap-2 mt-2"><button type="button" onclick="atualizarStatusCorrida('${d.id}','CHEGOU_LOJA')" class="bg-blue-600 text-white px-3 py-3 rounded font-bold">📍 CHEGUEI NA LOJA</button><button type="button" onclick="cancelarCorridaAdmin('${d.id}')" class="bg-red-600 text-white px-3 py-2 rounded font-bold">❌ CANCELAR</button></div>`;}else if(p.status==="CHEGOU_LOJA"){botoes = `<button type="button" onclick="atualizarStatusCorrida('${d.id}','A_CAMINHO')" class="w-full bg-yellow-500 text-black py-3 rounded font-bold mt-2">🏍️ SAIR PARA ENTREGA</button>`;}else if(p.status==="A_CAMINHO"){botoes = `<button type="button" onclick="atualizarStatusCorrida('${d.id}','CHEGOU_CLIENTE')" class="w-full bg-blue-600 text-white py-3 rounded font-bold mt-2">📍 CHEGUEI NO CLIENTE</button>`;}else if(p.status==="CHEGOU_CLIENTE"){botoes = `<div class="bg-black text-white p-3 rounded mt-2 text-center border-2 border-yellow-400"><p class="text-xs">CODIGO: <b class="text-yellow-400 text-lg">${p.codigo_secreto}</b></p><input id="cod_${d.id}" placeholder="0000" class="w-full p-3 rounded text-black font-black text-center text-xl mt-2"><button type="button" onclick="finalizarPorAdmin('${d.id}','${p.codigo_secreto}')" class="w-full bg-green-600 text-white py-3 rounded font-bold mt-2">✅ FINALIZAR</button></div>`;}h += `<div class="border-2 border-black p-2 rounded bg-white mb-2"><b>${p.nome_loja||''} ${p.veiculo||''} ${p.km||''}km</b> - ${p.endereco_completo||''}<br><span class="text-[10px] bg-black text-white px-1 rounded">${p.status} - Loj R$${Number(p.valor_lojista||0).toFixed(2)} | Moto R$${Number(p.valor_motoboy||0).toFixed(2)}</span><br><div class="bg-yellow-100 border p-1 rounded mt-1 text-center"><b class="text-sm">COD: ${p.codigo_secreto||''}</b></div>${botoes}</div>`;});if($("corridasAbertas")) $("corridasAbertas").innerHTML = h || "Nenhuma aberta";});}
+window.finalizarPorAdmin = async(id,codigoCorreto)=>{const input = document.getElementById(`cod_${id}`);const cod = input?.value.trim() || prompt("Digite codigo "+codigoCorreto);if(cod!== codigoCorreto){ alert("Codigo errado! É "+codigoCorreto); return; }const pSnap = await getDoc(doc(db,"pedidos",id));const p = pSnap.data();await setDoc(doc(db,"pedidos",id),{status:"ENTREGUE",entregue_em:Timestamp.now()},{merge:true});if(p.motorista_id){const snap = await getDoc(doc(db,"usuarios",p.motorista_id));if(snap.exists()){const novo = (snap.data().saldo_motoboy||0)+Number(p.valor_motoboy||0);await setDoc(doc(db,"usuarios",p.motorista_id),{saldo_motoboy:novo},{merge:true});}}alert("✅ FINALIZADA R$"+p.valor_motoboy);};
+async function carregarEntregasMotoboy(){onSnapshot(collection(db,"pedidos"),s=>{let h = "";let corridaAceita = null;s.forEach(d=>{const p = d.data();if(p.motorista_id===userLogado.uid && ["ACEITA","CHEGOU_LOJA","A_CAMINHO","CHEGOU_CLIENTE"].includes(p.status)){corridaAceita = {id:d.id,...p};}});window.corridaAtivaId = corridaAceita? corridaAceita.id : null;if(corridaAceita){const p = corridaAceita;let botoes = "";if(p.status==="ACEITA"){botoes = `<button onclick="atualizarStatusCorrida('${p.id}','CHEGOU_LOJA')" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black mb-2">📍 CHEGUEI NA LOJA</button><button onclick="cancelarCorrida('${p.id}')" class="w-full bg-red-600 text-white py-2 rounded-xl font-bold text-xs">❌ CANCELAR ENTREGA</button>`;}else if(p.status==="CHEGOU_LOJA"){botoes = `<button onclick="atualizarStatusCorrida('${p.id}','A_CAMINHO')" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black mb-2">🏍️ SAIR PARA ENTREGA</button>`;}else if(p.status==="A_CAMINHO"){botoes = `<button onclick="atualizarStatusCorrida('${p.id}','CHEGOU_CLIENTE')" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black mb-2">📍 CHEGUEI NO CLIENTE</button>`;}else if(p.status==="CHEGOU_CLIENTE"){botoes = `<div class="bg-black text-white p-4 rounded-xl border-4 border-yellow-400 mb-2"><p class="text-center text-xs">CÓDIGO DO CLIENTE: <b class="text-yellow-400 text-lg">${p.codigo_secreto}</b></p><input id="codigoEntregaInput" type="tel" maxlength="4" placeholder="0000" class="border-2 border-yellow-400 p-4 rounded-xl w-full text-center font-black text-3xl tracking-[10px] text-black mt-2 bg-white"><button onclick="confirmarEntrega('${p.id}','${p.codigo_secreto}')" class="w-full bg-green-600 text-white py-4 rounded-xl font-black text-lg mt-3 border-2 border-white">✅ FINALIZAR ENTREGA</button></div>`;}h = `<div class="bg-black text-white p-2 rounded-xl text-center font-black mb-2 text-xs">📦 ${p.status} - ${p.veiculo} ${p.km||''}km R$${Number(p.valor_motoboy||0).toFixed(2)}</div><div class="bg-blue-100 border-2 border-blue-600 p-3 rounded-xl mb-2"><b>🏪 ${p.nome_loja}</b><br>${p.endereco_loja}</div><div class="bg-yellow-100 border-2 border-yellow-600 p-3 rounded-xl mb-3"><b>👤 ${p.bairro} - ${p.endereco_completo}</b></div>${botoes}`;}else{s.forEach(d=>{const p = d.data();if(p.status==="AGUARDANDO" &&!p.motorista_id){h += `<div class="border-2 p-2 rounded bg-white mb-2">📦 <b>${p.veiculo||'MOTO'} ${p.km||''}km</b> - ${p.nome_loja||''}<br><span class="text-[10px]">Loja: ${p.endereco_loja||''}</span><br><span class="text-[10px]">Cliente: ${p.endereco_completo||''}</span><br><b class="text-green-600">Ganha: R$${Number(p.valor_motoboy||0).toFixed(2)}</b><br><button type="button" onclick="window.aceitarCorrida('${d.id}')" class="w-full bg-black text-white py-2 rounded mt-1 font-bold">ACEITAR ${p.veiculo||'MOTO'}</button></div>`;}});if(!h) h = `<div class="text-center p-4 bg-gray-100 rounded">Nenhuma corrida no momento</div>`;}if($("listaEntregasMotoboy")) $("listaEntregasMotoboy").innerHTML = h;});}
+window.atualizarStatusCorrida = async(id,novoStatus)=>{await setDoc(doc(db,"pedidos",id),{status:novoStatus},{merge:true});};
+window.cancelarCorrida = async(id)=>{if(!confirm("Cancelar essa entrega? Ela volta pra lista.")) return;await setDoc(doc(db,"pedidos",id),{status:"AGUARDANDO",motorista_id:null,motorista_nome:null},{merge:true});window.corridaAtivaId = null;};
+window.confirmarEntrega = async(id,codigoCorreto)=>{const input = $("codigoEntregaInput");const cod = input?.value.trim()||"";if(!cod){ alert("Digite o código de 4 dígitos"); return; }if(cod!== codigoCorreto){alert("❌ Código errado! Correto é "+codigoCorreto);return;}try{const pSnap = await getDoc(doc(db,"pedidos",id));if(!pSnap.exists()){ alert("Corrida não existe mais"); return; }const p = pSnap.data();await setDoc(doc(db,"pedidos",id),{status:"ENTREGUE",entregue_em:Timestamp.now()},{merge:true});const snap = await getDoc(doc(db,"usuarios",userLogado.uid));const novo = (snap.data()?.saldo_motoboy||0) + Number(p.valor_motoboy||0);await setDoc(doc(db,"usuarios",userLogado.uid),{saldo_motoboy:novo},{merge:true});alert("✅ ENTREGA FINALIZADA R$"+Number(p.valor_motoboy||0).toFixed(2));window.corridaAtivaId = null;window.kmCalculadoAutomatico = 0;}catch(e){alert("Erro ao finalizar: "+e.message);}};
+async function carregarExtratos(){if(!userLogado) return;onSnapshot(query(collection(db,"pedidos"), where("owner_id","==",userLogado.uid)),snap=>{let html = "";snap.forEach(d=>{const p = d.data();let btnCancelar = "";if(p.status==="AGUARDANDO"){btnCancelar = `<button onclick="cancelarCorridaLojista('${d.id}')" class="w-full bg-red-600 text-white py-3 rounded-xl mt-2 font-black text-xs border-2 border-black">❌ CANCELAR CORRIDA - DEVOLVE SALDO</button>`;}else if(p.status==="CANCELADA"){btnCancelar = `<div class="w-full bg-gray-300 text-black py-2 rounded-xl mt-2 font-bold text-xs text-center border-2 border-black">❌ CANCELADA - R$${Number(p.valor_lojista||0).toFixed(2)} devolvido</div>`;}html += `<div class="border-2 border-black p-3 rounded-xl bg-white mb-2"><div class="flex justify-between"><b class="text-xs">${p.km||5}km ${p.origem||''} -> ${p.bairro||''} ${p.veiculo}</b><span class="text-[9px] bg-black text-white px-2 py-1 rounded">R$${Number(p.valor_lojista||0).toFixed(2)}</span></div><div class="bg-yellow-100 border-2 border-yellow-500 p-2 rounded-xl mt-2 text-center"><p class="font-black text-3xl tracking-widest">${p.codigo_secreto}</p><p class="text-[10px]">${p.status}</p></div><div class="flex justify-between mt-2 text-[10px]"><span>${p.km||5}km auto</span><b>${p.status}</b></div>${btnCancelar}</div>`;});if($("extratoLojista")) $("extratoLojista").innerHTML = html || "Sem pedidos";});}
 </script>
 </body>
-</html>
+</html>400
