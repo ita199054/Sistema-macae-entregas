@@ -964,26 +964,88 @@ await setDoc(doc(db,"usuarios",p.owner_id),{saldo_lojista:novo},{merge:true});
 alert("✅ Cancelada admin");
 };
 
+// CORREÇÃO 1 - ACEITAR NÃO TRAVA
+window.aceitarCorrida = async(id)=>{
+  console.log("ACEITAR CLICADO", id);
+  try{
+    const refPedido = doc(db,"pedidos",id);
+    const snap = await getDoc(refPedido);
+    if(!snap.exists()){
+      alert("Pedido não existe mais");
+      return;
+    }
+    await setDoc(refPedido,{
+      motorista_id: userLogado.uid,
+      motorista_nome: userLogado.email,
+      status: "ACEITA",
+      aceita_em: Timestamp.now()
+    },{merge:true});
+    alert("✅ CORRIDA ACEITA! ID "+id.substring(0,5));
+  }catch(e){
+    alert("ERRO AO ACEITAR: "+e.message);
+    console.error(e);
+  }
+};
+
+// CORREÇÃO 2 - ADMIN CONSEGUE FINALIZAR
 async function carregarAbertas(){
 onSnapshot(collection(db,"pedidos"),s=>{
 let h = "";
 s.forEach(d=>{
 const p = d.data();
 if(p.status==="ENTREGUE" || p.status==="CANCELADA") return;
-h += `<div class="border-2 border-black p-2 rounded bg-white mb-2">
-<b>${p.nome_loja||''} ${p.veiculo||''} ${p.km||''}km</b> - ${p.endereco_completo||''}<br>
-<span class="text-[10px]">Loja: ${p.endereco_loja||''}</span><br>
-<span class="text-[10px] bg-black text-white px-1 rounded">Loj R$${Number(p.valor_lojista||0).toFixed(2)} | Moto R$${Number(p.valor_motoboy||0).toFixed(2)} - ${p.status}</span><br>
-<div class="bg-yellow-100 border p-1 rounded mt-1 text-center"><b class="text-sm">COD: ${p.codigo_secreto||''}</b></div>
+let botoes = "";
+if(p.status==="AGUARDANDO"){
+botoes = `
 <div class="grid grid-cols-2 gap-2 mt-2">
 <button type="button" onclick="window.aceitarCorrida('${d.id}')" class="bg-green-600 text-white px-3 py-3 rounded font-bold">✅ ACEITAR</button>
 <button type="button" onclick="cancelarCorridaAdmin('${d.id}')" class="bg-red-600 text-white px-3 py-2 rounded font-bold">❌ CANCELAR</button>
-</div>
+</div>`;
+}else if(p.status==="ACEITA"){
+botoes = `
+<div class="grid grid-cols-1 gap-2 mt-2">
+<button type="button" onclick="atualizarStatusCorrida('${d.id}','CHEGOU_LOJA')" class="bg-blue-600 text-white px-3 py-3 rounded font-bold">📍 CHEGUEI NA LOJA</button>
+<button type="button" onclick="cancelarCorridaAdmin('${d.id}')" class="bg-red-600 text-white px-3 py-2 rounded font-bold">❌ CANCELAR</button>
+</div>`;
+}else if(p.status==="CHEGOU_LOJA"){
+botoes = `<button type="button" onclick="atualizarStatusCorrida('${d.id}','A_CAMINHO')" class="w-full bg-yellow-500 text-black py-3 rounded font-bold mt-2">🏍️ SAIR PARA ENTREGA</button>`;
+}else if(p.status==="A_CAMINHO"){
+botoes = `<button type="button" onclick="atualizarStatusCorrida('${d.id}','CHEGOU_CLIENTE')" class="w-full bg-blue-600 text-white py-3 rounded font-bold mt-2">📍 CHEGUEI NO CLIENTE</button>`;
+}else if(p.status==="CHEGOU_CLIENTE"){
+botoes = `
+<div class="bg-black text-white p-3 rounded mt-2 text-center border-2 border-yellow-400">
+<p class="text-xs">CODIGO: <b class="text-yellow-400 text-lg">${p.codigo_secreto}</b></p>
+<input id="cod_${d.id}" placeholder="0000" class="w-full p-3 rounded text-black font-black text-center text-xl mt-2">
+<button type="button" onclick="finalizarPorAdmin('${d.id}','${p.codigo_secreto}')" class="w-full bg-green-600 text-white py-3 rounded font-bold mt-2">✅ FINALIZAR</button>
+</div>`;
+}
+h += `<div class="border-2 border-black p-2 rounded bg-white mb-2">
+<b>${p.nome_loja||''} ${p.veiculo||''} ${p.km||''}km</b> - ${p.endereco_completo||''}<br>
+<span class="text-[10px] bg-black text-white px-1 rounded">${p.status} - Loj R$${Number(p.valor_lojista||0).toFixed(2)} | Moto R$${Number(p.valor_motoboy||0).toFixed(2)}</span><br>
+<div class="bg-yellow-100 border p-1 rounded mt-1 text-center"><b class="text-sm">COD: ${p.codigo_secreto||''}</b></div>
+${botoes}
 </div>`;
 });
 if($("corridasAbertas")) $("corridasAbertas").innerHTML = h || "Nenhuma aberta";
 });
 }
+
+window.finalizarPorAdmin = async(id,codigoCorreto)=>{
+const input = document.getElementById(`cod_${id}`);
+const cod = input?.value.trim() || prompt("Digite codigo "+codigoCorreto);
+if(cod!== codigoCorreto){ alert("Codigo errado! É "+codigoCorreto); return; }
+const pSnap = await getDoc(doc(db,"pedidos",id));
+const p = pSnap.data();
+await setDoc(doc(db,"pedidos",id),{status:"ENTREGUE",entregue_em:Timestamp.now()},{merge:true});
+if(p.motorista_id){
+const snap = await getDoc(doc(db,"usuarios",p.motorista_id));
+if(snap.exists()){
+const novo = (snap.data().saldo_motoboy||0)+Number(p.valor_motoboy||0);
+await setDoc(doc(db,"usuarios",p.motorista_id),{saldo_motoboy:novo},{merge:true});
+}
+}
+alert("✅ FINALIZADA R$"+p.valor_motoboy);
+};
 
 async function carregarEntregasMotoboy(){
 onSnapshot(collection(db,"pedidos"),s=>{
@@ -1030,29 +1092,6 @@ window.cancelarCorrida = async(id)=>{
 if(!confirm("Cancelar essa entrega? Ela volta pra lista.")) return;
 await setDoc(doc(db,"pedidos",id),{status:"AGUARDANDO",motorista_id:null,motorista_nome:null},{merge:true});
 window.corridaAtivaId = null;
-};
-
-// *** UNICA CORREÇÃO: FUNÇÃO ACEITAR QUE NÃO TRAVA NO ADMIN ***
-window.aceitarCorrida = async(id)=>{
-  console.log("ACEITAR CLICADO", id);
-  try{
-    const refPedido = doc(db,"pedidos",id);
-    const snap = await getDoc(refPedido);
-    if(!snap.exists()){
-      alert("Pedido não existe mais");
-      return;
-    }
-    await setDoc(refPedido,{
-      motorista_id: userLogado.uid,
-      motorista_nome: userLogado.email,
-      status: "ACEITA",
-      aceita_em: Timestamp.now()
-    },{merge:true});
-    alert("✅ CORRIDA ACEITA! ID "+id.substring(0,5));
-  }catch(e){
-    alert("ERRO AO ACEITAR: "+e.message);
-    console.error(e);
-  }
 };
 
 window.confirmarEntrega = async(id,codigoCorreto)=>{
