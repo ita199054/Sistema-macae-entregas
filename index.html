@@ -267,14 +267,11 @@ function escutarDinamica(){try{onSnapshot(doc(db,"pricing_config","dinamica"), s
 function atualizarBtnDinamica(){const btn = $("btnDinamica");const st = $("statusDinamica");const stL = $("statusDinamicaLojista");const stM = $("statusDinamicaMotoboy");if(dinamicaAtiva){if(btn){btn.innerText="ON";btn.className="bg-green-600 text-white px-6 py-3 rounded-full font-black text-sm border-2 border-white";}if(st) st.innerText=`LIGADA +R$${dinamicaExtraLoj.toFixed(2)} / +R$${dinamicaExtraMoto.toFixed(2)}`;if(stL){stL.innerText=`⚡ DINÂMICA LIGADA +R$${dinamicaExtraLoj.toFixed(2)}`;stL.className="p-2 rounded text-center text-xs font-bold mb-2 bg-yellow-400 text-black border-2 border-black";}if(stM){stM.innerText=`⚡ DINÂMICA +R$${dinamicaExtraMoto.toFixed(2)} EXTRA`;stM.className="p-2 rounded text-center text-xs font-bold mb-3 bg-yellow-400 text-black border-2 border-black";}if($("labelDinamicaTotal")) $("labelDinamicaTotal").innerText=`⚡ +R$${dinamicaExtraLoj.toFixed(2)}`;}else{if(btn){btn.innerText="OFF";btn.className="bg-red-600 text-white px-6 py-3 rounded-full font-black text-sm border-2 border-black";}if(st) st.innerText="DESLIGADA";if(stL){stL.innerText="⚡ DINÂMICA DESLIGADA";stL.className="p-2 rounded text-center text-xs font-bold mb-2 bg-gray-200";}if(stM){stM.innerText="⚡ DESLIGADA";stM.className="p-2 rounded text-center text-xs font-bold mb-3 bg-gray-200";}if($("labelDinamicaTotal")) $("labelDinamicaTotal").innerText="";}if(typeof calc === 'function') calc();}
 window.toggleDinamica = async()=>{if(!["ADMIN","SUPORTE","FRANQUEADO"].includes(userRoleReal)){alert("Só admin pode");return;}dinamicaAtiva =!dinamicaAtiva;await setDoc(doc(db,"pricing_config","dinamica"),{ativa:dinamicaAtiva,extraLoj:Number($("editDinamicaLojista").value||0),extraMoto:Number($("editDinamicaMoto").value||0),alterado_por:userLogado.email,alterado_em:Timestamp.now()},{merge:true});atualizarBtnDinamica();};
 window.salvarDinamicaValor = async()=>{dinamicaExtraLoj = Number($("editDinamicaLojista").value||0);dinamicaExtraMoto = Number($("editDinamicaMoto").value||0);await setDoc(doc(db,"pricing_config","dinamica"),{extraLoj:dinamicaExtraLoj,extraMoto:dinamicaExtraMoto,alterado_por:userLogado.email},{merge:true});alert(`✅ Dinâmica R$${dinamicaExtraLoj.toFixed(2)} / R$${dinamicaExtraMoto.toFixed(2)}`);atualizarBtnDinamica();};
-
-// *** MELHORIA 3 - KM VARIA DE VERDADE COM HAVERSINE ***
 async function calcularKmAutomatico(){
 const origem = $("enderecoSalaoLojista")?.value.trim() || "Cavaleiros, Macaé";
 const destino = $("enderecoCompletoLojista")?.value.trim();
 if(!origem ||!destino || destino.length < 4) return;
 if($("detalheRegiao")) $("detalheRegiao").innerText = "🔍 Calculando KM no mapa...";
-
 async function getCoordOSM(txt){
  try{
   const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(txt + ", Macaé RJ Brasil")}&limit=1`);
@@ -300,23 +297,19 @@ if(c1 && c2){
   if(j.routes && j.routes[0]){
    const kmReal = j.routes[0].distance / 1000;
    window.kmCalculadoAutomatico = Math.max(1, Math.ceil(kmReal));
-   console.log("KM OSRM:", window.kmCalculadoAutomatico);
    calc();
    return;
   }
  }catch(e){}
  const kmLinhaReta = haversine(c1,c2) * 1.3;
  window.kmCalculadoAutomatico = Math.max(1, Math.ceil(kmLinhaReta));
- console.log("KM Haversine:", window.kmCalculadoAutomatico);
  calc();
  return;
 }
 let kmBairro = 0;
-let bairroAchado = "";
 Object.entries(regraAtual.bairros||{}).forEach(([b,d])=>{
- if(destino.toUpperCase().includes(b) &&!bairroAchado){
+ if(destino.toUpperCase().includes(b)){
   kmBairro = Number(d.km||0);
-  bairroAchado = b;
  }
 });
 if(kmBairro > 0){
@@ -327,9 +320,7 @@ if(kmBairro > 0){
  calc();
 }
 }
-
 window.debounceKm = function(){clearTimeout(timeoutBuscaKm);timeoutBuscaKm = setTimeout(calcularKmAutomatico, 900);}
-
 onAuthStateChanged(auth, async(user)=>{
 if(user){
 userLogado = user;
@@ -372,7 +363,8 @@ $("telaPendente").classList.add("hidden");
 function escutarSaldo(){if(!userLogado) return;onSnapshot(doc(db,"usuarios",userLogado.uid),s=>{if(s.exists()){if($("saldoLojistaValor")) $("saldoLojistaValor").innerText = (s.data().saldo_lojista||0).toFixed(2);if($("saldoMotoboyValor")) $("saldoMotoboyValor").innerText = (s.data().saldo_motoboy||0).toFixed(2);}});}
 function mostrarTelaPorRole(){if($("telaMotoboy")) $("telaMotoboy").classList.add("hidden");if($("telaLojista")) $("telaLojista").classList.add("hidden");if($("telaAdmin")) $("telaAdmin").classList.add("hidden");if(userRoleReal.startsWith("MOTOBOY")){if($("telaMotoboy")) $("telaMotoboy").classList.remove("hidden");}else if(userRoleReal==="LOJISTA" || userRoleReal==="SUPER_LOJISTA"){if($("telaLojista")) $("telaLojista").classList.remove("hidden");}else{if($("telaAdmin")) $("telaAdmin").classList.remove("hidden");}calc();}
 window.fazerLogin = async()=>{try{await signInWithEmailAndPassword(auth,$("loginEmail").value.trim(),$("loginSenha").value.trim());}catch(e){if($("msgLogin")) $("msgLogin").innerText = e.message;}};
-window.fazerCadastro = async()=>{const email = $("cadEmailLogin").value.trim().toLowerCase();const senha = $("cadSenhaLogin").value.trim();const nome = $("cadNomeLogin").value.trim();const tipo = $("tipoCadastro").value;if(!email||!senha||!nome){ alert("Preencha"); return; }try{const cred = await createUserWithEmailAndPassword(auth,email,senha);const dados = {userId:cred.user.uid,nome,email,role:tipo,status:tipo==="ADMIN"?"APROVADO":"PENDENTE",saldo_lojista:0,saldo_motoboy:0,criadoEm:Timestamp.now()};await setDoc(doc(db,"usuarios",cred.user.uid),dados);await setDoc(doc(db,"usuarios",email),dados);if(tipo.startsWith("MOTOBOY")) await setDoc(doc(db,"motoristas",cred.user.uid),{...dados,veiculo:getVeiculoDoRole(tipo)},{merge:true});await signOut(auth);alert("Enviado!");location.reload();}catch(e){alert(e.message);}};
+// CORREÇÃO ÚNICA - REMOVIDA LINHA QUE CRIAVA DOC COM EMAIL
+window.fazerCadastro = async()=>{const email = $("cadEmailLogin").value.trim().toLowerCase();const senha = $("cadSenhaLogin").value.trim();const nome = $("cadNomeLogin").value.trim();const tipo = $("tipoCadastro").value;if(!email||!senha||!nome){ alert("Preencha"); return; }try{const cred = await createUserWithEmailAndPassword(auth,email,senha);const dados = {userId:cred.user.uid,nome,email,role:tipo,status:tipo==="ADMIN"?"APROVADO":"PENDENTE",saldo_lojista:0,saldo_motoboy:0,criadoEm:Timestamp.now()};await setDoc(doc(db,"usuarios",cred.user.uid),dados);if(tipo.startsWith("MOTOBOY")) await setDoc(doc(db,"motoristas",cred.user.uid),{...dados,veiculo:getVeiculoDoRole(tipo)},{merge:true});await signOut(auth);alert("Enviado!");location.reload();}catch(e){alert(e.message);}};
 window.fazerLogout = async()=>{await signOut(auth);location.reload();};
 async function carregarPrecos(){try{const s = await getDoc(doc(db,"pricing_config","atual"));if(s.exists() && s.data().regra){const data = s.data().regra;regraAtual = {...regraAtual,...data, bairros:{...regraAtual.bairros,...(data.bairros||{})}, rotas:{...regraAtual.rotas,...(data.rotas||{})}};Object.keys(data).forEach(k=>{if(["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].includes(k)) regraAtual[k]=data[k];});}}catch(e){}setVeiculoAdmin(veiculoAdminAtual);calc();}
 function parseValor(str){return Number(String(str).replace(",",".").replace(/[^0-9.\-]/g,"")||0);}
@@ -400,4 +392,4 @@ window.confirmarEntrega = async(id,codigoCorreto)=>{const input = $("codigoEntre
 async function carregarExtratos(){if(!userLogado) return;onSnapshot(query(collection(db,"pedidos"), where("owner_id","==",userLogado.uid)),snap=>{let html = "";snap.forEach(d=>{const p = d.data();let btnCancelar = "";if(p.status==="AGUARDANDO"){btnCancelar = `<button onclick="cancelarCorridaLojista('${d.id}')" class="w-full bg-red-600 text-white py-3 rounded-xl mt-2 font-black text-xs border-2 border-black">❌ CANCELAR CORRIDA - DEVOLVE SALDO</button>`;}else if(p.status==="CANCELADA"){btnCancelar = `<div class="w-full bg-gray-300 text-black py-2 rounded-xl mt-2 font-bold text-xs text-center border-2 border-black">❌ CANCELADA - R$${Number(p.valor_lojista||0).toFixed(2)} devolvido</div>`;}html += `<div class="border-2 border-black p-3 rounded-xl bg-white mb-2"><div class="flex justify-between"><b class="text-xs">${p.km||5}km ${p.origem||''} -> ${p.bairro||''} ${p.veiculo}</b><span class="text-[9px] bg-black text-white px-2 py-1 rounded">R$${Number(p.valor_lojista||0).toFixed(2)}</span></div><div class="bg-yellow-100 border-2 border-yellow-500 p-2 rounded-xl mt-2 text-center"><p class="font-black text-3xl tracking-widest">${p.codigo_secreto}</p><p class="text-[10px]">${p.status}</p></div><div class="flex justify-between mt-2 text-[10px]"><span>${p.km||5}km auto</span><b>${p.status}</b></div>${btnCancelar}</div>`;});if($("extratoLojista")) $("extratoLojista").innerHTML = html || "Sem pedidos";});}
 </script>
 </body>
-</html>400
+</html>
