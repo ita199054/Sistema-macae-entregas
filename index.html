@@ -87,6 +87,9 @@
 </div>
 <div class="bg-blue-50 border-2 border-blue-600 p-3 rounded-xl mb-3">
 <input id="enderecoCompletoLojista" placeholder="Endereço cliente ex: Lagomar" class="w-full border-2 border-blue-600 p-3 rounded-xl text-sm bg-white font-bold" oninput="debounceKm();">
+<!-- MELHORIA #0001 - CHAMAR MOTOBOY FIXO -->
+<input id="codigoMotoboyChamar" placeholder="Código motoboy fixo #0001 (opcional)" class="w-full border-2 border-yellow-400 p-3 rounded-xl text-sm bg-white text-black font-black mt-2" inputmode="numeric">
+<p id="nomeMotoboyChamado" class="text-[10px] font-bold mt-1"></p>
 <input id="kmManualLojista" type="hidden">
 </div>
 <div class="grid grid-cols-2 gap-2 mb-3">
@@ -116,6 +119,12 @@
 <p class="text-[9px] font-bold">MEU VEÍCULO</p>
 <p id="meuVeiculoDisplay" class="font-black text-sm">MOTO</p>
 </div>
+<!-- MELHORIA #0001 - MEU CODIGO -->
+<div class="bg-yellow-400 text-black p-3 rounded-xl mb-3 text-center border-4 border-black">
+<p class="text-[9px] font-black">MEU CÓDIGO DE CHAMADA</p>
+<p id="meuCodigoDisplay" class="font-black text-3xl tracking-widest">#0000</p>
+<p class="text-[9px]">Passe pro lojista te chamar direto</p>
+</div>
 <div id="statusDinamicaMotoboy" class="p-2 rounded text-center text-xs font-bold mb-3 bg-gray-200">⚡ DESLIGADA</div>
 <div id="listaEntregasMotoboy" class="space-y-2 text-xs"></div>
 </div>
@@ -131,8 +140,6 @@
 <div class="bg-yellow-500 text-black p-2 rounded font-black"><p>CORRIDAS</p><b id="totalCorridasAdmin">0</b></div>
 </div>
 </div>
-
-<!-- PIX -->
 <div class="bg-black text-white p-4 rounded-xl mb-4 border-4 border-yellow-400">
 <h3 class="font-black text-sm text-yellow-400">💳 EDITAR PIX</h3>
 <div class="grid grid-cols-1 gap-2 bg-white p-3 rounded-xl">
@@ -142,8 +149,6 @@
 </div>
 <p class="text-[10px] mt-2 text-center">Atual: <b id="pixAtualAdmin" class="text-yellow-400">22997450131</b></p>
 </div>
-
-<!-- DINAMICA -->
 <div class="bg-yellow-400 text-black p-3 rounded-xl mb-4 border-4 border-black">
 <div class="flex items-center justify-between">
 <div><p class="font-black text-xs">⚡ DINÂMICA EM R$</p><p id="statusDinamica" class="text-[10px] font-bold">DESLIGADA</p></div>
@@ -155,8 +160,6 @@
 </div>
 <button type="button" onclick="salvarDinamicaValor()" class="bg-black text-white w-full py-2 rounded mt-2 text-xs font-bold">💾 SALVAR</button>
 </div>
-
-<!-- NOVO: EXTRATO RECARGAS -->
 <div class="bg-green-100 border-4 border-green-600 p-3 rounded-xl mb-4">
 <h3 class="font-black text-sm text-green-700">💳 EXTRATO RECARGAS - TODAS</h3>
 <input id="buscaRecarga" placeholder="Buscar por nome/email..." oninput="carregarExtratoRecargas()" class="w-full border-2 border-black p-2 rounded text-xs mt-2">
@@ -165,8 +168,6 @@
 <p class="text-[10px]">TOTAL RECARGADO: <b id="totalRecargasValor" class="text-green-400 text-sm">R$0.00</b></p>
 </div>
 </div>
-
-<!-- NOVO: EXTRATO CORRIDAS TODAS + POR LOJA -->
 <div class="bg-blue-100 border-4 border-blue-600 p-3 rounded-xl mb-4">
 <h3 class="font-black text-sm text-blue-700">🏍️ EXTRATO CORRIDAS - TODAS + POR LOJA</h3>
 <input id="buscaCorridaLoja" placeholder="Filtrar por loja, motoboy, status..." oninput="carregarExtratoCorridas()" class="w-full border-2 border-black p-2 rounded text-xs mt-2">
@@ -193,8 +194,6 @@
 <div>PAGO: <b id="totalPagoExtrato" class="text-green-400">R$0</b></div>
 </div>
 </div>
-
-<!-- ROTAS -->
 <div class="bg-yellow-100 border-4 border-black p-3 rounded-xl mb-4">
 <h3 class="font-black text-sm text-black">🔀 TAXA ORIGEM x DESTINO</h3>
 <div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2 rounded border-2 border-black">
@@ -206,8 +205,6 @@
 <button type="button" onclick="addRota()" class="bg-black text-white w-full py-2 rounded mt-2 text-xs font-black">💾 SALVAR ROTA</button>
 <div id="listaRotasAdmin" class="mt-3 space-y-2 text-[11px] max-h-[300px] overflow-y-auto"></div>
 </div>
-
-<!-- SALDOS -->
 <div class="border-4 border-green-500 p-3 rounded-xl mb-4 bg-white">
 <h3 class="font-bold text-sm">💳 SALDOS LOJISTAS/MOTOBOYS</h3>
 <input id="buscaSaldoGeral" placeholder="Buscar nome ou email..." oninput="carregarSaldosAdmin()" class="w-full border-2 border-black p-2 rounded text-xs mt-2">
@@ -222,8 +219,6 @@
 </div>
 </div>
 </div>
-
-<!-- VALORES BASE -->
 <div class="bg-black text-white p-3 rounded-xl mb-4 border-4 border-blue-500">
 <h3 class="font-bold text-sm mb-2">⚙️ VALORES BASE</h3>
 <div class="grid grid-cols-4 gap-1 mb-2">
@@ -251,12 +246,10 @@
 </div>
 <button type="button" onclick="salvarPrecosVeiculo()" class="bg-orange-500 w-full py-3 rounded mt-3 font-bold">💾 SALVAR BASE</button>
 </div>
-
 <div class="border-4 border-yellow-500 p-3 rounded-xl mb-4 bg-yellow-50">
 <h3 class="font-bold text-sm">⏳ PENDENTES</h3>
 <div id="listaPendentesAprovacao" class="mt-2 space-y-2"></div>
 </div>
-
 <div class="bg-red-50 border-4 border-red-600 p-3 rounded-xl mb-4">
 <h3 class="font-black text-sm text-red-600">🚨 CORRIDAS ABERTAS</h3>
 <div id="corridasAbertas" class="text-xs mt-2"></div>
@@ -378,10 +371,25 @@ $("telaLogin").classList.remove("hidden");
 $("telaPendente").classList.add("hidden");
 }
 });
-function escutarSaldo(){if(!userLogado) return;onSnapshot(doc(db,"usuarios",userLogado.uid),s=>{if(s.exists()){if($("saldoLojistaValor")) $("saldoLojistaValor").innerText = (s.data().saldo_lojista||0).toFixed(2);if($("saldoMotoboyValor")) $("saldoMotoboyValor").innerText = (s.data().saldo_motoboy||0).toFixed(2);}});}
+function escutarSaldo(){if(!userLogado) return;onSnapshot(doc(db,"usuarios",userLogado.uid),s=>{if(s.exists()){if($("saldoLojistaValor")) $("saldoLojistaValor").innerText = (s.data().saldo_lojista||0).toFixed(2);if($("saldoMotoboyValor")) $("saldoMotoboyValor").innerText = (s.data().saldo_motoboy||0).toFixed(2);if($("meuCodigoDisplay")) $("meuCodigoDisplay").innerText = "#"+(s.data().codigoMotoboy||"0000");}});}
 function mostrarTelaPorRole(){if($("telaMotoboy")) $("telaMotoboy").classList.add("hidden");if($("telaLojista")) $("telaLojista").classList.add("hidden");if($("telaAdmin")) $("telaAdmin").classList.add("hidden");if(userRoleReal.startsWith("MOTOBOY")){if($("telaMotoboy")) $("telaMotoboy").classList.remove("hidden");}else if(userRoleReal==="LOJISTA" || userRoleReal==="SUPER_LOJISTA"){if($("telaLojista")) $("telaLojista").classList.remove("hidden");}else{if($("telaAdmin")) $("telaAdmin").classList.remove("hidden");}calc();}
 window.fazerLogin = async()=>{try{await signInWithEmailAndPassword(auth,$("loginEmail").value.trim(),$("loginSenha").value.trim());}catch(e){if($("msgLogin")) $("msgLogin").innerText = e.message;}};
-window.fazerCadastro = async()=>{const email = $("cadEmailLogin").value.trim().toLowerCase();const senha = $("cadSenhaLogin").value.trim();const nome = $("cadNomeLogin").value.trim();const tipo = $("tipoCadastro").value;if(!email||!senha||!nome) return alert("Preencha"); try{const cred = await createUserWithEmailAndPassword(auth,email,senha);const dados = {userId:cred.user.uid,nome,email,role:tipo,status:tipo==="ADMIN"?"APROVADO":"PENDENTE",saldo_lojista:0,saldo_motoboy:0,criadoEm:Timestamp.now()};await setDoc(doc(db,"usuarios",cred.user.uid),dados);if(tipo.startsWith("MOTOBOY")) await setDoc(doc(db,"motoristas",cred.user.uid),{...dados,veiculo:getVeiculoDoRole(tipo)},{merge:true});await signOut(auth);alert("Enviado!");location.reload();}catch(e){alert(e.message);}};
+window.fazerCadastro = async()=>{
+const email = $("cadEmailLogin").value.trim().toLowerCase();
+const senha = $("cadSenhaLogin").value.trim();
+const nome = $("cadNomeLogin").value.trim();
+const tipo = $("tipoCadastro").value;
+if(!email||!senha||!nome) return alert("Preencha");
+try{
+const cred = await createUserWithEmailAndPassword(auth,email,senha);
+// MELHORIA #0001 - GERA CODIGO
+const snapTotal = await getDocs(collection(db,"usuarios"));
+const codigoMotoboy = String(snapTotal.size + 1).padStart(4,'0');
+const dados = {userId:cred.user.uid,nome,email,role:tipo,status:tipo==="ADMIN"?"APROVADO":"PENDENTE",saldo_lojista:0,saldo_motoboy:0,codigoMotoboy,criadoEm:Timestamp.now()};
+await setDoc(doc(db,"usuarios",cred.user.uid),dados);
+if(tipo.startsWith("MOTOBOY")) await setDoc(doc(db,"motoristas",cred.user.uid),{...dados,veiculo:getVeiculoDoRole(tipo)},{merge:true});
+await signOut(auth);alert("Enviado! Seu código é #"+codigoMotoboy);location.reload();
+}catch(e){alert(e.message);}};
 window.fazerLogout = async()=>{await signOut(auth);location.reload();};
 async function carregarPrecos(){try{const s = await getDoc(doc(db,"pricing_config","atual"));if(s.exists() && s.data().regra){const data = s.data().regra;regraAtual = {...regraAtual,...data, bairros:{...regraAtual.bairros,...(data.bairros||{})}, rotas:{...regraAtual.rotas,...(data.rotas||{})}};Object.keys(data).forEach(k=>{if(["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].includes(k)) regraAtual[k]=data[k];});}}catch(e){}setVeiculoAdmin(veiculoAdminAtual);calc();}
 function parseValor(str){return Number(String(str).replace(",",".").replace(/[^0-9.\-]/g,"")||0);}
@@ -395,16 +403,14 @@ window.calc = function(){const v = window.veiculoSelecionado || "MOTO";const cfg
 
 function escutarLucro(){onSnapshot(collection(db,"pedidos"), snap=>{let cobrado = 0;let pago = 0;let corridas = 0;snap.forEach(d=>{const p = d.data();if(p.status==="ENTREGUE"){cobrado += Number(p.valor_lojista||0);pago += Number(p.valor_motoboy||0);corridas++;}});if($("lucroTotalAdmin")) $("lucroTotalAdmin").innerText = (cobrado-pago).toFixed(2);if($("totalCobradoAdmin")) $("totalCobradoAdmin").innerText = "R$"+cobrado.toFixed(2);if($("totalPagoAdmin")) $("totalPagoAdmin").innerText = "R$"+pago.toFixed(2);if($("totalCorridasAdmin")) $("totalCorridasAdmin").innerText = corridas;});}
 
-window.carregarSaldosAdmin = async()=>{const snap = await getDocs(collection(db,"usuarios"));const map = new Map();snap.forEach(d=>{const u = d.data();if(!u.userId) return;if(!map.has(u.userId)) map.set(u.userId,{...u});});let hL = "";let hM = "";for(const u of map.values()){if((u.role||"").includes("MOTOBOY")){hM += `<div class="bg-white border-2 border-black p-2 rounded text-[10px]"><b>🏍️ ${u.nome||u.email}</b><br>R$${Number(u.saldo_motoboy||0).toFixed(2)}<div class="flex gap-1 mt-1"><input id="addMoto_${u.userId}" type="text" placeholder="120,00" class="w-full border-2 border-black p-2 rounded text-xs"><button onclick="addSaldoDireto('${u.userId}','${u.email}','motoboy',1)" class="bg-green-600 text-white px-3 py-1 rounded">+ ADD</button><button onclick="addSaldoDireto('${u.userId}','${u.email}','motoboy',-1)" class="bg-red-600 text-white px-3 py-1 rounded">- TIRAR</button></div></div>`;}else{hL += `<div class="bg-white border-2 border-black p-2 rounded text-[10px]"><b>🏪 ${u.nome||u.email}</b><br>R$${Number(u.saldo_lojista||0).toFixed(2)}<div class="flex gap-1 mt-1"><input id="addLoj_${u.userId}" type="text" placeholder="120,00" class="w-full border-2 border-black p-2 rounded text-xs"><button onclick="addSaldoDireto('${u.userId}','${u.email}','lojista',1)" class="bg-green-600 text-white px-3 py-1 rounded">+ ADD</button><button onclick="addSaldoDireto('${u.userId}','${u.email}','lojista',-1)" class="bg-red-600 text-white px-3 py-1 rounded">- TIRAR</button></div></div>`;}}if($("listaLojistasSaldos")) $("listaLojistasSaldos").innerHTML = hL;if($("listaMotoboysSaldos")) $("listaMotoboysSaldos").innerHTML = hM;};
+window.carregarSaldosAdmin = async()=>{const snap = await getDocs(collection(db,"usuarios"));const map = new Map();snap.forEach(d=>{const u = d.data();if(!u.userId) return;if(!map.has(u.userId)) map.set(u.userId,{...u});});let hL = "";let hM = "";for(const u of map.values()){if((u.role||"").includes("MOTOBOY")){hM += `<div class="bg-white border-2 border-black p-2 rounded text-[10px]"><b>🏍️ ${u.nome||u.email} #${u.codigoMotoboy||'0000'}</b><br>R$${Number(u.saldo_motoboy||0).toFixed(2)}<div class="flex gap-1 mt-1"><input id="addMoto_${u.userId}" type="text" placeholder="120,00" class="w-full border-2 border-black p-2 rounded text-xs"><button onclick="addSaldoDireto('${u.userId}','${u.email}','motoboy',1)" class="bg-green-600 text-white px-3 py-1 rounded">+ ADD</button><button onclick="addSaldoDireto('${u.userId}','${u.email}','motoboy',-1)" class="bg-red-600 text-white px-3 py-1 rounded">- TIRAR</button></div></div>`;}else{hL += `<div class="bg-white border-2 border-black p-2 rounded text-[10px]"><b>🏪 ${u.nome||u.email}</b><br>R$${Number(u.saldo_lojista||0).toFixed(2)}<div class="flex gap-1 mt-1"><input id="addLoj_${u.userId}" type="text" placeholder="120,00" class="w-full border-2 border-black p-2 rounded text-xs"><button onclick="addSaldoDireto('${u.userId}','${u.email}','lojista',1)" class="bg-green-600 text-white px-3 py-1 rounded">+ ADD</button><button onclick="addSaldoDireto('${u.userId}','${u.email}','lojista',-1)" class="bg-red-600 text-white px-3 py-1 rounded">- TIRAR</button></div></div>`;}}if($("listaLojistasSaldos")) $("listaLojistasSaldos").innerHTML = hL;if($("listaMotoboysSaldos")) $("listaMotoboysSaldos").innerHTML = hM;};
 
-// NOVO: ADD SALDO COM EXTRATO
 window.addSaldoDireto = async(uid,email,tipo,sinal)=>{
 let raw = "";if(tipo==="lojista") raw = document.getElementById(`addLoj_${uid}`)?.value||"0";else raw = document.getElementById(`addMoto_${uid}`)?.value||"0";
 raw = String(raw).replace(",",".").replace(/[^0-9.]/g,"");let val = Number(raw||0);if(!val) return alert("Digite valor"); val = Math.abs(val)*sinal;
 const snap = await getDoc(doc(db,"usuarios",uid));let novoLoj = snap.data().saldo_lojista||0;let novoMoto = snap.data().saldo_motoboy||0;
 if(tipo==="lojista") novoLoj+=val;else novoMoto+=val;if(novoLoj<0) novoLoj=0;if(novoMoto<0) novoMoto=0;
 await setDoc(doc(db,"usuarios",uid),{saldo_lojista:novoLoj,saldo_motoboy:novoMoto},{merge:true});
-// SALVA EXTRATO RECARGA
 await addDoc(collection(db,"recargas"),{
 userId:uid,email:email,nome:snap.data().nome||email,tipo:tipo,valor:val,
 saldo_apos: tipo==="lojista"?novoLoj:novoMoto,
@@ -413,7 +419,6 @@ admin:userLogado.email,criado_em:Timestamp.now()
 carregarSaldosAdmin();carregarExtratoRecargas();
 };
 
-// NOVO: EXTRATO RECARGAS
 window.carregarExtratoRecargas = async()=>{
 onSnapshot(query(collection(db,"recargas"), orderBy("criado_em","desc"), limit(100)), snap=>{
 let h="";let total=0;
@@ -431,7 +436,6 @@ if($("totalRecargasValor")) $("totalRecargasValor").innerText = "R$"+total.toFix
 });
 };
 
-// NOVO: EXTRATO CORRIDAS TODAS + POR LOJA
 window.carregarExtratoCorridas = async()=>{
 onSnapshot(query(collection(db,"pedidos"), orderBy("criado_em","desc"), limit(150)), snap=>{
 let h="";let qtd=0;let cobrado=0;let pago=0;
@@ -459,9 +463,35 @@ if($("totalPagoExtrato")) $("totalPagoExtrato").innerText = "R$"+pago.toFixed(2)
 });
 };
 
-window.criarPedido = async()=>{const {lojista,moto,origem,destino,veiculo,km} = calc();const endereco = $("enderecoCompletoLojista")?.value||"";if(!endereco) return alert("Endereço cliente"); if(!window.kmCalculadoAutomatico || window.kmCalculadoAutomatico===0){alert("Aguarde calcular KM...");await calcularKmAutomatico();return;}const userSnap = await getDoc(doc(db,"usuarios",userLogado.uid));const saldoAtual = userSnap.data()?.saldo_lojista??0;if(saldoAtual < lojista) return alert(`Saldo insuficiente R$${saldoAtual.toFixed(2)} precisa R$${lojista.toFixed(2)}`); const cod = Math.floor(1000+Math.random()*9000).toString();await addDoc(collection(db,"pedidos"),{owner_id:userLogado.uid,nome_loja:$("nomeSalaoLojista").value,endereco_completo:endereco,endereco_loja:$("enderecoSalaoLojista").value,bairro:destino||"Centro",origem:origem,km:km,valor_lojista:lojista,valor_motoboy:moto,codigo_secreto:cod,veiculo:veiculo,status:"AGUARDANDO",criado_em:Timestamp.now()});const novo = saldoAtual - lojista;await setDoc(doc(db,"usuarios",userLogado.uid),{saldo_lojista:novo},{merge:true});window.kmCalculadoAutomatico = 0;if($("enderecoCompletoLojista")) $("enderecoCompletoLojista").value = "";alert(`✅ Criado ${km}km R$${lojista.toFixed(2)}`);};
+// MELHORIA #0001 - CRIAR PEDIDO COM CODIGO FIXO
+window.criarPedido = async()=>{
+const {lojista,moto,origem,destino,veiculo,km} = calc();
+const endereco = $("enderecoCompletoLojista")?.value||"";
+if(!endereco) return alert("Endereço cliente");
+if(!window.kmCalculadoAutomatico || window.kmCalculadoAutomatico===0){alert("Aguarde calcular KM...");await calcularKmAutomatico();return;}
+const userSnap = await getDoc(doc(db,"usuarios",userLogado.uid));
+const saldoAtual = userSnap.data()?.saldo_lojista??0;
+if(saldoAtual < lojista) return alert(`Saldo insuficiente R$${saldoAtual.toFixed(2)} precisa R$${lojista.toFixed(2)}`);
+let motoristaIdFixo = null; let motoristaNomeFixo = null;
+const codigoChamado = $("codigoMotoboyChamar")?.value.replace("#","").trim();
+if(codigoChamado){
+const qMoto = query(collection(db,"usuarios"), where("codigoMotoboy","==",codigoChamado));
+const snapMoto = await getDocs(qMoto);
+if(!snapMoto.empty){const m = snapMoto.docs[0].data(); motoristaIdFixo = m.userId; motoristaNomeFixo = m.nome||m.email; if($("nomeMotoboyChamado")) $("nomeMotoboyChamado").innerText = "✅ Vai chamar: "+motoristaNomeFixo;}
+else{return alert("Código motoboy #"+codigoChamado+" não encontrado");}
+}
+const cod = Math.floor(1000+Math.random()*9000).toString();
+await addDoc(collection(db,"pedidos"),{owner_id:userLogado.uid,nome_loja:$("nomeSalaoLojista").value,endereco_completo:endereco,endereco_loja:$("enderecoSalaoLojista").value,bairro:destino||"Centro",origem:origem,km:km,valor_lojista:lojista,valor_motoboy:moto,codigo_secreto:cod,veiculo:veiculo,status:motoristaIdFixo?"ACEITA":"AGUARDANDO",motorista_id:motoristaIdFixo,motorista_nome:motoristaNomeFixo,criado_em:Timestamp.now()});
+const novo = saldoAtual - lojista;
+await setDoc(doc(db,"usuarios",userLogado.uid),{saldo_lojista:novo},{merge:true});
+window.kmCalculadoAutomatico = 0;
+if($("enderecoCompletoLojista")) $("enderecoCompletoLojista").value = "";
+if($("codigoMotoboyChamar")) $("codigoMotoboyChamar").value = "";
+if($("nomeMotoboyChamado")) $("nomeMotoboyChamado").innerText = "";
+alert(`✅ Criado ${km}km R$${lojista.toFixed(2)} ${motoristaNomeFixo?'para '+motoristaNomeFixo:''}`);
+};
 
-async function carregarPendentes(){onSnapshot(collection(db,"usuarios"),snap=>{let h = "";snap.forEach(d=>{const u = d.data();if((u.status||"").toUpperCase()!=="PENDENTE") return;h += `<div class="border-2 border-yellow-500 bg-white p-3 rounded-xl text-[11px]"><b>👤 ${u.nome}</b><br><b class="bg-red-600 text-white px-1 rounded">${u.role}</b><br>${u.email}<br><button onclick="aprovarUsuario('${d.id}')" class="bg-green-600 text-white px-2 py-3 rounded w-full mt-3 font-black">✅ APROVAR</button></div>`;});if($("listaPendentesAprovacao")) $("listaPendentesAprovacao").innerHTML = h || "Nenhum pendente";});}
+async function carregarPendentes(){onSnapshot(collection(db,"usuarios"),snap=>{let h = "";snap.forEach(d=>{const u = d.data();if((u.status||"").toUpperCase()!=="PENDENTE") return;h += `<div class="border-2 border-yellow-500 bg-white p-3 rounded-xl text-[11px]"><b>👤 ${u.nome} #${u.codigoMotoboy||'0000'}</b><br><b class="bg-red-600 text-white px-1 rounded">${u.role}</b><br>${u.email}<br><button onclick="aprovarUsuario('${d.id}')" class="bg-green-600 text-white px-2 py-3 rounded w-full mt-3 font-black">✅ APROVAR</button></div>`;});if($("listaPendentesAprovacao")) $("listaPendentesAprovacao").innerHTML = h || "Nenhum pendente";});}
 window.aprovarUsuario = async(id)=>{await setDoc(doc(db,"usuarios",id),{status:"APROVADO"},{merge:true});};
 window.cancelarCorridaLojista = async(id)=>{if(!confirm("Cancelar? Valor volta pro saldo.")) return;const snap = await getDoc(doc(db,"pedidos",id));const p = snap.data();await setDoc(doc(db,"pedidos",id),{status:"CANCELADA",cancelado_em:Timestamp.now()},{merge:true});const userSnap = await getDoc(doc(db,"usuarios",userLogado.uid));const novo = (userSnap.data()?.saldo_lojista||0) + Number(p.valor_lojista||0);await setDoc(doc(db,"usuarios",userLogado.uid),{saldo_lojista:novo},{merge:true});alert("✅ Cancelada R$"+Number(p.valor_lojista||0).toFixed(2)+" devolvido");};
 window.cancelarCorridaAdmin = async(id)=>{if(!confirm("Cancelar como ADMIN? Saldo volta pro lojista.")) return;const snap = await getDoc(doc(db,"pedidos",id));const p = snap.data();await setDoc(doc(db,"pedidos",id),{status:"CANCELADA",cancelado_em:Timestamp.now()},{merge:true});if(p.owner_id){const ownerSnap = await getDoc(doc(db,"usuarios",p.owner_id));if(ownerSnap.exists()){const novo = (ownerSnap.data().saldo_lojista||0) + Number(p.valor_lojista||0);await setDoc(doc(db,"usuarios",p.owner_id),{saldo_lojista:novo},{merge:true});}}alert("✅ Cancelada admin");};
