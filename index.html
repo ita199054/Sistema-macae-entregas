@@ -3,92 +3,224 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anjos Flash - VALOR POR BAIRRO FIXO - CAVALEIROS X AROEIRA</title>
+<title>Anjos Flash - 5000 LINHAS - VALOR POR BAIRRO NO LUGAR CERTO + RETORNO/SUBIR + SALDOS + EXTRATOS</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
 <div id="telaLogin" class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
-<div class="bg-white p-6 rounded-xl w-full max-w-sm">
-<h2 class="font-bold text-xl text-center">Anjos Flash</h2>
+<div class="bg-white p-6 rounded-xl w-full max-w-sm max-h-[95vh] overflow-y-auto">
+<h2 class="font-bold text-xl text-center">🏍️ Anjos Flash - 5000 LINHAS</h2>
+<p id="pixLoginDisplay" class="text-[10px] text-center bg-black text-white p-1 rounded mt-2">PIX: 22997450131</p>
 <div class="flex gap-2 my-3">
-<button type="button" onclick="setAba('entrar')" class="flex-1 bg-black text-white py-2 rounded">ENTRAR</button>
-<button type="button" onclick="setAba('cadastrar')" class="flex-1 border py-2 rounded">CRIAR</button>
+<button type="button" onclick="setAba('entrar')" class="flex-1 bg-black text-white py-2 rounded font-bold">ENTRAR</button>
+<button type="button" onclick="setAba('cadastrar')" class="flex-1 border py-2 rounded font-bold">CRIAR CONTA</button>
 </div>
 <div id="abaEntrar">
-<input id="loginEmail" placeholder="Email" class="w-full border p-3 rounded mb-2">
-<input id="loginSenha" type="password" placeholder="Senha" class="w-full border p-3 rounded mb-2">
-<button type="button" onclick="fazerLogin()" class="w-full bg-orange-500 text-white p-3 rounded font-bold">ENTRAR</button>
-<p id="msgLogin" class="text-xs text-red-600 mt-2"></p>
+<input id="loginEmail" placeholder="Seu email" class="w-full border p-3 rounded mb-2 text-sm">
+<input id="loginSenha" type="password" placeholder="Sua senha" class="w-full border p-3 rounded mb-2 text-sm">
+<button type="button" onclick="fazerLogin()" class="w-full bg-orange-500 text-white p-3 rounded font-bold">ENTRAR NO SISTEMA</button>
+<p id="msgLogin" class="text-xs text-red-600 mt-2 text-center"></p>
 </div>
 <div id="abaCadastrar" class="hidden">
-<select id="tipoCadastro" class="w-full border-2 p-3 rounded mb-2 font-bold"><option value="LOJISTA">LOJISTA</option><option value="MOTOBOY_MOTO">MOTOBOY</option><option value="ADMIN">ADMIN</option></select>
-<input id="cadEmailLogin" placeholder="Email" class="w-full border p-3 rounded mb-2">
-<input id="cadSenhaLogin" type="password" placeholder="Senha" class="w-full border p-3 rounded mb-2">
-<input id="cadNomeLogin" placeholder="Nome" class="w-full border p-3 rounded mb-2">
-<button type="button" onclick="fazerCadastro()" class="w-full bg-black text-white p-4 rounded font-black">ENVIAR</button>
+<select id="tipoCadastro" class="w-full border-2 p-3 rounded mb-2 text-sm font-bold bg-white">
+<option value="LOJISTA">SOU LOJISTA</option>
+<option value="SUPER_LOJISTA">SOU SUPER LOJISTA - SUBIR</option>
+<option value="MOTOBOY_MOTO">SOU MOTOBOY MOTO</option>
+<option value="MOTOBOY_UTILITARIO">SOU MOTOBOY UTILITÁRIO</option>
+<option value="MOTOBOY_CAMINHAO_3_4">SOU MOTOBOY CAMINHÃO 3/4</option>
+<option value="MOTOBOY_CARRETA">SOU MOTOBOY CARRETA</option>
+<option value="MOTOBOY_MOTORISTA">SOU MOTOBOY (GERAL)</option>
+<option value="FRANQUEADO">SOU FRANQUEADO</option>
+<option value="SUPORTE">SOU SUPORTE</option>
+<option value="ADMIN">SOU ADMIN</option>
+</select>
+<input id="cadEmailLogin" placeholder="Email para cadastro" class="w-full border p-3 rounded mb-2 text-sm">
+<input id="cadSenhaLogin" type="password" placeholder="Crie uma senha" class="w-full border p-3 rounded mb-2 text-sm">
+<input id="cadNomeLogin" placeholder="Nome completo" class="w-full border p-3 rounded mb-2 text-sm">
+<div id="boxDocsMotoboy" class="hidden bg-red-50 p-3 rounded-xl border-2 border-red-500 space-y-3">
+<p class="text-[10px] font-black bg-red-600 text-white p-2 rounded text-center">📄 DOCUMENTOS MOTOBOY - OPCIONAL MAS RECOMENDADO</p>
+<div><label class="text-[10px] font-bold">📸 CNH</label><input type="file" id="cadFileCNH" accept="image/*,.pdf" class="w-full text-[11px] border-2 border-black p-2 bg-white rounded mt-1"></div>
+<div><label class="text-[10px] font-bold">📄 CRLV</label><input type="file" id="cadFileCRLV" accept="image/*,.pdf" class="w-full text-[11px] border-2 border-black p-2 bg-white rounded mt-1"></div>
+<div><label class="text-[10px] font-bold">🏠 COMPROVANTE</label><input type="file" id="cadFileEndereco" accept="image/*,.pdf" class="w-full text-[11px] border-2 border-black p-2 bg-white rounded mt-1"></div>
+<div><label class="text-[10px] font-bold">📋 ANTT</label><input type="file" id="cadFileANTT" accept="image/*,.pdf" class="w-full text-[11px] border-2 border-gray-400 p-2 bg-white rounded mt-1"></div>
+<div><label class="text-[10px] font-bold">🤳 SELFIE</label><input type="file" id="cadFileSelfie" accept="image/*" class="w-full text-[11px] border-2 border-black p-2 bg-white rounded mt-1"></div>
+</div>
+<button type="button" onclick="fazerCadastro()" id="btnEnviarCadastro" class="w-full bg-black text-white p-4 rounded-xl font-black mt-4 text-lg border-2 border-yellow-400">✅ ENVIAR CADASTRO</button>
 </div>
 </div>
 </div>
-<div id="telaPendente" class="fixed inset-0 bg-yellow-100 z-40 hidden flex items-center justify-center p-4"><div class="bg-white p-6 rounded-xl w-full max-w-sm text-center"><h2 class="font-bold">Aguardando aprovacao</h2><p id="pendenteRole" class="text-[11px] mt-2 bg-black text-white p-2 rounded"></p><button type="button" onclick="fazerLogout()" class="w-full bg-red-600 text-white p-3 rounded mt-4">SAIR</button></div></div>
-<div id="app" class="max-w-[420px] mx-auto bg-white min-h-screen">
-<div class="p-4 flex justify-between items-center border-b sticky top-0 bg-white z-20"><b>Anjos Flash</b><span id="roleRealBadge" class="bg-black text-white text-[10px] px-2 py-1 rounded">...</span><button type="button" onclick="fazerLogout()" class="text-[10px] border px-2 py-1 rounded">SAIR</button></div>
+<div id="telaPendente" class="fixed inset-0 bg-yellow-100 z-40 hidden flex items-center justify-center p-4">
+<div class="bg-white p-6 rounded-xl w-full max-w-sm text-center border-2 border-yellow-500">
+<h2 class="font-bold text-xl">⏳ Aguardando aprovação do ADMIN</h2>
+<p id="pendenteRole" class="text-[11px] mt-3 bg-black text-white p-2 rounded font-bold"></p>
+<button type="button" onclick="fazerLogout()" class="w-full bg-red-600 text-white p-3 rounded font-bold mt-4">SAIR</button>
+</div>
+</div>
+<div id="app" class="max-w-[420px] mx-auto bg-white min-h-screen shadow-xl relative">
+<div class="p-4 flex justify-between items-center border-b sticky top-0 bg-white z-20">
+<div><b>🏍️ Anjos Flash</b><br><span id="nomeLojaTopo" class="text-[11px] font-bold text-orange-600"></span></div>
+<div class="flex gap-2 items-center">
+<a href="chat.html" class="bg-blue-600 text-white text-[10px] px-3 py-2 rounded-full font-bold">💬 CHAT</a>
+<span id="roleRealBadge" class="bg-black text-white text-[10px] px-2 py-1 rounded">...</span>
+<button type="button" onclick="fazerLogout()" class="text-[10px] border px-2 py-1 rounded">SAIR</button>
+</div>
+</div>
 <div id="telaLojista" class="p-4 hidden">
-<div class="bg-black text-white p-4 rounded-xl mb-3 text-center"><p class="text-[11px]">SALDO</p><p class="font-bold text-3xl text-yellow-400">R$ <span id="saldoLojistaValor">0.00</span></p></div>
-<input id="nomeSalaoLojista" placeholder="Nome loja" class="w-full p-3 rounded border-2 border-black text-sm font-bold mb-2" oninput="salvarNomeLoja()">
-<input id="enderecoSalaoLojista" placeholder="Origem: CAVALEIROS" value="CAVALEIROS" class="w-full p-3 rounded border-2 border-green-600 text-sm font-bold bg-white mb-2 uppercase" oninput="salvarNomeLoja();debounceKm();">
-<input id="enderecoCompletoLojista" placeholder="Destino: AROEIRA" class="w-full border-2 border-blue-600 p-3 rounded-xl text-sm bg-white font-bold uppercase" oninput="debounceKm();">
-<div class="bg-gray-100 p-3 rounded text-sm border mt-3">
-<div class="font-bold text-xl">Seu custo: R$ <span id="totalLojista">10.00</span></div>
-<div id="detalheRegiao" class="text-[11px] font-bold mt-1"></div>
+<div class="bg-black text-white p-4 rounded-xl mb-3 text-center border-2 border-blue-500">
+<p class="text-[11px] opacity-70">MEU SALDO LOJISTA</p>
+<p class="font-bold text-3xl text-yellow-400">R$ <span id="saldoLojistaValor">0.00</span></p>
 </div>
-<button type="button" onclick="criarPedido()" class="w-full bg-black text-white p-4 rounded-xl mt-3 font-bold">CRIAR CORRIDA</button>
+<div id="boxPixLojista" class="bg-yellow-100 border-2 border-yellow-500 p-3 rounded-xl mb-3 text-center">
+<p class="text-[9px] font-bold">PIX PARA RECARGA</p>
+<p id="pixLojistaDisplay" class="font-black text-xl">22997450131</p>
+<p id="nomePixLojistaDisplay" class="text-[10px] font-bold"></p>
+<button type="button" onclick="navigator.clipboard.writeText(document.getElementById('pixLojistaDisplay').innerText)" class="bg-black text-white text-[10px] px-4 py-2 rounded-full mt-2 font-bold">📋 COPIAR PIX</button>
+</div>
+<div id="statusDinamicaLojista" class="p-2 rounded text-center text-xs font-bold mb-2 bg-gray-200">⚡ DINAMICA DESLIGADA</div>
+<div class="bg-white border-2 border-black p-3 rounded-xl mb-3">
+<input id="nomeSalaoLojista" placeholder="Nome da sua loja" class="w-full p-3 rounded border-2 border-black text-sm font-bold" oninput="salvarNomeLoja()">
+</div>
+<div class="bg-green-50 border-2 border-green-600 p-3 rounded-xl mb-3">
+<label class="text-[10px] font-black">ORIGEM - BAIRRO DA LOJA</label>
+<input id="enderecoSalaoLojista" placeholder="Ex: CAVALEIROS" value="CAVALEIROS" class="w-full p-3 rounded border-2 border-green-600 text-sm font-bold bg-white uppercase mt-1" oninput="salvarNomeLoja();debounceKm();">
+</div>
+<div class="bg-blue-50 border-2 border-blue-600 p-3 rounded-xl mb-3">
+<label class="text-[10px] font-black">DESTINO - BAIRRO CLIENTE</label>
+<input id="enderecoCompletoLojista" placeholder="Ex: AROEIRA" class="w-full border-2 border-blue-600 p-3 rounded-xl text-sm bg-white font-bold uppercase mt-1" oninput="debounceKm();">
+<p class="text-[9px] mt-1">Se tiver valor fixo CAVALEIROS x AROEIRA cobra esse valor fixo, se não tiver busca pra cobrar (KM automático)</p>
+</div>
+<div class="grid grid-cols-2 gap-2 mb-3">
+<label class="flex items-center gap-2 text-sm border-2 border-yellow-500 p-3 rounded-xl bg-yellow-100 font-bold"><input type="checkbox" id="precisaRetorno" class="w-5 h-5" onchange="calc()"> 🔄 RETORNO</label>
+<label class="flex items-center gap-2 text-sm border-2 border-orange-500 p-3 rounded-xl bg-orange-100 font-bold"><input type="checkbox" id="precisaSuper" class="w-5 h-5" onchange="calc()"> ⬆️ SUBIR +</label>
+</div>
+<div class="grid grid-cols-2 gap-2 mb-3">
+<button type="button" onclick="setVeiculo('MOTO')" id="btnMOTO" class="border-2 p-3 rounded-xl text-xs font-bold bg-black text-white">🏍️ MOTO</button>
+<button type="button" onclick="setVeiculo('UTILITARIO')" id="btnUTILITARIO" class="border-2 p-3 rounded-xl text-xs font-bold">🚐 UTIL</button>
+<button type="button" onclick="setVeiculo('CAMINHAO_3_4')" id="btnCAMINHAO_3_4" class="border-2 p-3 rounded-xl text-xs font-bold">🚚 3/4</button>
+<button type="button" onclick="setVeiculo('CARRETA')" id="btnCARRETA" class="border-2 p-3 rounded-xl text-xs font-bold">🚛 CARRETA</button>
+</div>
+<div class="bg-gray-100 p-3 rounded text-sm border">
+<div class="font-bold text-xl">Seu custo: R$ <span id="totalLojista">10.00</span></div>
+<div id="detalheRegiao" class="text-[11px] font-bold mt-1 p-2 rounded"></div>
+</div>
+<button type="button" onclick="criarPedido()" class="w-full bg-black text-white p-4 rounded-xl mt-3 font-bold">🚀 CRIAR CORRIDA</button>
 </div>
 <div id="telaMotoboy" class="p-4 hidden">
-<div class="bg-black text-white p-4 rounded-xl mb-3 text-center"><p class="font-bold text-2xl text-green-400">R$ <span id="saldoMotoboyValor">0.00</span></p></div>
-<div class="bg-yellow-400 text-black p-3 rounded-xl mb-3 text-center border-4 border-black"><p id="meuCodigoDisplay" class="font-black text-3xl">#0000</p></div>
+<div class="bg-black text-white p-4 rounded-xl mb-3 text-center border-2 border-green-500">
+<p class="font-bold text-2xl text-green-400">R$ <span id="saldoMotoboyValor">0.00</span></p>
+</div>
+<div class="bg-yellow-400 text-black p-3 rounded-xl mb-3 text-center border-4 border-black">
+<p id="meuCodigoDisplay" class="font-black text-3xl tracking-widest">#0000</p>
+</div>
 <div id="listaEntregasMotoboy" class="space-y-2 text-xs"></div>
 </div>
 <div id="telaAdmin" class="p-4 hidden">
-<div class="bg-black text-white p-4 rounded-xl mb-4 text-center"><p>LUCRO TOTAL R$ <span id="lucroTotalAdmin">0.00</span></p></div>
-<div class="bg-white p-3 rounded-xl border-4 border-black mb-4">
-<h3 class="font-black text-sm">🏪 LANCAR CORRIDA - ESCOLHE LOJA</h3>
-<input id="emailLojaAdminLancamento" placeholder="Email loja" class="w-full border-2 border-black p-2 rounded text-xs mt-2 font-bold">
-<button type="button" onclick="buscarLojaParaLancar()" class="bg-black text-white px-3 py-1 rounded mt-1 text-xs">BUSCAR</button>
-<div id="boxLojaSelecionadaLancamento" class="hidden mt-2 bg-yellow-100 border-2 p-2 rounded"><p id="nomeLojaLancamento" class="font-bold"></p><p id="emailLojaLancamento"></p><p id="saldoLojaLancamento" class="font-bold text-green-700"></p></div>
-<select id="selectLojaLancamento" class="w-full border-2 border-black p-2 rounded text-xs mt-2" onchange="selecionarLojaParaLancar()"><option value="">-- Selecione loja APROVADA --</option></select>
-<input id="enderecoLojaAdminLancamento" placeholder="Origem LOJA ex: CAVALEIROS" value="CAVALEIROS" class="w-full border-2 border-green-600 p-2 rounded mt-2 uppercase font-bold">
-<input id="enderecoClienteAdminLancamento" placeholder="Destino CLIENTE ex: AROEIRA" class="w-full border-2 border-blue-600 p-2 rounded mt-2 uppercase font-bold">
-<div class="bg-gray-100 p-2 rounded mt-2">Custo loja: R$ <span id="totalLojistaAdminLanc">10.00</span> - Moto: R$ <span id="totalMotoAdminLanc">7.50</span><div id="detalheRegiaoAdminLanc" class="text-[10px] font-bold mt-1"></div></div>
-<button type="button" onclick="criarPedidoAdminPorLoja()" class="w-full bg-blue-600 text-white p-3 rounded mt-2 font-black">CRIAR PELA LOJA</button>
+<div class="bg-black text-white p-4 rounded-xl mb-4 border-4 border-green-500 text-center">
+<p class="text-[10px] opacity-70">💰 LUCRO TOTAL</p>
+<p class="font-black text-3xl text-green-400">R$ <span id="lucroTotalAdmin">0.00</span></p>
+<div class="grid grid-cols-3 gap-2 mt-3 text-[10px]">
+<div class="bg-white/10 p-2 rounded"><p>COBRADO</p><b id="totalCobradoAdmin">R$0.00</b></div>
+<div class="bg-white/10 p-2 rounded"><p>PAGO MOTO</p><b id="totalPagoAdmin">R$0.00</b></div>
+<div class="bg-yellow-500 text-black p-2 rounded font-black"><p>CORRIDAS</p><b id="totalCorridasAdmin">0</b></div>
+</div>
+</div>
+<div class="bg-white p-3 rounded-xl border-4 border-black mb-4 shadow">
+<h3 class="font-black text-sm">🏪 LANÇAR CORRIDA - ESCOLHA A LOJA</h3>
+<div class="flex gap-1 mt-2">
+<input id="emailLojaAdminLancamento" placeholder="Email da loja" class="flex-1 border-2 border-black p-2 rounded text-xs font-bold">
+<button type="button" onclick="buscarLojaParaLancar()" class="bg-black text-white px-3 rounded text-xs font-black">🔍 BUSCAR</button>
+</div>
+<div id="boxLojaSelecionadaLancamento" class="hidden mt-2 bg-yellow-100 border-2 border-yellow-500 p-2 rounded">
+<p class="text-[11px] font-black">✅ LOJA SELECIONADA:</p>
+<p id="nomeLojaLancamento" class="text-xs font-bold"></p>
+<p id="emailLojaLancamento" class="text-[10px]"></p>
+<p id="saldoLojaLancamento" class="text-[11px] font-bold text-green-700"></p>
+</div>
+<select id="selectLojaLancamento" class="w-full border-2 border-black p-2 rounded text-xs bg-white font-bold mt-2" onchange="selecionarLojaParaLancar()">
+<option value="">-- Selecione loja APROVADA --</option>
+</select>
+<div class="bg-green-50 border-2 border-green-600 p-3 rounded-xl mt-3">
+<label class="text-[10px] font-black">ORIGEM - BAIRRO LOJA</label>
+<input id="enderecoLojaAdminLancamento" placeholder="Ex: CAVALEIROS" value="CAVALEIROS" class="w-full p-3 rounded border-2 border-green-600 text-sm font-bold bg-white uppercase mt-1" oninput="debounceKmAdmin();">
+</div>
+<div class="bg-blue-50 border-2 border-blue-600 p-3 rounded-xl mt-2">
+<label class="text-[10px] font-black">DESTINO - BAIRRO CLIENTE</label>
+<input id="enderecoClienteAdminLancamento" placeholder="Ex: AROEIRA" class="w-full border-2 border-blue-600 p-3 rounded-xl text-sm bg-white font-bold uppercase mt-1" oninput="debounceKmAdmin();">
+<p class="text-[9px] mt-1">Se tiver valor fixo CAVALEIROS x AROEIRA cobra esse valor fixo, se não tiver busca pra cobrar</p>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-2">
+<label class="flex items-center gap-2 text-sm border-2 border-yellow-500 p-3 rounded-xl bg-yellow-100 font-bold"><input type="checkbox" id="precisaRetornoAdmin" class="w-5 h-5" onchange="calcAdminLancamento()"> 🔄 RETORNO</label>
+<label class="flex items-center gap-2 text-sm border-2 border-orange-500 p-3 rounded-xl bg-orange-100 font-bold"><input type="checkbox" id="precisaSuperAdmin" class="w-5 h-5" onchange="calcAdminLancamento()"> ⬆️ SUBIR +</label>
+</div>
+<div class="grid grid-cols-4 gap-1 mt-2">
+<button type="button" onclick="setVeiculoAdminLancamento('MOTO')" id="btnAdminLancMOTO" class="border-2 p-2 rounded-xl text-[10px] font-bold bg-black text-white">MOTO</button>
+<button type="button" onclick="setVeiculoAdminLancamento('UTILITARIO')" id="btnAdminLancUTILITARIO" class="border-2 p-2 rounded-xl text-[10px] font-bold">UTIL</button>
+<button type="button" onclick="setVeiculoAdminLancamento('CAMINHAO_3_4')" id="btnAdminLancCAMINHAO_3_4" class="border-2 p-2 rounded-xl text-[10px] font-bold">3/4</button>
+<button type="button" onclick="setVeiculoAdminLancamento('CARRETA')" id="btnAdminLancCARRETA" class="border-2 p-2 rounded-xl text-[10px] font-bold">CARRETA</button>
+</div>
+<div class="bg-gray-100 p-3 rounded text-sm border mt-2">
+<div class="font-bold text-xl">Custo loja: R$ <span id="totalLojistaAdminLanc">10.00</span> <span id="detalheRegiaoAdminLanc" class="text-[10px] font-bold text-blue-600 block mt-1 p-1 rounded"></span></div>
+<div class="text-[11px] mt-1">Moto ganha: R$ <span id="totalMotoAdminLanc">7.50</span></div>
+</div>
+<button type="button" onclick="criarPedidoAdminPorLoja()" class="w-full bg-blue-600 text-white p-4 rounded-xl mt-3 font-black border-2 border-black">🚀 CRIAR CORRIDA PELA LOJA</button>
+</div>
+<div class="bg-black text-white p-4 rounded-xl mb-4 border-4 border-yellow-400">
+<h3 class="font-black text-sm text-yellow-400">💳 EDITAR PIX</h3>
+<div class="grid grid-cols-1 gap-2 bg-white p-3 rounded-xl">
+<input id="editPixNumero" value="22997450131" class="w-full border-2 border-black p-3 rounded text-sm font-black text-black">
+<input id="editPixNome" placeholder="Seu nome no PIX" class="w-full border-2 border-black p-3 rounded text-sm font-bold text-black">
+<button type="button" onclick="salvarPix()" class="bg-yellow-400 text-black w-full py-3 rounded-xl font-black border-2 border-black">💾 SALVAR PIX</button>
+</div>
+<p class="text-[10px] mt-2 text-center">Atual: <b id="pixAtualAdmin" class="text-yellow-400">22997450131</b></p>
+</div>
+<div class="bg-green-100 border-4 border-green-600 p-3 rounded-xl mb-4">
+<h3 class="font-black text-sm text-green-700">💳 EXTRATO RECARGAS</h3>
+<div id="listaExtratoRecargas" class="mt-3 space-y-1 max-h-[400px] overflow-y-auto text-[11px]"></div>
+<div class="bg-black text-white p-2 rounded mt-2 text-center"><p class="text-[10px]">TOTAL: <b id="totalRecargasValor" class="text-green-400 text-sm">R$0.00</b></p></div>
+</div>
+<div class="bg-blue-100 border-4 border-blue-600 p-3 rounded-xl mb-4">
+<h3 class="font-black text-sm text-blue-700">🏍️ EXTRATO CORRIDAS</h3>
+<div id="listaExtratoCorridas" class="mt-3 space-y-2 max-h-[600px] overflow-y-auto text-[11px]"></div>
 </div>
 <div class="bg-yellow-100 border-4 border-black p-3 rounded-xl mb-4">
-<h3 class="font-black text-sm text-black">🔀 VALOR FIXO POR BAIRRO - EX: CAVALEIROS x AROEIRA = R$15,00</h3>
-<p class="text-[10px] mt-1">Se cadastrar CAVALEIROS x AROEIRA = R$15,00, quando digitar CAVALEIROS -> AROEIRA cobra R$15,00 FIXO. Se NAO tiver valor, vai BUSCAR PARA COBRAR (KM automatico).</p>
+<h3 class="font-black text-sm text-black">🔀 VALOR FIXO POR BAIRRO - ONDE COLOCO OS BAIRROS - EX: CAVALEIROS x AROEIRA</h3>
+<p class="text-[10px] font-bold mt-1">AQUI É ONDE COLOCO OS BAIRROS - NÃO É ONDE MARCA RETORNO/SUBIR - RETORNO/SUBIR FICA LÁ EM CIMA</p>
+<p class="text-[10px] mt-1">Se cadastrar CAVALEIROS x AROEIRA = R$15,00, quando clicar cobra esse valor fixo. Se não tiver valor, busca pra cobrar (KM automático).</p>
 <div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2 rounded border-2 border-black">
 <input id="origemRota" placeholder="Origem: CAVALEIROS" class="border-2 border-black p-2 rounded text-xs font-bold uppercase">
 <input id="destinoRota" placeholder="Destino: AROEIRA" class="border-2 border-black p-2 rounded text-xs font-bold uppercase">
 <input id="valorRotaLojista" type="text" inputmode="decimal" placeholder="15,00 Valor cobra loja" class="w-full border-2 border-blue-600 p-2 rounded text-xs font-bold">
 <input id="valorRotaMotoboy" type="text" inputmode="decimal" placeholder="8,00 Valor paga moto" class="w-full border-2 border-green-600 p-2 rounded text-xs font-bold">
 </div>
-<button type="button" onclick="addRota()" class="bg-black text-white w-full py-2 rounded mt-2 text-xs font-black border-2 border-yellow-400">💾 SALVAR VALOR FIXO POR BAIRRO</button>
-<div id="listaRotasAdmin" class="mt-3 space-y-2 text-[11px] max-h-[400px] overflow-y-auto"></div>
+<button type="button" onclick="addRota()" class="bg-black text-white w-full py-3 rounded mt-2 text-xs font-black border-2 border-yellow-400">💾 SALVAR VALOR FIXO POR BAIRRO</button>
+<div id="listaRotasAdmin" class="mt-3 space-y-2 text-[11px] max-h-[500px] overflow-y-auto"></div>
 </div>
 <div class="border-4 border-yellow-500 p-3 rounded-xl mb-4 bg-yellow-50">
-<h3 class="font-bold text-sm">⏳ PENDENTES - APROVAR LOJISTA E MOTOBOY</h3>
+<h3 class="font-bold text-sm">⏳ PENDENTES - LOJISTA E MOTOBOY</h3>
 <div class="grid grid-cols-2 gap-2 mt-3">
-<div class="bg-white border-2 border-yellow-600 p-2 rounded-xl"><p class="font-black text-[11px] text-center bg-yellow-400 p-1 rounded">LOJISTAS PENDENTES</p><div id="listaLojistasPendentes" class="mt-2 space-y-2 max-h-[400px] overflow-y-auto"></div></div>
-<div class="bg-white border-2 border-green-600 p-2 rounded-xl"><p class="font-black text-[11px] text-center bg-green-600 text-white p-1 rounded">MOTOBOYS PENDENTES</p><div id="listaMotoboysPendentes" class="mt-2 space-y-2 max-h-[400px] overflow-y-auto"></div></div>
+<div class="bg-white border-2 border-yellow-600 p-2 rounded-xl">
+<p class="font-black text-[11px] text-center bg-yellow-400 text-black p-1 rounded">🏪 LOJISTAS PENDENTES</p>
+<div id="listaLojistasPendentes" class="mt-2 space-y-2 max-h-[500px] overflow-y-auto"></div>
+</div>
+<div class="bg-white border-2 border-green-600 p-2 rounded-xl">
+<p class="font-black text-[11px] text-center bg-green-600 text-white p-1 rounded">🏍️ MOTOBOYS PENDENTES</p>
+<div id="listaMotoboysPendentes" class="mt-2 space-y-2 max-h-[500px] overflow-y-auto"></div>
+</div>
 </div>
 </div>
 <div class="border-4 border-green-500 p-3 rounded-xl mb-4 bg-white">
-<h3 class="font-bold text-sm">💳 SALDOS - COLOCA E TIRA SALDO</h3>
+<h3 class="font-bold text-sm">💳 SALDOS - LOJISTA E MOTOBOY - COLOCA E TIRA SALDO</h3>
 <div class="grid grid-cols-2 gap-2 mt-3">
-<div class="bg-yellow-50 border-2 border-yellow-500 p-2 rounded-xl"><p class="font-black text-[11px] text-center bg-yellow-400 p-1 rounded">LOJISTAS APROVADOS</p><div id="listaLojistasSaldos" class="mt-2 space-y-2 max-h-[500px] overflow-y-auto"></div></div>
-<div class="bg-green-50 border-2 border-green-600 p-2 rounded-xl"><p class="font-black text-[11px] text-center bg-green-600 text-white p-1 rounded">MOTOBOYS APROVADOS</p><div id="listaMotoboysSaldos" class="mt-2 space-y-2 max-h-[500px] overflow-y-auto"></div></div>
+<div class="bg-yellow-50 border-2 border-yellow-500 p-2 rounded-xl">
+<p class="font-black text-[11px] text-center bg-yellow-400 text-black p-1 rounded">🏪 LOJISTAS APROVADOS</p>
+<div id="listaLojistasSaldos" class="mt-2 space-y-2 max-h-[600px] overflow-y-auto"></div>
+</div>
+<div class="bg-green-50 border-2 border-green-600 p-2 rounded-xl">
+<p class="font-black text-[11px] text-center bg-green-600 text-white p-1 rounded">🏍️ MOTOBOYS APROVADOS</p>
+<div id="listaMotoboysSaldos" class="mt-2 space-y-2 max-h-[600px] overflow-y-auto"></div>
 </div>
 </div>
-<div class="bg-green-100 border-4 border-green-600 p-3 rounded-xl mb-4"><h3 class="font-black text-sm">EXTRATO RECARGAS</h3><div id="listaExtratoRecargas" class="mt-2"></div><p class="mt-2 font-bold">TOTAL: <span id="totalRecargasValor">R$0.00</span></p></div>
-<div class="bg-blue-100 border-4 border-blue-600 p-3 rounded-xl mb-4"><h3 class="font-black text-sm">EXTRATO CORRIDAS</h3><div id="listaExtratoCorridas" class="mt-2"></div></div>
+</div>
 </div>
 </div>
 <script type="module">
@@ -161,7 +293,7 @@ var destino = ($("enderecoCompletoLojista")?$("enderecoCompletoLojista").value:"
 var fixo = getValorFixoPorBairro(origem, destino);
 var loj=10; var moto=7.5; var ehFixo=false;
 if(fixo){loj=fixo.lojista; moto=fixo.motoboy; ehFixo=true; if($("detalheRegiao")) $("detalheRegiao").innerHTML = "<span class='bg-black text-yellow-400 px-2 py-1 rounded'>🔒 VALOR FIXO: "+fixo.origem+" x "+fixo.destino+" = R$"+loj.toFixed(2)+" - Vai cobrar esse valor</span>";}
-else{if($("detalheRegiao")) $("detalheRegiao").innerHTML = "<span class='bg-blue-600 text-white px-2 py-1 rounded'>📍 SEM FIXO - BUSCANDO PRA COBRAR (KM "+5+" = R$"+loj.toFixed(2)+")</span>";}
+else{if($("detalheRegiao")) $("detalheRegiao").innerHTML = "<span class='bg-blue-600 text-white px-2 py-1 rounded'>📍 SEM FIXO - BUSCANDO PRA COBRAR (KM 5 = R$"+loj.toFixed(2)+")</span>";}
 if($("totalLojista")) $("totalLojista").innerText=loj.toFixed(2);
 return{lojista:loj,moto:moto,km:5,veiculo:"MOTO",fixo:ehFixo};
 };
