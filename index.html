@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anjos Flash - FINAL CORRIGIDO</title>
+<title>Anjos Flash - COMPLETO EXTRATOS + SALDOS + ESCOLHE LOJA</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
 <div id="telaLogin" class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
 <div class="bg-white p-6 rounded-xl w-full max-w-sm max-h-[95vh] overflow-y-auto">
-<h2 class="font-bold text-xl text-center">Anjos Flash</h2>
+<h2 class="font-bold text-xl text-center">🏍️ Anjos Flash</h2>
 <p id="pixLoginDisplay" class="text-[10px] text-center bg-black text-white p-1 rounded mt-2">PIX: 22997450131</p>
 <div class="flex gap-2 my-3">
 <button type="button" onclick="setAba('entrar')" class="flex-1 bg-black text-white py-2 rounded">ENTRAR</button>
@@ -26,10 +26,10 @@
 <option value="LOJISTA">SOU LOJISTA</option>
 <option value="SUPER_LOJISTA">SOU SUPER LOJISTA</option>
 <option value="MOTOBOY_MOTO">SOU MOTOBOY MOTO</option>
-<option value="MOTOBOY_UTILITARIO">SOU UTILITARIO</option>
-<option value="MOTOBOY_CAMINHAO_3_4">SOU CAMINHAO 3/4</option>
+<option value="MOTOBOY_UTILITARIO">SOU UTILITÁRIO</option>
+<option value="MOTOBOY_CAMINHAO_3_4">SOU CAMINHÃO 3/4</option>
 <option value="MOTOBOY_CARRETA">SOU CARRETA</option>
-<option value="MOTOBOY_MOTORISTA">SOU MOTOBOY GERAL</option>
+<option value="MOTOBOY_MOTORISTA">SOU MOTOBOY (GERAL)</option>
 <option value="FRANQUEADO">SOU FRANQUEADO</option>
 <option value="SUPORTE">SOU SUPORTE</option>
 <option value="ADMIN">SOU ADMIN</option>
@@ -37,22 +37,22 @@
 <input id="cadEmailLogin" placeholder="Email" class="w-full border p-3 rounded mb-2 text-sm">
 <input id="cadSenhaLogin" type="password" placeholder="Senha" class="w-full border p-3 rounded mb-2 text-sm">
 <input id="cadNomeLogin" placeholder="Nome completo" class="w-full border p-3 rounded mb-2 text-sm">
-<button type="button" onclick="fazerCadastro()" class="w-full bg-black text-white p-4 rounded-xl font-black mt-4 border-2 border-yellow-400">ENVIAR CADASTRO</button>
+<button type="button" onclick="fazerCadastro()" id="btnEnviarCadastro" class="w-full bg-black text-white p-4 rounded-xl font-black mt-4 text-lg border-2 border-yellow-400">✅ ENVIAR CADASTRO</button>
 </div>
 </div>
 </div>
 <div id="telaPendente" class="fixed inset-0 bg-yellow-100 z-40 hidden flex items-center justify-center p-4">
 <div class="bg-white p-6 rounded-xl w-full max-w-sm text-center border-2 border-yellow-500">
-<h2 class="font-bold text-xl">Aguardando aprovacao</h2>
+<h2 class="font-bold text-xl">⏳ Aguardando aprovação</h2>
 <p id="pendenteRole" class="text-[11px] mt-3 bg-black text-white p-2 rounded"></p>
 <button type="button" onclick="fazerLogout()" class="w-full bg-red-600 text-white p-3 rounded font-bold mt-4">SAIR</button>
 </div>
 </div>
-<div id="app" class="max-w-[420px] mx-auto bg-white min-h-screen shadow-xl">
+<div id="app" class="max-w-[420px] mx-auto bg-white min-h-screen shadow-xl relative">
 <div class="p-4 flex justify-between items-center border-b sticky top-0 bg-white z-20">
-<div><b>Anjos Flash</b><br><span id="nomeLojaTopo" class="text-[11px] font-bold text-orange-600"></span></div>
+<div><b>🏍️ Anjos Flash</b><br><span id="nomeLojaTopo" class="text-[11px] font-bold text-orange-600"></span></div>
 <div class="flex gap-2 items-center">
-<a href="chat.html" class="bg-blue-600 text-white text-[10px] px-3 py-2 rounded-full font-bold">CHAT</a>
+<a href="chat.html" class="bg-blue-600 text-white text-[10px] px-3 py-2 rounded-full font-bold">💬</a>
 <span id="roleRealBadge" class="bg-black text-white text-[10px] px-2 py-1 rounded">...</span>
 <button type="button" onclick="fazerLogout()" class="text-[10px] border px-2 py-1 rounded">SAIR</button>
 </div>
@@ -68,31 +68,30 @@
 <p id="nomePixLojistaDisplay" class="text-[10px] font-bold"></p>
 <button type="button" onclick="navigator.clipboard.writeText(document.getElementById('pixLojistaDisplay').innerText)" class="bg-black text-white text-[10px] px-4 py-2 rounded-full mt-2 font-bold">COPIAR PIX</button>
 </div>
-<div id="statusDinamicaLojista" class="p-2 rounded text-center text-xs font-bold mb-2 bg-gray-200">DINAMICA DESLIGADA</div>
+<div id="statusDinamicaLojista" class="p-2 rounded text-center text-xs font-bold mb-2 bg-gray-200">⚡ DINAMICA DESLIGADA</div>
 <div class="bg-white border-2 border-black p-3 rounded-xl mb-3">
 <input id="nomeSalaoLojista" placeholder="Nome da loja" class="w-full p-3 rounded border-2 border-black text-sm font-bold" oninput="salvarNomeLoja()">
 </div>
 <div class="bg-green-50 border-2 border-green-600 p-3 rounded-xl mb-3">
-<input id="enderecoSalaoLojista" placeholder="Endereco loja ex: Cavaleiros" value="Cavaleiros" class="w-full p-3 rounded border-2 border-green-600 text-sm font-bold bg-white" oninput="salvarNomeLoja();debounceKm();">
+<input id="enderecoSalaoLojista" placeholder="Endereço loja ex: Cavaleiros" value="Cavaleiros" class="w-full p-3 rounded border-2 border-green-600 text-sm font-bold bg-white" oninput="salvarNomeLoja();debounceKm();">
 </div>
 <div class="bg-blue-50 border-2 border-blue-600 p-3 rounded-xl mb-3">
-<input id="enderecoCompletoLojista" placeholder="Endereco cliente ex: Lagomar" class="w-full border-2 border-blue-600 p-3 rounded-xl text-sm bg-white font-bold" oninput="debounceKm();">
-<input id="codigoMotoboyChamar" placeholder="Codigo motoboy fixo #0001 (opcional)" class="w-full border-2 border-yellow-400 p-3 rounded-xl text-sm bg-white text-black font-black mt-2" inputmode="numeric">
+<input id="enderecoCompletoLojista" placeholder="Endereço cliente ex: Lagomar" class="w-full border-2 border-blue-600 p-3 rounded-xl text-sm bg-white font-bold" oninput="debounceKm();">
+<input id="codigoMotoboyChamar" placeholder="Código motoboy fixo #0001 (opcional)" class="w-full border-2 border-yellow-400 p-3 rounded-xl text-sm bg-white text-black font-black mt-2" inputmode="numeric">
 <p id="nomeMotoboyChamado" class="text-[10px] font-bold mt-1"></p>
-<input id="kmManualLojista" type="hidden">
 </div>
 <div class="grid grid-cols-2 gap-2 mb-3">
 <label class="flex items-center gap-2 text-sm border-2 border-yellow-500 p-3 rounded-xl bg-yellow-100 font-bold"><input type="checkbox" id="precisaRetorno" class="w-5 h-5" onchange="calc()"> RETORNO</label>
 <label class="flex items-center gap-2 text-sm border-2 border-orange-500 p-3 rounded-xl bg-orange-100 font-bold"><input type="checkbox" id="precisaSuper" class="w-5 h-5" onchange="calc()"> SUBIR +</label>
 </div>
 <div class="grid grid-cols-2 gap-2 mb-3">
-<button type="button" onclick="setVeiculo('MOTO')" id="btnMOTO" class="border-2 p-3 rounded-xl text-xs font-bold bg-black text-white">MOTO</button>
-<button type="button" onclick="setVeiculo('UTILITARIO')" id="btnUTILITARIO" class="border-2 p-3 rounded-xl text-xs font-bold">UTIL</button>
-<button type="button" onclick="setVeiculo('CAMINHAO_3_4')" id="btnCAMINHAO_3_4" class="border-2 p-3 rounded-xl text-xs font-bold">3/4</button>
-<button type="button" onclick="setVeiculo('CARRETA')" id="btnCARRETA" class="border-2 p-3 rounded-xl text-xs font-bold">CARRETA</button>
+<button type="button" onclick="setVeiculo('MOTO')" id="btnMOTO" class="border-2 p-3 rounded-xl text-xs font-bold bg-black text-white">🏍️ MOTO</button>
+<button type="button" onclick="setVeiculo('UTILITARIO')" id="btnUTILITARIO" class="border-2 p-3 rounded-xl text-xs font-bold">🚐 UTIL</button>
+<button type="button" onclick="setVeiculo('CAMINHAO_3_4')" id="btnCAMINHAO_3_4" class="border-2 p-3 rounded-xl text-xs font-bold">🚚 3/4</button>
+<button type="button" onclick="setVeiculo('CARRETA')" id="btnCARRETA" class="border-2 p-3 rounded-xl text-xs font-bold">🚛 CARRETA</button>
 </div>
 <div class="bg-gray-100 p-3 rounded text-sm border">
-<div class="font-bold text-xl">Seu custo: R$ <span id="totalLojista">10.00</span> <span id="detalheRegiao" class="text-[10px] font-bold text-blue-600 block mt-1">(KM automatico)</span> <span id="labelDinamicaTotal" class="text-[10px] font-bold text-red-600"></span></div>
+<div class="font-bold text-xl">Seu custo: R$ <span id="totalLojista">10.00</span> <span id="detalheRegiao" class="text-[10px] font-bold text-blue-600 block mt-1">(KM automático)</span></div>
 </div>
 <button type="button" onclick="criarPedido()" class="w-full bg-black text-white p-4 rounded-xl mt-3 font-bold">CRIAR CORRIDA</button>
 <div id="extratoLojista" class="mt-4 space-y-2"></div>
@@ -102,57 +101,40 @@
 <p class="text-[11px] opacity-70">MEU SALDO</p>
 <p class="font-bold text-2xl text-green-400">R$ <span id="saldoMotoboyValor">0.00</span></p>
 </div>
-<div id="boxVeiculoMotoboy" class="bg-blue-100 border-2 border-blue-600 p-2 rounded-xl mb-3 text-center">
-<p class="text-[9px] font-bold">MEU VEICULO</p>
-<p id="meuVeiculoDisplay" class="font-black text-sm">MOTO</p>
-</div>
 <div class="bg-yellow-400 text-black p-3 rounded-xl mb-3 text-center border-4 border-black">
-<p class="text-[9px] font-black">MEU CODIGO DE CHAMADA</p>
+<p class="text-[9px] font-black">MEU CÓDIGO DE CHAMADA</p>
 <p id="meuCodigoDisplay" class="font-black text-3xl tracking-widest">#0000</p>
-<p class="text-[9px]">Passe pro lojista te chamar direto</p>
 </div>
-<div id="statusDinamicaMotoboy" class="p-2 rounded text-center text-xs font-bold mb-3 bg-gray-200">DESLIGADA</div>
+<div id="statusDinamicaMotoboy" class="p-2 rounded text-center text-xs font-bold mb-3 bg-gray-200">⚡ DESLIGADA</div>
 <div id="listaEntregasMotoboy" class="space-y-2 text-xs"></div>
 </div>
 <div id="telaAdmin" class="p-4 hidden">
 <div class="bg-black text-white p-4 rounded-xl mb-4 border-4 border-green-500 text-center">
-<p class="text-[10px] opacity-70">LUCRO TOTAL</p>
+<p class="text-[10px] opacity-70">💰 LUCRO TOTAL</p>
 <p class="font-black text-3xl text-green-400">R$ <span id="lucroTotalAdmin">0.00</span></p>
-<div class="grid grid-cols-3 gap-2 mt-3 text-[10px]">
-<div class="bg-white/10 p-2 rounded"><p>COBRADO</p><b id="totalCobradoAdmin">R$0.00</b></div>
-<div class="bg-white/10 p-2 rounded"><p>PAGO MOTO</p><b id="totalPagoAdmin">R$0.00</b></div>
-<div class="bg-yellow-500 text-black p-2 rounded font-black"><p>CORRIDAS</p><b id="totalCorridasAdmin">0</b></div>
-</div>
 </div>
 <div class="bg-white p-3 rounded-xl border-4 border-black mb-4 shadow">
-<h3 class="font-black text-sm text-black">LOJA PARA LANCAR CORRIDA</h3>
-<p class="text-[10px] text-gray-600 mb-2">Admin escolhe qual loja vai pagar. PIX e CHAT continuam iguais.</p>
+<h3 class="font-black text-sm">🏪 LANÇAR CORRIDA - ESCOLHE LOJA</h3>
 <div class="flex gap-1 mt-2">
-<input id="emailLojaAdminLancamento" placeholder="Email da loja ex: mara@email.com" class="flex-1 border-2 border-black p-2 rounded text-xs font-bold">
+<input id="emailLojaAdminLancamento" placeholder="Email da loja" class="flex-1 border-2 border-black p-2 rounded text-xs font-bold">
 <button type="button" onclick="buscarLojaParaLancar()" class="bg-black text-white px-3 rounded text-xs font-black">BUSCAR</button>
 </div>
 <div id="boxLojaSelecionadaLancamento" class="hidden mt-2 bg-yellow-100 border-2 border-yellow-500 p-2 rounded">
-<p class="text-[11px] font-black">LOJA SELECIONADA:</p>
+<p class="text-[11px] font-black">✅ LOJA SELECIONADA:</p>
 <p id="nomeLojaLancamento" class="text-xs font-bold"></p>
 <p id="emailLojaLancamento" class="text-[10px]"></p>
 <p id="saldoLojaLancamento" class="text-[11px] font-bold text-green-700"></p>
 </div>
 <div class="mt-2">
 <select id="selectLojaLancamento" class="w-full border-2 border-black p-2 rounded text-xs bg-white font-bold" onchange="selecionarLojaParaLancar()">
-<option value="">-- Selecione loja --</option>
+<option value="">-- Selecione loja da lista --</option>
 </select>
 </div>
 <div class="bg-green-50 border-2 border-green-600 p-3 rounded-xl mt-3">
-<input id="enderecoLojaAdminLancamento" placeholder="Endereco LOJA ex: Cavaleiros" value="Cavaleiros" class="w-full p-3 rounded border-2 border-green-600 text-sm font-bold bg-white" oninput="debounceKmAdmin();">
+<input id="enderecoLojaAdminLancamento" placeholder="Endereço LOJA" value="Cavaleiros" class="w-full p-3 rounded border-2 border-green-600 text-sm font-bold bg-white" oninput="debounceKmAdmin();">
 </div>
 <div class="bg-blue-50 border-2 border-blue-600 p-3 rounded-xl mt-2">
-<input id="enderecoClienteAdminLancamento" placeholder="Endereco CLIENTE ex: Lagomar" class="w-full border-2 border-blue-600 p-3 rounded-xl text-sm bg-white font-bold" oninput="debounceKmAdmin();">
-<input id="codigoMotoboyAdminLancamento" placeholder="Codigo motoboy fixo #0001 (opcional)" class="w-full border-2 border-yellow-400 p-3 rounded-xl text-sm bg-white text-black font-black mt-2" inputmode="numeric">
-<p id="nomeMotoboyAdminChamado" class="text-[10px] font-bold mt-1"></p>
-</div>
-<div class="grid grid-cols-2 gap-2 mt-2">
-<label class="flex items-center gap-2 text-sm border-2 border-yellow-500 p-3 rounded-xl bg-yellow-100 font-bold"><input type="checkbox" id="precisaRetornoAdmin" class="w-5 h-5" onchange="calcAdminLancamento()"> RETORNO</label>
-<label class="flex items-center gap-2 text-sm border-2 border-orange-500 p-3 rounded-xl bg-orange-100 font-bold"><input type="checkbox" id="precisaSuperAdmin" class="w-5 h-5" onchange="calcAdminLancamento()"> SUBIR +</label>
+<input id="enderecoClienteAdminLancamento" placeholder="Endereço CLIENTE" class="w-full border-2 border-blue-600 p-3 rounded-xl text-sm bg-white font-bold" oninput="debounceKmAdmin();">
 </div>
 <div class="grid grid-cols-4 gap-1 mt-2">
 <button type="button" onclick="setVeiculoAdminLancamento('MOTO')" id="btnAdminLancMOTO" class="border-2 p-2 rounded-xl text-[10px] font-bold bg-black text-white">MOTO</button>
@@ -161,19 +143,45 @@
 <button type="button" onclick="setVeiculoAdminLancamento('CARRETA')" id="btnAdminLancCARRETA" class="border-2 p-2 rounded-xl text-[10px] font-bold">CARRETA</button>
 </div>
 <div class="bg-gray-100 p-3 rounded text-sm border mt-2">
-<div class="font-bold text-xl">Custo loja: R$ <span id="totalLojistaAdminLanc">10.00</span> <span id="detalheRegiaoAdminLanc" class="text-[10px] font-bold text-blue-600 block mt-1"></span></div>
+<div class="font-bold text-xl">Custo loja: R$ <span id="totalLojistaAdminLanc">10.00</span> <span id="detalheRegiaoAdminLanc" class="text-[10px] font-bold text-blue-600 block"></span></div>
 <div class="text-[11px] mt-1">Moto ganha: R$ <span id="totalMotoAdminLanc">7.50</span></div>
 </div>
 <button type="button" onclick="criarPedidoAdminPorLoja()" class="w-full bg-blue-600 text-white p-4 rounded-xl mt-3 font-black border-2 border-black">CRIAR CORRIDA PELA LOJA</button>
 </div>
 <div class="bg-black text-white p-4 rounded-xl mb-4 border-4 border-yellow-400">
-<h3 class="font-black text-sm text-yellow-400">EDITAR PIX</h3>
+<h3 class="font-black text-sm text-yellow-400">💳 EDITAR PIX</h3>
 <div class="grid grid-cols-1 gap-2 bg-white p-3 rounded-xl">
-<input id="editPixNumero" placeholder="22997450131" value="22997450131" class="w-full border-2 border-black p-3 rounded text-sm font-black text-black">
+<input id="editPixNumero" value="22997450131" class="w-full border-2 border-black p-3 rounded text-sm font-black text-black">
 <input id="editPixNome" placeholder="Seu nome" class="w-full border-2 border-black p-3 rounded text-sm font-bold text-black">
 <button type="button" onclick="salvarPix()" class="bg-yellow-400 text-black w-full py-3 rounded-xl font-black border-2 border-black">SALVAR PIX</button>
 </div>
 <p class="text-[10px] mt-2 text-center">Atual: <b id="pixAtualAdmin" class="text-yellow-400">22997450131</b></p>
+</div>
+<div class="bg-green-100 border-4 border-green-600 p-3 rounded-xl mb-4">
+<h3 class="font-black text-sm text-green-700">💳 EXTRATO RECARGAS - COLOCA/TIRA SALDO</h3>
+<input id="buscaRecarga" placeholder="Buscar por nome/email..." oninput="carregarExtratoRecargas()" class="w-full border-2 border-black p-2 rounded text-xs mt-2">
+<div id="listaExtratoRecargas" class="mt-3 space-y-1 max-h-[300px] overflow-y-auto text-[11px]"></div>
+<div class="bg-black text-white p-2 rounded mt-2 text-center">
+<p class="text-[10px]">TOTAL RECARGADO: <b id="totalRecargasValor" class="text-green-400 text-sm">R$0.00</b></p>
+</div>
+</div>
+<div class="bg-blue-100 border-4 border-blue-600 p-3 rounded-xl mb-4">
+<h3 class="font-black text-sm text-blue-700">🏍️ EXTRATO CORRIDAS</h3>
+<div id="listaExtratoCorridas" class="mt-3 space-y-2 max-h-[500px] overflow-y-auto text-[11px]"></div>
+</div>
+<div class="border-4 border-green-500 p-3 rounded-xl mb-4 bg-white">
+<h3 class="font-bold text-sm">💳 SALDOS - COLOCA E TIRA SALDO + EXTRATO</h3>
+<input id="buscaSaldoGeral" placeholder="Buscar nome ou email..." oninput="carregarSaldosAdmin()" class="w-full border-2 border-black p-2 rounded text-xs mt-2">
+<div class="grid grid-cols-2 gap-2 mt-3">
+<div class="bg-yellow-50 border-2 border-yellow-500 p-2 rounded-xl">
+<p class="font-black text-[11px] text-center bg-yellow-400 text-black p-1 rounded">LOJISTAS</p>
+<div id="listaLojistasSaldos" class="mt-2 space-y-2 max-h-[500px] overflow-y-auto"></div>
+</div>
+<div class="bg-green-50 border-2 border-green-600 p-2 rounded-xl">
+<p class="font-black text-[11px] text-center bg-green-600 text-white p-1 rounded">MOTOBOYS</p>
+<div id="listaMotoboysSaldos" class="mt-2 space-y-2 max-h-[500px] overflow-y-auto"></div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -181,67 +189,105 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, doc, setDoc, getDoc, Timestamp, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-const firebaseConfig = {
-apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",
-authDomain: "anjos-flash.firebaseapp.com",
-projectId: "anjos-flash",
-storageBucket: "anjos-flash.firebasestorage.app",
-messagingSenderId: "725133182752",
-appId: "1:725133182752:web:5f9a98fa97269dcdcab945"
-};
+const firebaseConfig = {apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain: "anjos-flash.firebaseapp.com",projectId: "anjos-flash",storageBucket: "anjos-flash.firebasestorage.app",messagingSenderId: "725133182752",appId: "1:725133182752:web:5f9a98fa97269dcdcab945"};
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-let userLogado = null;
-let userRoleReal = null;
-let userStatus = null;
-let lojaSelecionadaLanc = null;
-let veiculoAdminLanc = "MOTO";
-let kmAdminLanc = 5;
-const $ = function(id){ return document.getElementById(id); };
-window.setAba = function(a){ $("abaEntrar").classList.toggle("hidden", a!=="entrar"); $("abaCadastrar").classList.toggle("hidden", a!=="cadastrar"); };
-window.setVeiculo = function(v){ window.veiculoSelecionado = v; ["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].forEach(function(id){ var b=$("btn"+id); if(b){ b.classList.remove("bg-black","text-white"); if(id===v) b.classList.add("bg-black","text-white"); } }); calc(); };
-window.veiculoSelecionado = "MOTO";
-window.setVeiculoAdminLancamento = function(v){ veiculoAdminLanc = v; ["MOTO","UTILITARIO","CAMINHAO_3_4","CARRETA"].forEach(function(id){ var b=$("btnAdminLanc"+id); if(b){ b.classList.remove("bg-black","text-white"); if(id===v) b.classList.add("bg-black","text-white"); } }); calcAdminLancamento(); };
-window.calcAdminLancamento = function(){ var k = kmAdminLanc || 5; var loj = k<=5? 10 : 10 + (k-5)*2; var moto = k<=5? 7.5 : 7.5 + (k-5)*1.5; if($("precisaRetornoAdmin") && $("precisaRetornoAdmin").checked){ loj = loj*1.5; moto = moto+2; } if($("precisaSuperAdmin") && $("precisaSuperAdmin").checked){ loj = loj+2; moto = moto+1; } if($("totalLojistaAdminLanc")) $("totalLojistaAdminLanc").innerText = loj.toFixed(2); if($("totalMotoAdminLanc")) $("totalMotoAdminLanc").innerText = moto.toFixed(2); if($("detalheRegiaoAdminLanc")) $("detalheRegiaoAdminLanc").innerText = k+"km automatico"; return {loj:loj,moto:moto}; };
-window.debounceKm = function(){ setTimeout(function(){ window.kmCalculadoAutomatico = 5; calc(); }, 300); };
-window.debounceKmAdmin = function(){ setTimeout(function(){ kmAdminLanc = 5; calcAdminLancamento(); }, 300); };
-window.kmCalculadoAutomatico = 5;
-window.calc = function(){ var v = window.veiculoSelecionado||"MOTO"; var k = window.kmCalculadoAutomatico||5; var loj = k<=5? 10 : 10 + (k-5)*2; var moto = k<=5? 7.5 : 7.5 + (k-5)*1.5; if($("precisaRetorno") && $("precisaRetorno").checked){ loj = loj*1.5; moto = moto+2; } if($("precisaSuper") && $("precisaSuper").checked){ loj = loj+2; moto = moto+1; } if($("totalLojista")) $("totalLojista").innerText = loj.toFixed(2); return {lojista:loj,moto:moto,km:k,veiculo:v}; };
-window.fazerLogin = async function(){ try{ var email=$("loginEmail").value.trim(); var senha=$("loginSenha").value.trim(); if(!email||!senha) return alert("Digite email e senha"); await signInWithEmailAndPassword(auth,email,senha); }catch(e){ if($("msgLogin")) $("msgLogin").innerText = e.message; alert("Erro login: "+e.message); } };
-window.fazerCadastro = async function(){ var email=$("cadEmailLogin").value.trim().toLowerCase(); var senha=$("cadSenhaLogin").value.trim(); var nome=$("cadNomeLogin").value.trim(); var tipo=$("tipoCadastro").value; if(!email||!senha||!nome) return alert("Preencha"); try{ var cred=await createUserWithEmailAndPassword(auth,email,senha); var snapTotal=await getDocs(collection(db,"usuarios")); var codigoMotoboy=String(snapTotal.size+1).padStart(4,"0"); var dados={userId:cred.user.uid,nome:nome,email:email,role:tipo,status:tipo==="ADMIN"?"APROVADO":"PENDENTE",saldo_lojista:0,saldo_motoboy:0,codigoMotoboy:codigoMotoboy,criadoEm:Timestamp.now()}; await setDoc(doc(db,"usuarios",cred.user.uid),dados); await signOut(auth); alert("Enviado! Seu codigo #"+codigoMotoboy); location.reload(); }catch(e){ alert(e.message); } };
-window.fazerLogout = async function(){ await signOut(auth); location.reload(); };
-window.salvarNomeLoja = function(){ if(!userLogado) return; localStorage.setItem("nomeLoja_"+userLogado.uid, $("nomeSalaoLojista").value); localStorage.setItem("endLoja_"+userLogado.uid, $("enderecoSalaoLojista").value); if($("nomeLojaTopo")) $("nomeLojaTopo").innerText = $("nomeSalaoLojista").value; };
-async function buscarRoleReal(user){ try{ var d=await getDoc(doc(db,"usuarios",user.uid)); if(d.exists() && d.data().role) return {role:d.data().role,status:d.data().status}; }catch(e){} return {role:"LOJISTA",status:"PENDENTE"}; }
-function normalizaRole(r){ r=(r||"").toUpperCase().trim(); if(r.includes("CARRETA")) return "MOTOBOY_CARRETA"; if(r.includes("3_4")) return "MOTOBOY_CAMINHAO_3_4"; if(r.includes("UTIL")) return "MOTOBOY_UTILITARIO"; if(r.startsWith("MOTOBOY")) return "MOTOBOY_MOTO"; if(r.includes("SUPER")) return "SUPER_LOJISTA"; if(r==="ADMIN") return "ADMIN"; return "LOJISTA"; }
-function mostrarTelaPorRole(){ if($("telaMotoboy")) $("telaMotoboy").classList.add("hidden"); if($("telaLojista")) $("telaLojista").classList.add("hidden"); if($("telaAdmin")) $("telaAdmin").classList.add("hidden"); if(userRoleReal.startsWith("MOTOBOY")){ if($("telaMotoboy")) $("telaMotoboy").classList.remove("hidden"); }else if(userRoleReal==="LOJISTA"||userRoleReal==="SUPER_LOJISTA"){ if($("telaLojista")) $("telaLojista").classList.remove("hidden"); }else{ if($("telaAdmin")) $("telaAdmin").classList.remove("hidden"); carregarLojasParaLancamento(); } }
-onAuthStateChanged(auth, async function(user){
+let userLogado=null;let userRoleReal=null;let userStatus=null;let lojaSelecionadaLanc=null;let veiculoAdminLanc="MOTO";let kmAdminLanc=5;
+const $=function(id){return document.getElementById(id);};
+window.setAba=function(a){$("abaEntrar").classList.toggle("hidden",a!=="entrar");$("abaCadastrar").classList.toggle("hidden",a!=="cadastrar");};
+window.setVeiculo=function(v){window.veiculoSelecionado=v;calc();};
+window.veiculoSelecionado="MOTO";
+window.setVeiculoAdminLancamento=function(v){veiculoAdminLanc=v;calcAdminLancamento();};
+window.calcAdminLancamento=function(){var k=kmAdminLanc||5;var loj=k<=5?10:10+(k-5)*2;var moto=k<=5?7.5:7.5+(k-5)*1.5;if($("totalLojistaAdminLanc")) $("totalLojistaAdminLanc").innerText=loj.toFixed(2);if($("totalMotoAdminLanc")) $("totalMotoAdminLanc").innerText=moto.toFixed(2);return{loj:loj,moto:moto};};
+window.debounceKm=function(){calc();};
+window.debounceKmAdmin=function(){calcAdminLancamento();};
+window.kmCalculadoAutomatico=5;
+window.calc=function(){var k=window.kmCalculadoAutomatico||5;var loj=k<=5?10:10+(k-5)*2;var moto=k<=5?7.5:7.5+(k-5)*1.5;if($("totalLojista")) $("totalLojista").innerText=loj.toFixed(2);return{lojista:loj,moto:moto,km:k,veiculo:"MOTO"};};
+window.salvarNomeLoja=function(){if(!userLogado) return;if($("nomeLojaTopo")) $("nomeLojaTopo").innerText=$("nomeSalaoLojista").value;};
+async function buscarRoleReal(user){try{var d=await getDoc(doc(db,"usuarios",user.uid));if(d.exists()&&d.data().role) return{role:d.data().role,status:d.data().status};}catch(e){}return{role:"LOJISTA",status:"PENDENTE"};}
+function normalizaRole(r){r=(r||"").toUpperCase().trim();if(r==="ADMIN") return"ADMIN";return"LOJISTA";}
+function escutarSaldo(){if(!userLogado) return;onSnapshot(doc(db,"usuarios",userLogado.uid),function(s){if(s.exists()){if($("saldoLojistaValor")) $("saldoLojistaValor").innerText=(s.data().saldo_lojista||0).toFixed(2);if($("saldoMotoboyValor")) $("saldoMotoboyValor").innerText=(s.data().saldo_motoboy||0).toFixed(2);if($("meuCodigoDisplay")) $("meuCodigoDisplay").innerText="#"+(s.data().codigoMotoboy||"0000");}});}
+function mostrarTelaPorRole(){if($("telaMotoboy")) $("telaMotoboy").classList.add("hidden");if($("telaLojista")) $("telaLojista").classList.add("hidden");if($("telaAdmin")) $("telaAdmin").classList.add("hidden");if(userRoleReal.startsWith("MOTOBOY")){if($("telaMotoboy")) $("telaMotoboy").classList.remove("hidden");}else if(userRoleReal==="LOJISTA"){if($("telaLojista")) $("telaLojista").classList.remove("hidden");}else{if($("telaAdmin")) $("telaAdmin").classList.remove("hidden");}}
+onAuthStateChanged(auth,async function(user){
 if(user){
 userLogado=user;
 var res=await buscarRoleReal(user);
-userRoleReal=normalizaRole(res.role);
+userRoleReal=res.role;
 userStatus=res.status||"PENDENTE";
 if($("roleRealBadge")) $("roleRealBadge").innerText=userRoleReal+" - "+userStatus;
-if(userStatus!=="APROVADO" && userRoleReal!=="ADMIN"){
+if(userStatus!=="APROVADO"&&userRoleReal!=="ADMIN"){
 $("telaLogin").classList.add("hidden");
 $("telaPendente").classList.remove("hidden");
-if($("pendenteRole")) $("pendenteRole").innerText=userRoleReal+" "+userStatus;
 return;
 }
 $("telaLogin").classList.add("hidden");
 $("telaPendente").classList.add("hidden");
 mostrarTelaPorRole();
+escutarSaldo();
+carregarSaldosAdmin();
+carregarExtratoRecargas();
+carregarExtratoCorridas();
+carregarLojasParaLancamento();
 }else{
 $("telaLogin").classList.remove("hidden");
-$("telaPendente").classList.add("hidden");
 }
 });
-window.buscarLojaParaLancar = async function(){
+window.fazerLogin=async function(){try{await signInWithEmailAndPassword(auth,$("loginEmail").value.trim(),$("loginSenha").value.trim());}catch(e){if($("msgLogin")) $("msgLogin").innerText=e.message;}};
+window.fazerCadastro=async function(){var email=$("cadEmailLogin").value.trim().toLowerCase();var senha=$("cadSenhaLogin").value.trim();var nome=$("cadNomeLogin").value.trim();var tipo=$("tipoCadastro").value;try{var cred=await createUserWithEmailAndPassword(auth,email,senha);var snapTotal=await getDocs(collection(db,"usuarios"));var codigo=String(snapTotal.size+1).padStart(4,"0");await setDoc(doc(db,"usuarios",cred.user.uid),{userId:cred.user.uid,nome:nome,email:email,role:tipo,status:tipo==="ADMIN"?"APROVADO":"PENDENTE",saldo_lojista:0,saldo_motoboy:0,codigoMotoboy:codigo,criadoEm:Timestamp.now()});await signOut(auth);alert("Enviado #"+codigo);location.reload();}catch(e){alert(e.message);}};
+window.fazerLogout=async function(){await signOut(auth);location.reload();};
+window.carregarSaldosAdmin=async function(){
+var snap=await getDocs(collection(db,"usuarios"));
+var hL="";var hM="";
+snap.forEach(function(d){
+var u=d.data();
+if(!u.userId) return;
+if((u.role||"").includes("MOTOBOY")){
+hM+='<div class="bg-white border-2 border-black p-2 rounded text-[10px]"><b>'+(u.nome||u.email)+' #'+(u.codigoMotoboy||'0000')+'</b><br>R'+Number(u.saldo_motoboy||0).toFixed(2)+'<div class="flex gap-1 mt-1"><input id="addMoto_'+u.userId+'" placeholder="120,00" class="w-full border-2 border-black p-2 rounded"><button onclick="addSaldoDireto(\''+u.userId+'\',\''+u.email+'\',\'motoboy\',1)" class="bg-green-600 text-white px-2 py-1 rounded">+ ADD</button><button onclick="addSaldoDireto(\''+u.userId+'\',\''+u.email+'\',\'motoboy\',-1)" class="bg-red-600 text-white px-2 py-1 rounded">- TIRAR</button></div></div>';
+}else{
+hL+='<div class="bg-white border-2 border-black p-2 rounded text-[10px]"><b>'+(u.nome||u.email)+'</b><br>R'+Number(u.saldo_lojista||0).toFixed(2)+'<div class="flex gap-1 mt-1"><input id="addLoj_'+u.userId+'" placeholder="120,00" class="w-full border-2 border-black p-2 rounded"><button onclick="addSaldoDireto(\''+u.userId+'\',\''+u.email+'\',\'lojista\',1)" class="bg-green-600 text-white px-2 py-1 rounded">+ ADD</button><button onclick="addSaldoDireto(\''+u.userId+'\',\''+u.email+'\',\'lojista\',-1)" class="bg-red-600 text-white px-2 py-1 rounded">- TIRAR</button></div></div>';
+}
+});
+if($("listaLojistasSaldos")) $("listaLojistasSaldos").innerHTML=hL;
+if($("listaMotoboysSaldos")) $("listaMotoboysSaldos").innerHTML=hM;
+};
+window.addSaldoDireto=async function(uid,email,tipo,sinal){
+var raw="";if(tipo==="lojista") raw=document.getElementById("addLoj_"+uid).value;else raw=document.getElementById("addMoto_"+uid).value;
+raw=String(raw).replace(",",".").replace(/[^0-9.]/g,"");var val=Number(raw||0);if(!val) return alert("Digite valor");val=Math.abs(val)*sinal;
+var snap=await getDoc(doc(db,"usuarios",uid));var novoLoj=snap.data().saldo_lojista||0;var novoMoto=snap.data().saldo_motoboy||0;
+if(tipo==="lojista") novoLoj+=val;else novoMoto+=val;if(novoLoj<0) novoLoj=0;if(novoMoto<0) novoMoto=0;
+await setDoc(doc(db,"usuarios",uid),{saldo_lojista:novoLoj,saldo_motoboy:novoMoto},{merge:true});
+await addDoc(collection(db,"recargas"),{userId:uid,email:email,nome:snap.data().nome||email,tipo:tipo,valor:val,saldo_apos:tipo==="lojista"?novoLoj:novoMoto,admin:userLogado.email,criado_em:Timestamp.now()});
+carregarSaldosAdmin();carregarExtratoRecargas();
+};
+window.carregarExtratoRecargas=async function(){
+onSnapshot(query(collection(db,"recargas"), orderBy("criado_em","desc"), limit(100)), function(snap){
+var h="";var total=0;
+snap.forEach(function(d){
+var r=d.data();
+if(r.valor>0) total+=r.valor;
+h+='<div class="border-2 '+(r.valor>0?'bg-green-100':'bg-red-100')+' p-2 rounded"><b>'+r.nome+'</b> - '+r.tipo+' <b>'+(r.valor>0?'+':'')+'R'+Number(r.valor).toFixed(2)+'</b> Saldo: R'+Number(r.saldo_apos).toFixed(2)+'</div>';
+});
+if($("listaExtratoRecargas")) $("listaExtratoRecargas").innerHTML=h;
+if($("totalRecargasValor")) $("totalRecargasValor").innerText="R$"+total.toFixed(2);
+});
+};
+window.carregarExtratoCorridas=async function(){
+onSnapshot(query(collection(db,"pedidos"), orderBy("criado_em","desc"), limit(100)), function(snap){
+var h="";
+snap.forEach(function(d){
+var p=d.data();
+h+='<div class="border-2 border-black p-2 rounded bg-white"><b>'+(p.nome_loja||'LOJA')+'</b> - '+p.status+' R$'+Number(p.valor_lojista||0).toFixed(2)+'</div>';
+});
+if($("listaExtratoCorridas")) $("listaExtratoCorridas").innerHTML=h;
+});
+};
+window.buscarLojaParaLancar=async function(){
 var email=$("emailLojaAdminLancamento").value.trim().toLowerCase();
-if(!email) return alert("Digite email da loja");
+if(!email) return alert("Digite email");
 var q=query(collection(db,"usuarios"), where("email","==",email));
 var snap=await getDocs(q);
-if(snap.empty) return alert("Loja nao encontrada");
+if(snap.empty) return alert("Nao encontrada");
 var data=snap.docs[0].data();
 lojaSelecionadaLanc=data;
 if($("boxLojaSelecionadaLancamento")) $("boxLojaSelecionadaLancamento").classList.remove("hidden");
@@ -250,7 +296,6 @@ if($("emailLojaLancamento")) $("emailLojaLancamento").innerText=data.email;
 if($("saldoLojaLancamento")) $("saldoLojaLancamento").innerText="Saldo: R$"+Number(data.saldo_lojista||0).toFixed(2);
 };
 async function carregarLojasParaLancamento(){
-try{
 var q=query(collection(db,"usuarios"), limit(20));
 var snap=await getDocs(q);
 var sel=$("selectLojaLancamento");
@@ -258,22 +303,19 @@ if(!sel) return;
 sel.innerHTML='<option value="">-- Selecione loja --</option>';
 snap.forEach(function(d){
 var u=d.data();
-if(u.role && (u.role.includes("LOJISTA")||u.role==="LOJISTA"||u.role==="SUPER_LOJISTA")){
+if(u.role&&(u.role.includes("LOJISTA")||u.role==="LOJISTA")){
 var opt=document.createElement("option");
 opt.value=u.userId;
 opt.text=(u.nome||u.email)+" - R$"+Number(u.saldo_lojista||0).toFixed(2);
 sel.appendChild(opt);
 }
 });
-}catch(e){}
 }
-window.selecionarLojaParaLancar = async function(){
+window.selecionarLojaParaLancar=async function(){
 var sel=$("selectLojaLancamento");
-var opt=sel.options[sel.selectedIndex];
-if(!opt||!opt.value) return;
-var uid=opt.value;
+var uid=sel.value;
+if(!uid) return;
 var d=await getDoc(doc(db,"usuarios",uid));
-if(!d.exists()) return;
 var data=d.data();
 lojaSelecionadaLanc=data;
 if($("boxLojaSelecionadaLancamento")) $("boxLojaSelecionadaLancamento").classList.remove("hidden");
@@ -282,69 +324,37 @@ if($("emailLojaLancamento")) $("emailLojaLancamento").innerText=data.email;
 if($("saldoLojaLancamento")) $("saldoLojaLancamento").innerText="Saldo: R$"+Number(data.saldo_lojista||0).toFixed(2);
 if($("emailLojaAdminLancamento")) $("emailLojaAdminLancamento").value=data.email;
 };
-window.criarPedidoAdminPorLoja = async function(){
-if(!lojaSelecionadaLanc) return alert("Selecione a loja primeiro");
-var calc=calcAdminLancamento();
-var loj=calc.loj;
-var moto=calc.moto;
+window.criarPedidoAdminPorLoja=async function(){
+if(!lojaSelecionadaLanc) return alert("Selecione a loja");
+var c=calcAdminLancamento();
+var loj=c.loj;
+var moto=c.moto;
 var endLoja=$("enderecoLojaAdminLancamento").value;
 var endCliente=$("enderecoClienteAdminLancamento").value;
-if(!endCliente) return alert("Digite endereco cliente");
-var saldoAtual=Number(lojaSelecionadaLanc.saldo_lojista||0);
-if(saldoAtual < loj) return alert("Saldo insuficiente da loja R$"+saldoAtual.toFixed(2)+" precisa R$"+loj.toFixed(2));
+if(!endCliente) return alert("Digite cliente");
+if(Number(lojaSelecionadaLanc.saldo_lojista||0)<loj) return alert("Saldo insuficiente");
 var cod=Math.floor(1000+Math.random()*9000).toString();
-await addDoc(collection(db,"pedidos"),{
-owner_id:lojaSelecionadaLanc.userId,
-nome_loja:lojaSelecionadaLanc.nome||lojaSelecionadaLanc.email,
-endereco_completo:endCliente,
-endereco_loja:endLoja,
-km:kmAdminLanc,
-valor_lojista:loj,
-valor_motoboy:moto,
-codigo_secreto:cod,
-veiculo:veiculoAdminLanc,
-status:"AGUARDANDO",
-criado_em:Timestamp.now(),
-criado_por_admin:userLogado.email
-});
-var novoSaldo=saldoAtual-loj;
-await setDoc(doc(db,"usuarios",lojaSelecionadaLanc.userId),{saldo_lojista:novoSaldo},{merge:true});
-alert("Corrida criada pela loja "+(lojaSelecionadaLanc.nome||lojaSelecionadaLanc.email)+" - R$"+loj.toFixed(2));
-if($("enderecoClienteAdminLancamento")) $("enderecoClienteAdminLancamento").value="";
-lojaSelecionadaLanc.saldo_lojista=novoSaldo;
-if($("saldoLojaLancamento")) $("saldoLojaLancamento").innerText="Saldo: R$"+novoSaldo.toFixed(2);
+await addDoc(collection(db,"pedidos"),{owner_id:lojaSelecionadaLanc.userId,nome_loja:lojaSelecionadaLanc.nome||lojaSelecionadaLanc.email,endereco_completo:endCliente,endereco_loja:endLoja,km:kmAdminLanc,valor_lojista:loj,valor_motoboy:moto,codigo_secreto:cod,veiculo:veiculoAdminLanc,status:"AGUARDANDO",criado_em:Timestamp.now(),criado_por_admin:userLogado.email});
+var novo=Number(lojaSelecionadaLanc.saldo_lojista||0)-loj;
+await setDoc(doc(db,"usuarios",lojaSelecionadaLanc.userId),{saldo_lojista:novo},{merge:true});
+alert("Criada pela loja "+lojaSelecionadaLanc.email+" R$"+loj.toFixed(2));
+lojaSelecionadaLanc.saldo_lojista=novo;
 };
-window.criarPedido = async function(){
+window.criarPedido=async function(){
 var c=calc();
 var loj=c.lojista;
 var moto=c.moto;
 var endereco=$("enderecoCompletoLojista").value;
 if(!endereco) return alert("Endereco cliente");
 var userSnap=await getDoc(doc(db,"usuarios",userLogado.uid));
-var saldoAtual=userSnap.data().saldo_lojista||0;
-if(saldoAtual < loj) return alert("Saldo insuficiente R$"+saldoAtual.toFixed(2));
+var saldo=userSnap.data().saldo_lojista||0;
+if(saldo<loj) return alert("Saldo insuficiente");
 var cod=Math.floor(1000+Math.random()*9000).toString();
-await addDoc(collection(db,"pedidos"),{
-owner_id:userLogado.uid,
-nome_loja:$("nomeSalaoLojista").value,
-endereco_completo:endereco,
-endereco_loja:$("enderecoSalaoLojista").value,
-km:c.km,
-valor_lojista:loj,
-valor_motoboy:moto,
-codigo_secreto:cod,
-veiculo:c.veiculo,
-status:"AGUARDANDO",
-criado_em:Timestamp.now()
-});
-var novo=saldoAtual-loj;
-await setDoc(doc(db,"usuarios",userLogado.uid),{saldo_lojista:novo},{merge:true});
+await addDoc(collection(db,"pedidos"),{owner_id:userLogado.uid,nome_loja:$("nomeSalaoLojista").value,endereco_completo:endereco,endereco_loja:$("enderecoSalaoLojista").value,km:c.km,valor_lojista:loj,valor_motoboy:moto,codigo_secreto:cod,veiculo:c.veiculo,status:"AGUARDANDO",criado_em:Timestamp.now()});
+await setDoc(doc(db,"usuarios",userLogado.uid),{saldo_lojista:saldo-loj},{merge:true});
 alert("Criado R$"+loj.toFixed(2));
-if($("enderecoCompletoLojista")) $("enderecoCompletoLojista").value="";
 };
-window.salvarPix = async function(){ var numero=$("editPixNumero").value.trim(); var nome=$("editPixNome").value.trim(); if(!numero) return alert("Digite PIX"); await setDoc(doc(db,"pix_config","atual"),{numero:numero,nome:nome,pix:numero,nomePix:nome},{merge:true}); alert("PIX salvo "+numero); };
-window.toggleDinamica = function(){ alert("Dinamica OFF/ON - configure no Firebase"); };
-window.salvarDinamicaValor = function(){ alert("Salvo"); };
+window.salvarPix=async function(){var numero=$("editPixNumero").value.trim();await setDoc(doc(db,"pix_config","atual"),{numero:numero,pix:numero},{merge:true});alert("PIX salvo");};
 </script>
 </body>
 </html>
