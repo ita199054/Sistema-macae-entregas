@@ -3,112 +3,271 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anjos Flash - FINAL</title>
+<title>Anjos Flash - FINAL FUNCIONAL</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
+<div id="alertaSomNovoPedido" class="fixed top-0 left-0 right-0 bg-red-600 text-white p-4 z-[100] hidden text-center animate-pulse border-4 border-yellow-400">
+<p class="font-black text-xl">🔔 NOVA CORRIDA TOCANDO!!! 🔔</p>
+<p id="textoAlertaSom" class="text-sm font-bold"></p>
+<button onclick="pararSomAlerta()" class="bg-yellow-400 text-black px-6 py-2 rounded-full font-black mt-2">🔇 PARAR SOM</button>
+</div>
 <div id="telaLogin" class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
-<div class="bg-white p-6 rounded-xl w-full max-w-sm">
-<h2 class="font-bold text-center">🏍️ Anjos Flash</h2>
-<input id="loginEmail" placeholder="email" class="w-full border p-3 rounded mb-2">
-<input id="loginSenha" type="password" placeholder="senha" class="w-full border p-3 rounded mb-2">
-<button onclick="fazerLogin()" class="w-full bg-orange-500 text-white p-3 rounded">ENTRAR</button>
+<div class="bg-white p-6 rounded-xl w-full max-w-sm max-h-[90vh] overflow-y-auto">
+<h2 class="font-bold text-xl text-center">🏍️ Anjos Flash</h2>
+<button onclick="ativarSom()" class="w-full bg-green-600 text-white p-3 rounded-xl mt-3 font-black border-2 border-black">🔊 ATIVAR SOM</button>
+<div class="flex gap-2 my-3">
+<button type="button" onclick="setAba('entrar')" class="flex-1 bg-black text-white py-2 rounded font-bold">ENTRAR</button>
+<button type="button" onclick="setAba('cadastrar')" class="flex-1 border py-2 rounded font-bold">CRIAR CONTA</button>
+</div>
+<div id="abaEntrar">
+<input id="loginEmail" placeholder="Seu email" class="w-full border p-3 rounded mb-2 text-sm">
+<input id="loginSenha" type="password" placeholder="Sua senha" class="w-full border p-3 rounded mb-2 text-sm">
+<button type="button" onclick="fazerLogin()" class="w-full bg-orange-500 text-white p-3 rounded font-bold">ENTRAR</button>
+<p id="msgLogin" class="text-xs text-red-600 mt-2"></p>
+</div>
+<div id="abaCadastrar" class="hidden">
+<select id="tipoCadastro" class="w-full border-2 p-3 rounded mb-2 font-bold">
+<option value="LOJISTA">SOU LOJISTA</option>
+<option value="MOTOBOY_MOTO">SOU MOTOBOY #0001</option>
+<option value="ADMIN">SOU ADMIN</option>
+</select>
+<input id="cadEmailLogin" placeholder="Email" class="w-full border p-3 rounded mb-2 text-sm">
+<input id="cadSenhaLogin" type="password" placeholder="Senha" class="w-full border p-3 rounded mb-2 text-sm">
+<input id="cadNomeLogin" placeholder="Nome" class="w-full border p-3 rounded mb-2 text-sm">
+<button type="button" onclick="fazerCadastro()" class="w-full bg-black text-white p-4 rounded-xl font-black mt-4">✅ ENVIAR</button>
 </div>
 </div>
-<div id="app" class="max-w-[420px] mx-auto bg-white min-h-screen">
-<div class="p-4 flex justify-between border-b">
-<b>Anjos Flash - FINAL LIMPO</b>
-<button onclick="fazerLogout()" class="text-xs border px-2 py-1 rounded">SAIR</button>
 </div>
-<div id="telaLojista" class="p-4">
-<div class="bg-black text-white p-3 rounded-xl text-center">R$ <span id="saldoLojistaValor">0.00</span></div>
-<input id="enderecoSalaoLojista" placeholder="CAVALEIROS" value="CAVALEIROS" class="w-full p-2 rounded border-2 mt-2 text-sm uppercase" oninput="calc();">
-<input id="enderecoCompletoLojista" placeholder="AROEIRA" class="w-full border-2 p-2 rounded text-sm uppercase mt-2" oninput="calc();">
-<div class="bg-yellow-50 border-4 border-yellow-500 p-4 rounded-xl mt-3">
+<div id="telaPendente" class="fixed inset-0 bg-yellow-100 z-40 hidden flex items-center justify-center p-4">
+<div class="bg-white p-6 rounded-xl w-full max-w-sm text-center border-2 border-yellow-500">
+<h2 class="font-bold text-xl">⏳ Aguardando aprovação</h2>
+<button type="button" onclick="fazerLogout()" class="w-full bg-red-600 text-white p-3 rounded font-bold mt-4">SAIR</button>
+</div>
+</div>
+<div id="app" class="max-w-[420px] mx-auto bg-white min-h-screen shadow-xl relative">
+<div class="p-4 flex justify-between items-center border-b sticky top-0 bg-white z-20">
+<div>
+<b>🏍️ Anjos Flash</b><br>
+<span id="statusSomBadge" class="text-[9px] bg-red-600 text-white px-2 rounded">🔇 SOM DESATIVADO</span>
+</div>
+<div class="flex gap-2 items-center">
+<button onclick="ativarSom()" class="bg-green-600 text-white text-[10px] px-2 py-1 rounded font-black">🔊 ATIVAR SOM</button>
+<span id="roleRealBadge" class="bg-black text-white text-[10px] px-2 py-1 rounded">...</span>
+<button type="button" onclick="fazerLogout()" class="text-[10px] border px-2 py-1 rounded">SAIR</button>
+</div>
+</div>
+<div id="telaLojista" class="p-4 hidden">
+<div class="bg-black text-white p-4 rounded-xl mb-3 text-center border-2 border-blue-500">
+<p class="font-bold text-2xl text-yellow-400">R$ <span id="saldoLojistaValor">0.00</span></p>
+</div>
+<div class="bg-yellow-100 border-2 border-yellow-500 p-3 rounded-xl mb-3 text-center">
+<p id="pixLojistaDisplay" class="font-black text-xl">22997450131</p>
+<button type="button" onclick="navigator.clipboard.writeText(document.getElementById('pixLojistaDisplay').innerText)" class="bg-black text-white text-[10px] px-4 py-2 rounded-full mt-2">📋 COPIAR PIX</button>
+</div>
+<div class="bg-green-50 border-2 border-green-600 p-3 rounded-xl mb-3">
+<label class="text-[10px] font-black">ORIGEM - BAIRRO LOJA</label>
+<input id="enderecoSalaoLojista" placeholder="CAVALEIROS" value="CAVALEIROS" class="w-full p-3 rounded border-2 border-green-600 text-sm font-bold uppercase mt-1" oninput="debounceKm();">
+</div>
+<div class="bg-blue-50 border-2 border-blue-600 p-3 rounded-xl mb-3">
+<label class="text-[10px] font-black">DESTINO - BAIRRO CLIENTE</label>
+<input id="enderecoCompletoLojista" placeholder="AROEIRA" class="w-full border-2 border-blue-600 p-3 rounded-xl text-sm font-bold uppercase mt-1" oninput="debounceKm();">
+</div>
+<div class="bg-yellow-50 border-4 border-yellow-500 p-4 rounded-xl mb-3">
 <h3 class="font-black text-sm">🔄 ABA RETORNO - SO RETORNO E LOCAL PARA MARCAR</h3>
 <div class="bg-white border-2 border-black p-3 rounded-xl mt-3 flex items-center gap-3">
 <input type="checkbox" id="precisaRetorno" class="w-8 h-8" onchange="calc()">
 <div>
 <p class="font-black text-sm">🔄 RETORNO</p>
-<p class="text-[10px]">Local para marcar retorno</p>
+<p class="text-[10px]">Marque se precisa voltar</p>
 </div>
 </div>
 <div id="localMarcarRetorno" class="mt-3 bg-yellow-100 border-2 border-yellow-600 p-3 rounded-xl hidden">
-<label class="text-[10px] font-black">📍 LOCAL PARA MARCAR RETORNO</label>
-<input id="enderecoRetornoLojista" placeholder="ENDERECO RETORNO - ONDE VOLTA" class="w-full p-3 rounded border-2 text-sm uppercase mt-1">
+<label class="text-[10px] font-black">📍 LOCAL PARA MARCAR RETORNO - ONDE VOLTA</label>
+<input id="enderecoRetornoLojista" placeholder="ENDERECO RETORNO - ONDE VOLTA" class="w-full p-3 rounded border-2 border-yellow-600 text-sm font-bold uppercase mt-1">
 </div>
 </div>
-<div class="bg-white border-2 border-black p-3 rounded-xl mt-3 text-center">
-<p class="font-black text-2xl">R$ <span id="totalLojista">10.00</span></p>
+<div class="bg-white border-2 border-black p-3 rounded-xl mb-3 text-center">
+<p class="font-black text-3xl">R$ <span id="totalLojista">10.00</span></p>
 </div>
-<button onclick="criarPedido()" class="w-full bg-black text-white p-3 rounded-xl mt-3">🚀 CRIAR CORRIDA</button>
-<div class="bg-blue-50 border-2 border-blue-600 p-2 rounded-xl mt-3">
-<h3 class="font-bold text-sm">📞 CHAMAR MOTOBOY #0001</h3>
-<input id="codigoMotoboyChamarLojista" placeholder="#0001" class="border p-2 rounded text-xs w-full mt-1">
-<input id="idCorridaChamarLojista" placeholder="ID CORRIDA" class="border p-2 rounded text-xs w-full mt-1">
-<button onclick="chamarMotoboyPorNumeroLojista()" class="bg-blue-600 text-white w-full py-2 rounded mt-2 text-xs">CHAMAR #0001</button>
-<div id="listaCorridasParaChamarLojista" class="mt-2 text-xs"></div>
+<button type="button" onclick="criarPedido()" class="w-full bg-black text-white p-4 rounded-xl mt-3 font-bold">🚀 CRIAR CORRIDA</button>
+<div class="bg-blue-50 border-4 border-blue-600 p-3 rounded-xl mt-4">
+<h3 class="font-black text-sm">📞 CHAMAR MOTOBOY #0001 - LOJISTA TEM LOCAL</h3>
+<div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2 rounded border-2 border-black">
+<input id="codigoMotoboyChamarLojista" placeholder="#0001 - NUMERO MOTOBOY" class="border-2 border-black p-2 rounded text-xs font-black uppercase">
+<input id="idCorridaChamarLojista" placeholder="ID CORRIDA" class="border-2 border-black p-2 rounded text-xs font-bold">
 </div>
-<div id="listaMeusPedidosLojista" class="mt-3 text-xs"></div>
-<div class="bg-blue-100 border-2 border-blue-600 p-2 rounded-xl mt-3">
-<button onclick="imprimirMeuExtratoLojista()" class="bg-blue-600 text-white w-full py-2 rounded text-xs">🖨️ EXTRATO</button>
+<button type="button" onclick="chamarMotoboyPorNumeroLojista()" class="bg-blue-600 text-white w-full py-3 rounded mt-2 text-xs font-black border-2 border-black">📞 CHAMAR MOTOBOY #0001</button>
+<div id="listaCorridasParaChamarLojista" class="mt-2 space-y-1 max-h-[300px] overflow-y-auto text-[11px]"></div>
+</div>
+<div class="bg-yellow-100 border-4 border-yellow-500 p-3 rounded-xl mt-3">
+<h3 class="font-black text-sm">📍 MEUS PEDIDOS</h3>
+<div id="listaMeusPedidosLojista" class="mt-2 space-y-2 max-h-[500px] overflow-y-auto text-[11px]"></div>
+<button onclick="tocarSomTeste()" class="bg-black text-white w-full py-2 rounded mt-2 text-[11px] font-bold">🔔 TESTAR SOM</button>
+</div>
+<div class="bg-blue-100 border-4 border-blue-600 p-3 rounded-xl mt-3">
+<h3 class="font-black text-sm">🖨️ EXTRATO PARA IMPRIMIR</h3>
+<button type="button" onclick="imprimirMeuExtratoLojista()" class="bg-blue-600 text-white w-full py-3 rounded-xl mt-2 font-black border-2 border-black">🖨️ IMPRIMIR MEU EXTRATO</button>
+<div id="listaMeuExtratoLojista" class="mt-2 bg-white p-2 rounded border text-[11px]"></div>
 </div>
 </div>
 <div id="telaMotoboy" class="p-4 hidden">
-<div class="bg-black text-white p-3 rounded-xl text-center">R$ <span id="saldoMotoboyValor">0.00</span><p id="meuCodigoDisplay">#0000</p></div>
-<div id="listaEntregasMotoboy" class="mt-3 text-xs"></div>
+<div class="bg-black text-white p-4 rounded-xl mb-3 text-center border-2 border-green-500">
+<p class="font-bold text-2xl text-green-400">R$ <span id="saldoMotoboyValor">0.00</span></p>
+<p id="meuCodigoDisplay" class="font-black text-3xl tracking-widest bg-yellow-400 text-black p-2 rounded mt-2">#0000</p>
+<button onclick="ativarSom()" class="bg-green-600 text-white w-full py-2 rounded mt-2 font-black">🔊 ATIVAR SOM</button>
+</div>
+<div class="bg-blue-100 border-4 border-blue-600 p-3 rounded-xl mb-3">
+<h3 class="font-black text-sm">🔍 CORRIDAS PROCURANDO MOTOBOY</h3>
+<div id="listaEntregasMotoboy" class="space-y-2 text-xs max-h-[600px] overflow-y-auto"></div>
+</div>
+<div class="bg-green-100 border-2 border-green-600 p-2 rounded-xl">
+<button onclick="imprimirMeuExtratoMotoboy()" class="bg-green-600 text-white w-full py-2 rounded text-xs font-bold">🖨️ MEU EXTRATO</button>
+<div id="listaMeuExtratoMotoboy" class="mt-2 text-xs bg-white p-2 rounded"></div>
+</div>
 </div>
 <div id="telaAdmin" class="p-4 hidden">
-<h3 class="font-bold">ADMIN</h3>
-<div class="bg-yellow-50 border-4 border-yellow-500 p-3 rounded-xl mt-3">
-<h3 class="font-black text-sm">🔄 ABA RETORNO ADMIN</h3>
+<div class="bg-black text-white p-4 rounded-xl mb-4 border-4 border-green-500 text-center">
+<p>💰 LUCRO R$ <span id="lucroTotalAdmin">0.00</span></p>
+</div>
+<div class="bg-yellow-400 text-black p-3 rounded-xl mb-4 border-4 border-black">
+<h3 class="font-black text-sm">⚡ PAINEL ADMIN</h3>
+<div class="grid grid-cols-2 gap-2 mt-3 bg-white p-3 rounded border-2 border-black">
+<div><label class="text-[9px] font-bold">⚡ DINAMICA EXTRA LOJISTA R$</label><input id="editDinamicaLojista" type="number" value="3" class="w-full border-2 border-blue-600 p-2 rounded text-xs font-bold"></div>
+<div><label class="text-[9px] font-bold">⚡ DINAMICA EXTRA MOTO R$</label><input id="editDinamicaMoto" type="number" value="2" class="w-full border-2 border-green-600 p-2 rounded text-xs font-bold"></div>
+<div><label class="text-[9px] font-bold">🔄 RETORNO % LOJISTA</label><input id="editRetornoPercent" type="number" value="50" class="w-full border-2 border-yellow-600 p-2 rounded text-xs font-bold"></div>
+<div><label class="text-[9px] font-bold">🔄 RETORNO FIXO MOTO R$</label><input id="editRetornoMoto" type="number" value="3" class="w-full border-2 border-orange-600 p-2 rounded text-xs font-bold"></div>
+</div>
+<button type="button" onclick="salvarDinamicaCompleta()" class="bg-black text-white w-full py-3 rounded-xl mt-3 font-black border-2 border-yellow-400">💾 SALVAR</button>
+</div>
+<div class="bg-black text-yellow-400 p-4 rounded-xl mb-4 border-4 border-yellow-400">
+<h3 class="font-black text-sm text-yellow-400">💳 EDITAR PIX</h3>
+<div class="grid grid-cols-1 gap-2 bg-white p-3 rounded-xl mt-2">
+<input id="editPixNumero" value="22997450131" class="w-full border-4 border-yellow-400 p-3 rounded text-sm font-black text-black">
+<button type="button" onclick="salvarPix()" class="bg-yellow-400 text-black w-full py-3 rounded-xl font-black border-4 border-black text-lg">💾 SALVAR PIX</button>
+</div>
+<p class="text-[10px] mt-2 text-center">PIX ATUAL: <b id="pixAtualAdmin" class="text-yellow-400">22997450131</b></p>
+</div>
+<div class="bg-yellow-50 border-4 border-yellow-500 p-3 rounded-xl mb-4">
+<h3 class="font-black text-sm">🔄 ABA RETORNO ADMIN - SO RETORNO E LOCAL PARA MARCAR</h3>
 <div class="bg-white border-2 border-black p-3 rounded-xl mt-2 flex items-center gap-3">
 <input type="checkbox" id="precisaRetornoAdmin" class="w-8 h-8" onchange="calcAdminLancamento()">
-<p class="font-black text-sm">🔄 RETORNO</p>
+<p class="font-black text-sm">🔄 RETORNO - SO RETORNO E LOCAL PARA MARCAR</p>
 </div>
 <div id="localMarcarRetornoAdmin" class="mt-3 bg-yellow-100 border-2 p-3 rounded-xl hidden">
+<label class="text-[10px] font-black">📍 LOCAL RETORNO ADMIN</label>
 <input id="enderecoRetornoAdmin" placeholder="ENDERECO RETORNO ADMIN" class="w-full p-3 rounded border-2 text-sm uppercase">
 </div>
 </div>
-<div class="bg-gray-100 p-2 rounded text-xs mt-2">Loja: R$ <span id="totalLojistaAdminLanc">10.00</span> | Moto: R$ <span id="totalMotoAdminLanc">7.50</span></div>
+<div class="bg-blue-100 border-4 border-blue-600 p-3 rounded-xl mb-4">
+<h3 class="font-black text-sm">📞 CHAMAR MOTOBOY #0001 - ADMIN</h3>
+<div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2 rounded border-2 border-black">
+<input id="codigoMotoboyChamar" placeholder="#0001" class="border-2 border-black p-2 rounded text-xs font-black uppercase">
+<input id="idCorridaChamar" placeholder="ID CORRIDA" class="border-2 border-black p-2 rounded text-xs font-bold">
+</div>
+<button type="button" onclick="chamarMotoboyPorNumero()" class="bg-blue-600 text-white w-full py-3 rounded mt-2 text-xs font-black border-2 border-black">📞 CHAMAR MOTOBOY #0001 - COM SOM</button>
+<div id="listaCorridasParaChamar" class="mt-2 space-y-1 max-h-[300px] overflow-y-auto text-[11px]"></div>
+</div>
+<div class="bg-green-100 border-4 border-green-600 p-3 rounded-xl mb-4">
+<h3 class="font-black text-sm">🖨️ EXTRATO LOJA POR LOJA</h3>
+<select id="selectLojaImprimirExtrato" class="w-full border-2 border-black p-2 rounded text-xs bg-white font-bold mt-1"><option value="">-- Selecione loja --</option></select>
+<button type="button" onclick="imprimirExtratoLojaPorLoja()" class="bg-yellow-400 text-black w-full py-2 rounded mt-2 text-[11px] font-black border-2 border-black">🖨️ IMPRIMIR LOJA POR LOJA</button>
+<button type="button" onclick="imprimirExtratoGeral()" class="bg-black text-white w-full py-2 rounded mt-2 text-xs">🖨️ IMPRIMIR GERAL</button>
+</div>
+<div class="bg-white p-3 rounded-xl border-4 border-black mb-4">
+<h3 class="font-black text-sm">🏪 LANÇAR CORRIDA</h3>
+<select id="selectLojaLancamento" class="w-full border-2 border-black p-2 rounded text-xs bg-white font-bold mt-2"><option value="">-- Selecione loja --</option></select>
+<input id="enderecoLojaAdminLancamento" placeholder="ORIGEM CAVALEIROS" value="CAVALEIROS" class="w-full p-3 rounded border-2 border-green-600 text-sm font-bold uppercase mt-1">
+<input id="enderecoClienteAdminLancamento" placeholder="DESTINO AROEIRA" class="w-full border-2 border-blue-600 p-3 rounded-xl text-sm font-bold uppercase mt-1">
+<div class="bg-gray-100 p-3 rounded text-sm border mt-2">ADMIN VE: Loja: R$ <span id="totalLojistaAdminLanc">10.00</span> | Moto: R$ <span id="totalMotoAdminLanc">7.50</span></div>
+<button type="button" onclick="criarPedidoAdminPorLoja()" class="w-full bg-blue-600 text-white p-4 rounded-xl mt-3 font-black">🚀 CRIAR</button>
+</div>
+<div class="bg-yellow-100 border-4 border-black p-3 rounded-xl mb-4">
+<h3 class="font-black text-sm">🔀 VALOR FIXO POR BAIRRO - CAVALEIROS x AROEIRA</h3>
+<div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2 rounded border-2 border-black">
+<input id="origemRota" placeholder="CAVALEIROS" class="border-2 border-black p-2 rounded text-xs font-bold uppercase">
+<input id="destinoRota" placeholder="AROEIRA" class="border-2 border-black p-2 rounded text-xs font-bold uppercase">
+<input id="valorRotaLojista" type="text" placeholder="15,00" class="w-full border-2 border-blue-600 p-2 rounded text-xs font-bold">
+<input id="valorRotaMotoboy" type="text" placeholder="8,00" class="w-full border-2 border-green-600 p-2 rounded text-xs font-bold">
+</div>
+<button type="button" onclick="addRota()" class="bg-black text-white w-full py-3 rounded mt-2 text-xs font-black">💾 SALVAR BAIRRO</button>
+<div id="listaRotasAdmin" class="mt-3 space-y-2 text-[11px] max-h-[500px] overflow-y-auto"></div>
+</div>
+<div class="border-4 border-yellow-500 p-3 rounded-xl mb-4 bg-yellow-50"><h3 class="font-bold text-sm">⏳ PENDENTES</h3><div id="listaLojistasPendentes"></div><div id="listaMotoboysPendentes"></div></div>
+<div class="border-4 border-green-500 p-3 rounded-xl mb-4 bg-white"><h3 class="font-bold text-sm">💳 SALDOS</h3><div id="listaLojistasSaldos"></div><div id="listaMotoboysSaldos"></div></div>
+<div class="bg-green-100 border-4 border-green-600 p-3 rounded-xl mb-4"><h3 class="font-black text-sm">💳 EXTRATO RECARGAS</h3><div id="listaExtratoRecargas"></div></div>
+<div class="bg-blue-100 border-4 border-blue-600 p-3 rounded-xl mb-4"><h3 class="font-black text-sm">🏍️ EXTRATO CORRIDAS</h3><div id="listaExtratoCorridas"></div></div>
+<div class="bg-blue-100 border-4 border-blue-600 p-3 rounded-xl mb-4"><h3 class="font-black text-sm">🧾 BOLETOS</h3><div id="listaBoletosAdmin"></div></div>
 </div>
 </div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-const firebaseConfig = {apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain: "anjos-flash.firebaseapp.com",projectId: "anjos-flash"};
-const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
+import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, doc, setDoc, getDoc, Timestamp, orderBy, limit, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const firebaseConfig = {apiKey: "AIzaSyBT0GOP33aXXyMTE8xLGdu3iv98WmgGN44",authDomain: "anjos-flash.firebaseapp.com",projectId: "anjos-flash",storageBucket: "anjos-flash.firebasestorage.app",messagingSenderId: "725133182752",appId: "1:725133182752:web:5f9a98fa97269dcdcab945"};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+let userLogado=null; let userRoleReal=null; let userStatus=null; let mapaRotasFixas={}; let somAtivado=false; let audioContext=null;
+let configPrecos = { dinamica_ativa:false, dinamica_lojista:3, dinamica_moto:2, retorno_percent:50, retorno_moto:3, subir_lojista:8, subir_moto:4 };
 const $=id=>document.getElementById(id);
+window.setAba=a=>{$("abaEntrar").classList.toggle("hidden",a!=="entrar");$("abaCadastrar").classList.toggle("hidden",a!=="cadastrar");};
+window.debounceKm=()=>setTimeout(()=>calc(),200);
+window.debounceKmAdmin=()=>setTimeout(()=>calcAdminLancamento(),200);
+window.ativarSom=function(){try{if(!audioContext){audioContext = new (window.AudioContext || window.webkitAudioContext)();}somAtivado=true; if($("statusSomBadge")){$("statusSomBadge").innerText="🔊 SOM ATIVADO";} tocarSomTeste();}catch(e){}};
+window.tocarSomTeste=function(){if(!somAtivado){ativarSom(); return;} try{if(!audioContext)audioContext = new (window.AudioContext || window.webkitAudioContext)(); const osc = audioContext.createOscillator(); const gain = audioContext.createGain(); osc.type='sine'; osc.frequency.value=800; gain.gain.value=0.5; osc.connect(gain); gain.connect(audioContext.destination); osc.start(); setTimeout(()=>{osc.stop();},300);}catch(e){}};
+window.pararSomAlerta=function(){if($("alertaSomNovoPedido"))$("alertaSomNovoPedido").classList.add("hidden");};
+async function carregarConfigPrecos(){try{const d=await getDoc(doc(db,"pricing_config","dinamica")); if(d.exists()){const data=d.data(); configPrecos.dinamica_ativa=data.ativa||false; configPrecos.dinamica_lojista=Number(data.dinamica_lojista??3); configPrecos.dinamica_moto=Number(data.dinamica_moto??2); configPrecos.retorno_percent=Number(data.retorno_percent??50); configPrecos.retorno_moto=Number(data.retorno_moto??3); configPrecos.subir_lojista=Number(data.subir_lojista??8); configPrecos.subir_moto=Number(data.subir_moto??4);} const pixDoc=await getDoc(doc(db,"pix_config","atual")); if(pixDoc.exists()){const pixData=pixDoc.data(); const numero=pixData.numero||"22997450131"; if($("pixLojistaDisplay"))$("pixLojistaDisplay").innerText=numero; if($("pixAtualAdmin"))$("pixAtualAdmin").innerText=numero; if($("editPixNumero"))$("editPixNumero").value=numero;}}catch(e){} calc(); calcAdminLancamento();}
 window.calc=function(){
   var loj=10; var moto=7.5;
-  if($("precisaRetorno")?.checked){
-    loj+=loj*0.5; moto+=3;
-    $("localMarcarRetorno").classList.remove("hidden");
+  let baseLoj=loj;
+  if($("precisaRetorno")&&$("precisaRetorno").checked){
+    let vLoj=baseLoj*(Number(configPrecos.retorno_percent||50)/100);
+    let vMoto=Number(configPrecos.retorno_moto||3);
+    loj+=vLoj; moto+=vMoto;
+    if($("localMarcarRetorno")) $("localMarcarRetorno").classList.remove("hidden");
   }else{
-    $("localMarcarRetorno").classList.add("hidden");
+    if($("localMarcarRetorno")) $("localMarcarRetorno").classList.add("hidden");
   }
-  $("totalLojista").innerText=loj.toFixed(2);
+  if(configPrecos.dinamica_ativa){loj+=Number(configPrecos.dinamica_lojista||0); moto+=Number(configPrecos.dinamica_moto||0);}
+  if($("totalLojista"))$("totalLojista").innerText=loj.toFixed(2);
   return{lojista:loj,moto:moto};
 };
 window.calcAdminLancamento=function(){
   var loj=10; var moto=7.5;
-  if($("precisaRetornoAdmin")?.checked){
-    loj+=loj*0.5; moto+=3;
-    $("localMarcarRetornoAdmin").classList.remove("hidden");
+  let baseLoj=loj;
+  if($("precisaRetornoAdmin")&&$("precisaRetornoAdmin").checked){
+    let vLoj=baseLoj*(Number(configPrecos.retorno_percent||50)/100);
+    let vMoto=Number(configPrecos.retorno_moto||3);
+    loj+=vLoj; moto+=vMoto;
+    if($("localMarcarRetornoAdmin")) $("localMarcarRetornoAdmin").classList.remove("hidden");
   }else{
-    $("localMarcarRetornoAdmin").classList.add("hidden");
+    if($("localMarcarRetornoAdmin")) $("localMarcarRetornoAdmin").classList.add("hidden");
   }
-  $("totalLojistaAdminLanc").innerText=loj.toFixed(2);
-  $("totalMotoAdminLanc").innerText=moto.toFixed(2);
-  return{loj,moto};
+  if(configPrecos.dinamica_ativa){loj+=Number(configPrecos.dinamica_lojista||0); moto+=Number(configPrecos.dinamica_moto||0);}
+  if($("totalLojistaAdminLanc"))$("totalLojistaAdminLanc").innerText=loj.toFixed(2);
+  if($("totalMotoAdminLanc"))$("totalMotoAdminLanc").innerText=moto.toFixed(2);
+  return{loj:loj,moto:moto};
 };
-window.criarPedido=async function(){var c=calc(); alert("Criado R$"+c.lojista.toFixed(2));};
-window.chamarMotoboyPorNumeroLojista=async function(){alert("CHAMAR #0001 LOJISTA");};
-window.imprimirMeuExtratoLojista=function(){window.print();};
-window.fazerLogin=async function(){await signInWithEmailAndPassword(auth,$("loginEmail").value,$("loginSenha").value);};
+window.criarPedido=async function(){
+  var c=calc();
+  var endereco=$("enderecoCompletoLojista").value;
+  if(!endereco) return alert("Endereco");
+  var userSnap=await getDoc(doc(db,"usuarios",userLogado.uid));
+  var saldo=userSnap.data().saldo_lojista||0;
+  if(saldo<c.lojista) return alert("Saldo insuficiente");
+  var cod=Math.floor(1000+Math.random()*9000).toString();
+  await addDoc(collection(db,"pedidos"),{owner_id:userLogado.uid, endereco_completo:endereco, endereco_loja:$("enderecoSalaoLojista").value, endereco_retorno:$("enderecoRetornoLojista")?.value||"", valor_lojista:c.lojista, valor_motoboy:c.moto, codigo_secreto:cod, status:"AGUARDANDO", criado_em:Timestamp.now(), precisaRetorno:$("precisaRetorno")?.checked||false});
+  await setDoc(doc(db,"usuarios",userLogado.uid),{saldo_lojista:saldo-c.lojista},{merge:true});
+  alert("Criado R$"+c.lojista.toFixed(2));
+};
+window.fazerLogin=async function(){try{await signInWithEmailAndPassword(auth,$("loginEmail").value.trim(),$("loginSenha").value.trim());}catch(e){if($("msgLogin"))$("msgLogin").innerText=e.message;}};
+window.fazerCadastro=async function(){var email=$("cadEmailLogin").value.trim().toLowerCase(); var senha=$("cadSenhaLogin").value.trim(); var nome=$("cadNomeLogin").value.trim(); var tipo=$("tipoCadastro").value; try{var cred=await createUserWithEmailAndPassword(auth,email,senha); var snapTotal=await getDocs(collection(db,"usuarios")); var codigo=String(snapTotal.size+1).padStart(4,"0"); await setDoc(doc(db,"usuarios",cred.user.uid),{userId:cred.user.uid,nome:nome,email:email,role:tipo,status:tipo==="ADMIN"?"APROVADO":"PENDENTE",saldo_lojista:0,saldo_motoboy:0,codigoMotoboy:codigo,criadoEm:Timestamp.now()}); await signOut(auth); alert("Enviado #"+codigo); location.reload();}catch(e){alert(e.message);}};
 window.fazerLogout=async function(){await signOut(auth); location.reload();};
-onAuthStateChanged(auth, async user=>{if(user){$("telaLogin").classList.add("hidden"); var d=await getDoc(doc(db,"usuarios",user.uid)); var role=d.data()?.role||"LOJISTA"; $("telaLojista").classList.toggle("hidden",!role.includes("LOJISTA")); $("telaMotoboy").classList.toggle("hidden",!role.includes("MOTOBOY")); $("telaAdmin").classList.toggle("hidden",role!=="ADMIN");}else{$("telaLogin").classList.remove("hidden");}});
+async function buscarRoleReal(user){try{var d=await getDoc(doc(db,"usuarios",user.uid)); if(d.exists()&&d.data().role) return{role:d.data().role,status:d.data().status};}catch(e){} return{role:"LOJISTA",status:"PENDENTE"};}
+function escutarSaldo(){if(!userLogado)return; onSnapshot(doc(db,"usuarios",userLogado.uid),function(s){if(s.exists()){if($("saldoLojistaValor"))$("saldoLojistaValor").innerText=(s.data().saldo_lojista||0).toFixed(2); if($("saldoMotoboyValor"))$("saldoMotoboyValor").innerText=(s.data().saldo_motoboy||0).toFixed(2); if($("meuCodigoDisplay"))$("meuCodigoDisplay").innerText="#"+(s.data().codigoMotoboy||"0000");}});}
+function mostrarTelaPorRole(){$("telaMotoboy")?.classList.add("hidden");$("telaLojista")?.classList.add("hidden");$("telaAdmin")?.classList.add("hidden"); if(userRoleReal.startsWith("MOTOBOY"))$("telaMotoboy").classList.remove("hidden"); else if(userRoleReal==="LOJISTA")$("telaLojista").classList.remove("hidden"); else $("telaAdmin").classList.remove("hidden");}
+onAuthStateChanged(auth,async function(user){if(user){userLogado=user; var res=await buscarRoleReal(user); userRoleReal=res.role; userStatus=res.status||"PENDENTE"; if($("roleRealBadge"))$("roleRealBadge").innerText=userRoleReal+" - "+userStatus; if(userStatus!=="APROVADO"&&userRoleReal!=="ADMIN"){$("telaLogin").classList.add("hidden");$("telaPendente").classList.remove("hidden"); return;} $("telaLogin").classList.add("hidden");$("telaPendente").classList.add("hidden"); mostrarTelaPorRole(); escutarSaldo(); carregarConfigPrecos();}else{$("telaLogin").classList.remove("hidden");}});
 </script>
 </body>
 </html>
